@@ -55,40 +55,31 @@ public class ParserTest extends BaseTest {
     @Test
     public void testParsingExpressions() {
         Map data = loadJSONMap("/rules.json");
-//		System.out.println(obj);
-
-        Parser parser;
-//		ArrayList<String> results;
+        Parser parser = new Parser();
 
         Iterator iter = data.keySet().iterator();
         while (iter.hasNext()) {
             String key = (String) iter.next();
-//			System.out.println(key);
             Object expectation = (Object) data.get(key);
 
-//			System.out.println("Test: " + key);
-//			System.out.println("Expectation = " + expectation);
-            parser = new Parser(key);
-//			System.out.println("Parsed to: " + parser.getTokens() + "\n");
+            Object result = parser.parse(key);
 
             if (expectation instanceof String) {
                 org.junit.Assert.assertEquals(
-                        parser.parse(),
+                        result,
                         expectation
                 );
             } else {
                 List expectationList = (List) data.get(key);
 
                 @SuppressWarnings("unchecked")
-                List<String> results = (ArrayList<String>) parser.parse();
+                List<String> results = (ArrayList<String>) result;
 
-//				System.out.println("Evaluated to: " + results);
                 org.junit.Assert.assertArrayEquals(
                         results.toArray(),
                         expectationList.toArray()
                 );
             }
-//			System.out.println("Passed");
         }
     }
 

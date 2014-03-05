@@ -97,10 +97,4 @@ public class Parser {
         return list;
     }
 
-    public static void main(String[] args) {
-        Parser parser = new Parser("(mod @n 10)");
-        System.out.println(StringUtils.join(parser.getTokens().toArray(), ", "));
-        System.out.println(StringUtils.join(((List<Object>)parser.parse()).toArray(), ", "));
-    }
-
 }
