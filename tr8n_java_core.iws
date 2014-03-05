@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="26a54d45-4393-4b79-8055-2f7789fbc01d" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.travis.yml" afterPath="$PROJECT_DIR$/.travis.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tr8n_java_core.iws" afterPath="$PROJECT_DIR$/tr8n_java_core.iws" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
     </list>
     <ignored path="tr8n_java_core.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -201,19 +200,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name=".travis.yml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name=".travis.yml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.travis.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="0" selection-start="64" selection-end="64" vertical-scroll-proportion="0.115384616" vertical-offset="0" max-vertical-offset="780">
+            <state line="6" column="0" selection-start="64" selection-end="64" vertical-scroll-proportion="-3.6" vertical-offset="0" max-vertical-offset="240">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="pom.xml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="51" column="64" selection-start="1713" selection-end="1713" vertical-scroll-proportion="0.0" vertical-offset="530" max-vertical-offset="1335">
+            <state line="72" column="35" selection-start="2392" selection-end="2392" vertical-scroll-proportion="0.6832298" vertical-offset="530" max-vertical-offset="1335">
               <folding />
             </state>
           </provider>
@@ -246,9 +245,9 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/.travis.yml" />
+        <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
   </component>
@@ -809,13 +808,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="64" selection-start="1713" selection-end="1713" vertical-scroll-proportion="0.0" vertical-offset="530" max-vertical-offset="1335">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="text-editor">
         <state line="3" column="77" selection-start="96" selection-end="96" vertical-scroll-proportion="-1.8" vertical-offset="0" max-vertical-offset="135">
@@ -825,7 +817,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.travis.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="0" selection-start="64" selection-end="64" vertical-scroll-proportion="0.115384616" vertical-offset="0" max-vertical-offset="780">
+        <state line="6" column="0" selection-start="64" selection-end="64" vertical-scroll-proportion="-3.6" vertical-offset="0" max-vertical-offset="240">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="72" column="35" selection-start="2392" selection-end="2392" vertical-scroll-proportion="0.6832298" vertical-offset="530" max-vertical-offset="1335">
           <folding />
         </state>
       </provider>
