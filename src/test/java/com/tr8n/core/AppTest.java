@@ -1,4 +1,4 @@
-package com.tr8n;
+package com.tr8n.core;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

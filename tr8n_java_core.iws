@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="26a54d45-4393-4b79-8055-2f7789fbc01d" name="Default" comment="" />
+    <list default="true" id="26a54d45-4393-4b79-8055-2f7789fbc01d" name="Default" comment="">
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/com/tr8n/App.java" afterPath="$PROJECT_DIR$/src/main/java/com/tr8n/core/App.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/com/tr8n/AppTest.java" afterPath="$PROJECT_DIR$/src/test/java/com/tr8n/core/AppTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tr8n_java_core.ipr" afterPath="$PROJECT_DIR$/tr8n_java_core.ipr" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tr8n_java_core.iws" afterPath="$PROJECT_DIR$/tr8n_java_core.iws" />
+    </list>
     <ignored path="tr8n_java_core.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -198,10 +204,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
+      <file leaf-file-name=".travis.yml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.travis.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="11" column="25" selection-start="172" selection-end="172" vertical-scroll-proportion="-6.6" vertical-offset="0" max-vertical-offset="255">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="pom.xml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="25" selection-start="502" selection-end="502" vertical-scroll-proportion="0.20496894" vertical-offset="0" max-vertical-offset="805">
+            <state line="51" column="64" selection-start="1713" selection-end="1713" vertical-scroll-proportion="0.29192546" vertical-offset="530" max-vertical-offset="1335">
               <folding />
             </state>
           </provider>
@@ -214,10 +229,21 @@
       <setting name="OPEN_NEW_TAB" value="false" />
     </FindUsagesManager>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="HierarchyBrowserManager">
     <option name="SHOW_PACKAGES" value="false" />
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
     <option name="SORT_ALPHABETICALLY" value="false" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="changedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/.travis.yml" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+      </list>
+    </option>
   </component>
   <component name="InspectionManager">
     <option name="AUTOSCROLL_TO_SOURCE" value="false" />
@@ -244,6 +270,12 @@
         <PATH_ELEMENT>
           <option name="myItemId" value="tr8n_java_core" />
           <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
         </PATH_ELEMENT>
       </PATH>
     </treeState>
@@ -312,10 +344,6 @@
               <option name="myItemId" value="tr8n_java_core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -349,7 +377,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="tr8n" />
+              <option name="myItemId" value="core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -375,7 +403,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="tr8n" />
+              <option name="myItemId" value="core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -403,9 +431,14 @@
     <property name="recentsLimit" value="5" />
     <property name="dynamic.classpath" value="false" />
   </component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.tr8n.sdk" />
+    </key>
+  </component>
   <component name="RunManager" selected="JUnit.AppTest">
     <configuration default="false" name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.tr8n.App" />
+      <option name="MAIN_CLASS_NAME" value="com.tr8n.core.App" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -424,8 +457,8 @@
       <module name="tr8n_java_core" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.tr8n" />
-      <option name="MAIN_CLASS_NAME" value="com.tr8n.AppTest" />
+      <option name="PACKAGE_NAME" value="com.tr8n.core" />
+      <option name="MAIN_CLASS_NAME" value="com.tr8n.core.AppTest" />
       <option name="METHOD_NAME" />
       <option name="TEST_OBJECT" value="class" />
       <option name="VM_PARAMETERS" />
@@ -741,7 +774,7 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/tr8n/App.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/tr8n/core/App.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="13" column="0" selection-start="171" selection-end="171" vertical-scroll-proportion="0.24223602" vertical-offset="0" max-vertical-offset="805">
           <folding />
@@ -755,16 +788,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/tr8n/AppTest.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/tr8n/core/AppTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="21" column="0" selection-start="371" selection-end="371" vertical-scroll-proportion="0.35403726" vertical-offset="0" max-vertical-offset="805">
           <folding />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1" column="0" selection-start="0" selection-end="7" vertical-scroll-proportion="0.01863354" vertical-offset="0" max-vertical-offset="805">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.travis.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="25" selection-start="172" selection-end="172" vertical-scroll-proportion="-6.6" vertical-offset="0" max-vertical-offset="255">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="25" selection-start="502" selection-end="502" vertical-scroll-proportion="0.20496894" vertical-offset="0" max-vertical-offset="805">
+        <state line="51" column="64" selection-start="1713" selection-end="1713" vertical-scroll-proportion="0.29192546" vertical-offset="530" max-vertical-offset="1335">
           <folding />
         </state>
       </provider>

@@ -1,4 +1,4 @@
-package com.tr8n;
+package com.tr8n.core;
 
 /**
  * Hello world!
