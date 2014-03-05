@@ -52,6 +52,24 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>2.5</version>
             </plugin>
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>2.2.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.6.5.201403032054</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -65,18 +83,18 @@
                 </property>
             </activation>
             <build>
-                <!--<plugins>-->
-                    <!--<plugin>-->
-                        <!--<groupId>org.jacoco</groupId>-->
-                        <!--<artifactId>jacoco-maven-plugin</artifactId>-->
-                        <!--<version>${maven.jacoco.version}</version>-->
-                    <!--</plugin>-->
-                    <!--<plugin>-->
-                        <!--<groupId>org.eluder.coveralls</groupId>-->
-                        <!--<artifactId>coveralls-maven-plugin</artifactId>-->
-                        <!--<version>2.0.1</version>-->
-                    <!--</plugin>-->
-                <!--</plugins>-->
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.6.5.201403032054</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.eluder.coveralls</groupId>
+                        <artifactId>coveralls-maven-plugin</artifactId>
+                        <version>2.2.0</version>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
     </profiles>
