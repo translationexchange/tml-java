@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+require 'fsevent'
+require 'terminal-notifier'
+
+class UnitTester < FSEvent
+  def on_change(directories)
+    puts "Detected change in: #{directories.inspect}"
+    run_php_unit
+  end
+
+  def start
+    puts "watching #{registered_directories.join(", ")} for changes"
+    super
+  end
+
+  def run_php_unit
+    system('clear')
+    if (system("mvn clean test"))
+      system("mvn jacoco:report")
+      system("terminal-notifier -message 'All tests are passing' -title 'JUnit'")
+    else
+      system("terminal-notifier -message 'Tests are failing' -title 'JUnit'")
+    end
+  end
+end
+
+Signal.trap("INT"){ puts "\nCustom INT handler called."; exit }
+
+tester = UnitTester.new
+tester.watch_directories ["#{Dir.pwd}/src"]
+tester.start
