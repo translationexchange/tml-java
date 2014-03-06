@@ -6,8 +6,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
 
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -62,6 +64,22 @@ public class BaseTest {
         }
 
         return obj;
+    }
+
+    public static Date parseDate(String value) {
+        try {
+            return (new SimpleDateFormat("yyyy-MM-dd")).parse(value);
+        } catch (java.text.ParseException ex){
+            return null;
+        }
+    }
+
+    public static Date parseTime(String value) {
+        try {
+            return (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).parse(value);
+        } catch (java.text.ParseException ex){
+            return null;
+        }
     }
 
     @SuppressWarnings("unchecked")
