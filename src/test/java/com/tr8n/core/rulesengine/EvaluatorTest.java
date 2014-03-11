@@ -1,6 +1,8 @@
 package com.tr8n.core.rulesengine;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -409,6 +411,97 @@ public class EvaluatorTest extends BaseTest {
     }
 
     @Test
+    public void testEvaluatingHelperExpressions() {
+        Evaluator e = new Evaluator();
+        org.junit.Assert.assertTrue(
+                (Boolean) e.getExpression("in").evaluate(e, Arrays.asList("1,2,3,5..10,20..24", "1"))
+        );
+        org.junit.Assert.assertTrue(
+                (Boolean) e.getExpression("in").evaluate(e, Arrays.asList("1,2,3,5..10,20..24", "5"))
+        );
+        org.junit.Assert.assertTrue(
+                (Boolean) e.getExpression("in").evaluate(e, Arrays.asList("1,2,3,5..10,20..24", "6"))
+        );
+        org.junit.Assert.assertTrue(
+                (Boolean) e.getExpression("in").evaluate(e, Arrays.asList("1,2,3,5..10,20..24", "24"))
+        );
+        org.junit.Assert.assertFalse(
+                (Boolean) e.getExpression("in").evaluate(e, Arrays.asList("1,2,3,5..10,20..24", "25"))
+        );
+
+        org.junit.Assert.assertFalse(
+                (Boolean) e.getExpression("within").evaluate(e, Arrays.asList("0..3", "4"))
+        );
+
+        org.junit.Assert.assertTrue(
+                (Boolean) e.getExpression("within").evaluate(e, Arrays.asList("0..3", "3"))
+        );
+
+        org.junit.Assert.assertTrue(
+                (Boolean) e.getExpression("within").evaluate(e, Arrays.asList("0..3", "2.5"))
+        );
+
+        e.setVariable("@genders", Arrays.asList("male", "male", "female"));
+        org.junit.Assert.assertEquals(
+                3,
+                e.getExpression("count").evaluate(e, Arrays.asList("@genders"))
+        );
+
+        org.junit.Assert.assertEquals(
+                3,
+                e.getExpression("count").evaluate(e, Arrays.asList(Arrays.asList("male", "male", "female")))
+        );
+
+        org.junit.Assert.assertEquals(
+                0,
+                e.getExpression("count").evaluate(e, Arrays.asList(Arrays.asList()))
+        );
+
+        e.setVariable("@genders", Arrays.asList("male", "male", "female"));
+        org.junit.Assert.assertTrue(
+                (Boolean) e.getExpression("any").evaluate(e, Arrays.asList("@genders", "male"))
+        );
+
+        e.setVariable("@genders", Arrays.asList("female", "female", "female"));
+        org.junit.Assert.assertFalse(
+                (Boolean) e.getExpression("any").evaluate(e, Arrays.asList("@genders", "male"))
+        );
+
+
+        org.junit.Assert.assertFalse(
+                (Boolean) e.getExpression("any").evaluate(e, Arrays.asList(Arrays.asList("female", "female", "female"), "male"))
+        );
+
+        org.junit.Assert.assertFalse(
+                (Boolean) e.getExpression("any").evaluate(e, Arrays.asList(Arrays.asList(), "male"))
+        );
+
+        e.setVariable("@genders", Arrays.asList("female", "female", "female"));
+        org.junit.Assert.assertFalse(
+                (Boolean) e.getExpression("all").evaluate(e, Arrays.asList("@genders", "male"))
+        );
+
+        e.setVariable("@genders", Arrays.asList("female", "female", "male"));
+        org.junit.Assert.assertFalse(
+                (Boolean) e.getExpression("all").evaluate(e, Arrays.asList("@genders", "female"))
+        );
+
+        e.setVariable("@genders", Arrays.asList("female", "female", "female"));
+        org.junit.Assert.assertTrue(
+                (Boolean) e.getExpression("all").evaluate(e, Arrays.asList("@genders", "female"))
+        );
+
+        org.junit.Assert.assertTrue(
+                (Boolean) e.getExpression("all").evaluate(e, Arrays.asList(Arrays.asList("female", "female", "female"), "female"))
+        );
+
+        org.junit.Assert.assertFalse(
+                (Boolean) e.getExpression("all").evaluate(e, Arrays.asList(Arrays.asList(), "female"))
+        );
+
+    }
+
+    @Test
     public void testEvaluatingFullExpressions() {
         Evaluator e = new Evaluator();
         Parser p = new Parser();
@@ -441,5 +534,32 @@ public class EvaluatorTest extends BaseTest {
         org.junit.Assert.assertNull(
                 e.getVariable("@n")
         );
+    }
+
+    @Test
+    public void testEvaluatorExtensions() {
+        HashMap<String, Object> vars = new HashMap<String, Object>();
+        vars.put("@n", 5);
+
+        Map<String, Expression> ext = new HashMap<String, Expression>();
+        ext.put("print", new Expression() {
+            public Object evaluate(Evaluator evaluator, List params) {
+                String varName = (String) params.get(0);
+                String varValue = "" + evaluator.getVariable(varName);
+                return varName + " = " + varValue;
+            }
+        });
+
+        Evaluator e = new Evaluator(vars, ext);
+        e.addNestedFunction("print");
+
+        Parser p = new Parser();
+
+        org.junit.Assert.assertEquals(
+                "@n = 5",
+                e.evaluate(p.parse("(print @n)"))
+        );
+
+        e.removeNestedFunction("print");
     }
 }

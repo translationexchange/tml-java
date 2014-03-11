@@ -1,0 +1,140 @@
+/*
+ *  Copyright (c) 2014 Michael Berkovich, http://tr8nhub.com All rights reserved.
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in
+ *  all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *  THE SOFTWARE.
+ */
+
+package com.tr8n.core;
+
+import com.tr8n.core.rulesengine.Evaluator;
+import com.tr8n.core.rulesengine.Parser;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Iterator;
+
+public class LanguageContextRule extends Base {
+
+    /**
+     * Holds reference to the language context it belongs to
+     */
+    LanguageContext languageContext;
+
+    /**
+     * Unique key of the context within the language
+     */
+    String keyword;
+
+    /**
+     * Description of the rule
+     */
+    String description;
+
+    /**
+     * Examples of the rule application
+     */
+    String examples;
+
+    /**
+     * Conditions in symbolic notation
+     */
+    String conditions;
+
+    /**
+     * Optimized conditions parsed into an array
+     */
+    List compiledConditions;
+
+
+    /**
+     * Default constructor
+     * @param attributes
+     */
+    public LanguageContextRule(Map attributes) {
+        super(attributes);
+    }
+
+    /**
+     *
+     * @param attributes
+     */
+    public void updateAttributes(Map attributes) {
+        if (attributes.get("language_context") != null) {
+            this.languageContext = (LanguageContext) attributes.get("language_context");
+        }
+
+        this.keyword = (String) attributes.get("keyword");
+        this.description = (String) attributes.get("description");
+        this.examples = (String) attributes.get("examples");
+        this.conditions = (String) attributes.get("conditions");
+        this.compiledConditions = (List) attributes.get("conditions_expression");
+    }
+
+    /**
+     *
+     * @return boolean
+     */
+    public boolean isFallback() {
+        return this.keyword == "other";
+    }
+
+    /**
+     *
+     * @return List
+     */
+    public List conditionsExpression() {
+        if (this.compiledConditions == null) {
+            Parser p = new Parser(this.conditions);
+            this.compiledConditions = (List) p.parse();
+        }
+
+        return this.compiledConditions;
+    }
+
+    /**
+     *
+     * @param vars
+     * @return boolean
+     */
+    public boolean evaluate(Map vars) {
+        if (this.isFallback())
+            return true;
+
+        Evaluator e = new Evaluator();
+
+        Iterator entries = vars.entrySet().iterator();
+        while (entries.hasNext()) {
+            Entry thisEntry = (Entry) entries.next();
+            String key = (String) thisEntry.getKey();
+            Object value = thisEntry.getValue();
+            e.setVariable(key, value);
+        }
+
+        return (Boolean) e.evaluate(this.conditionsExpression());
+    }
+
+    public void load() {
+    }
+
+    public Map toHash() {
+        return null;
+    }
+
+}

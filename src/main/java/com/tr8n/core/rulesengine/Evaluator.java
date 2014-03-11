@@ -1,4 +1,29 @@
+/*
+ *  Copyright (c) 2014 Michael Berkovich, http://tr8nhub.com All rights reserved.
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in
+ *  all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *  THE SOFTWARE.
+ */
+
 package com.tr8n.core.rulesengine;
+
+import com.google.common.collect.Range;
+import com.tr8n.core.Utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,12 +42,15 @@ public class Evaluator {
 
     private Map<String, Expression> context;
     private Map<String, Object> variables;
+    private List<String> nestedFunctions;
 
     /**
      * Default constructor
      */
     public Evaluator() {
         this.context = defaultContext();
+        this.nestedFunctions = new ArrayList<String>();
+        this.nestedFunctions.addAll(defaultContextNestedFunctions());
         this.variables = new HashMap<String, Object>();
     }
 
@@ -52,6 +80,11 @@ public class Evaluator {
 
     public void setVariable(String name, Object value) {
         this.variables.put(name, value);
+    }
+
+    public static List<String> defaultContextNestedFunctions() {
+        return Arrays.asList("quote", "car", "cdr", "cond", "if", "&&", "||",
+            "and", "or", "true", "false", "let", "count", "all", "any");
     }
 
     public static Map<String, Expression> defaultContext() {
@@ -179,7 +212,7 @@ public class Evaluator {
                 if (v1 instanceof Date && v2 instanceof Date)
                     return ((Date) v1).before((Date)v2);
 
-                if (isNumeric(v1) && isNumeric(v2))
+                if (Utils.isNumeric(v1) && Utils.isNumeric(v2))
                     return Double.parseDouble(v1.toString()) < Double.parseDouble(v2.toString());
 
                 return v1.toString().length() < v2.toString().length();
@@ -290,10 +323,10 @@ public class Evaluator {
                 Object v1 = params.get(0);
                 Object v2 = params.get(1);
 
-                if (isNumeric(v1) && isNumeric(v2)) {
+                if (Utils.isNumeric(v1) && Utils.isNumeric(v2)) {
                     if (v1 instanceof Double || v2 instanceof Double)
-                        return parseDouble(v1) + parseDouble(v2);
-                    return parseInt(v1) + parseInt(v2);
+                        return Utils.parseDouble(v1) + Utils.parseDouble(v2);
+                    return Utils.parseInt(v1) + Utils.parseInt(v2);
                 }
 
                 return params.get(0).toString() + params.get(1).toString();
@@ -306,10 +339,10 @@ public class Evaluator {
                 Object v1 = params.get(0);
                 Object v2 = params.get(1);
 
-                if (isNumeric(v1) && isNumeric(v2)) {
+                if (Utils.isNumeric(v1) && Utils.isNumeric(v2)) {
                     if (v1 instanceof Double || v2 instanceof Double)
-                        return parseDouble(v1) - parseDouble(v2);
-                    return parseInt(v1) - parseInt(v2);
+                        return Utils.parseDouble(v1) - Utils.parseDouble(v2);
+                    return Utils.parseInt(v1) - Utils.parseInt(v2);
                 }
 
                 return null;
@@ -322,10 +355,10 @@ public class Evaluator {
                 Object v1 = params.get(0);
                 Object v2 = params.get(1);
 
-                if (isNumeric(v1) && isNumeric(v2)) {
+                if (Utils.isNumeric(v1) && Utils.isNumeric(v2)) {
                     if (v1 instanceof Double || v2 instanceof Double)
-                        return parseDouble(v1) * parseDouble(v2);
-                    return parseInt(v1) * parseInt(v2);
+                        return Utils.parseDouble(v1) * Utils.parseDouble(v2);
+                    return Utils.parseInt(v1) * Utils.parseInt(v2);
                 }
 
                 return null;
@@ -338,10 +371,10 @@ public class Evaluator {
                 Object v1 = params.get(0);
                 Object v2 = params.get(1);
 
-                if (isNumeric(v1) && isNumeric(v2)) {
+                if (Utils.isNumeric(v1) && Utils.isNumeric(v2)) {
                     if (v1 instanceof Double || v2 instanceof Double)
-                        return parseDouble(v1) / parseDouble(v2);
-                    return parseInt(v1) / parseInt(v2);
+                        return Utils.parseDouble(v1) / Utils.parseDouble(v2);
+                    return Utils.parseInt(v1) / Utils.parseInt(v2);
                 }
 
                 return null;
@@ -354,8 +387,8 @@ public class Evaluator {
                 Object v1 = params.get(0);
                 Object v2 = params.get(1);
 
-                if (isInteger(v1) && isInteger(v2)) {
-                    return parseInt(v1) % parseInt(v2);
+                if (Utils.isInteger(v1) && Utils.isInteger(v2)) {
+                    return Utils.parseInt(v1) % Utils.parseInt(v2);
                 }
 
                 return null;
@@ -430,7 +463,7 @@ public class Evaluator {
         // ['match', '/a/', 'abc'] => true
         defaultContext.put("match", new Expression() {
             public Object evaluate(Evaluator evaluator, List params) {
-                Pattern p = parsePattern((String) params.get(0));
+                Pattern p = Utils.parsePattern((String) params.get(0));
                 Matcher m = p.matcher((String) params.get(1));
                 return m.find();
             }
@@ -439,22 +472,116 @@ public class Evaluator {
         // ['replace', '/(matr|vert|ind)ix|ex$/i', '$1ices', 'vertex'] => vertices
         defaultContext.put("replace", new Expression() {
             public Object evaluate(Evaluator evaluator, List params) {
-                Pattern p = parsePattern((String) params.get(0));
+                Pattern p = Utils.parsePattern((String) params.get(0));
                 Matcher m = p.matcher((String) params.get(2));
                 return m.replaceAll((String) params.get(1));
             }
         });
 
 
+        // ['in', '1,2,3,5..10,20..24', '@n']
+        defaultContext.put("in", new Expression() {
+            public Object evaluate(Evaluator evaluator, List params) {
+                String values = ("" + params.get(0)).trim();
+                String search = ("" + params.get(1)).trim();
+                String[] vals = values.split(",");
+                for (String value : vals) {
+                    value = value.trim();
 
+                    if (value.contains("..")) {
+                        String[] bounds = value.split("\\.\\.");
+                        Range range = Range.closed(Integer.parseInt(bounds[0].trim()), Integer.parseInt(bounds[1].trim()));
+                        if (range.contains(Integer.parseInt(search)))
+                            return true;
+                    } else if (value.equals(search.toString())) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        });
+
+        // ['within', '0..3', '@n']
+        defaultContext.put("within", new Expression() {
+            public Object evaluate(Evaluator evaluator, List params) {
+                String[] bounds = ((String) params.get(0)).trim().split("\\.\\.");
+                String search = ((String) params.get(1)).trim();
+                Double left = Double.parseDouble(bounds[0].trim());
+                Double right = Double.parseDouble(bounds[1].trim());
+                Double value = Double.parseDouble(search);
+                return left <= value && value <= right;
+            }
+        });
+
+        // ['count', '@genders']
+        defaultContext.put("count", new Expression() {
+            public Object evaluate(Evaluator evaluator, List params) {
+                List list;
+                if (params.get(0) instanceof String) {
+                    list = (List) evaluator.getVariable((String)params.get(0));
+                } else {
+                    list = (List) params.get(0);
+                }
+                return list.size();
+            }
+        });
+
+        // ['all', '@genders', 'male']
+        defaultContext.put("all", new Expression() {
+            public Object evaluate(Evaluator evaluator, List params) {
+                List list;
+                if (params.get(0) instanceof String) {
+                    list = (List) evaluator.getVariable((String)params.get(0));
+                } else {
+                    list = (List) params.get(0);
+                }
+
+                if (list.size() == 0)
+                    return false;
+
+                for (Object object : list) {
+                    if (!object.equals(params.get(1)))
+                        return false;
+                }
+                return true;
+            }
+        });
+
+        // ['any', '@genders', 'female']
+        defaultContext.put("any", new Expression() {
+            public Object evaluate(Evaluator evaluator, List params) {
+                List list;
+                if (params.get(0) instanceof String) {
+                    list = (List) evaluator.getVariable((String)params.get(0));
+                } else {
+                    list = (List) params.get(0);
+                }
+
+                if (list.size() == 0)
+                    return false;
+
+                for (Object object : list) {
+                    if (object.equals(params.get(1)))
+                        return true;
+                }
+                return false;
+            }
+        });
 
         return defaultContext;
     }
 
+    public void addNestedFunction(String fn) {
+        this.nestedFunctions.add(fn);
+    }
+
+    public void removeNestedFunction(String fn) {
+        this.nestedFunctions.remove(fn);
+    }
+
     public boolean isNestedFunction(String fn) {
-        List<String> nested = Arrays.asList("quote", "car", "cdr", "cond", "if", "&&", "||",
-                "and", "or", "true", "false", "let", "count", "all", "any");
-        return (nested.indexOf(fn) != -1);
+        return (this.nestedFunctions.indexOf(fn) != -1);
     }
 
     private Object applyFunction(String name, List args) {

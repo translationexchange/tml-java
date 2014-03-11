@@ -20,40 +20,56 @@
  *  THE SOFTWARE.
  */
 
-package com.tr8n.core.rulesengine;
+package com.tr8n.core;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.Map;
 
-public class CLI {
+public abstract class Base {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		boolean done = false;
-		
-		Parser parser = new Parser();
-		Evaluator evaluator = new Evaluator();
-		
-		while (!done) {
-	      System.out.print("$ ");
-	      BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	      String expression = null;
-	      try {
-	    	  expression = br.readLine();
-	      } catch (IOException ioe) {
-	         System.out.println("IO error trying to read expression");
-	         System.exit(1);
-	      }
-	
-	      if (expression.equals("\\q") || expression.equals("\\quit"))
-	    	  return;
-	      
-	      Object result = evaluator.evaluate(parser.parse(expression));
-	      System.out.println(result.toString());
-		}
-	}
-	
+    /**
+     * Default constructor
+     */
+    public Base() {
+
+    }
+
+    /**
+     * Constructor from attributes
+     * @param attributes
+     */
+    public Base(Map<String, Object> attributes) {
+        this();
+        updateAttributes(attributes);
+    }
+
+    /**
+     * Updates object's attributes
+     * @param attributes
+     */
+    public abstract void updateAttributes(Map attributes);
+
+    /**
+     *
+     */
+    public void load() {
+        // Optionally can be overloaded by the extending class
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Map toHash() {
+        // Optionally can be overloaded by the extending class
+        return null;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String toJSON() {
+        return "";
+    }
+
 }

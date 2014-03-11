@@ -20,40 +20,41 @@
  *  THE SOFTWARE.
  */
 
-package com.tr8n.core.rulesengine;
+package com.tr8n.core;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.Map;
 
-public class CLI {
+public class Source {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		boolean done = false;
-		
-		Parser parser = new Parser();
-		Evaluator evaluator = new Evaluator();
-		
-		while (!done) {
-	      System.out.print("$ ");
-	      BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	      String expression = null;
-	      try {
-	    	  expression = br.readLine();
-	      } catch (IOException ioe) {
-	         System.out.println("IO error trying to read expression");
-	         System.exit(1);
-	      }
-	
-	      if (expression.equals("\\q") || expression.equals("\\quit"))
-	    	  return;
-	      
-	      Object result = evaluator.evaluate(parser.parse(expression));
-	      System.out.println(result.toString());
-		}
-	}
-	
+    /**
+     * Reference back to the application it belongs to
+     */
+    Application application;
+
+    /**
+     * Locale of the language it currently holds
+     */
+    String locale;
+
+    /**
+     * Source key
+     */
+    String key;
+
+    /**
+     * Source name given by the admin or developer
+     */
+    String name;
+
+    /**
+     * Source description
+     */
+    String description;
+
+    /**
+     * Translation keys registered with the source
+     */
+    Map<String, TranslationKey> translationKeys;
+
+
 }

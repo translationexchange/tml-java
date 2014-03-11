@@ -52,19 +52,9 @@ public class BaseTest {
     public static Object loadJSON(String resourceName) {
         String jsonText = loadResource(resourceName);
         if (jsonText == null) return null;
-
-        JSONParser p = new JSONParser();
-        Object obj = null;
-        try {
-            obj = p.parse(jsonText);
-        } catch(ParseException pe){
-            System.out.println("position: " + pe.getPosition());
-            System.out.println(pe);
-            return null;
-        }
-
-        return obj;
+        return Utils.parseJSON(jsonText);
     }
+
 
     public static Date parseDate(String value) {
         try {
@@ -92,6 +82,15 @@ public class BaseTest {
         return (List<Object>) loadJSON(resourceName);
     }
 
+    @SuppressWarnings("unchecked")
+    public static Map loadJsonMapFromString(String jsonText) {
+        return (Map) Utils.parseJSON(jsonText);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List loadJsonListFromString(String jsonText) {
+        return (List) Utils.parseJSON(jsonText);
+    }
 }
 
 
