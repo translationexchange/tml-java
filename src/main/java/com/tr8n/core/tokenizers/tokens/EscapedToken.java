@@ -26,21 +26,25 @@ import com.tr8n.core.Language;
 
 import java.util.Map;
 
-public class PipedToken extends DataToken {
+/**
+ * Not yet supported by the service
+ */
+public class EscapedToken extends BaseToken {
 
     public static String getExpression() {
-        return "(\\{[^_:|][\\w]*(:[\\w]+)*(::[\\w]+)*\\s*\\|\\|?[^{^}]+\\})";
+        return "(\\^\\{[^}.]*\\})";
     }
 
-    public PipedToken(String token) {
-        super(token);
+    public EscapedToken(String token) {
+        this(token, null);
     }
 
-    public PipedToken(String token, String label) {
+    public EscapedToken(String token, String label) {
         super(token, label);
     }
 
     public String substitute(String translatedLabel, Map tokensData, Language language, Map options) {
-        return "";
+        return translatedLabel;
     }
+
 }

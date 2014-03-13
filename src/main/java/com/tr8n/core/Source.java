@@ -22,9 +22,14 @@
 
 package com.tr8n.core;
 
+import org.apache.commons.lang.StringUtils;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
-public class Source {
+public class Source extends Base {
 
     /**
      * Reference back to the application it belongs to
@@ -56,5 +61,50 @@ public class Source {
      */
     Map<String, TranslationKey> translationKeys;
 
+    /**
+     *
+     * @param attributes
+     */
+    public Source(Map attributes) {
+        super(attributes);
+    }
+
+    /**
+     *
+     * @param attributes
+     */
+    public void updateAttributes(Map attributes) {
+        if (attributes.get("application") != null)
+            this.application = (Application) attributes.get("application");
+
+        this.key = (String) attributes.get("key");
+        this.locale = (String) attributes.get("locale");
+        this.name = (String) attributes.get("name");
+        this.description = (String) attributes.get("description");
+
+
+        this.translationKeys = new HashMap<String, TranslationKey>();
+        if (attributes.get("translation_keys") != null) {
+            for (Object data : ((List) attributes.get("translation_keys"))) {
+                Map attrs = new HashMap((Map) data);
+                attrs.put("application", this.application);
+
+                TranslationKey translationKey = new TranslationKey(attrs);
+                translationKey = this.application.cacheTranslationKey(translationKey);
+                this.translationKeys.put(translationKey.key, translationKey);
+            }
+        }
+    }
+
+    public void load() {
+        try {
+            Map data = (Map) this.application.get("source", Utils.buildMap("source", this.key, "locale", this.locale, "translations", "true"));
+            this.updateAttributes(data);
+        } catch (Exception ex) {
+            Tr8n.getLogger().error("Failed to load source");
+            Tr8n.getLogger().error(ex);
+            Tr8n.getLogger().error(StringUtils.join(ex.getStackTrace(), "\n"));
+        }
+    }
 
 }

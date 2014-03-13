@@ -22,5 +22,26 @@
 
 package com.tr8n.core.tokenizers.tokens;
 
-public class MethodToken {
+import com.tr8n.core.Language;
+
+import java.util.Map;
+
+public class MethodToken extends DataToken {
+
+    public static String getExpression() {
+        return "(\\{[^_:.][\\w]*(\\.[\\w]+)(:[\\w]+)*(::[\\w]+)*\\})";
+    }
+
+    public MethodToken(String token) {
+        super(token);
+    }
+
+    public MethodToken(String token, String label) {
+        super(token, label);
+    }
+
+    public String substitute(String translatedLabel, Map tokensData, Language language, Map options) {
+        return "";
+    }
+
 }

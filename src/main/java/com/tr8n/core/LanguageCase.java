@@ -22,9 +22,13 @@
 
 package com.tr8n.core;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class LanguageCase {
+public class LanguageCase extends Base {
+
+    public static final String TR8N_HTML_TAGS_REGEX = "/<\\/?[^>]*>/";
 
     /**
      * Holds reference back to the language it belongs to
@@ -34,7 +38,7 @@ public class LanguageCase {
     /**
      * How to apply the case: "phrase" or "words"
      */
-    String application;
+    String type;
 
     /**
      * Unique key identifying the language case
@@ -61,6 +65,37 @@ public class LanguageCase {
      */
     List<LanguageCaseRule> rules;
 
+
+    /**
+     * Constructor with attributes
+     * @param attributes
+     */
+    public LanguageCase(Map attributes) {
+        super(attributes);
+    }
+
+    /**
+     *
+     * @param attributes
+     */
+    public void updateAttributes(Map attributes) {
+        if (attributes.get("language") != null) {
+            this.language = (Language) attributes.get("language");
+        }
+
+        this.keyword = (String) attributes.get("language");
+        this.latinName = (String) attributes.get("latin_name");
+        this.nativeName = (String) attributes.get("native_name");
+        this.description = (String) attributes.get("description");
+        this.type = (String) attributes.get("application");
+
+        this.rules = new ArrayList<LanguageCaseRule>();
+        if (attributes.get("rules") != null) {
+            for (Object data : ((List) attributes.get("rules"))) {
+                this.rules.add(new LanguageCaseRule((Map) data));
+            }
+        }
+    }
 
     /**
      * Finds matching rule for value
@@ -99,4 +134,10 @@ public class LanguageCase {
     public String apply(String value, Object object) {
         return "";
     }
+
+
+    public String toString() {
+        return  this.keyword + "(" + this.language.locale + ")";
+    }
+
 }

@@ -22,6 +22,7 @@
 
 package com.tr8n.core;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.*;
 import org.apache.log4j.LogManager;
 
@@ -46,6 +47,16 @@ public class Logger {
         } catch (IOException e) {
             System.out.println("Failed to add appender !!");
         }
+    }
+
+    public void logException(String message, Exception ex) {
+        if (message != null) error(message);
+        error(ex);
+        error(StringUtils.join(ex.getStackTrace(), "\n"));
+    }
+
+    public void logException(Exception ex) {
+        this.logException(null, ex);
     }
 
     public void trace(Object message) {

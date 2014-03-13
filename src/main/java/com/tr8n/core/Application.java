@@ -23,15 +23,14 @@
 package com.tr8n.core;
 
 import com.squareup.okhttp.OkHttpClient;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Application extends Base {
     public static final String TR8N_HOST = "https://tr8nhub.com";
@@ -74,19 +73,54 @@ public class Application extends Base {
     String defaultLocale;
 
     /**
+     * Default data and decoration tokens
+     */
+    Map<String, Object> tokens;
+
+    /**
      * Default key level
      */
-    Integer defaultLevel;
+    Long translatorLevel;
 
     /**
      * Application threshold
      */
-    Integer threshold;
+    Long threshold;
+
+    /**
+     * CSS classes for decorator
+     */
+    String css;
+
+    /**
+     * Application shortcuts
+     */
+    Map<String, String> shortcuts;
 
     /**
      * Application features
      */
     Map<String, Boolean> features;
+
+    /**
+     * List of languages enabled for the application
+     */
+    List<Language> languages;
+
+    /**
+     * List of application sources
+     */
+    List<Source> sources;
+
+    /**
+     * List of application components
+     */
+    List<Component> components;
+
+    /**
+     * List of featured locales
+     */
+    List<String> featuredLocales;
 
     /**
      * Languages by locale
@@ -99,6 +133,11 @@ public class Application extends Base {
     Map<String, Source> sourcesByKeys;
 
     /**
+     * Components by keys
+     */
+    Map<String, Component> componentsByKeys;
+
+    /**
      * Application Translation keys
      */
     Map<String, TranslationKey> translationKeys;
@@ -107,6 +146,11 @@ public class Application extends Base {
      * Missing translation keys
      */
     Map<String, List> missingTranslationKeysBySources;
+
+    /**
+     * Periodically send missing keys to the server
+     */
+    TimerTask scheduler;
 
     /**
      * API Client
@@ -129,13 +173,14 @@ public class Application extends Base {
             "key", key,
             "secret", secret
         ));
+        app.load();
 
-        try {
-            app.init();
-        } catch (Exception ex) {
-            Tr8n.getLogger().error("Failed to initialize application " + ex.toString());
-            Tr8n.getLogger().error(ex);
-        }
+//        app.scheduler = new TimerTask() {
+//            @Override
+//            public void run() {
+////                app.sub
+//            }
+//        };
 
         return app;
     }
@@ -154,71 +199,60 @@ public class Application extends Base {
 
         this.name = (String) attributes.get("name");
         this.description = (String) attributes.get("description");
-        this.threshold = (Integer) attributes.get("threshold");
+        this.threshold = (Long) attributes.get("threshold");
         this.defaultLocale = (String) attributes.get("default_locale");
-        this.defaultLevel = (Integer) attributes.get("default_level");
+        this.translatorLevel = (Long) attributes.get("translator_level");
+        this.css = (String) attributes.get("css");
 
-        this.features = (Map<String, Boolean>) attributes.get("features");
+        if (attributes.get("tokens") != null)
+            this.tokens = new HashMap<String, Object>((Map) attributes.get("tokens"));
+        if (attributes.get("shortcuts") != null)
+            this.shortcuts = new HashMap<String, String>((Map) attributes.get("shortcuts"));
+        if (attributes.get("features") != null)
+            this.features = new HashMap<String, Boolean>((Map) attributes.get("features"));
+        if (attributes.get("featured_locales") != null)
+            this.featuredLocales = new ArrayList<String>((List) attributes.get("featured_locales"));
 
-//        has_many :features, :languages, :featured_locales, :sources, :components, :tokens, :css, :shortcuts
-//
-//        self.attributes[:languages] = []
-//        if hash_value(attrs, :languages)
-//        self.attributes[:languages] = hash_value(attrs, :languages).collect{ |l| Tr8n::Language.new(l.merge(:application => self)) }
-//        end
-//
-//        self.attributes[:sources] = []
-//        if hash_value(attrs, :sources)
-//        self.attributes[:sources] = hash_value(attrs, :sources).collect{ |l| Tr8n::Source.new(l.merge(:application => self)) }
-//        end
-//
-//        self.attributes[:components] = []
-//        if hash_value(attrs, :components)
-//        self.attributes[:components] = hash_value(attrs, :components).collect{ |l| Tr8n::Component.new(l.merge(:application => self)) }
-//        end
-//
-//        @translation_keys         = {}
-//        @sources_by_key           = {}
-//        @components_by_key        = {}
-//
-//        @languages_by_locale      = nil
-//        @missing_keys_by_sources  = nil
-    }
-
-    public String getAccessToken() throws Exception {
-        if (this.accessToken == null) {
-            // TODO: check if access token is expired
-            Map accessTokenData = (Map) get("oauth/request_token", Utils.buildMap(
-                                        "client_id", key,
-                                        "client_secret", secret,
-                                        "grant_type", "client_credentials"),
-                                        Utils.buildMap("oauth", true)
-                                  );
-
-            this.accessToken = Utils.buildMap(
-              "token", accessTokenData.get("access_token"),
-              "expires_at", new Date()
-            );
-//            "expires_in": 7905428
+        this.languages = new ArrayList<Language>();
+        if (attributes.get("languages") != null) {
+            for (Object data : ((List) attributes.get("languages"))) {
+                this.languages.add(new Language((Map) data));
+            }
         }
 
-        return (String) this.accessToken.get("token");
+        this.sources = new ArrayList<Source>();
+        if (attributes.get("sources") != null) {
+            for (Object data : ((List) attributes.get("sources"))) {
+                this.sources.add(new Source((Map) data));
+            }
+        }
+
+        this.components = new ArrayList<Component>();
+        if (attributes.get("components") != null) {
+            for (Object data : ((List) attributes.get("components"))) {
+                this.components.add(new Component((Map) data));
+            }
+        }
+
+        this.translationKeys = new HashMap<String, TranslationKey>();
+        this.sourcesByKeys =  new HashMap<String, Source>();
+        this.componentsByKeys =  new HashMap<String, Component>();
+        this.languagesByLocales = new HashMap<String, Language>();
+        this.missingTranslationKeysBySources = new HashMap<String, List>();
     }
 
-    public void init() throws Exception {
-        getAccessToken();
-
-        Map attributes = (Map) get("application", Utils.buildMap("client_id", key, "definition", "true"));
-        this.updateAttributes(attributes);
+    /**
+     * Loads application from the service
+     */
+    public void load() {
+        try {
+            Map attributes = (Map) get("application", Utils.buildMap("client_id", key, "definition", "true"));
+            this.updateAttributes(attributes);
+        } catch (Exception ex) {
+            Tr8n.getLogger().logException("Failed to load application", ex);
+        }
     }
 
-//    public void loadTranslations(String locale, Map options, )
-//
-//    - (void) loadTranslationsForLocale: (NSString *) locale
-//    withOptions: (NSDictionary *) options
-//    success: (void (^)()) success
-//    failure: (void (^)(NSError *error)) failure;
-//
     public void resetTranslationsCacheForLocale(String locale) {
 
     }
@@ -227,13 +261,58 @@ public class Application extends Base {
 
     }
 
-    public Language language() {
-        return language(defaultLocale);
+    /**
+     *
+     * @return
+     */
+    public Language getLanguage() {
+        return getLanguage(defaultLocale);
     }
 
-    public Language language(String local) {
-        return null;
+    /**
+     *
+     * @param locale
+     * @return
+     */
+    public Language getLanguage(String locale) {
+        if (this.languagesByLocales.get(locale) == null) {
+            Language language = new Language(Utils.buildMap("application", this, "locale", locale));
+            language.load();
+            this.languagesByLocales.put(locale, language);
+        }
+
+        return this.languagesByLocales.get(locale);
     }
+
+    /**
+     *
+     * @param key
+     * @return
+     */
+    public Source getSource(String key) {
+        return this.getSource(key, this.defaultLocale);
+    }
+
+    /**
+     * Get source with translations for a specific locale
+     * @param key
+     * @param locale
+     * @return
+     */
+    public Source getSource(String key, String locale) {
+        if (this.sourcesByKeys.get(key) == null) {
+            Source source = new Source(Utils.buildMap("application", this, "key", key, "locale", locale));
+            source.load();
+            this.sourcesByKeys.put(key, source);
+        }
+
+        return this.sourcesByKeys.get(key);
+    }
+
+    /**
+     *  API Functions
+     *
+     */
 
     private OkHttpClient getOkHttpClient() {
         if (this.client == null) {
@@ -242,14 +321,40 @@ public class Application extends Base {
         return this.client;
     }
 
+    private String getAccessToken() throws Exception {
+        if (this.accessToken == null) {
+            // TODO: check if access token is expired
+            Map accessTokenData = (Map) get("oauth/request_token", Utils.buildMap(
+                    "client_id", key,
+                    "client_secret", secret,
+                    "grant_type", "client_credentials"),
+                    Utils.buildMap("oauth", true)
+            );
+
+            this.accessToken = Utils.buildMap(
+                    "token", accessTokenData.get("access_token"),
+                    "expires_at", new Date()
+            );
+//            "expires_in": 7905428
+        }
+
+        return (String) this.accessToken.get("token");
+    }
+
+    private void prepareParams(Map params, Map options) throws Exception {
+        if (options != null && options.get("oauth") != null)
+            return;
+
+        params.put("access_token", this.getAccessToken());
+    }
+
     public Object get(String path, Map params) throws Exception {
         return get(path, params, null);
     }
 
     public Object get(String path, Map params, Map options) throws Exception {
-        if (options != null && options.get("oauth") == null) {
-            params.put("access_token", this.getAccessToken());
-        }
+        prepareParams(params, options);
+
         URL url = Utils.buildURL(this.host, TR8N_API_PATH + path, params);
         Tr8n.getLogger().debug("Requesting: " + url.toString());
 
@@ -266,34 +371,31 @@ public class Application extends Base {
 
             Tr8n.getLogger().debug("Received data: " + responseText);
 
-            Object data = Utils.parseJSON(responseText);
+            Map data = (Map) Utils.parseJSON(responseText);
+            if (data.get("error") != null)
+                throw new Exception((String) data.get("error"));
 
-            if (options == null || options.get("class_name") == null)
-                return data;
-
-            Tr8n.getLogger().debug("Constructing object... ");
-
-            // TODO: construct object
             return data;
         } finally {
             if (in != null) in.close();
         }
     }
 
-    public void post(String path, Map params, Map options) throws Exception {
+    public Object post(String path, Map params, Map options) throws Exception {
+        prepareParams(params, options);
+
         URL url = Utils.buildURL(this.host, TR8N_API_PATH + path);
         byte[] body = Utils.buildQueryString(params).getBytes("UTF-8");
+
         HttpURLConnection connection = getOkHttpClient().open(url);
         OutputStream out = null;
         InputStream in = null;
         try {
-            // Write the request.
             connection.setRequestMethod("POST");
             out = connection.getOutputStream();
             out.write(body);
             out.close();
 
-            // Read the response.
             if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 throw new IOException("Unexpected HTTP response: "
                         + connection.getResponseCode() + " " + connection.getResponseMessage());
@@ -301,16 +403,26 @@ public class Application extends Base {
             in = connection.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             reader.readLine();
+            return reader.toString();
         } finally {
             if (out != null) out.close();
             if (in != null) in.close();
         }
     }
 
+    public TranslationKey cacheTranslationKey(TranslationKey translationKey) {
+        return translationKey;
+    }
 
     public static void main(String[] args) {
         Application app = Application.init("37f812fac93a71088", "a9dc95ff798e6e1d1", "https://sandbox.tr8nhub.com");
+        Language lang = app.getLanguage("ru");
+        Source source = app.getSource("undefined");
 
+    }
+
+    public String toString() {
+        return  this.name + "(" + this.key + ")";
     }
 
 }

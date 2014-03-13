@@ -22,10 +22,9 @@
 
 package com.tr8n.core;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import com.tr8n.core.rulesengine.Variable;
+
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -99,25 +98,24 @@ public class LanguageContext extends Base {
 
         this.keyword = (String) attributes.get("keyword");
         this.description = (String) attributes.get("description");
-        this.keys = (List<String>) attributes.get("keys");
         this.tokenExpression = (String) attributes.get("token_expression");
-        this.variableNames = (List<String>) attributes.get("variables");
         this.tokenMapping = attributes.get("token_mapping");
 
+        if (attributes.get("keys") != null)
+            this.keys = new ArrayList<String>((List) attributes.get("keys"));
+
+        if (attributes.get("variables") != null)
+            this.variableNames = new ArrayList<String> ((List) attributes.get("variables"));
+
         this.rules = new HashMap<String, LanguageContextRule>();
-
         if (attributes.get("rules") != null) {
-            Map<String, Object> rulesHash = (Map<String, Object>) attributes.get("rules");
-            Iterator entries = rulesHash.entrySet().iterator();
+            Iterator entries = ((Map<String, Object>) attributes.get("rules")).entrySet().iterator();
             while (entries.hasNext()) {
-                Map.Entry thisEntry = (Map.Entry) entries.next();
-                String key = (String) thisEntry.getKey();
-                Map ruleData = (Map) thisEntry.getValue();
-
-                LanguageContextRule rule = new LanguageContextRule(ruleData);
+                Map.Entry entry = (Map.Entry) entries.next();
+                LanguageContextRule rule = new LanguageContextRule((Map) entry.getValue());
                 rule.languageContext = this;
                 if (rule.isFallback()) this.fallbackRule = rule;
-                rules.put(key, rule);
+                this.rules.put((String) entry.getKey(), rule);
             }
         }
     }
@@ -139,12 +137,12 @@ public class LanguageContext extends Base {
      * @return
      */
     public Map vars(Object object) {
-
-        // TODO: major research here
-
-
-
-        return null;
+        Map vars = new HashMap();
+        for (String varName : this.variableNames) {
+            Variable var = Tr8n.getConfig().getContextVariable(this.keyword, varName);
+            vars.put(varName, var.getValue(this, object));
+        }
+        return vars;
     }
 
     /**
@@ -174,7 +172,6 @@ public class LanguageContext extends Base {
      * @return
      */
     public String toString() {
-//        return  this.keyword + "(" + this.language.locale + ")";
-        return "";
+        return  this.keyword + "(" + this.language.locale + ")";
     }
 }

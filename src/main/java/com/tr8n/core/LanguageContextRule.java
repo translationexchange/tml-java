@@ -32,6 +32,8 @@ import java.util.Iterator;
 
 public class LanguageContextRule extends Base {
 
+    public static final String TR8N_DEFAULT_RULE_KEYWORD = "other";
+
     /**
      * Holds reference to the language context it belongs to
      */
@@ -60,7 +62,7 @@ public class LanguageContextRule extends Base {
     /**
      * Optimized conditions parsed into an array
      */
-    List compiledConditions;
+    List conditionsExpression;
 
 
     /**
@@ -84,7 +86,10 @@ public class LanguageContextRule extends Base {
         this.description = (String) attributes.get("description");
         this.examples = (String) attributes.get("examples");
         this.conditions = (String) attributes.get("conditions");
-        this.compiledConditions = (List) attributes.get("conditions_expression");
+
+        if (attributes.get("operations_expression") instanceof List) {
+            this.conditionsExpression = (List) attributes.get("conditions_expression");
+        }
     }
 
     /**
@@ -92,20 +97,20 @@ public class LanguageContextRule extends Base {
      * @return boolean
      */
     public boolean isFallback() {
-        return this.keyword == "other";
+        return this.keyword.equals(TR8N_DEFAULT_RULE_KEYWORD);
     }
 
     /**
      *
      * @return List
      */
-    public List conditionsExpression() {
-        if (this.compiledConditions == null) {
+    public List getConditionsExpression() {
+        if (this.conditionsExpression == null) {
             Parser p = new Parser(this.conditions);
-            this.compiledConditions = (List) p.parse();
+            this.conditionsExpression = (List) p.parse();
         }
 
-        return this.compiledConditions;
+        return this.conditionsExpression;
     }
 
     /**
@@ -114,7 +119,7 @@ public class LanguageContextRule extends Base {
      * @return boolean
      */
     public boolean evaluate(Map vars) {
-        if (this.isFallback())
+        if (isFallback())
             return true;
 
         Evaluator e = new Evaluator();
@@ -127,14 +132,6 @@ public class LanguageContextRule extends Base {
             e.setVariable(key, value);
         }
 
-        return (Boolean) e.evaluate(this.conditionsExpression());
+        return (Boolean) e.evaluate(this.getConditionsExpression());
     }
-
-    public void load() {
-    }
-
-    public Map toHash() {
-        return null;
-    }
-
 }

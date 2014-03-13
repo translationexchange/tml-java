@@ -22,9 +22,11 @@
 
 package com.tr8n.core;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
-public class Translation {
+public class Translation extends Base {
 
     /**
      * Reference to the translation key it belongs to
@@ -52,19 +54,34 @@ public class Translation {
      */
     Map context;
 
-    /**
-     * Precedence of the translation.
-     * The higher the precedence the higher the order of the translation.
-     */
-    Integer precedence;
 
     /**
-     * Check if the rule key is of a default rule. Usually "other" rules.
-     * @param ruleKey
-     * @return
+     *
+     * @param attributes
      */
-    public boolean isDefaultRule(String ruleKey) {
-        return false;
+    public Translation(Map attributes) {
+        super(attributes);
+    }
+
+    /**
+     *
+     * @param attributes
+     */
+    public void updateAttributes(Map attributes) {
+        if (attributes.get("language") != null)
+            this.language = (Language) attributes.get("language");
+
+        if (attributes.get("translation_key") != null)
+            this.translationKey = (TranslationKey) attributes.get("translation_key");
+
+        this.locale = (String) attributes.get("locale");
+
+        if (this.language == null && this.locale != null) {
+            this.language = this.translationKey.application.getLanguage(this.locale);
+        }
+
+        this.label = (String) attributes.get("label");
+        this.context = (Map) attributes.get("context");
     }
 
     /**
@@ -72,16 +89,53 @@ public class Translation {
      * @return
      */
     public boolean hasContext() {
-        return false;
+        return this.context != null && this.context.size() > 0;
     }
 
     /**
      * Checks if the translation is valid for the given tokens
+     *
+     *  {
+     *    "count" => {"number":"one"},
+     *    "user" => {"gender":"male"}
+     *  }
+     *
      * @param tokens
      * @return
      */
     public boolean isValidTranslationForTokens(Map tokens) {
-        return false;
+        if (!hasContext()) return true;
+
+        Iterator entries = this.context.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry entry = (Map.Entry) entries.next();
+            String tokenName = (String) entry.getKey();
+            Map rules = (Map) entry.getValue();
+
+            // TODO: get token object from token by name
+            Object tokenObject = null;
+
+            if (tokenObject == null) return false;
+
+            Iterator ruleEntries = rules.entrySet().iterator();
+            while (ruleEntries.hasNext()) {
+                String contextKeyword = (String) entry.getKey();
+                String ruleKeyword = (String) entry.getValue();
+
+                if (ruleKeyword.equals(LanguageContextRule.TR8N_DEFAULT_RULE_KEYWORD))
+                    continue;
+
+                LanguageContext context = language.getContextByKeyword(contextKeyword);
+                if (context == null)
+                    return false;
+
+                LanguageContextRule rule = context.findMatchingRule(tokenObject);
+                if (rule == null || !rule.keyword.equals(ruleKeyword))
+                    return false;
+            }
+        }
+
+        return true;
     }
 
 }

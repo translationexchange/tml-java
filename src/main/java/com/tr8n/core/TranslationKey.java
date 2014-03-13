@@ -22,10 +22,11 @@
 
 package com.tr8n.core;
 
-import java.util.List;
-import java.util.Map;
+import java.math.BigInteger;
+import java.util.*;
+import java.security.*;
 
-public class TranslationKey {
+public class TranslationKey extends Base {
 
     /**
      * Reference to the application where the key came from
@@ -55,7 +56,7 @@ public class TranslationKey {
     /**
      * Level of the key
      */
-    Integer level;
+    Long level;
 
     /**
      * Hash of translations for each locale needed by the application
@@ -72,13 +73,68 @@ public class TranslationKey {
      */
     List decorationTokens;
 
+    /**
+     *
+     * @param attributes
+     */
+    public TranslationKey(Map attributes) {
+        super(attributes);
+    }
+
+    /**
+     *
+     * @param attributes
+     */
+    public void updateAttributes(Map attributes) {
+        if (attributes.get("application") != null)
+            this.application = (Application) attributes.get("application");
+
+        this.label = (String) attributes.get("label");
+        this.description = (String) attributes.get("description");
+
+        if (attributes.get("key") != null) {
+            this.key = (String) attributes.get("key");
+        } else {
+            this.key = generateKey(label, description);
+        }
+
+        this.locale = (String) attributes.get("locale");
+        if (this.locale == null)
+            this.locale = Tr8n.getConfig().defaultLocale;
+
+        this.level = (Long) attributes.get("level");
+
+        this.translations = new HashMap<String, List>();
+        if (attributes.get("translations") != null) {
+            Iterator entries = ((Map<String, Object>) attributes.get("translations")).entrySet().iterator();
+            while (entries.hasNext()) {
+                Map.Entry entry = (Map.Entry) entries.next();
+                List localeData = (List) entry.getValue();
+                String locale = (String) entry.getKey();
+                Language language = this.application.getLanguage(locale);
+
+                if (this.translations.get(locale) == null) {
+                    this.translations.put(locale, new ArrayList());
+                }
+
+                for (Object translationData : localeData) {
+                    Map attrs = new HashMap((Map) translationData);
+                    attrs.put("language", language);
+                    attrs.put("translation_key", this);
+
+                    Translation translation = new Translation(attrs);
+                    this.translations.get(locale).add(translation);
+                }
+            }
+        }
+    }
 
     /**
      * Generates unique hash key for the translation key using label
      * @param label
      * @return
      */
-    public String generateKey(String label) {
+    public static String generateKey(String label) {
         return generateKey(label, null);
     }
 
@@ -88,8 +144,21 @@ public class TranslationKey {
      * @param description
      * @return
      */
-    public String generateKey(String label, String description) {
-        return "";
+    public static String generateKey(String label, String description) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(label); sb.append(";;;");
+        if (description != null) sb.append(description);
+        String s = sb.toString();
+
+        try {
+            MessageDigest m=MessageDigest.getInstance("MD5");
+            m.update(s.getBytes(),0,s.length());
+            return new BigInteger(1,m.digest()).toString(16);
+        } catch (Exception ex) {
+            Tr8n.getLogger().error("Failed to generate md5 key for " + label + " " + description);
+            Tr8n.getLogger().error(ex);
+            return null;
+        }
     }
 
     /**
@@ -106,7 +175,7 @@ public class TranslationKey {
      * @return
      */
     public boolean hasTranslations() {
-        return false;
+        return this.translations.size() > 0;
     }
 
     /**

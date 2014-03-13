@@ -22,9 +22,14 @@
 
 package com.tr8n.core;
 
+import org.apache.commons.lang.StringUtils;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
-public class Language {
+public class Language extends Base {
 
     /**
      * Holds reference to the application it belongs to
@@ -66,6 +71,62 @@ public class Language {
      */
     Map<String, LanguageCase> cases;
 
+    /**
+     * Default language constructor
+     * @param attributes
+     */
+    public Language(Map attributes) {
+        super(attributes);
+    }
+
+    /**
+     *
+     * @param attributes
+     */
+    public void updateAttributes(Map attributes) {
+        if (attributes.get("application") != null)
+            this.application = (Application) attributes.get("application");
+
+        this.locale = (String) attributes.get("locale");
+        this.englishName = (String) attributes.get("english_name");
+        this.nativeName = (String) attributes.get("native_name");
+        this.rightToLeft = (Boolean) attributes.get("right_to_left");
+        this.flagUrl = (String) attributes.get("flag_url");
+
+        this.contexts = new HashMap<String, LanguageContext>();
+        if (attributes.get("contexts") != null) {
+            Iterator entries = ((Map<String, Object>) attributes.get("contexts")).entrySet().iterator();
+            while (entries.hasNext()) {
+                Map.Entry entry = (Map.Entry) entries.next();
+                LanguageContext context = new LanguageContext((Map) entry.getValue());
+                context.language = this;
+                contexts.put((String) entry.getKey(), context);
+            }
+        }
+
+        this.cases = new HashMap<String, LanguageCase>();
+        if (attributes.get("cases") != null) {
+            Iterator entries = ((Map<String, Object>) attributes.get("cases")).entrySet().iterator();
+            while (entries.hasNext()) {
+                Map.Entry entry = (Map.Entry) entries.next();
+                LanguageCase languageCase = new LanguageCase((Map) entry.getValue());
+                languageCase.language = this;
+                cases.put((String) entry.getKey(), languageCase);
+            }
+        }
+    }
+
+    public void load() {
+        try {
+            Map data = (Map) application.get("language", Utils.buildMap("locale", this.locale, "definition", "true"));
+            this.updateAttributes(data);
+        } catch (Exception ex) {
+            Tr8n.getLogger().error("Failed to load language");
+            Tr8n.getLogger().error(ex);
+            Tr8n.getLogger().error(StringUtils.join(ex.getStackTrace(), "\n"));
+        }
+    }
+
     public String name() {
         return "";
     }
@@ -79,7 +140,7 @@ public class Language {
      * @param keyword
      * @return
      */
-    public LanguageContext contextByKeyword(String keyword) {
+    public LanguageContext getContextByKeyword(String keyword) {
         return null;
     }
 
@@ -88,7 +149,7 @@ public class Language {
      * @param tokenName
      * @return
      */
-    public LanguageContext contextByTokenName(String tokenName) {
+    public LanguageContext getContextByTokenName(String tokenName) {
         return null;
     }
 
@@ -197,6 +258,11 @@ public class Language {
      */
     public String translate(String label, Map tokens) {
         return translate(label, "", tokens, null);
+    }
+
+
+    public String toString() {
+        return  this.englishName + "(" + this.locale + ")";
     }
 
 }

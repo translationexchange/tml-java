@@ -76,4 +76,19 @@ public class UtilsTest extends BaseTest {
         );
     }
 
+
+    @Test
+    public void testSetNestedMapValues() {
+        Configuration config = new Configuration();
+
+        Map root = new HashMap();
+
+        Utils.setNestedMapValue(root, "a.b.c", "hello");
+
+        Assert.assertEquals(
+                "hello",
+                Utils.getNestedMapValue(root, "a.b.c")
+        );
+    }
+
 }

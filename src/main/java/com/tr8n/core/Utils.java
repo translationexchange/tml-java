@@ -183,6 +183,20 @@ public class Utils {
         return result;
     }
 
+    /**
+     * Builds a list of Strings
+     * @param data
+     * @return
+     */
+    public static List<String> buildStringList(String... data) {
+        List<String> result = new ArrayList<String>();
+
+        for(String value : data) {
+            result.add(value);
+        }
+
+        return result;
+    }
 
     /**
      * Parsing JSON from string
@@ -204,4 +218,82 @@ public class Utils {
 
         return obj;
     }
+
+    /**
+     * Trims all values in a list of strings
+     * @param original
+     * @return
+     */
+    public static List<String> trimListValues(List original) {
+        List trimmedList = new ArrayList<String>();
+        for (int i = 0; i < original.size(); i++)
+            trimmedList.add((original.get(i).toString()).trim());
+        return trimmedList;
+    }
+
+
+    /**
+     * Returns a value from a nested map using a specific separator
+     * @param map
+     * @param key
+     * @param separator
+     * @return
+     */
+    public static Object getNestedMapValue(Map map, String key, String separator) {
+        String[] parts = key.split(separator);
+
+        for (int i=0; i<parts.length-1; i++) {
+            String part = parts[i];
+            Object obj = map.get(part);
+            if (!(obj instanceof Map)) return null;
+            map = (Map) obj;
+        }
+
+        return map.get(parts[parts.length-1]);
+    }
+
+
+    /**
+     * Returns a value from a nested map using a dot separator
+     * @param map
+     * @param key
+     * @return
+     */
+    public static Object getNestedMapValue(Map map, String key) {
+        return getNestedMapValue(map, key, "\\.");
+    }
+
+    /**
+     *
+     * @param map
+     * @param key
+     * @param value
+     * @param separator
+     */
+    public static void setNestedMapValue(Map map, String key, Object value, String separator) {
+        String[] parts = key.split(separator);
+
+        for (int i=0; i<parts.length-1; i++) {
+            String part = parts[i];
+            Map child = (Map) map.get(part);
+            if (child == null) {
+                map.put(part, new HashMap());
+                child = (Map) map.get(part);
+            }
+            map = child;
+        }
+
+        map.put(parts[parts.length-1], value);
+    }
+
+    /**
+     *
+     * @param map
+     * @param key
+     * @param value
+     */
+    public static void setNestedMapValue(Map map, String key, Object value) {
+        setNestedMapValue(map, key, value, "\\.");
+    }
+
 }

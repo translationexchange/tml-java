@@ -22,20 +22,74 @@
 
 package com.tr8n.core;
 
+import com.tr8n.core.rulesengine.Variable;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Configuration {
 
+    /**
+     * Enables/Disables Tr8n
+     */
     Boolean enabled = true;
+
+    /**
+     * Application default locale fallback, if disabled
+     */
     String defaultLocale = "en-US";
+
+    /**
+     * Default translation key level
+     */
     Integer defaultLevel = 0;
+
+    /**
+     * Default decoration format
+     */
     String format = "html";
+
+    /**
+     * If using in CLI, enable to submit realtime
+     */
     Boolean submitMissingKeysRealTime = false;
+
+    /**
+     * Supported token classes
+     */
+    List<String> tokenClasses;
+
+    /**
+     * Application configuration
+     */
     Map<String, Object> application;
+
+    /**
+     * Context rules configuration and variable mapping
+     */
     Map<String, Object> contextRules;
+
+    /**
+     * Logger configuration
+     */
     Map<String, Object> logger;
+
+    /**
+     * Cache configuration
+     */
     Map<String, Object> cache;
+
+    /**
+     * Default tokens - overloads application tokens
+     */
     Map<String, Object> defaultTokens;
+
+    /**
+     * Localization configuration
+     */
     Map<String, Object> localization;
 
     public Configuration() {
@@ -45,29 +99,10 @@ public class Configuration {
 //            "secret", "12345"
 //        );
 
-        this.contextRules = Utils.buildMap(
-            "number", Utils.buildMap(
-                "variables", Utils.buildMap()
-            ),
-            "gender", Utils.buildMap(
-                "variables", Utils.buildMap(
-                    "@gender", "gender"
-                )
-             ),
-            "genders", Utils.buildMap(
-                "variables", Utils.buildMap(
-                    "@genders", "gender",
-                    "@size", "size"
-                )
-            ),
-            "date", Utils.buildMap(
-                "variables", Utils.buildMap()
-            ),
-            "list", Utils.buildMap(
-                "variables", Utils.buildMap(
-                    "@count", "count"
-                )
-            )
+        this.tokenClasses = Utils.buildStringList(
+                "com.tr8n.core.tokenizers.tokens.DataToken",
+                "com.tr8n.core.tokenizers.tokens.MethodToken",
+                "com.tr8n.core.tokenizers.tokens.PipedToken"
         );
 
         this.logger = Utils.buildMap(
@@ -84,87 +119,105 @@ public class Configuration {
             "timeout", 3600
         );
 
+        buildDefaultContextRulesConfiguration();
+        buildDefaultLocalizationConfiguration();
+        buildDefaultTokensConfiguration();
 
-        this.defaultTokens = Utils.buildMap(
-            "html", Utils.buildMap(
-                "data", Utils.buildMap(
-                    "ndash",    "&ndash;",       // –
-                    "mdash",    "&mdash;",       // —
-                    "iexcl",    "&iexcl;",       // ¡
-                    "iquest",   "&iquest;",      // ¿
-                    "quot",     "&quot;",        // "
-                    "ldquo",    "&ldquo;",       // “
-                    "rdquo",    "&rdquo;",       // ”
-                    "lsquo",    "&lsquo;",       // ‘
-                    "rsquo",    "&rsquo;",       // ’
-                    "laquo",    "&laquo;",       // «
-                    "raquo",    "&raquo;",       // »
-                    "nbsp",     "&nbsp;",        // space
-                    "lsaquo",   "&lsaquo;",      // ‹
-                    "rsaquo",   "&rsaquo;",      // ›
-                    "br",       "<br/>",         // line break
-                    "lbrace",   "{",
-                    "rbrace",   "}",
-                    "trade",    "&trade;"        // TM
-                ),
-                "decoration", Utils.buildMap(
-                    "strong",   "<strong>{$0}</strong>",
-                    "bold",     "<strong>{$0}</strong>",
-                    "b",        "<strong>{$0}</strong>",
-                    "em",       "<em>{$0}</em>",
-                    "italic",   "<i>{$0}</i>",
-                    "i",        "<i>{$0}</i>",
-                    "link",     "<a href='{$href}'>{$0}</a>",
-                    "br",       "<br>{$0}",
-                    "strike",   "<strike>{$0}</strike>",
-                    "div",      "<div id='{$id}' class='{$class}' style='{$style}'>{$0}</div>",
-                    "span",     "<span id='{$id}' class='{$class}' style='{$style}'>{$0}</span>",
-                    "h1",       "<h1>{$0}</h1>",
-                    "h2",       "<h2>{$0}</h2>",
-                    "h3",       "<h3>{$0}</h3>"
+    }
+
+    private void buildDefaultContextRulesConfiguration() {
+        this.contextRules = Utils.buildMap(
+            "number", Utils.buildMap(
+            "variables", Utils.buildMap(
+                "@n", new Variable() {
+                        public Object getValue(LanguageContext context, Object object) {
+                            return object;
+                        }
+                    }
                 )
-             ),
+            ),
+            "gender", Utils.buildMap(
+                "variables", Utils.buildMap(
+                    "@gender", new Variable() {
+                        public Object getValue(LanguageContext context, Object object) {
+                            if (object instanceof Map) {
+                                Map map = (Map) object;
+                                if (map.get("object") != null) {
+                                    map = (Map) map.get("object");
+                                }
+                                return map.get("gender");
+                            }
+                            try {
+                                Method method = object.getClass().getMethod("getGender", null);
+                                if (method != null)
+                                    return method.invoke(object, null);
+                            } catch (Exception ex) {
+                                Tr8n.getLogger().error("Object " + object.getClass().getName() + " does not support gender method");
+                            }
 
-            "text", Utils.buildMap(
-                "data", Utils.buildMap(
-                    "ndash",    "–",        // –
-                    "mdash",    "–",        // —
-                    "iexcl",    "¡",        // ¡
-                    "iquest",   "¿",        // ¿
-                    "quot",     "\"",       // "
-                    "ldquo",    "“",        // “
-                    "rdquo",    "”",        // ”
-                    "lsquo",    "‘",        // ‘
-                    "rsquo",    "’",        // ’
-                    "laquo",    "«",        // «
-                    "raquo",    "»",        // »
-                    "nbsp",     " ",        // space
-                    "lsaquo",   "‹",        // ‹
-                    "rsaquo",   "›",        // ›
-                    "br",       "\n",       // line break
-                    "lbrace",   "{",
-                    "rbrace",   "}",
-                    "trade",    "™"         // TM
-                ),
-                "decoration", Utils.buildMap(
-                    "strong",   "{$0}",
-                    "bold",     "{$0}",
-                    "b",        "{$0}",
-                    "em",       "{$0}",
-                    "italic",   "{$0}",
-                    "i",        "{$0}",
-                    "link",     "{$0}",
-                    "br",       "\n{$0}",
-                    "strike",   "{$0}",
-                    "div",      "{$0}",
-                    "span",     "{$0}",
-                    "h1",       "{$0}",
-                    "h2",       "{$0}",
-                    "h3",       "{$0}"
-                 )
+                            return object;
+                         }
+                    }
+                )
+            ),
+            "genders", Utils.buildMap(
+                "variables", Utils.buildMap(
+                    "@genders", new Variable() {
+                        public Object getValue(LanguageContext context, Object object) {
+                            List genders = new ArrayList();
+
+                            if (!(object instanceof List)) {
+                                genders.add(getContextVariable("gender", "@gender").getValue(context, object));
+                                return genders;
+                            }
+
+                            for (Object obj : ((List) object)) {
+                                if (obj instanceof Map) {
+                                    genders.add(((Map) object).get("gender"));
+                                } else {
+                                    try {
+                                        Method method = obj.getClass().getMethod("getGender", null);
+                                        if (method != null)
+                                            genders.add(method.invoke(obj, null));
+                                    } catch (Exception ex) {
+                                        Tr8n.getLogger().error("Object " + obj.getClass().getName() + " does not support gender method");
+                                    }
+                                }
+                            }
+                            return genders;
+                        }
+                    },
+                    "@count",   new Variable() {
+                        public Object getValue(LanguageContext context, Object object) {
+                            if (!(object instanceof List)) return 1;
+                            return ((List) object).size();
+                        }
+                    }
+                )
+            ),
+            "date", Utils.buildMap(
+                "variables", Utils.buildMap(
+                    "@date",   new Variable() {
+                        public Object getValue(LanguageContext context, Object object) {
+                            return object;
+                        }
+                    }
+                )
+            ),
+            "list", Utils.buildMap(
+                "variables", Utils.buildMap(
+                    "@count",   new Variable() {
+                        public Object getValue(LanguageContext context, Object object) {
+                            if (!(object instanceof List)) return 1;
+                            return ((List) object).size();
+                        }
+                    }
+                )
             )
         );
+    }
 
+    private void buildDefaultLocalizationConfiguration() {
         this.localization = Utils.buildMap(
             "default_day_names",        Utils.buildList("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"),
             "default_abbr_day_names",   Utils.buildList("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"),
@@ -204,25 +257,138 @@ public class Configuration {
                 "%s", "{since_epoch}"
             )
         );
-                
     }
 
-    public Object getNestedMapValue(Map map, String key) {
-        String[] parts = key.split(".");
+    private void buildDefaultTokensConfiguration() {
+        this.defaultTokens = Utils.buildMap(
+            "html", Utils.buildMap(
+                "data", Utils.buildMap(
+                    "ndash",    "&ndash;",       // –
+                    "mdash",    "&mdash;",       // —
+                    "iexcl",    "&iexcl;",       // ¡
+                    "iquest",   "&iquest;",      // ¿
+                    "quot",     "&quot;",        // "
+                    "ldquo",    "&ldquo;",       // “
+                    "rdquo",    "&rdquo;",       // ”
+                    "lsquo",    "&lsquo;",       // ‘
+                    "rsquo",    "&rsquo;",       // ’
+                    "laquo",    "&laquo;",       // «
+                    "raquo",    "&raquo;",       // »
+                    "nbsp",     "&nbsp;",        // space
+                    "lsaquo",   "&lsaquo;",      // ‹
+                    "rsaquo",   "&rsaquo;",      // ›
+                    "br",       "<br/>",         // line break
+                    "lbrace",   "{",
+                    "rbrace",   "}",
+                    "trade",    "&trade;"        // TM
+                ),
+                "decoration", Utils.buildMap(
+                    "strong",   "<strong>{$0}</strong>",
+                    "bold",     "<strong>{$0}</strong>",
+                    "b",        "<strong>{$0}</strong>",
+                    "em",       "<em>{$0}</em>",
+                    "italic",   "<i>{$0}</i>",
+                    "i",        "<i>{$0}</i>",
+                    "link",     "<a href='{$href}'>{$0}</a>",
+                    "br",       "<br>{$0}",
+                    "strike",   "<strike>{$0}</strike>",
+                    "div",      "<div id='{$id}' class='{$class}' style='{$style}'>{$0}</div>",
+                    "span",     "<span id='{$id}' class='{$class}' style='{$style}'>{$0}</span>",
+                    "h1",       "<h1>{$0}</h1>",
+                    "h2",       "<h2>{$0}</h2>",
+                    "h3",       "<h3>{$0}</h3>"
+                )
+            ),
 
-        for (String part : parts) {
-            Object obj = map.get(part);
-            if (obj instanceof Map)
-                map = (Map) obj;
-            else
-                return obj;
-        }
+            "text", Utils.buildMap(
+                "data", Utils.buildMap(
+                    "ndash",    "–",        // –
+                    "mdash",    "–",        // —
+                    "iexcl",    "¡",        // ¡
+                    "iquest",   "¿",        // ¿
+                    "quot",     "\"",       // "
+                    "ldquo",    "“",        // “
+                    "rdquo",    "”",        // ”
+                    "lsquo",    "‘",        // ‘
+                    "rsquo",    "’",        // ’
+                    "laquo",    "«",        // «
+                    "raquo",    "»",        // »
+                    "nbsp",     " ",        // space
+                    "lsaquo",   "‹",        // ‹
+                    "rsaquo",   "›",        // ›
+                    "br",       "\n",       // line break
+                    "lbrace",   "{",
+                    "rbrace",   "}",
+                    "trade",    "™"         // TM
+                ),
+                "decoration", Utils.buildMap(
+                    "strong",   "{$0}",
+                    "bold",     "{$0}",
+                    "b",        "{$0}",
+                    "em",       "{$0}",
+                    "italic",   "{$0}",
+                    "i",        "{$0}",
+                    "link",     "{$0}",
+                    "br",       "\n{$0}",
+                    "strike",   "{$0}",
+                    "div",      "{$0}",
+                    "span",     "{$0}",
+                    "h1",       "{$0}",
+                    "h2",       "{$0}",
+                    "h3",       "{$0}"
+                )
+            )
+        );
+    }
 
-        return map;
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public Integer getDefaultLevel() {
+        return defaultLevel;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public List<String> getTokenClasses() {
+        return tokenClasses;
+    }
+
+    public Map getApplication() {
+        return application;
+    }
+
+    public void addDefaultTokenValue(String name, String type, String format, String value) {
+        if (this.defaultTokens == null) this.defaultTokens = new HashMap<String, Object>();
+        Utils.setNestedMapValue(this.defaultTokens, format + "." + type + "." + name, value);
+    }
+
+    public String getDefaultTokenValue(String name, String type, String format) {
+        return (String) Utils.getNestedMapValue(this.defaultTokens, format + "." + type + "." + name);
+    }
+
+    public String getDefaultTokenValue(String name, String type) {
+        return getDefaultTokenValue(name, type, getFormat());
+    }
+
+    public String getDefaultTokenValue(String name) {
+        return getDefaultTokenValue(name, "data");
     }
 
     public String getDefaultFormat(String name) {
-        return (String) getNestedMapValue(localization, "custom_date_formats." + name);
+        return (String) Utils.getNestedMapValue(localization, "custom_date_formats." + name);
+    }
+
+    public Variable getContextVariable(String contextKeyword, String varName) {
+        return (Variable) Utils.getNestedMapValue(contextRules, contextKeyword + ".variables." + varName);
+    }
+
+    public void setContextVariable(String contextKeyword, String varName, Variable var) {
+        Map vars = (Map) Utils.getNestedMapValue(contextRules, contextKeyword + ".variables");
+        vars.put(varName, var);
     }
 
 

@@ -22,10 +22,12 @@
 
 package com.tr8n.core;
 
+import com.tr8n.core.rulesengine.Parser;
+
 import java.util.List;
 import java.util.Map;
 
-public class LanguageCaseRule {
+public class LanguageCaseRule extends Base {
 
     /**
      * Reference back to the language case the rule belongs to
@@ -50,7 +52,7 @@ public class LanguageCaseRule {
     /**
      * Compiled conditions in the array form
      */
-    List compiledConditions;
+    List conditionsExpression;
 
     /**
      * Operations in the symbolic notations form
@@ -60,8 +62,56 @@ public class LanguageCaseRule {
     /**
      * Compiled operations in the array form
      */
-    List compiledOperations;
+    List operationsExpression;
 
+    /**
+     *
+     * @param attributes
+     */
+    public LanguageCaseRule(Map attributes) {
+        super(attributes);
+    }
+
+    /**
+     *
+     * @param attributes
+     */
+    public void updateAttributes(Map attributes) {
+        if (attributes.get("language_case") != null)
+            this.languageCase = (LanguageCase) attributes.get("language_case");
+
+        this.description = (String) attributes.get("description");
+        this.examples = (String) attributes.get("examples");
+
+        this.conditions = (String) attributes.get("conditions");
+        if (attributes.get("conditions_expression") instanceof List) {
+            this.conditionsExpression = (List) attributes.get("conditions_expression");
+        }
+
+        this.operations = (String) attributes.get("operations");
+        if (attributes.get("operations_expression") instanceof List) {
+            this.operationsExpression = (List) attributes.get("operations_expression");
+        }
+    }
+
+
+    public List getOperationsExpression() {
+        if (this.operationsExpression == null) {
+            Parser p = new Parser(this.operations);
+            this.operationsExpression = (List) p.parse();
+        }
+
+        return this.conditionsExpression;
+    }
+
+    public List getConditionsExpression() {
+        if (this.conditionsExpression == null) {
+            Parser p = new Parser(this.conditions);
+            this.conditionsExpression = (List) p.parse();
+        }
+
+        return this.conditionsExpression;
+    }
     /**
      * Extracts gender value from the object
      * @param object
