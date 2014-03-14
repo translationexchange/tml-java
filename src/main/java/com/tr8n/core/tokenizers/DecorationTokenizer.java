@@ -22,6 +22,249 @@
 
 package com.tr8n.core.tokenizers;
 
+import com.tr8n.core.Utils;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class DecorationTokenizer {
+    public static final String RESERVED_TOKEN  = "tr8n";
+    public static final String RE_SHORT_TOKEN_START = "\\[[\\w]*:";
+    public static final String RE_SHORT_TOKEN_END   = "\\]";
+    public static final String RE_LONG_TOKEN_START  = "\\[[\\w]*\\]";
+    public static final String RE_LONG_TOKEN_END    = "\\[\\/[\\w]*\\]";
+    public static final String RE_TEXT              = "[^\\[\\]]+";
+
+    public static final String TOKEN_TYPE_SHORT     = "short";
+    public static final String TOKEN_TYPE_LONG      = "long";
+    public static final String PLACEHOLDER          = "{$0}";
+
+    /**
+     *
+     */
+    List<String> tokenNames;
+
+    Object expression;
+
+    List<String> fragments;
+
+    List<String> elements;
+
+    Map tokensData;
+
+    String label;
+
+    Map options;
+
+    List<String> allowedTokenNames;
+
+    /**
+     *
+     * @param label
+     */
+    public DecorationTokenizer(String label) {
+        this(label, null);
+    }
+
+    /**
+     *
+     * @param label
+     * @param allowedTokenNames
+     */
+    public DecorationTokenizer(String label, List<String> allowedTokenNames) {
+        this.label =  "[" + RESERVED_TOKEN + "]" + label + "[/" + RESERVED_TOKEN + "]";
+        this.tokenNames = new ArrayList<String>();
+        this.allowedTokenNames = allowedTokenNames;
+        fragmentize();
+        this.expression = parse();
+
+    }
+
+    /**
+     *
+     */
+    private void fragmentize() {
+        String regex = StringUtils.join(Utils.buildList(
+                RE_SHORT_TOKEN_START,
+                RE_SHORT_TOKEN_END,
+                RE_LONG_TOKEN_START,
+                RE_LONG_TOKEN_END,
+                RE_TEXT
+            ).toArray(), "|"
+        );
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(this.label);
+
+        this.elements = new ArrayList<String>();
+
+        while(matcher.find()) {
+            this.elements.add(matcher.group());
+        }
+
+        // keep a copy for reference
+        this.fragments = new ArrayList<String>(this.elements);
+    }
+
+    /**
+     *
+     * @return
+     */
+    private boolean isEmpty() {
+        return this.elements.size() == 0;
+    }
+
+    /**
+     *
+     * @return
+     */
+    private String peek() {
+        if (isEmpty()) return null;
+        return (String) this.elements.get(0);
+    }
+
+    /**
+     *
+     * @return
+     */
+    private String pop() {
+        String element = peek();
+        if (element == null) return null;
+        this.elements.remove(0);
+        return element;
+    }
+
+    /**
+     *
+     * @param token
+     * @param regex
+     * @return
+     */
+    private boolean isMatchingExpression(String token, String regex) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(token);
+        return matcher.find();
+    }
+
+    /**
+     *
+     * @return
+     */
+    protected Object parse() {
+        String token = pop();
+
+        if (isMatchingExpression(token, RE_SHORT_TOKEN_START)) {
+            token = token.trim().replaceFirst(Pattern.quote("[:"), "");
+            return parseTree(token, TOKEN_TYPE_SHORT);
+        }
+
+        if (isMatchingExpression(token, RE_LONG_TOKEN_START)) {
+            token = token.trim().replaceAll("\\[\\]", "");
+            return parseTree(token, TOKEN_TYPE_LONG);
+        }
+
+        return token;
+    }
+
+    /**
+     *
+     * @param name
+     * @param type
+     * @return
+     */
+    protected Object parseTree(String name, String type) {
+        List tree = new ArrayList();
+        tree.add(name);
+
+        if (!tokenNames.contains(name) && !name.equals(RESERVED_TOKEN))
+            tokenNames.add(name);
+
+        if (type.equals(TOKEN_TYPE_SHORT)) {
+            boolean first = true;
+
+            while (peek() != null && ! isMatchingExpression(peek(), RE_SHORT_TOKEN_END)) {
+                Object value = parse();
+                if (first && value instanceof String) {
+                    value = ((String) value).trim();
+                    first = false;
+                }
+                tree.add(value);
+            }
+
+        } else if (type.equals(TOKEN_TYPE_LONG)) {
+            while (peek() != null && ! isMatchingExpression(peek(), RE_LONG_TOKEN_END)) {
+                tree.add(parse());
+            }
+        }
+
+        pop();
+        return tree;
+    }
+
+    /**
+     *
+     * @param token
+     * @return
+     */
+    protected boolean isTokenAllowed(String token) {
+        return this.allowedTokenNames == null || allowedTokenNames.contains(token);
+    }
+
+    /**
+     *
+     * @param token
+     * @param value
+     * @return
+     */
+    protected String applyToken(String token, String value) {
+        return value;
+    }
+
+    /**
+     *
+     * @param expr
+     * @return
+     */
+    protected String evaluate(Object expr) {
+        if (!(expr instanceof List))
+            return expr.toString();
+
+        List args = new ArrayList((List) expr);
+        String token = (String) args.remove(0);
+
+
+        List processedValues = new ArrayList();
+        for (Object arg : args) {
+            processedValues.add(evaluate(arg));
+        }
+
+        String value = StringUtils.join(processedValues.toArray(), "");
+        return applyToken(token, value);
+    }
+
+    /**
+     *
+     * @param tokensData
+     * @return
+     */
+    public Object substitute(Map tokensData) {
+        return substitute(tokensData, null);
+    }
+
+    /**
+     *
+     * @param tokensData
+     * @param options
+     * @return
+     */
+    public Object substitute(Map tokensData, Map options) {
+        this.tokensData = tokensData;
+        this.options = options;
+        return evaluate(this.expression);
+    }
 
 }

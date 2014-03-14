@@ -611,8 +611,7 @@ public class Evaluator {
 
         @SuppressWarnings("unchecked")
         List args = new ArrayList((List) expr);
-        String fn = (String) args.get(0);
-        args.remove(0);
+        String fn = (String) args.remove(0);
 
         if (!this.isNestedFunction(fn)) {
             List results = new ArrayList();
