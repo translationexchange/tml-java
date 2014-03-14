@@ -171,7 +171,31 @@ public class LanguageContext extends Base {
      *
      * @return
      */
+    public Object getTokenMapping() {
+        return this.tokenMapping;
+    }
+
+    /**
+     *
+     * @return Language of the context
+     */
+    public Language getLanguage() {
+        return this.language;
+    }
+
+    /**
+     *
+     * @return
+     */
     public String toString() {
         return  this.keyword + "(" + this.language.locale + ")";
+    }
+
+    /**
+     *
+     * @return
+     */
+    public LanguageContextRule getFallbackRule() {
+        return this.fallbackRule;
     }
 }

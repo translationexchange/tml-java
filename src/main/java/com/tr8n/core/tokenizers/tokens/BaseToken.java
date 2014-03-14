@@ -108,6 +108,14 @@ public abstract class BaseToken {
     }
 
     /**
+     *
+     * @return
+     */
+    public String getObjectName() {
+        return getName();
+    }
+
+    /**
      * Allows you to customize the returned token name
      * @param options
      * @return

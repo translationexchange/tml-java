@@ -134,4 +134,8 @@ public class LanguageContextRule extends Base {
 
         return (Boolean) e.evaluate(this.getConditionsExpression());
     }
+
+    public String getKeyword() {
+        return this.keyword;
+    }
 }

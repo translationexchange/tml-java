@@ -22,19 +22,21 @@
 
 package com.tr8n.core.tokenizers.tokens;
 
-import com.tr8n.core.Language;
-import com.tr8n.core.Tr8n;
-import com.tr8n.core.Utils;
+import com.tr8n.core.*;
 import com.tr8n.core.tokenizers.DataTokenValue;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 public class DataToken extends BaseToken {
+
+    private static final String MAP_OBJECT_NAME = "object";
+    private static final String MAP_OBJECT_VALUE = "value";
+    private static final String MAP_PROPERTY_NAME = "property";
+    private static final String MAP_ATTRIBUTE_NAME = "attribute";
 
     /**
      * List of language cases keys, if any
@@ -46,18 +48,35 @@ public class DataToken extends BaseToken {
      */
     List<String> languageContextKeys;
 
+    /**
+     *
+     * @return
+     */
     public static String getExpression() {
         return "(\\{[^_:][\\w]*(:[\\w]+)*(::[\\w]+)*\\})";
     }
 
+    /**
+     *
+     * @param token
+     */
     public DataToken(String token) {
         super(token);
     }
 
+    /**
+     *
+     * @param token
+     * @param label
+     */
     public DataToken(String token, String label) {
         super(token, label);
     }
 
+    /**
+     *
+     * @return
+     */
     public List<String> getLanguageContextKeys() {
         if (this.languageContextKeys == null) {
             this.languageContextKeys = Utils.trimListValues(
@@ -68,6 +87,10 @@ public class DataToken extends BaseToken {
         return this.languageContextKeys;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<String> getLanguageCaseKeys() {
         if (this.languageCaseKeys == null) {
             this.languageCaseKeys = Utils.trimListValues(
@@ -78,6 +101,11 @@ public class DataToken extends BaseToken {
         return this.languageCaseKeys;
     }
 
+    /**
+     *
+     * @param options
+     * @return
+     */
     public String getName(Map options) {
         StringBuilder sb = new StringBuilder();
 
@@ -103,7 +131,7 @@ public class DataToken extends BaseToken {
     }
 
     /**
-     * Token objects can be passed to the method using any of the following methods:
+     * Token objects can be passed to the translation method using any of the following approaches:
      *
      * - if an object is passed without a substitution value, it will use toString() to get the value:
      *
@@ -150,24 +178,51 @@ public class DataToken extends BaseToken {
      *                                           return user.getName();
      *                                        }
      *                                    }))
+     *
+     * @param tokenMap
+     * @return
      */
+    public Object getContextObject(Map tokenMap) {
+        if (tokenMap == null)
+            return null;
 
+        Object object = tokenMap.get(this.getObjectName());
+        if (object == null)
+            return null;
+
+        if (object instanceof DataTokenValue) {
+            DataTokenValue dtv = (DataTokenValue) object;
+            return dtv.getContextObject();
+        }
+
+        if (object instanceof List) {
+            List list = (List) object;
+            return list.get(0);
+        }
+
+        if (object instanceof Map) {
+            Map map = (Map) object;
+            if (map.get(MAP_OBJECT_NAME) != null)
+                return map.get(MAP_OBJECT_NAME);
+            return map;
+        }
+
+        return object;
+    }
 
     /**
      *
      * @param tokenMap map of token names to values
-     * @param language language for the value (needed for language cases)
-     * @param options list of options (for instance to disable decorations for language cases)
      * @return value of the token
      */
-    public String getValue(Map tokenMap, Language language, Map options) {
-        Object object = tokenMap.get(this.getName());
-
-        if (object == null) {
+    public String getValue(Map tokenMap) {
+        if (tokenMap == null || tokenMap.get(this.getName()) == null) {
             String tokenValue = Tr8n.getConfig().getDefaultTokenValue(getName());
             if (tokenValue != null) return tokenValue;
             return this.toString();
         }
+
+        Object object = tokenMap.get(this.getName());
 
         if (object instanceof DataTokenValue) {
             DataTokenValue dtv = (DataTokenValue) object;
@@ -186,27 +241,28 @@ public class DataToken extends BaseToken {
         if (object instanceof Map) {
             Map map = (Map) object;
 
-            if (map.get("value") != null) {
-                return map.get("value").toString();
+            if (map.get(MAP_OBJECT_VALUE) != null) {
+                return map.get(MAP_OBJECT_VALUE).toString();
             }
 
-            if (map.get("object") == null) {
+            if (map.get(MAP_OBJECT_NAME) == null) {
                 Tr8n.getLogger().error("{" + getName() + "} in " + getOriginalLabel() + " : substitution object is not provided}");
                 return getFullName();
             }
 
-            Map obj = (Map) map.get("object");
-            if (!(obj instanceof Map)) {
+            if (!(map.get(MAP_OBJECT_NAME) instanceof Map)) {
                 Tr8n.getLogger().error("{" + getName() + "} in " + getOriginalLabel() + " : substitution object is not a map}");
                 return getFullName();
             }
 
-            if (map.get("attribute") != null) {
-               return obj.get(map.get("attribute")).toString();
+            Map obj = (Map) map.get(MAP_OBJECT_NAME);
+
+            if (map.get(MAP_ATTRIBUTE_NAME) != null) {
+               return obj.get(map.get(MAP_ATTRIBUTE_NAME)).toString();
             }
 
-            if (map.get("property") != null) {
-                return obj.get(map.get("property")).toString();
+            if (map.get(MAP_PROPERTY_NAME) != null) {
+                return obj.get(map.get(MAP_PROPERTY_NAME)).toString();
             }
 
             Tr8n.getLogger().error("{" + getName() + "} in " + getOriginalLabel() + " : substitution property/value is not provided}");
@@ -218,21 +274,58 @@ public class DataToken extends BaseToken {
 
     /**
      *
-     * @param tokenMap map of token names to values
-     * @param language language for the value (needed for language cases)
-     * @return value of the token
+     * @param tokenValue
+     * @param object
+     * @param language
+     * @param options
+     * @return
      */
-    public String getValue(Map tokenMap, Language language) {
-        return getValue(tokenMap, language, null);
+    public String applyLanguageCases(String tokenValue, Object object, Language language, List<String> languageCaseKeys, Map options) {
+        if (languageCaseKeys.size() == 0)
+            return tokenValue;
+
+        for (String keyword : languageCaseKeys) {
+            LanguageCase languageCase = language.getLanguageCaseByKeyword(keyword);
+            if (languageCase == null) continue;
+            tokenValue = languageCase.apply(tokenValue, object, options);
+        }
+
+        return tokenValue;
     }
 
     /**
-     * @param tokenMap map of token names to values
-     * @return value of the token
+     *
+     * @param tokenValue
+     * @param object
+     * @param language
+     * @param options
+     * @return
      */
+    public String applyLanguageCases(String tokenValue, Object object, Language language, Map options) {
+       return applyLanguageCases(tokenValue, object, language, this.getLanguageCaseKeys(), options);
+    }
 
-    public String getValue(Map tokenMap) {
-        return getValue(tokenMap, null);
+    /**
+     * For transform tokens, we can only use the first context key, if it is not mapped in the context itself.
+     *
+     * {user:gender | male: , female: ... }
+     *
+     * It is not possible to apply multiple context rules on a single token at the same time:
+     *
+     * {user:gender:value | .... hah?}
+     *
+     * It is still possible to setup dependencies on multiple contexts.
+     *
+     * {user:gender:value}   - just not with piped tokens
+     *
+     * @param language
+     * @return
+     */
+    public LanguageContext getLanguageContext(Language language) {
+        if (this.getLanguageContextKeys().size() > 0)
+            return language.getContextByKeyword(getLanguageCaseKeys().get(0));
+
+        return language.getContextByTokenName(this.getName());
     }
 
     /**
@@ -244,7 +337,8 @@ public class DataToken extends BaseToken {
      * @return                  label with substituted tokens
      */
     public String substitute(String translatedLabel, Map tokensData, Language language, Map options) {
-        return translatedLabel.replaceAll(Pattern.quote(getFullName()), getValue(tokensData, language, options));
+        String value = applyLanguageCases(getValue(tokensData), getContextObject(tokensData), language, options);
+        return translatedLabel.replaceAll(Pattern.quote(getFullName()), value);
     }
 
 }

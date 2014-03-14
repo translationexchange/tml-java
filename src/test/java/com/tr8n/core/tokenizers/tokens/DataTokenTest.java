@@ -26,6 +26,11 @@ public class DataTokenTest {
                 token.getName()
         );
 
+        Assert.assertEquals(
+                "user",
+                token.getObjectName()
+        );
+
         token = new DataToken("{ user }");
 
         Assert.assertEquals(
@@ -154,60 +159,7 @@ public class DataTokenTest {
     }
 
     @Test
-    public void testGettingTokenValue() {
-        /**
-         * Returns a value from values hash.
-         *
-         * Token objects can be passed using any of the following forms:
-         *
-         * - if an object is passed without a substitution value, it will use toString() to get the value:
-         *
-         *     Tr8n.translate("Hello {user}", Utils.buildMap("user", current_user))
-         *     Tr8n.translate("{count||message}", Utils.buildMap("count", counter))
-         *
-         * - if an object is a list, the first value is the context object, the second value is the substitution value:
-         *
-         *     Tr8n.translate("Hello {user}", Utils.buildMap("user", Utils.buildList(current_user, "Michael")))
-         *     Tr8n.translate("Hello {user}", Utils.buildMap("user", Utils.buildList(current_user, current_user.name)))
-         *
-         * - if an object is a map (mostly used for JSON), it must provide the object and the value/attribute for substitution:
-         *
-         *     Tr8n.translate("Hello {user}", Utils.buildMap("user", Utils.buildMap(
-         *                                       "object", Utils.buildMap(
-         *                                           "name", "Michael",
-         *                                           "gender", "male"
-         *                                       ),
-         *                                       "value", "Michael"
-         *                                    ))
-         *
-         *     Tr8n.translate("Hello {user}", Utils.buildMap("user", Utils.buildMap(
-         *                                       "object", Utils.buildMap(
-         *                                           "name", "Michael",
-         *                                           "gender", "male"
-         *                                       ),
-         *                                       "attribute", "name"
-         *                                    ))
-         *
-         * - if you don't need the substitution, you can provide an object directly:
-         *
-         *     Tr8n.translate("{user| He, She}", Utils.buildMap("user", Utils.buildMap(
-         *                                           "name", "Michael",
-         *                                           "gender", "male"
-         *                                       ))
-         *
-         * - the most explicit way is to use the DataTokenValue interface:
-         *
-         *     Tr8n.translate("Hello {user}", Utils.buildMap("user", new DataTokenValue() {
-         *                                        public Object getContextObject() {
-         *                                           return user;
-         *                                        }
-         *                                        public String getSubstitutionValue() {
-         *                                           return user.getName();
-         *                                        }
-         *                                    }))
-         *
-         */
-
+    public void testTokenValue() {
         DataToken token = new DataToken("{count}");
         Assert.assertEquals(
                 "{count}",
@@ -269,6 +221,11 @@ public class DataTokenTest {
         );
 
         Assert.assertEquals(
+                "{user}",
+                token.getValue(Utils.buildMap("user",  Utils.buildList(user)))
+        );
+
+        Assert.assertEquals(
                 "Michael",
                 token.getValue(Utils.buildMap("user",  Utils.buildMap(
                         "object", Utils.buildMap(
@@ -281,7 +238,122 @@ public class DataTokenTest {
                 )
         );
 
-        
+        Assert.assertEquals(
+                "Michael",
+                token.getValue(Utils.buildMap("user",  Utils.buildMap(
+                        "object", Utils.buildMap(
+                            "name", "Michael",
+                            "gender", "male"
+                        ),
+                        "property", "name"
+                    )
+                )
+            )
+        );
+
+        Assert.assertEquals(
+                "Mike",
+                token.getValue(Utils.buildMap("user",  Utils.buildMap(
+                        "object", Utils.buildMap(
+                            "name", "Michael",
+                            "gender", "male"
+                        ),
+                        "value", "Mike"
+                    )
+                )
+            )
+        );
+
+        Assert.assertEquals(
+                "{user}",
+                token.getValue(Utils.buildMap("user",  Utils.buildMap(
+                        "object", Utils.buildMap(
+                           "name", "Michael",
+                            "gender", "male"
+                        )
+                )
+             )
+           )
+        );
+
+
+        Assert.assertEquals(
+                "{user}",
+                token.getValue(Utils.buildMap("user",  Utils.buildMap(
+                        "object", user,
+                        "property", "name"
+                )
+             )
+          )
+        );
+
+        Assert.assertEquals(
+                "{user}",
+                token.getValue(Utils.buildMap("user",  Utils.buildMap()))
+        );
+
+        token = new DataToken("{nbsp}");
+        Assert.assertEquals(
+                "nbsp",
+                token.getValue(Utils.buildMap("nbsp", "nbsp"))
+        );
+        Assert.assertEquals(
+                "&nbsp;",
+                token.getValue(null)
+        );
+        Assert.assertEquals(
+                "&nbsp;",
+                token.getValue(Utils.buildMap("abc", "abc"))
+        );
+    }
+
+    @Test
+    public void testContextObject() {
+        DataToken token = new DataToken("{count::ord}");
+
+        Assert.assertEquals(
+                null,
+                token.getContextObject(Utils.buildMap())
+        );
+
+        Assert.assertEquals(
+                null,
+                token.getContextObject(null)
+        );
+
+        Assert.assertEquals(
+                1,
+                token.getContextObject(Utils.buildMap("count", 1))
+        );
+
+        Assert.assertEquals(
+                10,
+                token.getContextObject(Utils.buildMap("count", new DataTokenValue() {
+                    public Object getContextObject() {
+                        return 10;
+                    }
+
+                    public String getSubstitutionValue() {
+                        return "10";
+                    }
+                }))
+        );
+
+        Assert.assertEquals(
+                1,
+                token.getContextObject(Utils.buildMap("count", Utils.buildList(1, 1)))
+        );
+
+
+        Assert.assertEquals(
+                1,
+                token.getContextObject(Utils.buildMap("count", Utils.buildMap("object", 1)))
+        );
+
+        Assert.assertEquals(
+                Utils.buildMap("a","b"),
+                token.getContextObject(Utils.buildMap("count", Utils.buildMap("a","b")))
+        );
 
     }
 

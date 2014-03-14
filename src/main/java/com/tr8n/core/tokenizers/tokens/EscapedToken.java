@@ -31,18 +31,39 @@ import java.util.Map;
  */
 public class EscapedToken extends BaseToken {
 
+    /**
+     *
+     * @return
+     */
     public static String getExpression() {
         return "(\\^\\{[^}.]*\\})";
     }
 
+    /**
+     *
+     * @param token
+     */
     public EscapedToken(String token) {
         this(token, null);
     }
 
+    /**
+     *
+     * @param token
+     * @param label
+     */
     public EscapedToken(String token, String label) {
         super(token, label);
     }
 
+    /**
+     *
+     * @param translatedLabel
+     * @param tokensData
+     * @param language
+     * @param options
+     * @return
+     */
     public String substitute(String translatedLabel, Map tokensData, Language language, Map options) {
         return translatedLabel;
     }

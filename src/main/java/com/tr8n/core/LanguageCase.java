@@ -122,7 +122,7 @@ public class LanguageCase extends Base {
      * @return
      */
     public String apply(String value) {
-        return apply(value, null);
+        return apply(value, null, null);
     }
 
     /**
@@ -131,8 +131,8 @@ public class LanguageCase extends Base {
      * @param object
      * @return
      */
-    public String apply(String value, Object object) {
-        return "";
+    public String apply(String value, Object object, Map options) {
+        return value;
     }
 
 

@@ -102,6 +102,9 @@ public class DataTokenizer {
         tokenize();
     }
 
+    /**
+     *
+     */
     // TODO: verify if reflection is too slow and switch to method invocation instead
     private void tokenize() {
         try {
@@ -131,6 +134,10 @@ public class DataTokenizer {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public List getTokenNames() {
         if (this.tokenNames == null) {
             this.tokenNames = new ArrayList<String>();
@@ -141,10 +148,19 @@ public class DataTokenizer {
         return this.tokenNames;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<String> getAllowedTokenNames() {
         return this.allowedTokenNames;
     }
 
+    /**
+     *
+     * @param token
+     * @return
+     */
     public boolean isTokenAllowed(BaseToken token) {
         if (this.getAllowedTokenNames() == null)
             return true;
@@ -152,10 +168,23 @@ public class DataTokenizer {
         return this.getAllowedTokenNames().contains(token.getName());
     }
 
+    /**
+     *
+     * @param tokensData
+     * @param language
+     * @return
+     */
     public String substitute(Map tokensData, Language language) {
         return substitute(tokensData, language, null);
     }
 
+    /**
+     *
+     * @param tokensData
+     * @param language
+     * @param options
+     * @return
+     */
     public String substitute(Map tokensData, Language language, Map options) {
         String translatedLabel = this.label;
         for (BaseToken token : this.tokens) {

@@ -31,18 +31,36 @@ import java.util.Map;
  */
 public class MustacheToken extends BaseToken {
 
+    /**
+     *
+     * @return
+     */
     public static String getExpression() {
         return "(\\{\\{[^}.]*\\}\\})";
     }
 
+    /**
+     *
+     * @param token
+     */
     public MustacheToken(String token) {
         this(token, null);
     }
 
+    /**
+     *
+     * @param token
+     * @param label
+     */
     public MustacheToken(String token, String label) {
         super(token, label);
     }
 
+    /**
+     *
+     * @param options
+     * @return
+     */
     public String getName(Map options) {
         StringBuilder sb = new StringBuilder();
         if (options.get("parens").equals(true))
@@ -53,8 +71,16 @@ public class MustacheToken extends BaseToken {
         return sb.toString();
     }
 
+    /**
+     *
+     * @param translatedLabel
+     * @param tokensData
+     * @param language
+     * @param options
+     * @return
+     */
     public String substitute(String translatedLabel, Map tokensData, Language language, Map options) {
-        return "";
+        return translatedLabel;
     }
 
 }

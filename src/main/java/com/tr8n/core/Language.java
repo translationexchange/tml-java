@@ -158,7 +158,7 @@ public class Language extends Base {
      * @param keyword
      * @return
      */
-    public LanguageCase languageCaseByKeyword(String keyword) {
+    public LanguageCase getLanguageCaseByKeyword(String keyword) {
         return null;
     }
 
