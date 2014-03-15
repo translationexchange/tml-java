@@ -37,39 +37,39 @@ public class LanguageContextRule extends Base {
     /**
      * Holds reference to the language context it belongs to
      */
-    LanguageContext languageContext;
+    private LanguageContext languageContext;
 
     /**
      * Unique key of the context within the language
      */
-    String keyword;
+    private String keyword;
 
     /**
      * Description of the rule
      */
-    String description;
+    private String description;
 
     /**
      * Examples of the rule application
      */
-    String examples;
+    private String examples;
 
     /**
      * Conditions in symbolic notation
      */
-    String conditions;
+    private String conditions;
 
     /**
      * Optimized conditions parsed into an array
      */
-    List conditionsExpression;
+    private List conditionsExpression;
 
 
     /**
      * Default constructor
      * @param attributes
      */
-    public LanguageContextRule(Map attributes) {
+    public LanguageContextRule(Map<String, Object> attributes) {
         super(attributes);
     }
 
@@ -77,7 +77,7 @@ public class LanguageContextRule extends Base {
      *
      * @param attributes
      */
-    public void updateAttributes(Map attributes) {
+    public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("language_context") != null) {
             this.languageContext = (LanguageContext) attributes.get("language_context");
         }
@@ -137,5 +137,25 @@ public class LanguageContextRule extends Base {
 
     public String getKeyword() {
         return this.keyword;
+    }
+
+    public LanguageContext getLanguageContext() {
+        return languageContext;
+    }
+
+    public void setLanguageContext(LanguageContext languageContext) {
+        this.languageContext = languageContext;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getExamples() {
+        return examples;
+    }
+
+    public String getConditions() {
+        return conditions;
     }
 }

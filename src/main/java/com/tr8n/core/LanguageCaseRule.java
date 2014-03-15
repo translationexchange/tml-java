@@ -32,43 +32,43 @@ public class LanguageCaseRule extends Base {
     /**
      * Reference back to the language case the rule belongs to
      */
-    LanguageCase languageCase;
+    private LanguageCase languageCase;
 
     /**
      * Rule description
      */
-    String description;
+    private String description;
 
     /**
      * Rule evaluation examples
      */
-    String examples;
+    private String examples;
 
     /**
      * Conditions in symbolic notations form
      */
-    String conditions;
+    private String conditions;
 
     /**
      * Compiled conditions in the array form
      */
-    List conditionsExpression;
+    private List conditionsExpression;
 
     /**
      * Operations in the symbolic notations form
      */
-    String operations;
+    private String operations;
 
     /**
      * Compiled operations in the array form
      */
-    List operationsExpression;
+    private List operationsExpression;
 
     /**
      *
      * @param attributes
      */
-    public LanguageCaseRule(Map attributes) {
+    public LanguageCaseRule(Map<String, Object> attributes) {
         super(attributes);
     }
 
@@ -76,7 +76,7 @@ public class LanguageCaseRule extends Base {
      *
      * @param attributes
      */
-    public void updateAttributes(Map attributes) {
+    public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("language_case") != null)
             this.languageCase = (LanguageCase) attributes.get("language_case");
 
@@ -149,4 +149,11 @@ public class LanguageCaseRule extends Base {
         return "";
     }
 
+    public LanguageCase getLanguageCase() {
+        return languageCase;
+    }
+
+    public void setLanguageCase(LanguageCase languageCase) {
+        this.languageCase = languageCase;
+    }
 }

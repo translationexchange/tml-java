@@ -22,6 +22,7 @@
 
 package com.tr8n.core;
 
+import java.text.AttributedString;
 import java.util.Map;
 
 public class Tr8n {
@@ -63,44 +64,81 @@ public class Tr8n {
         return getInstance().translate(label, "", tokens, options);
     }
 
+    /**
+     *
+     * @param label
+     * @return
+     */
+    public static AttributedString translateAttributedString(String label) {
+        return translateAttributedString(label, "");
+    }
 
+    public static AttributedString translateAttributedString(String label, String description) {
+        return translateAttributedString(label, description, null);
+    }
 
+    public static AttributedString translateAttributedString(String label, String description, Map<String, Object> tokens) {
+        return getInstance().translateAttributedString(label, description, null, null);
+    }
+
+    public static AttributedString translateAttributedString(String label, Map<String, Object> tokens) {
+        return getInstance().translateAttributedString(label, "", tokens, null);
+    }
+
+    public static AttributedString translateAttributedString(String label, Map<String, Object> tokens, Map<String, Object> options) {
+        return getInstance().translateAttributedString(label, "", tokens, options);
+    }
 
     Configuration config;
     Application application;
-    Language currentLanguage;
     Cache cache;
     Logger logger;
+    Request request;
 
     protected Tr8n() {
-        this.config = new Configuration();
-        this.cache = new Cache();
-        this.logger = new Logger();
-    }
-
-    public static Configuration getConfig() {
-        return getInstance().config;
     }
 
     public static Application getApplication() {
         return getInstance().application;
     }
 
-    public static Language getCurrentLanguage() {
-        return getInstance().currentLanguage;
+    public static Configuration getConfig() {
+        if (getInstance().config == null)
+            getInstance().config = new Configuration();
+
+        return getInstance().config;
     }
 
     public static Cache getCache() {
+        if (getInstance().cache  == null)
+            getInstance().cache = new Cache();
         return getInstance().cache;
     }
 
+    public static Request getRequest() {
+        if (getInstance().request == null)
+            getInstance().request = new Request();
+        return getInstance().request;
+    }
+
+    public static Language getCurrentLanguage() {
+        return getRequest().getCurrentLanguage();
+    }
+
     public static Logger getLogger() {
+        if (getInstance().logger == null)
+            getInstance().logger = new Logger();
+
         return getInstance().logger;
     }
 
     public String translate(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
-        return "";
+        return (String) this.getCurrentLanguage().translate(label, description, tokens, options);
     }
 
+    public AttributedString translateAttributedString(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
+//        return this.currentLanguage.translate(label, description, tokens, options);
+        return null;
+    }
 
 }

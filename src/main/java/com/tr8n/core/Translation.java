@@ -22,6 +22,8 @@
 
 package com.tr8n.core;
 
+import com.tr8n.core.tokenizers.tokens.DataToken;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,35 +33,35 @@ public class Translation extends Base {
     /**
      * Reference to the translation key it belongs to
      */
-    TranslationKey translationKey;
+    private TranslationKey translationKey;
 
     /**
      * Reference to the language it belongs to
      */
-    Language language;
+    private Language language;
 
     /**
      * Locale of the language it belongs to
      */
-    String locale;
+    private String locale;
 
     /**
      * Translation label
      */
-    String label;
+    private String label;
 
     /**
      * Translation context hash:
      * {token1: {context1: rule1}, token2: {context2: rule2}}
      */
-    Map context;
+    private Map context;
 
 
     /**
      *
      * @param attributes
      */
-    public Translation(Map attributes) {
+    public Translation(Map<String, Object> attributes) {
         super(attributes);
     }
 
@@ -67,7 +69,7 @@ public class Translation extends Base {
      *
      * @param attributes
      */
-    public void updateAttributes(Map attributes) {
+    public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("language") != null)
             this.language = (Language) attributes.get("language");
 
@@ -77,7 +79,7 @@ public class Translation extends Base {
         this.locale = (String) attributes.get("locale");
 
         if (this.language == null && this.locale != null) {
-            this.language = this.translationKey.application.getLanguage(this.locale);
+            this.language = this.translationKey.getApplication().getLanguage(this.locale);
         }
 
         this.label = (String) attributes.get("label");
@@ -112,9 +114,7 @@ public class Translation extends Base {
             String tokenName = (String) entry.getKey();
             Map rules = (Map) entry.getValue();
 
-            // TODO: get token object from token by name
-            Object tokenObject = null;
-
+            Object tokenObject = DataToken.getContextObject(tokens, tokenName);
             if (tokenObject == null) return false;
 
             Iterator ruleEntries = rules.entrySet().iterator();
@@ -130,7 +130,7 @@ public class Translation extends Base {
                     return false;
 
                 LanguageContextRule rule = context.findMatchingRule(tokenObject);
-                if (rule == null || !rule.keyword.equals(ruleKeyword))
+                if (rule == null || !rule.getKeyword().equals(ruleKeyword))
                     return false;
             }
         }
@@ -138,4 +138,15 @@ public class Translation extends Base {
         return true;
     }
 
+    public String getLabel() {
+        return label;
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
 }

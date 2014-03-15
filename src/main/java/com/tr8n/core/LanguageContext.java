@@ -33,58 +33,53 @@ public class LanguageContext extends Base {
     /**
      * Reference back to the language it belongs to
      */
-    Language language;
+    private Language language;
 
     /**
      * Unique key identifying the context => num, gender, list, etc..
      */
-    String keyword;
+    private String keyword;
 
     /**
      * Description of the context
      */
-    String description;
+    private String description;
 
     /**
      * List of available rule keys. num => [one, few, many, other]
      */
-    List<String> keys;
+    private List<String> keys;
 
     /**
      * Expression indicating which tokens belong to this context
      */
-    String tokenExpression;
+    private String tokenExpression;
 
     /**
      * List of variable names that an object must support for the context
      */
-    List<String> variableNames;
+    private List<String> variableNames;
 
     /**
      * Mapping of parameters to rules
      */
-    Object tokenMapping;
+    private Object tokenMapping;
 
     /**
      * Hash of all the rules for the context => {one: rule, few: rule, ...}
      */
-    Map<String, LanguageContextRule> rules;
+    private Map<String, LanguageContextRule> rules;
 
     /**
      * Fallback rule for the context
      */
-    LanguageContextRule fallbackRule;
-
-    /**
-     * Configuration of the context - based on the global configuration in Tr8n
-     */
-    Map config;
+    private LanguageContextRule fallbackRule;
 
     /**
      *
      * @param attributes
      */
-    public LanguageContext(Map attributes) {
+    public LanguageContext(Map<String, Object> attributes) {
         super(attributes);
     }
 
@@ -92,7 +87,7 @@ public class LanguageContext extends Base {
      *
      * @param attributes
      */
-    public void updateAttributes(Map attributes) {
+    public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("language") != null)
             this.language = (Language) attributes.get("language");
 
@@ -113,7 +108,7 @@ public class LanguageContext extends Base {
             while (entries.hasNext()) {
                 Map.Entry entry = (Map.Entry) entries.next();
                 LanguageContextRule rule = new LanguageContextRule((Map) entry.getValue());
-                rule.languageContext = this;
+                rule.setLanguageContext(this);
                 if (rule.isFallback()) this.fallbackRule = rule;
                 this.rules.put((String) entry.getKey(), rule);
             }
@@ -175,20 +170,13 @@ public class LanguageContext extends Base {
         return this.tokenMapping;
     }
 
-    /**
-     *
-     * @return Language of the context
-     */
-    public Language getLanguage() {
-        return this.language;
-    }
 
     /**
      *
      * @return
      */
     public String toString() {
-        return  this.keyword + "(" + this.language.locale + ")";
+        return  this.keyword + "(" + this.language.getLocale() + ")";
     }
 
     /**
@@ -197,5 +185,17 @@ public class LanguageContext extends Base {
      */
     public LanguageContextRule getFallbackRule() {
         return this.fallbackRule;
+    }
+
+    /**
+     *
+     * @return Language of the context
+     */
+    public Language getLanguage() {
+        return this.language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
     }
 }

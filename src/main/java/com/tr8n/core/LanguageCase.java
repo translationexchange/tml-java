@@ -33,44 +33,44 @@ public class LanguageCase extends Base {
     /**
      * Holds reference back to the language it belongs to
      */
-    Language language;
+    private Language language;
 
     /**
      * How to apply the case: "phrase" or "words"
      */
-    String type;
+    private String type;
 
     /**
      * Unique key identifying the language case
      */
-    String keyword;
+    private String keyword;
 
     /**
      * General name in Latin
      */
-    String latinName;
+    private String latinName;
 
     /**
      * Name in native language
      */
-    String nativeName;
+    private String nativeName;
 
     /**
      * Description of the language case
      */
-    String description;
+    private String description;
 
     /**
      * List of all rules for the language case
      */
-    List<LanguageCaseRule> rules;
+    private List<LanguageCaseRule> rules;
 
 
     /**
      * Constructor with attributes
      * @param attributes
      */
-    public LanguageCase(Map attributes) {
+    public LanguageCase(Map<String, Object> attributes) {
         super(attributes);
     }
 
@@ -78,7 +78,7 @@ public class LanguageCase extends Base {
      *
      * @param attributes
      */
-    public void updateAttributes(Map attributes) {
+    public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("language") != null) {
             this.language = (Language) attributes.get("language");
         }
@@ -92,7 +92,9 @@ public class LanguageCase extends Base {
         this.rules = new ArrayList<LanguageCaseRule>();
         if (attributes.get("rules") != null) {
             for (Object data : ((List) attributes.get("rules"))) {
-                this.rules.add(new LanguageCaseRule((Map) data));
+                LanguageCaseRule rule = new LanguageCaseRule((Map) data);
+                rule.setLanguageCase(this);
+                this.rules.add(rule);
             }
         }
     }
@@ -137,7 +139,14 @@ public class LanguageCase extends Base {
 
 
     public String toString() {
-        return  this.keyword + "(" + this.language.locale + ")";
+        return  this.keyword + "(" + this.language.getLocale() + ")";
     }
 
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
 }

@@ -22,6 +22,7 @@
 
 package com.tr8n.core.tokenizers;
 
+import com.tr8n.core.Language;
 import com.tr8n.core.Utils;
 import org.apache.commons.lang.StringUtils;
 
@@ -31,7 +32,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DecorationTokenizer {
+public class DecorationTokenizer extends Tokenizer {
+    public static final String TOKEN_BRACKET = "[";
+
     public static final String RESERVED_TOKEN  = "tr8n";
     public static final String RE_SHORT_TOKEN_START = "\\[[\\w]*:";
     public static final String RE_SHORT_TOKEN_END   = "\\]";
@@ -43,31 +46,35 @@ public class DecorationTokenizer {
     public static final String TOKEN_TYPE_LONG      = "long";
     public static final String PLACEHOLDER          = "{$0}";
 
+
+    /**
+     * Compiled expression extracted from the label
+     */
+    Object expression;
+
+    /**
+     * List of fragments, used internally
+     */
+    List<String> fragments;
+
+    /**
+     * List of elements, used internally
+     */
+    List<String> elements;
+
     /**
      *
      */
-    List<String> tokenNames;
-
-    Object expression;
-
-    List<String> fragments;
-
-    List<String> elements;
-
-    Map tokensData;
-
-    String label;
-
-    Map options;
-
-    List<String> allowedTokenNames;
+    public DecorationTokenizer() {
+        super();
+    }
 
     /**
      *
      * @param label
      */
     public DecorationTokenizer(String label) {
-        this(label, null);
+        super(label, null);
     }
 
     /**
@@ -76,18 +83,25 @@ public class DecorationTokenizer {
      * @param allowedTokenNames
      */
     public DecorationTokenizer(String label, List<String> allowedTokenNames) {
+        super(label, allowedTokenNames);
+    }
+
+    /**
+     * @param label Label to be tokenized
+     * @param allowedTokenNames List of allowed tokens
+     */
+    public void tokenize(String label, List<String> allowedTokenNames) {
         this.label =  "[" + RESERVED_TOKEN + "]" + label + "[/" + RESERVED_TOKEN + "]";
         this.tokenNames = new ArrayList<String>();
         this.allowedTokenNames = allowedTokenNames;
-        fragmentize();
+        tokenize();
         this.expression = parse();
-
     }
 
     /**
      *
      */
-    private void fragmentize() {
+    protected void tokenize() {
         String regex = StringUtils.join(Utils.buildList(
                 RE_SHORT_TOKEN_START,
                 RE_SHORT_TOKEN_END,
@@ -158,12 +172,12 @@ public class DecorationTokenizer {
         String token = pop();
 
         if (isMatchingExpression(token, RE_SHORT_TOKEN_START)) {
-            token = token.trim().replaceFirst(Pattern.quote("[:"), "");
+            token = token.trim().replaceAll("[\\[:]", "");
             return parseTree(token, TOKEN_TYPE_SHORT);
         }
 
         if (isMatchingExpression(token, RE_LONG_TOKEN_START)) {
-            token = token.trim().replaceAll("\\[\\]", "");
+            token = token.trim().replaceAll("[\\[\\]]", "");
             return parseTree(token, TOKEN_TYPE_LONG);
         }
 
@@ -249,22 +263,22 @@ public class DecorationTokenizer {
     /**
      *
      * @param tokensData
+     * @param options
      * @return
      */
-    public Object substitute(Map tokensData) {
-        return substitute(tokensData, null);
+    public String substitute(Map tokensData, Language language, Map options) {
+        this.tokensData = tokensData;
+        this.options = options;
+        return evaluate(this.expression);
     }
 
     /**
      *
-     * @param tokensData
-     * @param options
+     * @param label
      * @return
      */
-    public Object substitute(Map tokensData, Map options) {
-        this.tokensData = tokensData;
-        this.options = options;
-        return evaluate(this.expression);
+    public static boolean shouldBeUsed(String label) {
+        return label.contains(TOKEN_BRACKET);
     }
 
 }

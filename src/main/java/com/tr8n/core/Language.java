@@ -34,48 +34,48 @@ public class Language extends Base {
     /**
      * Holds reference to the application it belongs to
      */
-    Application application;
+    private Application application;
 
     /**
      * Language locale based on Tr8n notation
      */
-    String locale;
+    private String locale;
 
     /**
      * Language name in English
      */
-    String englishName;
+    private String englishName;
 
     /**
      * Language name in the native form
      */
-    String nativeName;
+    private String nativeName;
 
     /**
      * Whether the language rtl or ltr
      */
-    Boolean rightToLeft;
+    private Boolean rightToLeft;
 
     /**
      * Url of the language flag image
      */
-    String flagUrl;
+    private String flagUrl;
 
     /**
      * Hash of all language contexts
      */
-    Map<String, LanguageContext> contexts;
+    private Map<String, LanguageContext> contexts;
 
     /**
      * Hash of all language cases
      */
-    Map<String, LanguageCase> cases;
+    private Map<String, LanguageCase> cases;
 
     /**
      * Default language constructor
      * @param attributes
      */
-    public Language(Map attributes) {
+    public Language(Map<String, Object> attributes) {
         super(attributes);
     }
 
@@ -83,7 +83,7 @@ public class Language extends Base {
      *
      * @param attributes
      */
-    public void updateAttributes(Map attributes) {
+    public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("application") != null)
             this.application = (Application) attributes.get("application");
 
@@ -99,7 +99,7 @@ public class Language extends Base {
             while (entries.hasNext()) {
                 Map.Entry entry = (Map.Entry) entries.next();
                 LanguageContext context = new LanguageContext((Map) entry.getValue());
-                context.language = this;
+                context.setLanguage(this);
                 contexts.put((String) entry.getKey(), context);
             }
         }
@@ -110,7 +110,7 @@ public class Language extends Base {
             while (entries.hasNext()) {
                 Map.Entry entry = (Map.Entry) entries.next();
                 LanguageCase languageCase = new LanguageCase((Map) entry.getValue());
-                languageCase.language = this;
+                languageCase.setLanguage(this);
                 cases.put((String) entry.getKey(), languageCase);
             }
         }
@@ -219,6 +219,34 @@ public class Language extends Base {
         return null;
     }
 
+
+    private Object getOptionsValue(String key, Map options, Object defaultValue) {
+        Object value = options.get(key);
+        if (value!=null) return value;
+
+        value = Tr8n.getRequest().getBlockOption(key);
+        if (value!=null) return value;
+
+        return defaultValue;
+    }
+
+
+    private TranslationKey createTranslationKey(String keyHash, String label, String description, Map options) {
+        String locale = (String) getOptionsValue("locale", options, Tr8n.getApplication().getDefaultLocale());
+        Long level = (Long) getOptionsValue("level", options, Tr8n.getApplication().getTranslatorLevel());
+
+        Map attributes = Utils.buildMap(
+                "application", getApplication(),
+                "key", keyHash,
+                "label", label,
+                "description", description,
+                "locale", locale,
+                "level", level
+        );
+
+        return new TranslationKey(attributes);
+    }
+
     /**
      * Translation method
      * @param label
@@ -227,16 +255,39 @@ public class Language extends Base {
      * @param options
      * @return
      */
-    public String translate(String label, String description, Map tokens, Map options) {
-        return "";
+    public Object translate(String label, String description, Map tokens, Map options) {
+        String keyHash = TranslationKey.generateKey(label, description);
+
+        if (getApplication().isKeyRegistrationEnabled()) {
+            String sourceKey = (String) getOptionsValue("source", options, Tr8n.getRequest().getCurrentSource());
+
+            if (sourceKey == null)
+                sourceKey = "undefined source";
+
+            Source source = getApplication().getSource(sourceKey, this.getLocale());
+            if (source != null) {
+                TranslationKey matchedKey = source.getTranslationKey(keyHash);
+                if (matchedKey != null) return matchedKey.translate(this, tokens, options);
+
+                TranslationKey tempKey = createTranslationKey(keyHash, label, description, options);
+                getApplication().registerMissingTranslationKey(tempKey, source);
+            }
+        }
+
+        TranslationKey matchedKey = getApplication().getTranslationKey(keyHash);
+        if (matchedKey != null) return matchedKey.translate(this, tokens, options);
+
+        TranslationKey tempKey = createTranslationKey(keyHash, label, description, options);
+        return tempKey.translate(this, tokens, options);
     }
+    
 
     /**
      *
      * @param label
      * @return
      */
-    public String translate(String label) {
+    public Object translate(String label) {
         return translate(label, "");
     }
 
@@ -246,7 +297,7 @@ public class Language extends Base {
      * @param description
      * @return
      */
-    public String translate(String label, String description) {
+    public Object translate(String label, String description) {
         return translate(label, description, null, null);
     }
 
@@ -256,10 +307,25 @@ public class Language extends Base {
      * @param tokens
      * @return
      */
-    public String translate(String label, Map tokens) {
+    public Object translate(String label, Map tokens) {
         return translate(label, "", tokens, null);
     }
 
+    public Application getApplication() {
+        return application;
+    }
+
+    public void setApplication(Application application) {
+        this.application = application;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
 
     public String toString() {
         return  this.englishName + "(" + this.locale + ")";

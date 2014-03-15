@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * Not yet supported by the service
  */
-public class EscapedToken extends BaseToken {
+public class EscapedToken extends Token {
 
     /**
      *

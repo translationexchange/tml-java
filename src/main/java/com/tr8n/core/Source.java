@@ -65,7 +65,7 @@ public class Source extends Base {
      *
      * @param attributes
      */
-    public Source(Map attributes) {
+    public Source(Map<String, Object> attributes) {
         super(attributes);
     }
 
@@ -73,7 +73,7 @@ public class Source extends Base {
      *
      * @param attributes
      */
-    public void updateAttributes(Map attributes) {
+    public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("application") != null)
             this.application = (Application) attributes.get("application");
 
@@ -91,7 +91,7 @@ public class Source extends Base {
 
                 TranslationKey translationKey = new TranslationKey(attrs);
                 translationKey = this.application.cacheTranslationKey(translationKey);
-                this.translationKeys.put(translationKey.key, translationKey);
+                this.translationKeys.put(translationKey.getKey(), translationKey);
             }
         }
     }
@@ -107,4 +107,13 @@ public class Source extends Base {
         }
     }
 
+    public TranslationKey getTranslationKey(String hashKey) {
+        if (this.translationKeys == null)
+            return null;
+        return this.translationKeys.get(hashKey);
+    }
+
+    public String getKey() {
+        return key;
+    }
 }

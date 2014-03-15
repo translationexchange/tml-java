@@ -3,7 +3,6 @@ package com.tr8n.core.tokenizers.tokens;
 import com.tr8n.core.Utils;
 import com.tr8n.core.models.User;
 import com.tr8n.core.tokenizers.DataTokenValue;
-import com.tr8n.core.tokenizers.tokens.BaseToken;
 import com.tr8n.core.tokenizers.tokens.DataToken;
 import org.junit.Assert;
 import org.junit.Test;

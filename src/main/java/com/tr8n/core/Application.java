@@ -23,13 +23,10 @@
 package com.tr8n.core;
 
 import com.squareup.okhttp.OkHttpClient;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.*;
 
 public class Application extends Base {
@@ -39,123 +36,123 @@ public class Application extends Base {
     /**
      * Application host - points to the Tr8nHub server
      */
-    String host;
+    private String host;
 
     /**
      * Application key - must always be specified
      */
-    String key;
+    private String key;
 
     /**
      * Application secret - should only be used in development/test mode
      * Keys should only need to be registered during testing
      */
-    String secret;
+    private String secret;
 
     /**
      * Application access token for API calls
      */
-    Map<String, Object> accessToken;
+    private Map<String, Object> accessToken;
 
     /**
      * Application name
      */
-    String name;
+    private String name;
 
     /**
      * Application description
      */
-    String description;
+    private String description;
 
     /**
      * Application default locale
      */
-    String defaultLocale;
+    private String defaultLocale;
 
     /**
      * Default data and decoration tokens
      */
-    Map<String, Object> tokens;
+    private Map<String, Object> tokens;
 
     /**
      * Default key level
      */
-    Long translatorLevel;
+    private Long translatorLevel;
 
     /**
      * Application threshold
      */
-    Long threshold;
+    private Long threshold;
 
     /**
      * CSS classes for decorator
      */
-    String css;
+    private String css;
 
     /**
      * Application shortcuts
      */
-    Map<String, String> shortcuts;
+    private Map<String, String> shortcuts;
 
     /**
      * Application features
      */
-    Map<String, Boolean> features;
+    private Map<String, Boolean> features;
 
     /**
      * List of languages enabled for the application
      */
-    List<Language> languages;
+    private List<Language> languages;
 
     /**
      * List of application sources
      */
-    List<Source> sources;
+    private List<Source> sources;
 
     /**
      * List of application components
      */
-    List<Component> components;
+    private List<Component> components;
 
     /**
      * List of featured locales
      */
-    List<String> featuredLocales;
+    private List<String> featuredLocales;
 
     /**
      * Languages by locale
      */
-    Map<String, Language> languagesByLocales;
+    private Map<String, Language> languagesByLocales;
 
     /**
      * Sources by keys
      */
-    Map<String, Source> sourcesByKeys;
+    private Map<String, Source> sourcesByKeys;
 
     /**
      * Components by keys
      */
-    Map<String, Component> componentsByKeys;
+    private Map<String, Component> componentsByKeys;
 
     /**
      * Application Translation keys
      */
-    Map<String, TranslationKey> translationKeys;
+    private Map<String, TranslationKey> translationKeys;
 
     /**
      * Missing translation keys
      */
-    Map<String, List> missingTranslationKeysBySources;
+    private Map<String, Map<String, TranslationKey>> missingTranslationKeysBySources;
 
     /**
      * Periodically send missing keys to the server
      */
-    TimerTask scheduler;
+    private TimerTask scheduler;
 
     /**
      * API Client
      */
-    OkHttpClient client;
+    private OkHttpClient client;
 
     public static Application init(String key, String secret) {
         return init(key, secret, null);
@@ -234,11 +231,9 @@ public class Application extends Base {
             }
         }
 
-        this.translationKeys = new HashMap<String, TranslationKey>();
         this.sourcesByKeys =  new HashMap<String, Source>();
         this.componentsByKeys =  new HashMap<String, Component>();
         this.languagesByLocales = new HashMap<String, Language>();
-        this.missingTranslationKeysBySources = new HashMap<String, List>();
     }
 
     /**
@@ -253,6 +248,17 @@ public class Application extends Base {
         }
     }
 
+    /**
+     * When application is in production mode, secret should not be provided.
+     * Without the secret, the app will not be submitting missing keys to the server,
+     * and only use the default language values.
+     *
+     * @return true/false based on whether the app is in production mode
+     */
+    public boolean isKeyRegistrationEnabled() {
+        return this.secret != null;
+    }
+
     public void resetTranslationsCacheForLocale(String locale) {
 
     }
@@ -260,6 +266,51 @@ public class Application extends Base {
     public void resetTranslations() {
 
     }
+
+    /**
+     *
+     * @return
+     */
+    private Map<String, Map<String, TranslationKey>> getMissingTranslationKeysBySources() {
+        if (missingTranslationKeysBySources == null)
+            missingTranslationKeysBySources = new HashMap<String, Map<String, TranslationKey>>();
+        return missingTranslationKeysBySources;
+    }
+
+    /**
+     *
+     * @param translationKey
+     * @param source
+     */
+    public synchronized void registerMissingTranslationKey(TranslationKey translationKey, Source source) {
+        if (!isKeyRegistrationEnabled())
+            return;
+
+        Map translationKeys = getMissingTranslationKeysBySources().get(source.getKey());
+        if (translationKeys == null) {
+            translationKeys = new HashMap();
+            getMissingTranslationKeysBySources().put(source.getKey(), translationKeys);
+        }
+
+        if (translationKeys.get(translationKey.getKey()) == null) {
+            translationKeys.put(translationKey.getKey(), translationKey);
+        }
+    }
+
+    /**
+     *
+     */
+    public synchronized void submitMissingTranslationKeys() {
+        if (!isKeyRegistrationEnabled() || getMissingTranslationKeysBySources().size() == 0)
+            return;
+
+        Map params = new HashMap();
+
+
+        // TODO: finish implementation
+
+    }
+
 
     /**
      *
@@ -283,6 +334,7 @@ public class Application extends Base {
 
         return this.languagesByLocales.get(locale);
     }
+
 
     /**
      *
@@ -421,8 +473,25 @@ public class Application extends Base {
 
     }
 
+    public String getDefaultLocale() {
+        return defaultLocale;
+    }
+
+    public Long getTranslatorLevel() {
+        return translatorLevel;
+    }
+
     public String toString() {
         return  this.name + "(" + this.key + ")";
     }
 
+    private Map<String, TranslationKey> getTranslationKeys() {
+        if (translationKeys == null)
+            translationKeys = new HashMap<String, TranslationKey>();
+        return translationKeys;
+    }
+
+    public TranslationKey getTranslationKey(String key) {
+        return getTranslationKeys().get(key);
+    }
 }

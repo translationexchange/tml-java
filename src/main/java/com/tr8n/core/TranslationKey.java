@@ -22,7 +22,13 @@
 
 package com.tr8n.core;
 
+import com.tr8n.core.tokenizers.AttributedStringTokenizer;
+import com.tr8n.core.tokenizers.DataTokenizer;
+import com.tr8n.core.tokenizers.DecorationTokenizer;
+import com.tr8n.core.tokenizers.HtmlTokenizer;
+
 import java.math.BigInteger;
+import java.text.AttributedString;
 import java.util.*;
 import java.security.*;
 
@@ -31,53 +37,65 @@ public class TranslationKey extends Base {
     /**
      * Reference to the application where the key came from
      */
-    Application application;
+    private Application application;
 
     /**
      * Unique key (md5 hash) identifying this translation key
      */
-    String key;
+    private String key;
 
     /**
      * Text to be translated
      */
-    String label;
+    private String label;
 
     /**
      * Description of the text to be translated
      */
-    String description;
+    private String description;
 
     /*
      * Locale of the text to be translated
      */
-    String locale;
+    private String locale;
 
     /**
      * Level of the key
      */
-    Long level;
+    private Long level;
 
     /**
      * Hash of translations for each locale needed by the application
      */
-    Map<String, List> translations;
+    private Map<String, List<Translation>> translations;
 
     /**
      * Holds all data tokens found in the translation key
      */
-    List dataTokens;
+    private List dataTokens;
 
     /**
      * Holds all decoration tokens found in the translation key
      */
-    List decorationTokens;
+    private List decorationTokens;
+
+
+    /**
+     * List of data token names from the original label
+     */
+    private List<String> allowedDataTokenNames;
+
+    /**
+     * List of decoration token names from the original label
+     */
+    private List<String> allowedDecorationTokenNames;
+
 
     /**
      *
      * @param attributes
      */
-    public TranslationKey(Map attributes) {
+    public TranslationKey(Map<String, Object> attributes) {
         super(attributes);
     }
 
@@ -85,7 +103,7 @@ public class TranslationKey extends Base {
      *
      * @param attributes
      */
-    public void updateAttributes(Map attributes) {
+    public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("application") != null)
             this.application = (Application) attributes.get("application");
 
@@ -104,9 +122,9 @@ public class TranslationKey extends Base {
 
         this.level = (Long) attributes.get("level");
 
-        this.translations = new HashMap<String, List>();
+        this.translations = new HashMap<String, List<Translation>>();
         if (attributes.get("translations") != null) {
-            Iterator entries = ((Map<String, Object>) attributes.get("translations")).entrySet().iterator();
+            Iterator entries = ((Map) attributes.get("translations")).entrySet().iterator();
             while (entries.hasNext()) {
                 Map.Entry entry = (Map.Entry) entries.next();
                 List localeData = (List) entry.getValue();
@@ -114,7 +132,7 @@ public class TranslationKey extends Base {
                 Language language = this.application.getLanguage(locale);
 
                 if (this.translations.get(locale) == null) {
-                    this.translations.put(locale, new ArrayList());
+                    this.translations.put(locale, new ArrayList<Translation>());
                 }
 
                 for (Object translationData : localeData) {
@@ -183,7 +201,46 @@ public class TranslationKey extends Base {
      * @param language
      * @return
      */
-    public String translate(Language language) {
+    private List<Translation> getTranslations(Language language) {
+        if (translations == null)
+            return null;
+
+        if (translations.get(language.getLocale()) == null)
+            return null;
+
+        return translations.get(language.getLocale());
+    }
+
+    /**
+     *
+     * @param language
+     * @param tokens
+     * @return
+     */
+    private Translation findFirstAcceptableTranslation(Language language, Map tokens) {
+        List<Translation> availableTranslations = getTranslations(language);
+        if (availableTranslations == null || availableTranslations.size() == 0)
+            return null;
+
+        if (availableTranslations.size() == 1) {
+            Translation translation = availableTranslations.get(0);
+            if (!translation.hasContext()) return translation;
+        }
+
+        for (Translation translation : availableTranslations) {
+            if (translation.isValidTranslationForTokens(tokens))
+                return translation;
+        }
+
+        return null;
+    }
+
+    /**
+     *
+     * @param language
+     * @return
+     */
+    public Object translate(Language language) {
         return translate(language, null);
     }
 
@@ -193,7 +250,7 @@ public class TranslationKey extends Base {
      * @param tokens
      * @return
      */
-    public String translate(Language language, Map tokens) {
+    public Object translate(Language language, Map tokens) {
         return translate(language, null, null);
     }
 
@@ -204,8 +261,102 @@ public class TranslationKey extends Base {
      * @param options
      * @return
      */
-    public String translate(Language language, Map tokens, Map options) {
-        return "";
+    public Object translate(Language language, Map tokens, Map options) {
+        if (getLocale().equals(language.getLocale())) {
+            return substitute(label, tokens, language, options);
+        }
+
+        Translation translation = findFirstAcceptableTranslation(language, tokens);
+
+        // TODO: add support for decorators in J2EE
+
+        if (translation != null)
+            return substitute(translation.getLabel(), tokens, language, options);
+
+        return substitute(getLabel(), tokens, getApplication().getLanguage(), options);
     }
 
+    /**
+     *
+     * @return
+     */
+    public List<String> getAllowedDataTokenNames() {
+        if (allowedDataTokenNames == null) {
+            DataTokenizer dt = new DataTokenizer(getLabel());
+            allowedDataTokenNames = dt.getTokenNames();
+        }
+        return allowedDataTokenNames;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public List<String> getAllowedDecorationTokenNames() {
+        if (allowedDecorationTokenNames == null) {
+            DecorationTokenizer dt = new DecorationTokenizer(getLabel());
+            allowedDecorationTokenNames = dt.getTokenNames();
+        }
+        return allowedDecorationTokenNames;
+    }
+
+    /**
+     *
+     * @param translatedLabel
+     * @param tokens
+     * @param language
+     * @param options
+     * @return
+     */
+    public Object substitute(String translatedLabel, Map tokens, Language language, Map options) {
+        if (DataTokenizer.shouldBeUsed(translatedLabel)) {
+            DataTokenizer dt = new DataTokenizer(translatedLabel, getAllowedDataTokenNames());
+            translatedLabel = dt.substitute(tokens, language, options);
+        }
+
+        if (options != null && options.get("tokenizer") != null && options.get("tokenizer").equals("attributed")) {
+            if (DecorationTokenizer.shouldBeUsed(translatedLabel)) {
+                AttributedStringTokenizer ht = new AttributedStringTokenizer(translatedLabel, getAllowedDecorationTokenNames());
+                return ht.generateAttributedString(tokens, options);
+            }
+            return new AttributedString(translatedLabel);
+        }
+
+        if (DecorationTokenizer.shouldBeUsed(translatedLabel)) {
+            HtmlTokenizer ht = new HtmlTokenizer(translatedLabel, getAllowedDecorationTokenNames());
+            return ht.substitute(tokens, language, options);
+        }
+
+        return translatedLabel;
+    }
+
+
+    public String getLabel() {
+        return label;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public Long getLevel() {
+        return level;
+    }
+
+    public Application getApplication() {
+        return application;
+    }
+
+    public void setApplication(Application application) {
+        this.application = application;
+    }
 }
+

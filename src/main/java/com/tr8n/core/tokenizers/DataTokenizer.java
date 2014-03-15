@@ -22,10 +22,9 @@
 
 package com.tr8n.core.tokenizers;
 
-import com.tr8n.core.Base;
 import com.tr8n.core.Language;
 import com.tr8n.core.Tr8n;
-import com.tr8n.core.tokenizers.tokens.BaseToken;
+import com.tr8n.core.tokenizers.tokens.Token;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -35,42 +34,28 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DataTokenizer {
-
-    /**
-     * Label from which the tokens were extracted (original or translated)
-     */
-    String label;
-
-    /**
-     * List of allowed token names from the original label
-     */
-    List<String> allowedTokenNames;
+public class DataTokenizer extends Tokenizer {
+    public static final String TOKEN_BRACKET = "{";
 
     /**
      * Token objects generated from the label
      */
-    List<BaseToken> tokens;
-
-    /**
-     * Names of all registered tokens
-     */
-    List<String> tokenNames;
+    List<Token> tokens;
 
     /**
      * Default constructor
      */
     public DataTokenizer() {
-        // Do nothing here
+        super();
     }
 
     /**
-     * Constructs Tokenizer with label
+     * Constructs Base with label
      *
      * @param label label to be tokenized
      */
     public DataTokenizer(String label) {
-        this(label, null);
+        super(label, null);
     }
 
     /**
@@ -79,36 +64,16 @@ public class DataTokenizer {
      * @param allowedTokenNames list of allowed token names
      */
     public DataTokenizer(String label, List<String> allowedTokenNames) {
-        tokenize(label, allowedTokenNames);
-    }
-
-    /**
-     *
-     * @param label
-     */
-    public void tokenize(String label) {
-        tokenize(label, null);
-    }
-
-    /**
-     *
-     * @param label
-     * @param allowedTokenNames
-     */
-    public void tokenize(String label, List<String> allowedTokenNames) {
-        this.label = label;
-        this.allowedTokenNames = allowedTokenNames;
-        this.tokenNames = null;
-        tokenize();
+        super(label, allowedTokenNames);
     }
 
     /**
      *
      */
     // TODO: verify if reflection is too slow and switch to method invocation instead
-    private void tokenize() {
+    protected void tokenize() {
         try {
-            this.tokens = new ArrayList<BaseToken>();
+            this.tokens = new ArrayList<Token>();
             List<String> tokenMatches = new ArrayList<String>();
             String matchingLabel = this.label;
             for (String token : Tr8n.getConfig().getTokenClasses()) {
@@ -124,7 +89,7 @@ public class DataTokenizer {
                     if (tokenMatches.contains(match)) continue;
                     tokenMatches.add(match);
                     Constructor constructor = tokenClass.getConstructor(String.class, String.class);
-                    BaseToken registeredToken = (BaseToken) constructor.newInstance(match, this.label);
+                    Token registeredToken = (Token) constructor.newInstance(match, this.label);
                     this.tokens.add(registeredToken);
                     matchingLabel = matchingLabel.replaceAll(Pattern.quote(match), "");
                 }
@@ -136,46 +101,16 @@ public class DataTokenizer {
 
     /**
      *
-     * @return
+     * @return List of token names derived from the label
      */
-    public List getTokenNames() {
+    public List<String> getTokenNames() {
         if (this.tokenNames == null) {
             this.tokenNames = new ArrayList<String>();
-            for (BaseToken token : this.tokens) {
+            for (Token token : this.tokens) {
                 this.tokenNames.add(token.getName());
             }
         }
         return this.tokenNames;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public List<String> getAllowedTokenNames() {
-        return this.allowedTokenNames;
-    }
-
-    /**
-     *
-     * @param token
-     * @return
-     */
-    public boolean isTokenAllowed(BaseToken token) {
-        if (this.getAllowedTokenNames() == null)
-            return true;
-
-        return this.getAllowedTokenNames().contains(token.getName());
-    }
-
-    /**
-     *
-     * @param tokensData
-     * @param language
-     * @return
-     */
-    public String substitute(Map tokensData, Language language) {
-        return substitute(tokensData, language, null);
     }
 
     /**
@@ -186,10 +121,23 @@ public class DataTokenizer {
      * @return
      */
     public String substitute(Map tokensData, Language language, Map options) {
+        this.tokensData = tokensData;
+        this.options = options;
+
         String translatedLabel = this.label;
-        for (BaseToken token : this.tokens) {
+        for (Token token : this.tokens) {
             translatedLabel = token.substitute(translatedLabel, tokensData, language, options);
         }
         return translatedLabel;
     }
+
+    /**
+     *
+     * @param label
+     * @return
+     */
+    public static boolean shouldBeUsed(String label) {
+        return label.contains(TOKEN_BRACKET);
+    }
+
 }

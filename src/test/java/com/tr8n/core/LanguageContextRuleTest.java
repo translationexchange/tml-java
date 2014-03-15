@@ -12,105 +12,98 @@ public class LanguageContextRuleTest extends BaseTest {
 
     @Test
     public void testEvaluatingRules() {
-        LanguageContextRule rule = new LanguageContextRule(loadJsonMapFromString("{" +
-            "\"keyword\": \"many\"," +
-            "\"description\": \"{token} mod 10 is 0 or {token} mod 10 in 5..9 or {token} mod 100 in 11..14\"," +
-            "\"examples\": \"0, 5-20, 25-30, 35-40...\"," +
-            "\"conditions\": \"(|| (= 0 (mod @n 10)) (in '5..9' (mod @n 10)) (in '11..14' (mod @n 100)))\"" +
-            "}"));
+        LanguageContextRule rule = new LanguageContextRule(Utils.buildMap(
+                "keyword", "many",
+                "description", "{token} mod 10 is 0 or {token} mod 10 in 5..9 or {token} mod 100 in 11..14",
+                "examples", "0, 5-20, 25-30, 35-40...",
+                "conditions", "(|| (= 0 (mod @n 10)) (in '5..9' (mod @n 10)) (in '11..14' (mod @n 100)))"
+        ));
 
         org.junit.Assert.assertEquals(
                 "many",
-                rule.keyword
+                rule.getKeyword()
         );
 
         org.junit.Assert.assertEquals(
                 "{token} mod 10 is 0 or {token} mod 10 in 5..9 or {token} mod 100 in 11..14",
-                rule.description
+                rule.getDescription()
         );
 
         org.junit.Assert.assertEquals(
                 "0, 5-20, 25-30, 35-40...",
-                rule.examples
+                rule.getExamples()
         );
 
         org.junit.Assert.assertEquals(
                 "(|| (= 0 (mod @n 10)) (in '5..9' (mod @n 10)) (in '11..14' (mod @n 100)))",
-                rule.conditions
+                rule.getConditions()
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@n\":5}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@n", 5))
         );
         org.junit.Assert.assertTrue(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@n\":9}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@n", 9))
         );
         org.junit.Assert.assertTrue(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@n\":11}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@n", 11))
         );
         org.junit.Assert.assertTrue(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@n\":12}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@n", 12))
         );
         org.junit.Assert.assertTrue(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@n\":14}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@n", 14))
         );
         org.junit.Assert.assertTrue(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@n\":50}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@n", 50))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@n\":1}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@n", 1))
         );
         org.junit.Assert.assertFalse(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@n\":2}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@n", 2))
         );
         org.junit.Assert.assertFalse(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@n\":4}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@n", 4))
         );
         org.junit.Assert.assertFalse(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@n\":51}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@n", 51))
         );
 
-        rule = new LanguageContextRule(loadJsonMapFromString("{" +
-                "\"keyword\": \"female\"," +
-                "\"conditions\": \"(= 'female' @gender)\"" +
-                "}"));
+        rule = new LanguageContextRule(Utils.buildMap("keyword", "female", "conditions", "(= 'female' @gender)"));
 
         org.junit.Assert.assertFalse(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@gender\":\"male\"}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@gender", "male"))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@gender\":\"female\"}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@gender", "female"))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@gender\":\"unknown\"}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@gender", "unknown"))
         );
 
-        rule = new LanguageContextRule(loadJsonMapFromString("{" +
-                "\"keyword\": \"female\"," +
-                "\"conditions\": \"(&& (= 1 (count @genders)) (all @genders 'female'))\"" +
-                "}"));
+
+        rule = new LanguageContextRule(Utils.buildMap("keyword", "female", "conditions", "(&& (= 1 (count @genders)) (all @genders 'female'))"));
 
         org.junit.Assert.assertTrue(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@genders\":[\"female\"]}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@genders", Utils.buildList("female")))
         );
         org.junit.Assert.assertFalse(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@genders\":[\"female\", \"female\"]}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@genders", Utils.buildList("female", "female")))
         );
 
-        rule = new LanguageContextRule(loadJsonMapFromString("{" +
-                "\"keyword\": \"female\"," +
-                "\"conditions\": \"(&& (> (count @genders) 1) (all @genders 'female'))\"" +
-                "}"));
+        rule = new LanguageContextRule(Utils.buildMap("keyword", "female", "conditions", "(&& (> (count @genders) 1) (all @genders 'female'))"));
 
         org.junit.Assert.assertFalse(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@genders\":[\"female\"]}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@genders", Utils.buildList("female")))
         );
         org.junit.Assert.assertTrue(
-                (Boolean) rule.evaluate(loadJsonMapFromString("{\"@genders\":[\"female\", \"female\"]}"))
+                (Boolean) rule.evaluate(Utils.buildMap("@genders", Utils.buildList("female", "female")))
         );
+
 
     }
 

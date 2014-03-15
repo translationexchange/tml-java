@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class DataToken extends BaseToken {
+public class DataToken extends Token {
 
     private static final String MAP_OBJECT_NAME = "object";
     private static final String MAP_OBJECT_VALUE = "value";
@@ -41,12 +41,12 @@ public class DataToken extends BaseToken {
     /**
      * List of language cases keys, if any
      */
-    List<String> languageCaseKeys;
+    protected List<String> languageCaseKeys;
 
     /**
      * List of language context keys
      */
-    List<String> languageContextKeys;
+    protected List<String> languageContextKeys;
 
     /**
      *
@@ -183,10 +183,14 @@ public class DataToken extends BaseToken {
      * @return
      */
     public Object getContextObject(Map tokenMap) {
+        return getContextObject(tokenMap, this.getObjectName());
+    }
+
+    public static Object getContextObject(Map tokenMap, String name) {
         if (tokenMap == null)
             return null;
 
-        Object object = tokenMap.get(this.getObjectName());
+        Object object = tokenMap.get(name);
         if (object == null)
             return null;
 

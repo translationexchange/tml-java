@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * Not yet supported by the service
  */
-public class MustacheToken extends BaseToken {
+public class MustacheToken extends Token {
 
     /**
      *

@@ -1,17 +1,38 @@
+/*
+ *  Copyright (c) 2014 Michael Berkovich, http://tr8nhub.com All rights reserved.
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in
+ *  all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *  THE SOFTWARE.
+ */
+
 package com.tr8n.core.tokenizers;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.awt.font.TextAttribute;
 import java.text.AttributedString;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AttributedStringTokenizer extends DecorationTokenizer {
 
-    Map attributes;
+    public static final String ATTRIBUTE_RANGE_ORIGIN = "origin";
+    public static final String ATTRIBUTE_RANGE_LENGTH = "length";
+
+    Map<String, List> attributes;
 
     /**
      *
@@ -32,15 +53,6 @@ public class AttributedStringTokenizer extends DecorationTokenizer {
 
     /**
      *
-     * @param tokensData
-     * @return
-     */
-    public Object substitute(Map tokensData) {
-        return substitute(tokensData, null);
-    }
-
-    /**
-     *
      * @param expr
      * @param location
      * @return
@@ -49,19 +61,19 @@ public class AttributedStringTokenizer extends DecorationTokenizer {
         if (!(expr instanceof List))
             return expr.toString();
 
-        List args = new ArrayList((List) expr);
+        List<Object> args = new ArrayList<Object>((List) expr);
         String token = (String) args.remove(0);
 
         List attributedSet = (List) this.attributes.get(token);
         if (attributedSet == null) {
-            attributedSet = new ArrayList();
-            this.attributes.put(attributedSet, token);
+            attributedSet = new ArrayList<Map>();
+            this.attributes.put(token, attributedSet);
         }
 
-        Map attribute = new HashMap();
-        attribute.put("location", location);
+        Map<String, Integer> attribute = new HashMap<String, Integer>();
+        attribute.put(ATTRIBUTE_RANGE_ORIGIN, location);
 
-        List processedValues = new ArrayList();
+        List<String> processedValues = new ArrayList<String>();
         for (Object arg : args) {
             String value = evaluate(arg, location);
             location += value.length();
@@ -70,7 +82,7 @@ public class AttributedStringTokenizer extends DecorationTokenizer {
 
         String value = StringUtils.join(processedValues.toArray(), "");
 
-        attribute.put("length", value.length());
+        attribute.put(ATTRIBUTE_RANGE_LENGTH, value.length());
         attributedSet.add(attribute);
 
         return applyToken(token, value);
@@ -80,13 +92,22 @@ public class AttributedStringTokenizer extends DecorationTokenizer {
     /**
      *
      * @param tokensData
+     * @return
+     */
+    public Object generateAttributedString(Map tokensData) {
+        return substitute(tokensData, null);
+    }
+
+    /**
+     *
+     * @param tokensData
      * @param options
      * @return
      */
-    public Object substitute(Map tokensData, Map options) {
+    public AttributedString generateAttributedString(Map tokensData, Map options) {
         this.tokensData = tokensData;
         this.options = options;
-        this.attributes = new HashMap();
+        this.attributes = new HashMap<String, List>();
 
         String result = evaluate(this.expression, 0);
 
@@ -100,7 +121,7 @@ public class AttributedStringTokenizer extends DecorationTokenizer {
             if (styles == null)
                 continue;
 
-            List ranges = (List) this.attributes.get(tokenName);
+            List<Map> ranges = (List<Map>) this.attributes.get(tokenName);
             if (ranges == null)
                 continue;
 
@@ -171,8 +192,30 @@ public class AttributedStringTokenizer extends DecorationTokenizer {
 //    public static final java.lang.Float TRACKING_TIGHT;
 //    public static final java.lang.Float TRACKING_LOOSE;
 //
-    private void applyStyles(AttributedString attributedString, Map styles, List ranges) {
+    private void applyStyles(AttributedString attributedString, Map styles, List<Map> ranges) {
 //        attributedString.addAttribute(TextAttribute.FONT);
+
+        Iterator entries = styles.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry entry = (Map.Entry) entries.next();
+
+            String styleName = (String) entry.getKey();
+            Map styleAttributes = (Map) entry.getValue();
+
+            for (Map range : ranges) {
+                Integer origin = (Integer) range.get(ATTRIBUTE_RANGE_ORIGIN);
+                Integer length = (Integer) range.get(ATTRIBUTE_RANGE_LENGTH);
+
+                if (styleName.equals("attributes")) {
+                    attributedString.addAttributes(styleAttributes, origin, length);
+                } else if (styleName.equals("font")) {
+                    // TODO: finish implementation
+                }
+            }
+
+        }
+
+
     }
 
 

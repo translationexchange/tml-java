@@ -46,7 +46,7 @@ public abstract class Base {
      * Updates object's attributes
      * @param attributes
      */
-    public abstract void updateAttributes(Map attributes);
+    public abstract void updateAttributes(Map<String, Object> attributes);
 
     /**
      *

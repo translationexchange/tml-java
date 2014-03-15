@@ -24,26 +24,28 @@ package com.tr8n.core.tokenizers.tokens;
 
 import com.tr8n.core.Language;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
-public abstract class BaseToken {
+/**
+ * Base abstract class for all tokens supported by TML
+ */
+public abstract class Token {
+    public static final String OPTIONS_PARENS = "parens";
 
     /**
      * Label from which the key was created
      */
-    String originalLabel;
+    protected String originalLabel;
 
     /**
      * Full value of the token, used for replacement
      */
-    String fullName;
+    protected String fullName;
 
     /**
      * Just the name of the token
      */
-    String shortName;
+    protected String shortName;
 
     /**
      * Returns token's regular expression
@@ -57,7 +59,7 @@ public abstract class BaseToken {
      * Default constructor
      * @param token
      */
-    public BaseToken(String token) {
+    public Token(String token) {
         this(token, null);
     }
 
@@ -66,7 +68,7 @@ public abstract class BaseToken {
      * @param token
      * @param label
      */
-    public BaseToken(String token, String label) {
+    public Token(String token, String label) {
         this.fullName = token;
         this.originalLabel = label;
     }
@@ -122,10 +124,10 @@ public abstract class BaseToken {
      */
     public String getName(Map options) {
         StringBuilder sb = new StringBuilder();
-        if (options.get("parens").equals(true))
+        if (options.get(OPTIONS_PARENS).equals(true))
             sb.append("{");
         sb.append(getName());
-        if (options.get("parens").equals(true))
+        if (options.get(OPTIONS_PARENS).equals(true))
             sb.append("}");
         return sb.toString();
     }
