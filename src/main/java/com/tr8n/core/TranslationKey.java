@@ -118,12 +118,12 @@ public class TranslationKey extends Base {
 
         this.locale = (String) attributes.get("locale");
         if (this.locale == null)
-            this.locale = Tr8n.getConfig().defaultLocale;
+            this.locale = Tr8n.getConfig().getDefaultLocale();
 
         this.level = (Long) attributes.get("level");
 
-        this.translations = new HashMap<String, List<Translation>>();
-        if (attributes.get("translations") != null) {
+        if (attributes.get("translations") != null && this.application != null) {
+            this.translations = new HashMap<String, List<Translation>>();
             Iterator entries = ((Map) attributes.get("translations")).entrySet().iterator();
             while (entries.hasNext()) {
                 Map.Entry entry = (Map.Entry) entries.next();

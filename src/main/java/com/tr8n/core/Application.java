@@ -34,6 +34,11 @@ public class Application extends Base {
     public static final String TR8N_API_PATH = "tr8n/api/";
 
     /**
+     * Current Tr8n session
+     */
+    private Tr8n session;
+
+    /**
      * Application host - points to the Tr8nHub server
      */
     private String host;
@@ -149,6 +154,9 @@ public class Application extends Base {
      */
     private TimerTask scheduler;
 
+
+
+
     /**
      * API Client
      */
@@ -182,11 +190,12 @@ public class Application extends Base {
         return app;
     }
 
-    public Application(Map attributes) {
+    public Application(Map<String, Object> attributes) {
         super(attributes);
     }
 
-    public void updateAttributes(Map attributes) {
+    @Override
+    public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("host") != null)
             this.host = (String) attributes.get("host");
         if (attributes.get("key") != null)
@@ -210,22 +219,22 @@ public class Application extends Base {
         if (attributes.get("featured_locales") != null)
             this.featuredLocales = new ArrayList<String>((List) attributes.get("featured_locales"));
 
-        this.languages = new ArrayList<Language>();
         if (attributes.get("languages") != null) {
+            this.languages = new ArrayList<Language>();
             for (Object data : ((List) attributes.get("languages"))) {
                 this.languages.add(new Language((Map) data));
             }
         }
 
-        this.sources = new ArrayList<Source>();
         if (attributes.get("sources") != null) {
+            this.sources = new ArrayList<Source>();
             for (Object data : ((List) attributes.get("sources"))) {
                 this.sources.add(new Source((Map) data));
             }
         }
 
-        this.components = new ArrayList<Component>();
         if (attributes.get("components") != null) {
+            this.components = new ArrayList<Component>();
             for (Object data : ((List) attributes.get("components"))) {
                 this.components.add(new Component((Map) data));
             }
@@ -493,5 +502,65 @@ public class Application extends Base {
 
     public TranslationKey getTranslationKey(String key) {
         return getTranslationKeys().get(key);
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Map<String, Object> getTokens() {
+        return tokens;
+    }
+
+    public Long getThreshold() {
+        return threshold;
+    }
+
+    public String getCss() {
+        return css;
+    }
+
+    public Map<String, String> getShortcuts() {
+        return shortcuts;
+    }
+
+    public Map<String, Boolean> getFeatures() {
+        return features;
+    }
+
+    public List<Language> getLanguages() {
+        return languages;
+    }
+
+    public List<Source> getSources() {
+        return sources;
+    }
+
+    public List<Component> getComponents() {
+        return components;
+    }
+
+    public List<String> getFeaturedLocales() {
+        return featuredLocales;
+    }
+
+    public Tr8n getSession() {
+        return session;
+    }
+
+    public void setSession(Tr8n session) {
+        this.session = session;
     }
 }

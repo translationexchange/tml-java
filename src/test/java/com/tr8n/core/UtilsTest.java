@@ -74,7 +74,24 @@ public class UtilsTest extends BaseTest {
                 "http://google.com/search?q=test",
                 url.toString()
         );
+
+        url = Utils.buildURL("http://google.com", "/search");
+
+        Assert.assertEquals(
+                "http://google.com/search",
+                url.toString()
+        );
+
+        url = Utils.buildURL("http://google.com", "search");
+
+        Assert.assertEquals(
+                "http://google.com/search",
+                url.toString()
+        );
+
     }
+
+
 
 
     @Test
@@ -88,6 +105,46 @@ public class UtilsTest extends BaseTest {
         Assert.assertEquals(
                 "hello",
                 Utils.getNestedMapValue(root, "a.b.c")
+        );
+    }
+
+    @Test
+    public void testParseJson() {
+        Assert.assertEquals(
+                null,
+                Utils.parseJSON(null)
+        );
+
+        Assert.assertEquals(
+                null,
+                Utils.parseJSON("{'d'}")
+        );
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testBuildMapWithOneArgumentFails() {
+        Assert.assertEquals(
+                null,
+                Utils.buildMap("a")
+        );
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testBuildMapWithNullValueFails() {
+        Assert.assertEquals(
+                null,
+                Utils.buildMap("a", "b", null, "c")
+        );
+    }
+
+    @Test
+    public void testBuildMap() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("a", "b");
+
+        Assert.assertEquals(
+                map,
+                Utils.buildMap("a", "b")
         );
     }
 

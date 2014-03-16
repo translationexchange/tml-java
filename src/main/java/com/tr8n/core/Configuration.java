@@ -35,62 +35,62 @@ public class Configuration {
     /**
      * Enables/Disables Tr8n
      */
-    Boolean enabled = true;
+    private Boolean enabled = true;
 
     /**
      * Application default locale fallback, if disabled
      */
-    String defaultLocale = "en-US";
+    private String defaultLocale = "en-US";
 
     /**
      * Default translation key level
      */
-    Integer defaultLevel = 0;
+    private Integer defaultLevel = 0;
 
     /**
      * Default decoration format
      */
-    String format = "html";
+    private String format = "html";
 
     /**
      * If using in CLI, enable to submit realtime
      */
-    Boolean submitMissingKeysRealTime = false;
+    private Boolean submitMissingKeysRealTime = false;
 
     /**
      * Supported token classes
      */
-    List<String> tokenClasses;
+    private List<String> tokenClasses;
 
     /**
      * Application configuration
      */
-    Map<String, Object> application;
+    private Map<String, Object> application;
 
     /**
      * Context rules configuration and variable mapping
      */
-    Map<String, Object> contextRules;
+    private Map<String, Object> contextRules;
 
     /**
      * Logger configuration
      */
-    Map<String, Object> logger;
+    private Map<String, Object> logger;
 
     /**
      * Cache configuration
      */
-    Map<String, Object> cache;
+    private Map<String, Object> cache;
 
     /**
      * Default tokens - overloads application tokens
      */
-    Map<String, Object> defaultTokens;
+    private Map<String, Object> defaultTokens;
 
     /**
      * Localization configuration
      */
-    Map<String, Object> localization;
+    private Map<String, Object> localization;
 
     public Configuration() {
 //        this.application = Utils.buildMap(
@@ -391,5 +391,83 @@ public class Configuration {
         vars.put(varName, var);
     }
 
+    public Boolean getEnabled() {
+        return enabled;
+    }
 
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getDefaultLocale() {
+        return defaultLocale;
+    }
+
+    public void setDefaultLocale(String defaultLocale) {
+        this.defaultLocale = defaultLocale;
+    }
+
+    public void setDefaultLevel(Integer defaultLevel) {
+        this.defaultLevel = defaultLevel;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public Boolean getSubmitMissingKeysRealTime() {
+        return submitMissingKeysRealTime;
+    }
+
+    public void setSubmitMissingKeysRealTime(Boolean submitMissingKeysRealTime) {
+        this.submitMissingKeysRealTime = submitMissingKeysRealTime;
+    }
+
+    public void setTokenClasses(List<String> tokenClasses) {
+        this.tokenClasses = tokenClasses;
+    }
+
+    public void setApplication(Map<String, Object> application) {
+        this.application = application;
+    }
+
+    public Map<String, Object> getContextRules() {
+        return contextRules;
+    }
+
+    public void setContextRules(Map<String, Object> contextRules) {
+        this.contextRules = contextRules;
+    }
+
+    public Map<String, Object> getLogger() {
+        return logger;
+    }
+
+    public void setLogger(Map<String, Object> logger) {
+        this.logger = logger;
+    }
+
+    public Map<String, Object> getCache() {
+        return cache;
+    }
+
+    public void setCache(Map<String, Object> cache) {
+        this.cache = cache;
+    }
+
+    public Map<String, Object> getDefaultTokens() {
+        return defaultTokens;
+    }
+
+    public void setDefaultTokens(Map<String, Object> defaultTokens) {
+        this.defaultTokens = defaultTokens;
+    }
+
+    public Map<String, Object> getLocalization() {
+        return localization;
+    }
+
+    public void setLocalization(Map<String, Object> localization) {
+        this.localization = localization;
+    }
 }

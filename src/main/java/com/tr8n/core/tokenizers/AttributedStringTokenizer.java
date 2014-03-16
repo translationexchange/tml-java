@@ -95,7 +95,7 @@ public class AttributedStringTokenizer extends DecorationTokenizer {
      * @return
      */
     public Object generateAttributedString(Map tokensData) {
-        return substitute(tokensData, null);
+        return generateAttributedString(tokensData, null);
     }
 
     /**

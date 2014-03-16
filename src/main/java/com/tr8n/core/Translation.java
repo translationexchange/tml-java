@@ -41,11 +41,6 @@ public class Translation extends Base {
     private Language language;
 
     /**
-     * Locale of the language it belongs to
-     */
-    private String locale;
-
-    /**
      * Translation label
      */
     private String label;
@@ -56,6 +51,12 @@ public class Translation extends Base {
      */
     private Map context;
 
+
+    /**
+     * Default constructor
+     */
+    public Translation() {
+    }
 
     /**
      *
@@ -76,14 +77,44 @@ public class Translation extends Base {
         if (attributes.get("translation_key") != null)
             this.translationKey = (TranslationKey) attributes.get("translation_key");
 
-        this.locale = (String) attributes.get("locale");
-
-        if (this.language == null && this.locale != null) {
-            this.language = this.translationKey.getApplication().getLanguage(this.locale);
+        if (this.language == null && attributes.get("locale") != null && this.translationKey != null) {
+            this.language = this.translationKey.getApplication().getLanguage((String) attributes.get("locale"));
         }
 
         this.label = (String) attributes.get("label");
         this.context = (Map) attributes.get("context");
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
+    public TranslationKey getTranslationKey() {
+        return translationKey;
+    }
+
+    public void setTranslationKey(TranslationKey translationKey) {
+        this.translationKey = translationKey;
+    }
+
+    public Map getContext() {
+        return context;
+    }
+
+    public void setContext(Map context) {
+        this.context = context;
     }
 
     /**
@@ -91,7 +122,7 @@ public class Translation extends Base {
      * @return
      */
     public boolean hasContext() {
-        return this.context != null && this.context.size() > 0;
+        return getContext() != null && getContext().size() > 0;
     }
 
     /**
@@ -119,8 +150,9 @@ public class Translation extends Base {
 
             Iterator ruleEntries = rules.entrySet().iterator();
             while (ruleEntries.hasNext()) {
-                String contextKeyword = (String) entry.getKey();
-                String ruleKeyword = (String) entry.getValue();
+                Map.Entry ruleEntry = (Map.Entry) ruleEntries.next();
+                String contextKeyword = (String) ruleEntry.getKey();
+                String ruleKeyword = (String) ruleEntry.getValue();
 
                 if (ruleKeyword.equals(LanguageContextRule.TR8N_DEFAULT_RULE_KEYWORD))
                     continue;
@@ -138,15 +170,5 @@ public class Translation extends Base {
         return true;
     }
 
-    public String getLabel() {
-        return label;
-    }
 
-    public Language getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(Language language) {
-        this.language = language;
-    }
 }

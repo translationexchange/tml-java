@@ -29,7 +29,7 @@ import org.apache.log4j.LogManager;
 import java.io.IOException;
 
 public class Logger {
-    org.apache.log4j.Logger theLogger;
+    private org.apache.log4j.Logger theLogger;
 
     public Logger() {
         this.theLogger = LogManager.getRootLogger();

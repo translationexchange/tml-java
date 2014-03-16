@@ -75,6 +75,14 @@ public class LanguageContext extends Base {
      */
     private LanguageContextRule fallbackRule;
 
+
+    /**
+     * Default constructor
+     */
+    public LanguageContext() {
+        super();
+    }
+
     /**
      *
      * @param attributes
@@ -89,28 +97,27 @@ public class LanguageContext extends Base {
      */
     public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("language") != null)
-            this.language = (Language) attributes.get("language");
+            setLanguage((Language) attributes.get("language"));
 
-        this.keyword = (String) attributes.get("keyword");
-        this.description = (String) attributes.get("description");
-        this.tokenExpression = (String) attributes.get("token_expression");
-        this.tokenMapping = attributes.get("token_mapping");
+        setKeyword((String) attributes.get("keyword"));
+        setDescription((String) attributes.get("description"));
+        setTokenExpression((String) attributes.get("token_expression"));
+        setTokenMapping(attributes.get("token_mapping"));
 
         if (attributes.get("keys") != null)
-            this.keys = new ArrayList<String>((List) attributes.get("keys"));
+            setKeys(new ArrayList<String>((List) attributes.get("keys")));
 
         if (attributes.get("variables") != null)
-            this.variableNames = new ArrayList<String> ((List) attributes.get("variables"));
+            setVariableNames(new ArrayList<String> ((List) attributes.get("variables")));
 
-        this.rules = new HashMap<String, LanguageContextRule>();
         if (attributes.get("rules") != null) {
             Iterator entries = ((Map<String, Object>) attributes.get("rules")).entrySet().iterator();
             while (entries.hasNext()) {
                 Map.Entry entry = (Map.Entry) entries.next();
                 LanguageContextRule rule = new LanguageContextRule((Map) entry.getValue());
                 rule.setLanguageContext(this);
-                if (rule.isFallback()) this.fallbackRule = rule;
-                this.rules.put((String) entry.getKey(), rule);
+                if (rule.isFallback()) setFallbackRule(rule);
+                addRule(rule);
             }
         }
     }
@@ -121,7 +128,9 @@ public class LanguageContext extends Base {
      * @return
      */
     public boolean isApplicableToTokenName(String tokenName) {
-        Pattern p = Utils.parsePattern(this.tokenExpression);
+        if (getTokenExpression() == null)
+            return false;
+        Pattern p = Utils.parsePattern(getTokenExpression());
         Matcher m = p.matcher(tokenName);
         return m.find();
     }
@@ -131,10 +140,10 @@ public class LanguageContext extends Base {
      * @param object
      * @return
      */
-    public Map vars(Object object) {
-        Map vars = new HashMap();
-        for (String varName : this.variableNames) {
-            Variable var = Tr8n.getConfig().getContextVariable(this.keyword, varName);
+    public Map<String, Object> vars(Object object) {
+        Map<String, Object> vars = new HashMap<String, Object>();
+        for (String varName : getVariableNames()) {
+            Variable var = Tr8n.getConfig().getContextVariable(getKeyword(), varName);
             vars.put(varName, var.getValue(this, object));
         }
         return vars;
@@ -148,13 +157,8 @@ public class LanguageContext extends Base {
     public LanguageContextRule findMatchingRule(Object object) {
         Map tokenVars = this.vars(object);
 
-        Iterator entries = this.rules.entrySet().iterator();
-        while (entries.hasNext()) {
-            Map.Entry thisEntry = (Map.Entry) entries.next();
-            LanguageContextRule rule = (LanguageContextRule) thisEntry.getValue();
-
+        for (LanguageContextRule rule : getRules().values()) {
             if (rule.isFallback()) continue;
-
             if (rule.evaluate(tokenVars))
                 return rule;
         }
@@ -197,5 +201,73 @@ public class LanguageContext extends Base {
 
     public void setLanguage(Language language) {
         this.language = language;
+    }
+
+    public void addRule(LanguageContextRule rule) {
+        if (rules == null)
+            rules = new HashMap<String, LanguageContextRule>();
+        rules.put(rule.getKeyword(), rule);
+    }
+
+    public LanguageContextRule getRule(String key) {
+        if (rules == null)
+            return null;
+        return rules.get(key);
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<String> getKeys() {
+        return keys;
+    }
+
+    public void setKeys(List<String> keys) {
+        this.keys = keys;
+    }
+
+    public String getTokenExpression() {
+        return tokenExpression;
+    }
+
+    public void setTokenExpression(String tokenExpression) {
+        this.tokenExpression = tokenExpression;
+    }
+
+    public List<String> getVariableNames() {
+        return variableNames;
+    }
+
+    public void setVariableNames(List<String> variableNames) {
+        this.variableNames = variableNames;
+    }
+
+    public void setTokenMapping(Object tokenMapping) {
+        this.tokenMapping = tokenMapping;
+    }
+
+    public Map<String, LanguageContextRule> getRules() {
+        return rules;
+    }
+
+    public void setRules(Map<String, LanguageContextRule> rules) {
+        this.rules = rules;
+    }
+
+    public void setFallbackRule(LanguageContextRule fallbackRule) {
+        this.fallbackRule = fallbackRule;
     }
 }

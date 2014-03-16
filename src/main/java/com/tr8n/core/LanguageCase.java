@@ -67,6 +67,13 @@ public class LanguageCase extends Base {
 
 
     /**
+     * Default constructor
+     */
+    public LanguageCase() {
+        super();
+    }
+
+    /**
      * Constructor with attributes
      * @param attributes
      */
@@ -79,22 +86,20 @@ public class LanguageCase extends Base {
      * @param attributes
      */
     public void updateAttributes(Map<String, Object> attributes) {
-        if (attributes.get("language") != null) {
-            this.language = (Language) attributes.get("language");
-        }
+        if (attributes.get("language") != null)
+            setLanguage((Language) attributes.get("language"));
 
-        this.keyword = (String) attributes.get("language");
-        this.latinName = (String) attributes.get("latin_name");
-        this.nativeName = (String) attributes.get("native_name");
-        this.description = (String) attributes.get("description");
-        this.type = (String) attributes.get("application");
+        setKeyword((String) attributes.get("language"));
+        setLatinName((String) attributes.get("latin_name"));
+        setNativeName((String) attributes.get("native_name"));
+        setDescription((String) attributes.get("description"));
+        setType((String) attributes.get("application"));
 
-        this.rules = new ArrayList<LanguageCaseRule>();
         if (attributes.get("rules") != null) {
             for (Object data : ((List) attributes.get("rules"))) {
                 LanguageCaseRule rule = new LanguageCaseRule((Map) data);
                 rule.setLanguageCase(this);
-                this.rules.add(rule);
+                addRule(rule);
             }
         }
     }
@@ -138,6 +143,7 @@ public class LanguageCase extends Base {
     }
 
 
+
     public String toString() {
         return  this.keyword + "(" + this.language.getLocale() + ")";
     }
@@ -148,5 +154,65 @@ public class LanguageCase extends Base {
 
     public void setLanguage(Language language) {
         this.language = language;
+    }
+
+    public void addRule(LanguageCaseRule rule) {
+        if (rules == null)
+            rules = new ArrayList<LanguageCaseRule>();
+        rules.add(rule);
+    }
+
+    public LanguageCaseRule getRule(Integer index) {
+        if (rules == null)
+            return null;
+        return rules.get(index);
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public String getLatinName() {
+        return latinName;
+    }
+
+    public void setLatinName(String latinName) {
+        this.latinName = latinName;
+    }
+
+    public String getNativeName() {
+        return nativeName;
+    }
+
+    public void setNativeName(String nativeName) {
+        this.nativeName = nativeName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<LanguageCaseRule> getRules() {
+        return rules;
+    }
+
+    public void setRules(List<LanguageCaseRule> rules) {
+        this.rules = rules;
     }
 }

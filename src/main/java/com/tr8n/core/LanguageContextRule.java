@@ -64,6 +64,12 @@ public class LanguageContextRule extends Base {
      */
     private List conditionsExpression;
 
+    /**
+     * Default constructor
+     */
+    public LanguageContextRule() {
+        super();
+    }
 
     /**
      * Default constructor
@@ -78,14 +84,13 @@ public class LanguageContextRule extends Base {
      * @param attributes
      */
     public void updateAttributes(Map<String, Object> attributes) {
-        if (attributes.get("language_context") != null) {
-            this.languageContext = (LanguageContext) attributes.get("language_context");
-        }
+        if (attributes.get("language_context") != null)
+            setLanguageContext((LanguageContext) attributes.get("language_context"));
 
-        this.keyword = (String) attributes.get("keyword");
-        this.description = (String) attributes.get("description");
-        this.examples = (String) attributes.get("examples");
-        this.conditions = (String) attributes.get("conditions");
+        setKeyword((String) attributes.get("keyword"));
+        setDescription((String) attributes.get("description"));
+        setExamples((String) attributes.get("examples"));
+        setConditions((String) attributes.get("conditions"));
 
         if (attributes.get("operations_expression") instanceof List) {
             this.conditionsExpression = (List) attributes.get("conditions_expression");
@@ -97,7 +102,7 @@ public class LanguageContextRule extends Base {
      * @return boolean
      */
     public boolean isFallback() {
-        return this.keyword.equals(TR8N_DEFAULT_RULE_KEYWORD);
+        return getKeyword().equals(TR8N_DEFAULT_RULE_KEYWORD);
     }
 
     /**
@@ -157,5 +162,21 @@ public class LanguageContextRule extends Base {
 
     public String getConditions() {
         return conditions;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setExamples(String examples) {
+        this.examples = examples;
+    }
+
+    public void setConditions(String conditions) {
+        this.conditions = conditions;
     }
 }

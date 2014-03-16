@@ -25,7 +25,6 @@ package com.tr8n.core;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -34,32 +33,39 @@ public class Source extends Base {
     /**
      * Reference back to the application it belongs to
      */
-    Application application;
+    private Application application;
 
     /**
      * Locale of the language it currently holds
      */
-    String locale;
+    private String locale;
 
     /**
      * Source key
      */
-    String key;
+    private String key;
 
     /**
      * Source name given by the admin or developer
      */
-    String name;
+    private String name;
 
     /**
      * Source description
      */
-    String description;
+    private String description;
 
     /**
      * Translation keys registered with the source
      */
-    Map<String, TranslationKey> translationKeys;
+    private Map<String, TranslationKey> translationKeys;
+
+    /**
+     * Default constructor
+     */
+    public Source() {
+        super();
+    }
 
     /**
      *
@@ -75,30 +81,31 @@ public class Source extends Base {
      */
     public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("application") != null)
-            this.application = (Application) attributes.get("application");
+            setApplication((Application) attributes.get("application"));
 
-        this.key = (String) attributes.get("key");
-        this.locale = (String) attributes.get("locale");
-        this.name = (String) attributes.get("name");
-        this.description = (String) attributes.get("description");
+        setKey((String) attributes.get("key"));
+        setLocale((String) attributes.get("locale"));
+        setName((String) attributes.get("name"));
+        setDescription((String) attributes.get("description"));
 
-
-        this.translationKeys = new HashMap<String, TranslationKey>();
-        if (attributes.get("translation_keys") != null) {
+        if (attributes.get("translation_keys") != null && getApplication() != null) {
             for (Object data : ((List) attributes.get("translation_keys"))) {
                 Map attrs = new HashMap((Map) data);
-                attrs.put("application", this.application);
+                attrs.put("application", getApplication());
 
                 TranslationKey translationKey = new TranslationKey(attrs);
-                translationKey = this.application.cacheTranslationKey(translationKey);
-                this.translationKeys.put(translationKey.getKey(), translationKey);
+                translationKey = getApplication().cacheTranslationKey(translationKey);
+                addTranslationKey(translationKey);
             }
         }
     }
 
+    /**
+     * Loading source from service
+     */
     public void load() {
         try {
-            Map data = (Map) this.application.get("source", Utils.buildMap("source", this.key, "locale", this.locale, "translations", "true"));
+            Map data = (Map) getApplication().get("source", Utils.buildMap("source", getKey(), "locale", getLocale(), "translations", "true"));
             this.updateAttributes(data);
         } catch (Exception ex) {
             Tr8n.getLogger().error("Failed to load source");
@@ -107,13 +114,57 @@ public class Source extends Base {
         }
     }
 
-    public TranslationKey getTranslationKey(String hashKey) {
-        if (this.translationKeys == null)
+    public void addTranslationKey(TranslationKey translationKey) {
+        if (translationKeys == null) {
+            translationKeys = new HashMap<String, TranslationKey>();
+        }
+        translationKeys.put(translationKey.getKey(), translationKey);
+    }
+
+    public TranslationKey getTranslationKey(String key) {
+        if (translationKeys == null)
             return null;
-        return this.translationKeys.get(hashKey);
+
+        return translationKeys.get(key);
     }
 
     public String getKey() {
         return key;
+    }
+
+    public Application getApplication() {
+        return application;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setApplication(Application application) {
+        this.application = application;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

@@ -65,6 +65,13 @@ public class LanguageCaseRule extends Base {
     private List operationsExpression;
 
     /**
+     * Default constructor
+     */
+    public LanguageCaseRule() {
+        super();
+    }
+
+    /**
      *
      * @param attributes
      */
@@ -78,22 +85,21 @@ public class LanguageCaseRule extends Base {
      */
     public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("language_case") != null)
-            this.languageCase = (LanguageCase) attributes.get("language_case");
+            setLanguageCase((LanguageCase) attributes.get("language_case"));
 
-        this.description = (String) attributes.get("description");
-        this.examples = (String) attributes.get("examples");
+        setDescription((String) attributes.get("description"));
+        setExamples((String) attributes.get("examples"));
+        setConditions((String) attributes.get("conditions"));
 
-        this.conditions = (String) attributes.get("conditions");
         if (attributes.get("conditions_expression") instanceof List) {
             this.conditionsExpression = (List) attributes.get("conditions_expression");
         }
 
-        this.operations = (String) attributes.get("operations");
+        setOperations((String) attributes.get("operations"));
         if (attributes.get("operations_expression") instanceof List) {
             this.operationsExpression = (List) attributes.get("operations_expression");
         }
     }
-
 
     public List getOperationsExpression() {
         if (this.operationsExpression == null) {
@@ -155,5 +161,37 @@ public class LanguageCaseRule extends Base {
 
     public void setLanguageCase(LanguageCase languageCase) {
         this.languageCase = languageCase;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getExamples() {
+        return examples;
+    }
+
+    public void setExamples(String examples) {
+        this.examples = examples;
+    }
+
+    public String getConditions() {
+        return conditions;
+    }
+
+    public void setConditions(String conditions) {
+        this.conditions = conditions;
+    }
+
+    public String getOperations() {
+        return operations;
+    }
+
+    public void setOperations(String operations) {
+        this.operations = operations;
     }
 }
