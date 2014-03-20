@@ -67,7 +67,7 @@ public class TranslationKey extends Base {
     /**
      * Hash of translations for each locale needed by the application
      */
-    private Map<String, List<Translation>> translations;
+    private Map<String, List<Translation>> translationsByLocale;
 
     /**
      * Holds all data tokens found in the translation key
@@ -90,7 +90,7 @@ public class TranslationKey extends Base {
      */
     private List<String> allowedDecorationTokenNames;
 
-
+    /****************************************************************************************************/
     /**
      *
      * @param attributes
@@ -105,47 +105,44 @@ public class TranslationKey extends Base {
      */
     public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("application") != null)
-            this.application = (Application) attributes.get("application");
+            setApplication((Application) attributes.get("application"));
 
-        this.label = (String) attributes.get("label");
-        this.description = (String) attributes.get("description");
+        setLabel((String) attributes.get("label"));
+        setDescription((String) attributes.get("description"));
 
         if (attributes.get("key") != null) {
-            this.key = (String) attributes.get("key");
+            setKey((String) attributes.get("key"));
         } else {
-            this.key = generateKey(label, description);
+            setKey(generateKey(getLabel(), getDescription()));
         }
 
-        this.locale = (String) attributes.get("locale");
-        if (this.locale == null)
-            this.locale = Tr8n.getConfig().getDefaultLocale();
+        setLocale((String) attributes.get("locale"));
+        if (getLocale() == null)
+            setLocale(Tr8n.getConfig().getDefaultLocale());
 
-        this.level = (Long) attributes.get("level");
+        setLevel((Long) attributes.get("level"));
 
         if (attributes.get("translations") != null && this.application != null) {
-            this.translations = new HashMap<String, List<Translation>>();
             Iterator entries = ((Map) attributes.get("translations")).entrySet().iterator();
             while (entries.hasNext()) {
                 Map.Entry entry = (Map.Entry) entries.next();
                 List localeData = (List) entry.getValue();
                 String locale = (String) entry.getKey();
-                Language language = this.application.getLanguage(locale);
+                Language language = getApplication().getLanguage(locale);
 
-                if (this.translations.get(locale) == null) {
-                    this.translations.put(locale, new ArrayList<Translation>());
-                }
-
+                List<Translation> translations = new ArrayList<Translation>();
                 for (Object translationData : localeData) {
                     Map attrs = new HashMap((Map) translationData);
                     attrs.put("language", language);
                     attrs.put("translation_key", this);
-
                     Translation translation = new Translation(attrs);
-                    this.translations.get(locale).add(translation);
+                    translations.add(translation);
                 }
+                setTranslations(locale, translations);
             }
         }
     }
+
 
     /**
      * Generates unique hash key for the translation key using label
@@ -180,35 +177,11 @@ public class TranslationKey extends Base {
     }
 
     /**
-     * Sets translations for language
-     * @param newTranslation
-     * @param language
-     */
-    public void updateTranslations(List<Translation> newTranslation, Language language) {
-
-    }
-
-    /**
      * Returns YES if there are translations available for the key
      * @return
      */
     public boolean hasTranslations() {
-        return this.translations.size() > 0;
-    }
-
-    /**
-     *
-     * @param language
-     * @return
-     */
-    private List<Translation> getTranslations(Language language) {
-        if (translations == null)
-            return null;
-
-        if (translations.get(language.getLocale()) == null)
-            return null;
-
-        return translations.get(language.getLocale());
+        return getTranslationLocales().size() > 0;
     }
 
     /**
@@ -218,7 +191,7 @@ public class TranslationKey extends Base {
      * @return
      */
     private Translation findFirstAcceptableTranslation(Language language, Map tokens) {
-        List<Translation> availableTranslations = getTranslations(language);
+        List<Translation> availableTranslations = getTranslations(language.getLocale());
         if (availableTranslations == null || availableTranslations.size() == 0)
             return null;
 
@@ -331,6 +304,8 @@ public class TranslationKey extends Base {
     }
 
 
+    /****************************************************************************************************/
+
     public String getLabel() {
         return label;
     }
@@ -357,6 +332,94 @@ public class TranslationKey extends Base {
 
     public void setApplication(Application application) {
         this.application = application;
+    }
+
+    public Map<String, List<Translation>> getTranslationsByLocale() {
+        if (translationsByLocale == null)
+            translationsByLocale = new HashMap<String, List<Translation>>();
+
+        return translationsByLocale;
+    }
+
+    /**
+     * Sets translations for a specific locale. Translation key can have translations for multiple locales.
+     * @param locale
+     * @param translations
+     */
+    public void setTranslations(String locale, List<Translation> translations) {
+        for (Translation translation : translations) {
+            translation.setTranslationKey(this);
+        }
+
+        getTranslationsByLocale().put(locale, translations);
+    }
+
+    public List<Translation> getTranslations(String locale) {
+        return getTranslationsByLocale().get(locale);
+    }
+
+    public List<String> getTranslationLocales() {
+        return new ArrayList<String>(getTranslationsByLocale().keySet());
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
+    public void setLevel(Long level) {
+        this.level = level;
+    }
+
+    public List getDataTokens() {
+        return dataTokens;
+    }
+
+    public void setDataTokens(List dataTokens) {
+        this.dataTokens = dataTokens;
+    }
+
+    public List getDecorationTokens() {
+        return decorationTokens;
+    }
+
+    public void setDecorationTokens(List decorationTokens) {
+        this.decorationTokens = decorationTokens;
+    }
+
+    public void setAllowedDataTokenNames(List<String> allowedDataTokenNames) {
+        this.allowedDataTokenNames = allowedDataTokenNames;
+    }
+
+    public void setAllowedDecorationTokenNames(List<String> allowedDecorationTokenNames) {
+        this.allowedDecorationTokenNames = allowedDecorationTokenNames;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public Map toMap() {
+        Map data = new HashMap();
+        data.put("label", label);
+        if (description != null)
+            data.put("description", description);
+        if (locale != null)
+            data.put("locale", locale);
+        if (level != null)
+            data.put("level", level);
+        return data;
+    }
+
+    public String toString() {
+        return label + " (" + locale + ")";
     }
 }
 

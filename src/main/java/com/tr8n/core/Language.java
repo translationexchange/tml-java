@@ -122,8 +122,10 @@ public class Language extends Base {
 
     public void load() {
         try {
-            Map data = (Map) application.get("language", Utils.buildMap("locale", this.locale, "definition", "true"));
-            this.updateAttributes(data);
+            this.updateAttributes(getApplication().getHttpClient().getJSONMap("language", Utils.buildMap(
+                    "locale", this.locale,
+                    "definition", "true"
+            )));
         } catch (Exception ex) {
             Tr8n.getLogger().error("Failed to load language");
             Tr8n.getLogger().error(ex);
@@ -220,8 +222,11 @@ public class Language extends Base {
      * @return
      */
     private Object getOptionsValue(String key, Map options, Object defaultValue) {
-        Object value = options.get(key);
-        if (value!=null) return value;
+        Object value = null;
+        if (options != null) {
+            value = options.get(key);
+            if (value!=null) return value;
+        }
 
         value = getApplication().getSession().getBlockOption(key);
         if (value!=null) return value;
@@ -261,7 +266,7 @@ public class Language extends Base {
             String sourceKey = (String) getOptionsValue("source", options, getApplication().getSession().getCurrentSource());
 
             if (sourceKey == null)
-                sourceKey = "undefined source";
+                sourceKey = "undefined";
 
             Source source = getApplication().getSource(sourceKey, this.getLocale());
             if (source != null) {
@@ -327,7 +332,7 @@ public class Language extends Base {
     }
 
     public String toString() {
-        return  this.englishName + "(" + this.locale + ")";
+        return  this.englishName;
     }
 
     public String getEnglishName() {

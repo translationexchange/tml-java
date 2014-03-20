@@ -119,7 +119,26 @@ public class UtilsTest extends BaseTest {
                 null,
                 Utils.parseJSON("{'d'}")
         );
+
+        Assert.assertEquals(
+                Utils.buildMap("name", "Michael"),
+                Utils.parseJSON("{\"name\": \"Michael\"}")
+        );
     }
+
+    @Test
+    public void testBuildJson() {
+        Assert.assertEquals(
+                null,
+                Utils.buildJSON(null)
+        );
+
+        Assert.assertEquals(
+                "{\"name\":\"Michael\"}",
+                Utils.buildJSON(Utils.buildMap("name", "Michael"))
+        );
+    }
+
 
     @Test(expected=IllegalArgumentException.class)
     public void testBuildMapWithOneArgumentFails() {

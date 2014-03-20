@@ -3,9 +3,6 @@ package com.tr8n.core;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * Created by michael on 3/10/14.
- */
 public class ApplicationTest extends BaseTest {
 
     @Test
@@ -18,7 +15,7 @@ public class ApplicationTest extends BaseTest {
         );
 
         Assert.assertEquals(
-                null,
+                "https://tr8nhub.com",
                 app.getHost()
         );
 
@@ -77,17 +74,7 @@ public class ApplicationTest extends BaseTest {
 
         Assert.assertEquals(
                 null,
-                app.getSources()
-        );
-
-        Assert.assertEquals(
-                null,
-                app.getComponents()
-        );
-
-        Assert.assertEquals(
-                null,
-                app.getFeaturedLocales()
+                app.getFeaturedLanguages()
         );
 
         Assert.assertEquals(

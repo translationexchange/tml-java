@@ -22,6 +22,9 @@
 
 package com.tr8n.core;
 
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Map;
 
 public abstract class Base {
@@ -59,7 +62,7 @@ public abstract class Base {
      *
      * @return
      */
-    public Map toHash() {
+    public Map toMap() {
         // Optionally can be overloaded by the extending class
         return null;
     }
@@ -71,5 +74,8 @@ public abstract class Base {
     public String toJSON() {
         return "";
     }
+
+
+
 
 }

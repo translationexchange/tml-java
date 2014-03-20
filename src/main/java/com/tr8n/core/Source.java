@@ -105,7 +105,11 @@ public class Source extends Base {
      */
     public void load() {
         try {
-            Map data = (Map) getApplication().get("source", Utils.buildMap("source", getKey(), "locale", getLocale(), "translations", "true"));
+            Map data = getApplication().getHttpClient().getJSONMap("source", Utils.buildMap(
+                    "source", getKey(),
+                    "locale", getLocale(),
+                    "translations", "true")
+            );
             this.updateAttributes(data);
         } catch (Exception ex) {
             Tr8n.getLogger().error("Failed to load source");

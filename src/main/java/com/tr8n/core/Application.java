@@ -21,17 +21,10 @@
  */
 
 package com.tr8n.core;
-
-import com.squareup.okhttp.OkHttpClient;
-
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.*;
 
 public class Application extends Base {
     public static final String TR8N_HOST = "https://tr8nhub.com";
-    public static final String TR8N_API_PATH = "tr8n/api/";
 
     /**
      * Current Tr8n session
@@ -105,24 +98,16 @@ public class Application extends Base {
     private Map<String, Boolean> features;
 
     /**
-     * List of languages enabled for the application
+     * List of languages enabled for the application. The languages are used for the language selector.
+     * The do not contain all of the language details. When you get an individual language from an
+     * application, the language will be reloaded from the server to get all rules and definitions.
      */
     private List<Language> languages;
 
     /**
-     * List of application sources
-     */
-    private List<Source> sources;
-
-    /**
-     * List of application components
-     */
-    private List<Component> components;
-
-    /**
      * List of featured locales
      */
-    private List<String> featuredLocales;
+    private List<Language> featuredLanguages;
 
     /**
      * Languages by locale
@@ -150,45 +135,9 @@ public class Application extends Base {
     private Map<String, Map<String, TranslationKey>> missingTranslationKeysBySources;
 
     /**
-     * Periodically send missing keys to the server
-     */
-    private TimerTask scheduler;
-
-
-
-
-    /**
      * API Client
      */
-    private OkHttpClient client;
-
-    public static Application init(String key, String secret) {
-        return init(key, secret, null);
-    }
-
-    public static Application init(String key, String secret, String host) {
-        if (host == null) host = TR8N_HOST;
-
-        Tr8n.getCache().resetVersion();
-
-        Tr8n.getLogger().debug("Initializing application...");
-
-        Application app = new Application(Utils.buildMap(
-            "host", host,
-            "key", key,
-            "secret", secret
-        ));
-        app.load();
-
-//        app.scheduler = new TimerTask() {
-//            @Override
-//            public void run() {
-////                app.sub
-//            }
-//        };
-
-        return app;
-    }
+    private HttpClient httpClient;
 
     public Application(Map<String, Object> attributes) {
         super(attributes);
@@ -197,52 +146,51 @@ public class Application extends Base {
     @Override
     public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("host") != null)
-            this.host = (String) attributes.get("host");
+            setHost((String) attributes.get("host"));
         if (attributes.get("key") != null)
-            this.key = (String) attributes.get("key");
+            setKey((String) attributes.get("key"));
         if (attributes.get("secret") != null)
-            this.secret = (String) attributes.get("secret");
+            setSecret((String) attributes.get("secret"));
 
-        this.name = (String) attributes.get("name");
-        this.description = (String) attributes.get("description");
-        this.threshold = (Long) attributes.get("threshold");
-        this.defaultLocale = (String) attributes.get("default_locale");
-        this.translatorLevel = (Long) attributes.get("translator_level");
-        this.css = (String) attributes.get("css");
+        setName((String) attributes.get("name"));
+        setDescription((String) attributes.get("description"));
+        setThreshold((Long) attributes.get("threshold"));
+        setDefaultLocale((String) attributes.get("default_locale"));
+        setTranslatorLevel((Long) attributes.get("translator_level"));
+        setCss((String) attributes.get("css"));
 
         if (attributes.get("tokens") != null)
-            this.tokens = new HashMap<String, Object>((Map) attributes.get("tokens"));
+            setTokens(new HashMap<String, Object>((Map) attributes.get("tokens")));
+
         if (attributes.get("shortcuts") != null)
-            this.shortcuts = new HashMap<String, String>((Map) attributes.get("shortcuts"));
+            setShortcuts(new HashMap<String, String>((Map) attributes.get("shortcuts")));
+
         if (attributes.get("features") != null)
-            this.features = new HashMap<String, Boolean>((Map) attributes.get("features"));
-        if (attributes.get("featured_locales") != null)
-            this.featuredLocales = new ArrayList<String>((List) attributes.get("featured_locales"));
+            setFeatures(new HashMap<String, Boolean>((Map) attributes.get("features")));
 
         if (attributes.get("languages") != null) {
-            this.languages = new ArrayList<Language>();
             for (Object data : ((List) attributes.get("languages"))) {
-                this.languages.add(new Language((Map) data));
+                addLanguage(new Language((Map) data));
+            }
+        }
+
+        if (attributes.get("featured_locales") != null) {
+            for (Object data : ((List) attributes.get("featured_locales"))) {
+                addFeaturedLanguage((String) data);
             }
         }
 
         if (attributes.get("sources") != null) {
-            this.sources = new ArrayList<Source>();
             for (Object data : ((List) attributes.get("sources"))) {
-                this.sources.add(new Source((Map) data));
+                addSource(new Source((Map) data));
             }
         }
 
         if (attributes.get("components") != null) {
-            this.components = new ArrayList<Component>();
             for (Object data : ((List) attributes.get("components"))) {
-                this.components.add(new Component((Map) data));
+                addComponent(new Component((Map) data));
             }
         }
-
-        this.sourcesByKeys =  new HashMap<String, Source>();
-        this.componentsByKeys =  new HashMap<String, Component>();
-        this.languagesByLocales = new HashMap<String, Language>();
     }
 
     /**
@@ -250,8 +198,10 @@ public class Application extends Base {
      */
     public void load() {
         try {
-            Map attributes = (Map) get("application", Utils.buildMap("client_id", key, "definition", "true"));
-            this.updateAttributes(attributes);
+            this.updateAttributes(getHttpClient().getJSONMap("application", Utils.buildMap(
+                    "client_id", key,
+                    "definition", "true")
+            ));
         } catch (Exception ex) {
             Tr8n.getLogger().logException("Failed to load application", ex);
         }
@@ -268,12 +218,32 @@ public class Application extends Base {
         return this.secret != null;
     }
 
-    public void resetTranslationsCacheForLocale(String locale) {
-
+    /**
+     * Resets cached translation keys for the application scope
+     */
+    public void resetTranslations() {
+        this.translationKeys = new HashMap<String, TranslationKey>();
+        this.sourcesByKeys = new HashMap<String, Source>();
     }
 
-    public void resetTranslations() {
-
+    /**
+     * Loads translations from the service for a given language and caches them in the application
+     * @param language
+     */
+    public void loadTranslations(Language language) {
+        try {
+            Map<String, Object> results = getHttpClient().getJSONMap("application/translations", Utils.buildMap("locale", language.getLocale()));
+            Map keys = (Map) results.get("translation_keys");
+            Iterator entries = keys.entrySet().iterator();
+            while (entries.hasNext()) {
+                Map.Entry entry = (Map.Entry) entries.next();
+                Map attributes = new HashMap((Map)entry.getValue());
+                attributes.put("application", this);
+                cacheTranslationKey(new TranslationKey(attributes));
+            }
+        } catch (Exception ex) {
+            Tr8n.getLogger().logException(ex);
+        }
     }
 
     /**
@@ -313,13 +283,34 @@ public class Application extends Base {
         if (!isKeyRegistrationEnabled() || getMissingTranslationKeysBySources().size() == 0)
             return;
 
-        Map params = new HashMap();
+        Tr8n.getLogger().debug("Submitting missing translation keys...");
 
+        List params = new ArrayList();
 
-        // TODO: finish implementation
+        Iterator entries = missingTranslationKeysBySources.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry entry = (Map.Entry) entries.next();
+            String source = (String) entry.getKey();
+            Map translationKeys = (Map) entry.getValue();
+            List keys = new ArrayList();
 
+            for (Object object : translationKeys.values()) {
+                TranslationKey translationKey = (TranslationKey) object;
+                keys.add(translationKey.toMap());
+            }
+
+            params.add(Utils.buildMap("source", source, "keys", keys));
+        }
+
+        try {
+            getHttpClient().post("source/register_keys", Utils.buildMap("source_keys", Utils.buildJSON(params)));
+            this.missingTranslationKeysBySources.clear();
+
+            // TODO: should reload sources for locales?
+        } catch (Exception ex) {
+            Tr8n.getLogger().logException(ex);
+        }
     }
-
 
     /**
      *
@@ -335,15 +326,18 @@ public class Application extends Base {
      * @return
      */
     public Language getLanguage(String locale) {
-        if (this.languagesByLocales.get(locale) == null) {
-            Language language = new Language(Utils.buildMap("application", this, "locale", locale));
-            language.load();
-            this.languagesByLocales.put(locale, language);
+        if (languagesByLocales == null)
+            languagesByLocales = new HashMap<String, Language>();
+
+        if (languagesByLocales.get(locale) == null) {
+            languagesByLocales.put(locale, new Language(Utils.buildMap("application", this, "locale", locale)));
         }
 
-        return this.languagesByLocales.get(locale);
-    }
+        Language language = languagesByLocales.get(locale);
+        if (!language.hasDefinition()) language.load();
 
+        return language;
+    }
 
     /**
      *
@@ -361,125 +355,88 @@ public class Application extends Base {
      * @return
      */
     public Source getSource(String key, String locale) {
-        if (this.sourcesByKeys.get(key) == null) {
-            Source source = new Source(Utils.buildMap("application", this, "key", key, "locale", locale));
-            source.load();
-            this.sourcesByKeys.put(key, source);
+        if (sourcesByKeys == null) {
+            sourcesByKeys = new HashMap<String, Source>();
         }
 
-        return this.sourcesByKeys.get(key);
+        if (sourcesByKeys.get(key) == null) {
+            Source source = new Source(Utils.buildMap("application", this, "key", key, "locale", locale));
+            source.load();
+            sourcesByKeys.put(key, source);
+        }
+
+        return sourcesByKeys.get(key);
+    }
+
+
+    /**
+     * Adds a language to the list of application languages.
+     * The language may contain basic information or entire definition.
+     *
+     * @param language
+     */
+    public void addLanguage(Language language) {
+        if (languages == null)
+            languages = new ArrayList<Language>();
+
+        if (languagesByLocales == null)
+            languagesByLocales = new HashMap<String, Language>();
+
+        language.setApplication(this);
+        languages.add(language);
+        languagesByLocales.put(language.getLocale(), language);
     }
 
     /**
-     *  API Functions
+     * Adds a locale to a list of featured languages.
      *
+     * @param locale
      */
+    public void addFeaturedLanguage(String locale) {
+        if (featuredLanguages == null)
+            featuredLanguages = new ArrayList<Language>();
 
-    private OkHttpClient getOkHttpClient() {
-        if (this.client == null) {
-            this.client = new OkHttpClient();
-        }
-        return this.client;
+        if (languagesByLocales == null)
+            languagesByLocales = new HashMap<String, Language>();
+
+        Language language = languagesByLocales.get(locale);
+        if (language!=null)
+            featuredLanguages.add(language);
     }
 
-    private String getAccessToken() throws Exception {
-        if (this.accessToken == null) {
-            // TODO: check if access token is expired
-            Map accessTokenData = (Map) get("oauth/request_token", Utils.buildMap(
-                    "client_id", key,
-                    "client_secret", secret,
-                    "grant_type", "client_credentials"),
-                    Utils.buildMap("oauth", true)
-            );
+    public void addSource(Source source) {
+        if (sourcesByKeys == null)
+            sourcesByKeys =  new HashMap<String, Source>();
 
-            this.accessToken = Utils.buildMap(
-                    "token", accessTokenData.get("access_token"),
-                    "expires_at", new Date()
-            );
-//            "expires_in": 7905428
-        }
-
-        return (String) this.accessToken.get("token");
+        sourcesByKeys.put(source.getKey(), source);
     }
 
-    private void prepareParams(Map params, Map options) throws Exception {
-        if (options != null && options.get("oauth") != null)
-            return;
+    public void addComponent(Component component) {
+        if (componentsByKeys == null)
+            componentsByKeys =  new HashMap<String, Component>();
 
-        params.put("access_token", this.getAccessToken());
+        componentsByKeys.put(component.getKey(), component);
     }
 
-    public Object get(String path, Map params) throws Exception {
-        return get(path, params, null);
-    }
-
-    public Object get(String path, Map params, Map options) throws Exception {
-        prepareParams(params, options);
-
-        URL url = Utils.buildURL(this.host, TR8N_API_PATH + path, params);
-        Tr8n.getLogger().debug("Requesting: " + url.toString());
-
-        HttpURLConnection connection = getOkHttpClient().open(url);
-        InputStream in = null;
-        try {
-            in = connection.getInputStream();
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            for (int count; (count = in.read(buffer)) != -1; ) {
-                out.write(buffer, 0, count);
-            }
-            String responseText = new String(out.toByteArray(), "UTF-8");
-
-            Tr8n.getLogger().debug("Received data: " + responseText);
-
-            Map data = (Map) Utils.parseJSON(responseText);
-            if (data.get("error") != null)
-                throw new Exception((String) data.get("error"));
-
-            return data;
-        } finally {
-            if (in != null) in.close();
-        }
-    }
-
-    public Object post(String path, Map params, Map options) throws Exception {
-        prepareParams(params, options);
-
-        URL url = Utils.buildURL(this.host, TR8N_API_PATH + path);
-        byte[] body = Utils.buildQueryString(params).getBytes("UTF-8");
-
-        HttpURLConnection connection = getOkHttpClient().open(url);
-        OutputStream out = null;
-        InputStream in = null;
-        try {
-            connection.setRequestMethod("POST");
-            out = connection.getOutputStream();
-            out.write(body);
-            out.close();
-
-            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                throw new IOException("Unexpected HTTP response: "
-                        + connection.getResponseCode() + " " + connection.getResponseMessage());
-            }
-            in = connection.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            reader.readLine();
-            return reader.toString();
-        } finally {
-            if (out != null) out.close();
-            if (in != null) in.close();
-        }
-    }
-
+    /**
+     * Caches translation key in the application scope for source fallback
+     *
+     * @param translationKey
+     * @return
+     */
     public TranslationKey cacheTranslationKey(TranslationKey translationKey) {
+        TranslationKey cachedKey = getTranslationKey(translationKey.getKey());
+        if (cachedKey != null) {
+            for (String locale : translationKey.getTranslationLocales()) {
+                List<Translation> translations = translationKey.getTranslations(locale);
+                Language language = getLanguage(locale);
+                cachedKey.setTranslations(language.getLocale(), translations);
+            }
+            return cachedKey;
+        }
+
+        addTranslationKey(translationKey);
         return translationKey;
-    }
-
-    public static void main(String[] args) {
-        Application app = Application.init("37f812fac93a71088", "a9dc95ff798e6e1d1", "https://sandbox.tr8nhub.com");
-        Language lang = app.getLanguage("ru");
-        Source source = app.getSource("undefined");
-
     }
 
     public String getDefaultLocale() {
@@ -488,10 +445,6 @@ public class Application extends Base {
 
     public Long getTranslatorLevel() {
         return translatorLevel;
-    }
-
-    public String toString() {
-        return  this.name + "(" + this.key + ")";
     }
 
     private Map<String, TranslationKey> getTranslationKeys() {
@@ -504,7 +457,14 @@ public class Application extends Base {
         return getTranslationKeys().get(key);
     }
 
+    public void addTranslationKey(TranslationKey translationKey) {
+        translationKey.setApplication(this);
+        getTranslationKeys().put(translationKey.getKey(), translationKey);
+    }
+
     public String getHost() {
+        if (host == null)
+            return TR8N_HOST;
         return host;
     }
 
@@ -544,18 +504,6 @@ public class Application extends Base {
         return languages;
     }
 
-    public List<Source> getSources() {
-        return sources;
-    }
-
-    public List<Component> getComponents() {
-        return components;
-    }
-
-    public List<String> getFeaturedLocales() {
-        return featuredLocales;
-    }
-
     public Tr8n getSession() {
         return session;
     }
@@ -563,4 +511,97 @@ public class Application extends Base {
     public void setSession(Tr8n session) {
         this.session = session;
     }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
+
+    public void setAccessToken(Map<String, Object> accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setDefaultLocale(String defaultLocale) {
+        this.defaultLocale = defaultLocale;
+    }
+
+    public void setTokens(Map<String, Object> tokens) {
+        this.tokens = tokens;
+    }
+
+    public void setTranslatorLevel(Long translatorLevel) {
+        this.translatorLevel = translatorLevel;
+    }
+
+    public void setThreshold(Long threshold) {
+        this.threshold = threshold;
+    }
+
+    public void setCss(String css) {
+        this.css = css;
+    }
+
+    public void setShortcuts(Map<String, String> shortcuts) {
+        this.shortcuts = shortcuts;
+    }
+
+    public void setFeatures(Map<String, Boolean> features) {
+        this.features = features;
+    }
+
+    public List<Language> getlanguages() {
+        return languages;
+    }
+
+    public void setlanguages(List<Language> languages) {
+        this.languages = languages;
+    }
+
+    public List<Language> getFeaturedLanguages() {
+        return featuredLanguages;
+    }
+
+    public void setFeaturedLanguages(List<Language> featuredLanguages) {
+        this.featuredLanguages = featuredLanguages;
+    }
+
+    public Map<String, Object> getAccessToken() {
+        return accessToken;
+    }
+
+    public HttpClient getHttpClient() {
+        if (httpClient == null)
+            httpClient = new HttpClient(this);
+
+        return httpClient;
+    }
+
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
+
+
+    public String toString() {
+        return  this.name + "(" + this.key + ")";
+    }
+
 }

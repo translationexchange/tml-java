@@ -23,32 +23,77 @@
 package com.tr8n.core;
 
 import java.text.AttributedString;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Represents either a singleton or a request session object in multi-threaded application
  */
-public class Tr8n {
-    /**
-     * Singleton Methods - should ever only be used in a non-multi threaded application
-     */
+public class Tr8n extends Observable {
 
+    /****************************************************************************************************
+     *
+     * Singleton Definition
+     *
+     * The singleton approach can be used in a mobile or desktop application where language does not
+     * change with every request. It provides a mechanism to access a single thread-safe instance of Tr8n,
+     * cache translations globally in memory and utilize a global translation interface.
+     *
+     ****************************************************************************************************/
+
+    /**
+     * Static instance of Tr8n singleton
+     */
     private static Tr8n instance = null;
 
+    /**
+     * Tr8n configuration attribute
+     */
+    private static Configuration config;
+
+    /**
+     * Tr8n cache
+     */
+    private static Cache cache;
+
+    /**
+     * Tr8n logger
+     */
+    private static Logger logger;
+
+    /**
+     * Periodically send missing keys to the server, should only be used in a single user mode (desktop, mobile)
+     */
+    private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private static ScheduledFuture<?> applicationScheduleHandler;
+
+
+    /**
+     * Get a singleton instance of Tr8n
+     *
+     * @return Tr8n instance
+     */
     public static Tr8n getInstance() {
-        if(instance == null) {
+        if(instance == null)
             instance = new Tr8n();
-        }
         return instance;
     }
 
     /**
+     * Sets current language in the singleton instance
+     * @param locale
+     */
+    public static void setCurrentLocale(String locale) {
+        getInstance().setCurrentLanguage(getInstance().getApplication().getLanguage(locale));
+    }
+
+    /**
      *
-     * @param label
-     * @return
+     * @param label Label to be translated
+     * @return translated label
      */
     public static String tr(String label) {
         return tr(label, "");
@@ -95,7 +140,6 @@ public class Tr8n {
         return getInstance().translateAttributedString(label, "", tokens, options);
     }
 
-
     public static void init(String key) {
         init(key, null);
     }
@@ -106,27 +150,31 @@ public class Tr8n {
 
     public static void init(String key, String secret, String host) {
         getInstance().initialize(key, secret, host);
+        if (!isSchedulerRunning()) startScheduledTasks();
     }
 
-    /**
-     * Static attributes
-     */
+    public static boolean isSchedulerRunning() {
+        return applicationScheduleHandler != null;
+    }
+    public static void startScheduledTasks() {
+        if (applicationScheduleHandler != null)
+            return;
 
-    /**
-     *
-     */
-    private static Configuration config;
+        applicationScheduleHandler = scheduler.scheduleAtFixedRate(new Runnable() {
+            public void run() {
+                getLogger().debug("Running scheduled tasks...");
+                getInstance().getApplication().submitMissingTranslationKeys();
+            }
+        }, 5, 5, TimeUnit.SECONDS);
+    }
 
-    /**
-     *
-     */
-    private static Cache cache;
+    public static void stopScheduledTasks() {
+        if (applicationScheduleHandler == null)
+            return;
 
-    /**
-     *
-     */
-    private static Logger logger;
-
+        applicationScheduleHandler.cancel(true);
+        applicationScheduleHandler = null;
+    }
 
     public static Configuration getConfig() {
         if (config == null)
@@ -148,6 +196,16 @@ public class Tr8n {
         return logger;
     }
 
+
+    /****************************************************************************************************
+     *
+     * Instance Definition
+     *
+     * For web environment, where every request needs its own set of attributes, an instance of Tr8n must
+     * be created and propagated with the request context. In those scenarios, a shared cache, like Memcached
+     * or Redis should be used to ensure that all instances of application servers can reuse translations.
+     *
+     ****************************************************************************************************/
 
     /**
      * Current application
@@ -201,6 +259,18 @@ public class Tr8n {
 
     public Language getCurrentLanguage() {
         return currentLanguage;
+    }
+
+    public void switchLanguage(Language language) {
+        if (getCurrentLanguage().equals(language))
+            return;
+        setCurrentLanguage(language);
+
+        getApplication().resetTranslations();
+        getApplication().loadTranslations(language);
+
+        setChanged();
+        notifyObservers(language);
     }
 
     public void setCurrentLanguage(Language language) {

@@ -22,9 +22,12 @@
 
 package com.tr8n.core;
 
+import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -211,12 +214,30 @@ public class Utils {
         try {
             obj = p.parse(jsonText);
         } catch(ParseException pe){
-            System.out.println("position: " + pe.getPosition());
-            System.out.println(pe);
+            Tr8n.getLogger().logException(pe);
             return null;
         }
 
         return obj;
+    }
+
+    /**
+     * Builds json from an object
+     *
+     * @param object
+     * @return
+     */
+    public static String buildJSON(Object object) {
+        if (object == null) return null;
+
+        StringWriter out = new StringWriter();
+        try {
+            JSONValue.writeJSONString(object, out);
+        } catch(IOException ex){
+            Tr8n.getLogger().logException(ex);
+            return null;
+        }
+        return out.toString();
     }
 
     /**
