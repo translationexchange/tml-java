@@ -327,7 +327,7 @@ public class DataToken extends Token {
      */
     public LanguageContext getLanguageContext(Language language) {
         if (this.getLanguageContextKeys().size() > 0)
-            return language.getContextByKeyword(getLanguageCaseKeys().get(0));
+            return language.getContextByKeyword(getLanguageContextKeys().get(0));
 
         return language.getContextByTokenName(this.getName());
     }

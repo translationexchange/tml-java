@@ -45,6 +45,11 @@ public class PipedToken extends DataToken {
     List<String> parameters;
 
     /**
+     * Name without pipes
+     */
+    String pipelessName;
+    
+    /**
      *
      * @return
      */
@@ -96,33 +101,80 @@ public class PipedToken extends DataToken {
         return this.parameters;
     }
 
+    
+    public String getPipelessName() {
+        if (this.pipelessName == null) {
+            this.pipelessName = getParenslessName().split("\\|")[0];
+        }
+        return this.pipelessName;
+
+    }
+    
+    /**
+     * 
+     */
+    public String getName() {
+        if (this.shortName == null) {
+            this.shortName = getPipelessName().split(":")[0].trim();
+        }
+        return this.shortName;
+    }    
 
     /**
-     * token:      {count|| one: message, many: messages}
-     * results in: {"one": "message", "many": "messages"}
-     *
-     * token:      {count|| message}
-     * transform:  [{"one": "{$0}", "other": "{$0::plural}"}, {"one": "{$0}", "other": "{$1}"}]
-     * results in: {"one": "message", "other": "messages"}
-     *
-     * token:      {count|| message, messages}
-     * transform:  [{"one": "{$0}", "other": "{$0::plural}"}, {"one": "{$0}", "other": "{$1}"}]
-     * results in: {"one": "message", "other": "messages"}
-     *
-     * token:      {user| Dorogoi, Dorogaya}
-     * transform:  ["unsupported", {"male": "{$0}", "female": "{$1}", "other": "{$0}/{$1}"}]
-     * results in: {"male": "Dorogoi", "female": "Dorogaya", "other": "Dorogoi/Dorogaya"}
-     *
-     * token:      {actors:|| likes, like}
-     * transform:  ["unsupported", {"one": "{$0}", "other": "{$1}"}]
-     * results in: {"one": "likes", "other": "like"}
-     *
-     *
-     * @param tokenMappingOptions
-     * @param language
-     * @param options
-     * @return
-     */
+    *
+    * @return
+    */
+   public List<String> getLanguageContextKeys() {
+       if (this.languageContextKeys == null) {
+           this.languageContextKeys = Utils.trimListValues(
+               Arrays.asList(getPipelessName().split("::")[0].split(":"))
+           );
+           this.languageContextKeys.remove(0);
+       }
+       return this.languageContextKeys;
+   }
+
+   /**
+    *
+    * @return
+    */
+   public List<String> getLanguageCaseKeys() {
+       if (this.languageCaseKeys == null) {
+           this.languageCaseKeys = Utils.trimListValues(
+               Arrays.asList(getPipelessName().split("::"))
+           );
+           this.languageCaseKeys.remove(0);
+       }
+       return this.languageCaseKeys;
+   }
+    
+   
+    /**
+	 * token:      {count|| one: message, many: messages}
+	 * results in: {"one": "message", "many": "messages"}
+	 *
+	 * token:      {count|| message}
+	 * transform:  [{"one": "{$0}", "other": "{$0::plural}"}, {"one": "{$0}", "other": "{$1}"}]
+	 * results in: {"one": "message", "other": "messages"}
+	 *
+	 * token:      {count|| message, messages}
+	 * transform:  [{"one": "{$0}", "other": "{$0::plural}"}, {"one": "{$0}", "other": "{$1}"}]
+	 * results in: {"one": "message", "other": "messages"}
+	 *
+	 * token:      {user| Dorogoi, Dorogaya}
+	 * transform:  ["unsupported", {"male": "{$0}", "female": "{$1}", "other": "{$0}/{$1}"}]
+	 * results in: {"male": "Dorogoi", "female": "Dorogaya", "other": "Dorogoi/Dorogaya"}
+	 *
+	 * token:      {actors:|| likes, like}
+	 * transform:  ["unsupported", {"one": "{$0}", "other": "{$1}"}]
+	 * results in: {"one": "likes", "other": "like"}
+	 *
+	 *
+	 * @param tokenMappingOptions
+	 * @param language
+	 * @param options
+	 * @return
+	 */
     public Map<String, String> getParameterMap(Object tokenMappingOptions, Language language, Map options) {
         Map<String, String> values = new HashMap<String, String>();
 
@@ -230,6 +282,10 @@ public class PipedToken extends DataToken {
         }
 
         LanguageContext context = getLanguageContext(language);
+        if (context == null) {
+            Tr8n.getLogger().error("unknown language context in " + getFullName() + " of " + getOriginalLabel());
+            return translatedLabel;
+        }
 
         Map<String, String> valueMap = getParameterMap(context.getTokenMapping(), language, options);
         if (valueMap == null) {

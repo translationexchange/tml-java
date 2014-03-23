@@ -95,7 +95,8 @@ public class LanguageContext extends Base {
      *
      * @param attributes
      */
-    public void updateAttributes(Map<String, Object> attributes) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("language") != null)
             setLanguage((Language) attributes.get("language"));
 
@@ -140,7 +141,7 @@ public class LanguageContext extends Base {
      * @param object
      * @return
      */
-    public Map<String, Object> vars(Object object) {
+    public Map<String, Object> getVariables(Object object) {
         Map<String, Object> vars = new HashMap<String, Object>();
         for (String varName : getVariableNames()) {
             Variable var = Tr8n.getConfig().getContextVariable(getKeyword(), varName);
@@ -155,7 +156,7 @@ public class LanguageContext extends Base {
      * @return
      */
     public LanguageContextRule findMatchingRule(Object object) {
-        Map tokenVars = this.vars(object);
+        Map<String, Object> tokenVars = getVariables(object);
 
         for (LanguageContextRule rule : getRules().values()) {
             if (rule.isFallback()) continue;

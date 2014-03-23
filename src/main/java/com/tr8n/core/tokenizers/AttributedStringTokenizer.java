@@ -22,14 +22,17 @@
 
 package com.tr8n.core.tokenizers;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.font.TextAttribute;
-import java.awt.geom.AffineTransform;
 import java.text.AttributedString;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 
 public class AttributedStringTokenizer extends DecorationTokenizer {
 
@@ -144,45 +147,45 @@ public class AttributedStringTokenizer extends DecorationTokenizer {
             Object styleAttributes = entry.getValue();
 
             for (Map range : ranges) {
-                Integer origin = (Integer) range.get(ATTRIBUTE_RANGE_ORIGIN);
-                Integer length = (Integer) range.get(ATTRIBUTE_RANGE_LENGTH);
+                Integer start = (Integer) range.get(ATTRIBUTE_RANGE_ORIGIN);
+                Integer end = start + (Integer) range.get(ATTRIBUTE_RANGE_LENGTH);
 
                 if (styleName.equals("attributes")) {
-                    attributedString.addAttributes((Map) styleAttributes, origin, length);
+                    attributedString.addAttributes((Map) styleAttributes, start, end);
                 } else if (styleName.equals("font")) {
-                	addFont(attributedString, styleAttributes, origin, length);
+                	addFont(attributedString, styleAttributes, start, end);
                 } else if (styleName.equals("color")) {
-                	addForegroundColor(attributedString, styleAttributes, origin, length);
+                	addForegroundColor(attributedString, styleAttributes, start, end);
                 } else if (styleName.equals("background-color")) {
-                	addBackgroundColor(attributedString, styleAttributes, origin, length);
+                	addBackgroundColor(attributedString, styleAttributes, start, end);
                 } else if (styleName.equals("underline")) {
-                	addUnderline(attributedString, styleAttributes, origin, length);
+                	addUnderline(attributedString, styleAttributes, start, end);
                 } else if (styleName.equals("strikethrough")) {
-                	addStrikeThrough(attributedString, styleAttributes, origin, length);
+                	addStrikeThrough(attributedString, styleAttributes, start, end);
                 } else if (styleName.equals("weight")) {
-                	addWeight(attributedString, styleAttributes, origin, length);
+                	addWeight(attributedString, styleAttributes, start, end);
                 } else if (styleName.equals("family")) {
-                	addFamily(attributedString, styleAttributes, origin, length);
+                	addFamily(attributedString, styleAttributes, start, end);
                 } else if (styleName.equals("width")) {
-                	addWidth(attributedString, styleAttributes, origin, length);
+                	addWidth(attributedString, styleAttributes, start, end);
                 } else if (styleName.equals("justification")) {
-                	addJustification(attributedString, styleAttributes, origin, length);
+                	addJustification(attributedString, styleAttributes, start, end);
                 } else if (styleName.equals("posture")) {
-                	addPosture(attributedString, styleAttributes, origin, length);
+                	addPosture(attributedString, styleAttributes, start, end);
                 } else if (styleName.equals("size")) {
-                	addSize(attributedString, styleAttributes, origin, length);
+                	addSize(attributedString, styleAttributes, start, end);
                 } else if (styleName.equals("superscript")) {
-                	addSuperscript(attributedString, styleAttributes, origin, length);
+                	addSuperscript(attributedString, styleAttributes, start, end);
                 } else if (styleName.equals("direction")) {
-                	addDirection(attributedString, styleAttributes, origin, length);
+                	addDirection(attributedString, styleAttributes, start, end);
                 } else if (styleName.equals("ligatures")) {
-                	addLigatures(attributedString, styleAttributes, origin, length);
+                	addLigatures(attributedString, styleAttributes, start, end);
                 } else if (styleName.equals("transform")) {
-                	addTransform(attributedString, styleAttributes, origin, length);
+                	addTransform(attributedString, styleAttributes, start, end);
                 } else if (styleName.equals("kerning")) {
-                	addKerning(attributedString, styleAttributes, origin, length);
+                	addKerning(attributedString, styleAttributes, start, end);
                 } else if (styleName.equals("tracking")) {
-                	addTracking(attributedString, styleAttributes, origin, length);
+                	addTracking(attributedString, styleAttributes, start, end);
                 }
             }
 
@@ -197,37 +200,37 @@ public class AttributedStringTokenizer extends DecorationTokenizer {
 //  public static final java.lang.Boolean SWAP_COLORS_ON;
 //  public static final java.awt.font.TextAttribute NUMERIC_SHAPING;
     
-    private void addTracking(AttributedString attributedString, Object style, Integer origin, Integer length) {
+    private void addTracking(AttributedString attributedString, Object style, Integer start, Integer end) {
     	Float tracking = TextAttribute.TRACKING_TIGHT;
     	if (style instanceof String) {
     		tracking = getTracking((String) style);
     	}    	
-    	attributedString.addAttribute(TextAttribute.TRACKING, tracking, origin, length);	
+    	attributedString.addAttribute(TextAttribute.TRACKING, tracking, start, end);	
     }
     
-    private void addKerning(AttributedString attributedString, Object style, Integer origin, Integer length) {
+    private void addKerning(AttributedString attributedString, Object style, Integer start, Integer end) {
     	Integer kerning = TextAttribute.KERNING_ON;
     	if (style instanceof String) {
     		if (style.equals("on"))
     			kerning = TextAttribute.KERNING_ON;
     	}    	
-    	attributedString.addAttribute(TextAttribute.KERNING, kerning, origin, length);	
+    	attributedString.addAttribute(TextAttribute.KERNING, kerning, start, end);	
     }
     
-    private void addTransform(AttributedString attributedString, Object style, Integer origin, Integer length) {
-    	attributedString.addAttribute(TextAttribute.TRANSFORM, style, origin, length);	
+    private void addTransform(AttributedString attributedString, Object style, Integer start, Integer end) {
+    	attributedString.addAttribute(TextAttribute.TRANSFORM, style, start, end);	
     }
     
-    private void addLigatures(AttributedString attributedString, Object style, Integer origin, Integer length) {
+    private void addLigatures(AttributedString attributedString, Object style, Integer start, Integer end) {
     	Integer ligatures = TextAttribute.LIGATURES_ON;
     	if (style instanceof String) {
     		if (style.equals("on"))
     			ligatures = TextAttribute.LIGATURES_ON;
     	}    	
-    	attributedString.addAttribute(TextAttribute.LIGATURES, ligatures, origin, length);	
+    	attributedString.addAttribute(TextAttribute.LIGATURES, ligatures, start, end);	
     }
     
-    private void addDirection(AttributedString attributedString, Object style, Integer origin, Integer length) {
+    private void addDirection(AttributedString attributedString, Object style, Integer start, Integer end) {
     	Boolean dir = TextAttribute.RUN_DIRECTION_LTR;
     	if (style instanceof String) {
     		if (style.equals("rtl"))
@@ -235,62 +238,62 @@ public class AttributedStringTokenizer extends DecorationTokenizer {
     		else
     			dir = TextAttribute.RUN_DIRECTION_LTR;
     	}    	
-    	attributedString.addAttribute(TextAttribute.RUN_DIRECTION, dir, origin, length);	
+    	attributedString.addAttribute(TextAttribute.RUN_DIRECTION, dir, start, end);	
     }
     
-    private void addSuperscript(AttributedString attributedString, Object style, Integer origin, Integer length) {
+    private void addSuperscript(AttributedString attributedString, Object style, Integer start, Integer end) {
     	Integer superscript = TextAttribute.SUPERSCRIPT_SUPER;
     	if (style instanceof String) {
     		superscript = getSuperscript((String) style);
     	}    	
-    	attributedString.addAttribute(TextAttribute.SUPERSCRIPT, superscript, origin, length);	
+    	attributedString.addAttribute(TextAttribute.SUPERSCRIPT, superscript, start, end);	
     }
     
-    private void addSize(AttributedString attributedString, Object style, Integer origin, Integer length) {
-    	attributedString.addAttribute(TextAttribute.SIZE, Float.parseFloat("" + style), origin, length);	
+    private void addSize(AttributedString attributedString, Object style, Integer start, Integer end) {
+    	attributedString.addAttribute(TextAttribute.SIZE, Float.parseFloat("" + style), start, end);	
     }
     
-    private void addPosture(AttributedString attributedString, Object style, Integer origin, Integer length) {
+    private void addPosture(AttributedString attributedString, Object style, Integer start, Integer end) {
     	Float posture = TextAttribute.POSTURE_REGULAR;
     	if (style instanceof String) {
     		posture = getPosture((String) style);
     	}    	
     	
-    	attributedString.addAttribute(TextAttribute.POSTURE, posture, origin, length);	
+    	attributedString.addAttribute(TextAttribute.POSTURE, posture, start, end);	
     }
     
-    private void addJustification(AttributedString attributedString, Object style, Integer origin, Integer length) {
+    private void addJustification(AttributedString attributedString, Object style, Integer start, Integer end) {
     	Float justification = TextAttribute.JUSTIFICATION_NONE;
     	if (style instanceof String) {
     		justification = getJustification((String) style);
     	}    	
     	
-    	attributedString.addAttribute(TextAttribute.JUSTIFICATION, justification, origin, length);	
+    	attributedString.addAttribute(TextAttribute.JUSTIFICATION, justification, start, end);	
     }
     
-    private void addWidth(AttributedString attributedString, Object style, Integer origin, Integer length) {
+    private void addWidth(AttributedString attributedString, Object style, Integer start, Integer end) {
     	Float width = TextAttribute.WIDTH_REGULAR;
     	if (style instanceof String) {
     		width = getWidth((String) style);
     	}    	
     	
-    	attributedString.addAttribute(TextAttribute.WIDTH, width, origin, length);	
+    	attributedString.addAttribute(TextAttribute.WIDTH, width, start, end);	
     }
     
-    private void addFamily(AttributedString attributedString, Object style, Integer origin, Integer length) {
-    	attributedString.addAttribute(TextAttribute.FAMILY, style, origin, length);	
+    private void addFamily(AttributedString attributedString, Object style, Integer start, Integer end) {
+    	attributedString.addAttribute(TextAttribute.FAMILY, style, start, end);	
     }
     
-    private void addWeight(AttributedString attributedString, Object style, Integer origin, Integer length) {
+    private void addWeight(AttributedString attributedString, Object style, Integer start, Integer end) {
     	Float weight = TextAttribute.WEIGHT_REGULAR;
     	if (style instanceof String) {
     		weight = getWeight((String) style);
     	}    	
 
-    	attributedString.addAttribute(TextAttribute.WEIGHT, weight, origin, length);	
+    	attributedString.addAttribute(TextAttribute.WEIGHT, weight, start, end);	
     }
     
-    private void addStrikeThrough(AttributedString attributedString, Object style, Integer origin, Integer length) {
+    private void addStrikeThrough(AttributedString attributedString, Object style, Integer start, Integer end) {
     	Boolean on = TextAttribute.STRIKETHROUGH_ON;
     	if (style instanceof String) {
     		if (style.equals("true"))
@@ -299,45 +302,45 @@ public class AttributedStringTokenizer extends DecorationTokenizer {
     			on = !TextAttribute.STRIKETHROUGH_ON;
     	}
     	
-    	attributedString.addAttribute(TextAttribute.STRIKETHROUGH, on, origin, length);	
+    	attributedString.addAttribute(TextAttribute.STRIKETHROUGH, on, start, end);	
     }
     
-    private void addUnderline(AttributedString attributedString, Object style, Integer origin, Integer length) {
+    private void addUnderline(AttributedString attributedString, Object style, Integer start, Integer end) {
     	Integer type = TextAttribute.UNDERLINE_LOW_ONE_PIXEL;
     	if (style instanceof String) {
     		type = getUnderlineStyle((String)style);
     	}
     	
-    	attributedString.addAttribute(TextAttribute.UNDERLINE, type, origin, length);	
+    	attributedString.addAttribute(TextAttribute.UNDERLINE, type, start, end);	
     }
     
-    private void addBackgroundColor(AttributedString attributedString, Object style, Integer origin, Integer length) {
+    private void addBackgroundColor(AttributedString attributedString, Object style, Integer start, Integer end) {
     	if (style instanceof Color) {
-        	attributedString.addAttribute(TextAttribute.BACKGROUND, style, origin, length);	
+        	attributedString.addAttribute(TextAttribute.BACKGROUND, style, start, end);	
     		return;
     	}
     	
     	if (style instanceof String) {
 	    	String color = (String) style;
-        	attributedString.addAttribute(TextAttribute.BACKGROUND, getColor(color), origin, length);	
+        	attributedString.addAttribute(TextAttribute.BACKGROUND, getColor(color), start, end);	
     	}
     }
     
-    private void addForegroundColor(AttributedString attributedString, Object style, Integer origin, Integer length) {
+    private void addForegroundColor(AttributedString attributedString, Object style, Integer start, Integer end) {
     	if (style instanceof Color) {
-        	attributedString.addAttribute(TextAttribute.FOREGROUND, style, origin, length);	
+        	attributedString.addAttribute(TextAttribute.FOREGROUND, style, start, end);	
     		return;
     	}
     	
     	if (style instanceof String) {
 	    	String color = (String) style;
-        	attributedString.addAttribute(TextAttribute.FOREGROUND, getColor(color), origin, length);	
+        	attributedString.addAttribute(TextAttribute.FOREGROUND, getColor(color), start, end);	
     	}
     }
 
-    private void addFont(AttributedString attributedString, Object style, Integer origin, Integer length) {
+    private void addFont(AttributedString attributedString, Object style, Integer start, Integer end) {
     	if (style instanceof Font) {
-        	attributedString.addAttribute(TextAttribute.FONT, style, origin, length);	
+        	attributedString.addAttribute(TextAttribute.FONT, style, start, end);	
     		return;
     	}
     	
@@ -357,7 +360,7 @@ public class AttributedStringTokenizer extends DecorationTokenizer {
 	    	if (attributes.get("size") != null) {
 	    		fontSize = (Integer) attributes.get("size");
 	    	}
-	    	attributedString.addAttribute(TextAttribute.FONT, new Font(family, fontStyle, fontSize), origin, origin+length);	
+	    	attributedString.addAttribute(TextAttribute.FONT, new Font(family, fontStyle, fontSize), start, end);	
     	}
     }
 

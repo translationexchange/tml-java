@@ -22,10 +22,13 @@
 
 package com.tr8n.core;
 
+import com.tr8n.core.rulesengine.Evaluator;
 import com.tr8n.core.rulesengine.Parser;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class LanguageCaseRule extends Base {
 
@@ -52,7 +55,7 @@ public class LanguageCaseRule extends Base {
     /**
      * Compiled conditions in the array form
      */
-    private List conditionsExpression;
+	private List<Object> conditionsExpression;
 
     /**
      * Operations in the symbolic notations form
@@ -62,7 +65,7 @@ public class LanguageCaseRule extends Base {
     /**
      * Compiled operations in the array form
      */
-    private List operationsExpression;
+    private List<Object> operationsExpression;
 
     /**
      * Default constructor
@@ -72,7 +75,7 @@ public class LanguageCaseRule extends Base {
     }
 
     /**
-     *
+     * Creates rule with attributes
      * @param attributes
      */
     public LanguageCaseRule(Map<String, Object> attributes) {
@@ -80,10 +83,11 @@ public class LanguageCaseRule extends Base {
     }
 
     /**
-     *
+     * Updates rule attributes
      * @param attributes
      */
-    public void updateAttributes(Map<String, Object> attributes) {
+	@SuppressWarnings("unchecked")
+	public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("language_case") != null)
             setLanguageCase((LanguageCase) attributes.get("language_case"));
 
@@ -92,39 +96,33 @@ public class LanguageCaseRule extends Base {
         setConditions((String) attributes.get("conditions"));
 
         if (attributes.get("conditions_expression") instanceof List) {
-            this.conditionsExpression = (List) attributes.get("conditions_expression");
+            this.conditionsExpression = (List<Object>) attributes.get("conditions_expression");
         }
 
         setOperations((String) attributes.get("operations"));
         if (attributes.get("operations_expression") instanceof List) {
-            this.operationsExpression = (List) attributes.get("operations_expression");
+            this.operationsExpression = (List<Object>) attributes.get("operations_expression");
         }
     }
 
-    public List getOperationsExpression() {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public List getOperationsExpression() {
         if (this.operationsExpression == null) {
             Parser p = new Parser(this.operations);
-            this.operationsExpression = (List) p.parse();
+            this.operationsExpression = (List<Object>) p.parse();
         }
 
-        return this.conditionsExpression;
+        return this.operationsExpression;
     }
 
-    public List getConditionsExpression() {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public List getConditionsExpression() {
         if (this.conditionsExpression == null) {
             Parser p = new Parser(this.conditions);
-            this.conditionsExpression = (List) p.parse();
+            this.conditionsExpression = (List<Object>) p.parse();
         }
 
         return this.conditionsExpression;
-    }
-    /**
-     * Extracts gender value from the object
-     * @param object
-     * @return
-     */
-    public Map genderVariables(Object object) {
-        return null;
     }
 
     /**
@@ -143,17 +141,60 @@ public class LanguageCaseRule extends Base {
      * @return
      */
     public boolean evaluate(String value, Object object) {
-        return true;
+    	if (conditions == null)
+    		return false;
+    	
+    	Evaluator e = new Evaluator();
+    	e.setVariable("@value", value);
+    	
+    	if (object != null) {
+    		Map<String, Object> variables = getGenderVariables(object);
+    		if (variables != null) {
+                Iterator<Entry<String, Object>> entries = variables.entrySet().iterator();
+                while (entries.hasNext()) {
+					Map.Entry<String, Object> entry = (Map.Entry<String, Object>) entries.next();
+                    e.setVariable((String) entry.getKey(), entry.getValue());
+                }
+    		}
+    	}
+    	
+        return (Boolean) e.evaluate(getConditionsExpression());
     }
 
+    
+    /**
+     * Variables apply to gender based expressions
+     * @param object
+     * @return
+     */
+    private Map<String, Object> getGenderVariables(Object object) {
+    	if (!conditions.contains("@gender"))
+    		return null;
+    	
+    	if (object == null)
+    		return Utils.buildMap("@gender", "unknown");
+    	
+    	LanguageContext context = languageCase.getLanguage().getContextByKeyword("gender");
+    	if (context == null)
+    		return Utils.buildMap("@gender", "unknown");
+    	
+    	return context.getVariables(object);
+    }
+    
     /**
      * Applies operations and returns the modified value
      * @param value
      * @return
      */
     public String apply(String value) {
-        return "";
+    	if (operations == null)
+    		return value;
+
+    	Evaluator e = new Evaluator();
+    	e.setVariable("@value", value);
+    	return (String) e.evaluate(getOperationsExpression());
     }
+
 
     public LanguageCase getLanguageCase() {
         return languageCase;
@@ -193,5 +234,9 @@ public class LanguageCaseRule extends Base {
 
     public void setOperations(String operations) {
         this.operations = operations;
+    }
+    
+    public String toString() {
+    	return getConditions();
     }
 }

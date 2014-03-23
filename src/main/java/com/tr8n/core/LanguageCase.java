@@ -23,8 +23,10 @@
 package com.tr8n.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class LanguageCase extends Base {
 
@@ -85,11 +87,12 @@ public class LanguageCase extends Base {
      *
      * @param attributes
      */
-    public void updateAttributes(Map<String, Object> attributes) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("language") != null)
             setLanguage((Language) attributes.get("language"));
 
-        setKeyword((String) attributes.get("language"));
+        setKeyword((String) attributes.get("keyword"));
         setLatinName((String) attributes.get("latin_name"));
         setNativeName((String) attributes.get("native_name"));
         setDescription((String) attributes.get("description"));
@@ -97,7 +100,7 @@ public class LanguageCase extends Base {
 
         if (attributes.get("rules") != null) {
             for (Object data : ((List) attributes.get("rules"))) {
-                LanguageCaseRule rule = new LanguageCaseRule((Map) data);
+				LanguageCaseRule rule = new LanguageCaseRule((Map) data);
                 rule.setLanguageCase(this);
                 addRule(rule);
             }
@@ -115,11 +118,15 @@ public class LanguageCase extends Base {
 
     /**
      * Finds matching rule for value and object
-     * @param value
-     * @param object
-     * @return
+     * @param value		String value to be matched
+     * @param object	Associated object (optional)	
+     * @return 			True/False if the rule was matched
      */
     public LanguageCaseRule findMatchingRule(String value, Object object) {
+    	for (LanguageCaseRule rule : rules) {
+    		if (rule.evaluate(value, object))
+    			return rule;
+    	}
         return null;
     }
 
@@ -138,14 +145,27 @@ public class LanguageCase extends Base {
      * @param object
      * @return
      */
-    public String apply(String value, Object object, Map options) {
-        return value;
-    }
-
-
-
-    public String toString() {
-        return  this.keyword + "(" + this.language.getLocale() + ")";
+    public String apply(String value, Object object, Map<String, Object> options) {
+    	List<String> elements = new ArrayList<String>();
+    	
+    	if (type.equals("phrase")) {
+    		elements.add(value);
+    	} else {
+    		elements.addAll(Arrays.asList(value.split("\\s\\/,;:"))); 
+    	}
+    	
+        // TODO: use RegEx to split words and assemble them right back
+    	
+    	String transformedValue = value;
+    	for (String element : elements) {
+    		LanguageCaseRule rule = findMatchingRule(element, object);
+    		if (rule == null)
+    			continue;
+    		
+    		transformedValue = transformedValue.replaceAll(Pattern.quote(element), rule.apply(element));
+    	}
+    	
+        return transformedValue;
     }
 
     public Language getLanguage() {
@@ -215,4 +235,9 @@ public class LanguageCase extends Base {
     public void setRules(List<LanguageCaseRule> rules) {
         this.rules = rules;
     }
+    
+    public String toString() {
+        return getKeyword();
+    }
 }
+

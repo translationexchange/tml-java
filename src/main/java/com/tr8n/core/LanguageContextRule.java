@@ -62,7 +62,7 @@ public class LanguageContextRule extends Base {
     /**
      * Optimized conditions parsed into an array
      */
-    private List conditionsExpression;
+    private List<Object> conditionsExpression;
 
     /**
      * Default constructor
@@ -83,7 +83,8 @@ public class LanguageContextRule extends Base {
      *
      * @param attributes
      */
-    public void updateAttributes(Map<String, Object> attributes) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("language_context") != null)
             setLanguageContext((LanguageContext) attributes.get("language_context"));
 
@@ -109,10 +110,11 @@ public class LanguageContextRule extends Base {
      *
      * @return List
      */
-    public List getConditionsExpression() {
+    @SuppressWarnings("unchecked")
+	public List<Object> getConditionsExpression() {
         if (this.conditionsExpression == null) {
             Parser p = new Parser(this.conditions);
-            this.conditionsExpression = (List) p.parse();
+            this.conditionsExpression = (List<Object>) p.parse();
         }
 
         return this.conditionsExpression;
@@ -123,15 +125,15 @@ public class LanguageContextRule extends Base {
      * @param vars
      * @return boolean
      */
-    public boolean evaluate(Map vars) {
+    public boolean evaluate(Map<String, Object> vars) {
         if (isFallback())
             return true;
 
         Evaluator e = new Evaluator();
 
-        Iterator entries = vars.entrySet().iterator();
+        Iterator<Entry<String, Object>> entries = vars.entrySet().iterator();
         while (entries.hasNext()) {
-            Entry thisEntry = (Entry) entries.next();
+            Entry<String, Object> thisEntry = (Entry<String, Object>) entries.next();
             String key = (String) thisEntry.getKey();
             Object value = thisEntry.getValue();
             e.setVariable(key, value);

@@ -104,7 +104,7 @@ public class Tr8n extends Observable {
     }
 
     public static String tr(String label, String description, Map<String, Object> tokens) {
-        return getInstance().translate(label, description, null, null);
+        return getInstance().translate(label, description, tokens, null);
     }
 
     public static String tr(String label, Map<String, Object> tokens) {
@@ -129,7 +129,7 @@ public class Tr8n extends Observable {
     }
 
     public static AttributedString tras(String label, String description, Map<String, Object> tokens) {
-        return getInstance().translateAttributedString(label, description, null, null);
+        return getInstance().translateAttributedString(label, description, tokens, null);
     }
 
     public static AttributedString tras(String label, Map<String, Object> tokens) {
