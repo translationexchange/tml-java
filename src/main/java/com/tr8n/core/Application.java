@@ -29,7 +29,7 @@ public class Application extends Base {
     /**
      * Current Tr8n session
      */
-    private Tr8n session;
+    private Session session;
 
     /**
      * Application host - points to the Tr8nHub server
@@ -230,14 +230,13 @@ public class Application extends Base {
      * Loads translations from the service for a given language and caches them in the application
      * @param language
      */
-    public void loadTranslations(Language language) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public void loadTranslations(Language language) {
         try {
             Map<String, Object> results = getHttpClient().getJSONMap("application/translations", Utils.buildMap("locale", language.getLocale()));
-            Map keys = (Map) results.get("translation_keys");
-            Iterator entries = keys.entrySet().iterator();
-            while (entries.hasNext()) {
-                Map.Entry entry = (Map.Entry) entries.next();
-                Map attributes = new HashMap((Map)entry.getValue());
+			List keys = (List) results.get("translation_keys");
+            for (Object key : keys) {
+				Map<String, Object> attributes = new HashMap<String, Object>((Map)key);
                 attributes.put("application", this);
                 cacheTranslationKey(new TranslationKey(attributes));
             }
@@ -462,6 +461,12 @@ public class Application extends Base {
         getTranslationKeys().put(translationKey.getKey(), translationKey);
     }
 
+    public boolean isFeatureEnabled(String feature) {
+    	if (getFeatures() == null)
+    		return false;
+    	return getFeatures().get(feature);
+    }
+    
     public String getHost() {
         if (host == null)
             return TR8N_HOST;
@@ -504,11 +509,11 @@ public class Application extends Base {
         return languages;
     }
 
-    public Tr8n getSession() {
+    public Session getSession() {
         return session;
     }
 
-    public void setSession(Tr8n session) {
+    public void setSession(Session session) {
         this.session = session;
     }
 

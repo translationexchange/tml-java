@@ -30,39 +30,14 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Represents either a singleton or a request session object in multi-threaded application
+ * A utility session wrapper class for using by Mobile and Desktop application.
  */
-public class Tr8n extends Observable {
-
-    /****************************************************************************************************
-     *
-     * Singleton Definition
-     *
-     * The singleton approach can be used in a mobile or desktop application where language does not
-     * change with every request. It provides a mechanism to access a single thread-safe instance of Tr8n,
-     * cache translations globally in memory and utilize a global translation interface.
-     *
-     ****************************************************************************************************/
+public class Tr8n {
 
     /**
-     * Static instance of Tr8n singleton
+     * Static instance of Tr8n session
      */
-    private static Tr8n instance = null;
-
-    /**
-     * Tr8n configuration attribute
-     */
-    private static Configuration config;
-
-    /**
-     * Tr8n cache
-     */
-    private static Cache cache;
-
-    /**
-     * Tr8n logger
-     */
-    private static Logger logger;
+    private static Session session = null;
 
     /**
      * Periodically send missing keys to the server, should only be used in a single user mode (desktop, mobile)
@@ -72,72 +47,29 @@ public class Tr8n extends Observable {
 
 
     /**
-     * Get a singleton instance of Tr8n
+     * Get the current session
      *
      * @return Tr8n instance
      */
-    public static Tr8n getInstance() {
-        if(instance == null)
-            instance = new Tr8n();
-        return instance;
+    public static Session getSession() {
+        return session;
     }
 
+    
+    /** 
+     * Set the current session
+     * 
+     * @param newSession
+     */
+    public static void setSession(Session newSession) {
+    	session = newSession;
+    }
     /**
      * Sets current language in the singleton instance
      * @param locale
      */
     public static void setCurrentLocale(String locale) {
-        getInstance().setCurrentLanguage(getInstance().getApplication().getLanguage(locale));
-    }
-
-    /**
-     *
-     * @param label Label to be translated
-     * @return translated label
-     */
-    public static String tr(String label) {
-        return tr(label, "");
-    }
-
-    public static String tr(String label, String description) {
-        return tr(label, description, null);
-    }
-
-    public static String tr(String label, String description, Map<String, Object> tokens) {
-        return getInstance().translate(label, description, tokens, null);
-    }
-
-    public static String tr(String label, Map<String, Object> tokens) {
-        return getInstance().translate(label, "", tokens, null);
-    }
-
-    public static String tr(String label, Map<String, Object> tokens, Map<String, Object> options) {
-        return getInstance().translate(label, "", tokens, options);
-    }
-
-    /**
-     *
-     * @param label
-     * @return
-     */
-    public static AttributedString tras(String label) {
-        return tras(label, "");
-    }
-
-    public static AttributedString tras(String label, String description) {
-        return tras(label, description, null);
-    }
-
-    public static AttributedString tras(String label, String description, Map<String, Object> tokens) {
-        return getInstance().translateAttributedString(label, description, tokens, null);
-    }
-
-    public static AttributedString tras(String label, Map<String, Object> tokens) {
-        return getInstance().translateAttributedString(label, "", tokens, null);
-    }
-
-    public static AttributedString tras(String label, Map<String, Object> tokens, Map<String, Object> options) {
-        return getInstance().translateAttributedString(label, "", tokens, options);
+        getSession().setCurrentLanguage(getSession().getApplication().getLanguage(locale));
     }
 
     public static void init(String key) {
@@ -149,7 +81,7 @@ public class Tr8n extends Observable {
     }
 
     public static void init(String key, String secret, String host) {
-        getInstance().initialize(key, secret, host);
+        setSession(new Session(key, secret, host));
         if (!isSchedulerRunning()) startScheduledTasks();
     }
 
@@ -163,7 +95,7 @@ public class Tr8n extends Observable {
         applicationScheduleHandler = scheduler.scheduleAtFixedRate(new Runnable() {
             public void run() {
                 getLogger().debug("Running scheduled tasks...");
-                getInstance().getApplication().submitMissingTranslationKeys();
+                getSession().getApplication().submitMissingTranslationKeys();
             }
         }, 5, 5, TimeUnit.SECONDS);
     }
@@ -177,23 +109,15 @@ public class Tr8n extends Observable {
     }
 
     public static Configuration getConfig() {
-        if (config == null)
-            config = new Configuration();
-
-        return config;
+        return getSession().getConfig();
     }
 
     public static Cache getCache() {
-        if (cache  == null)
-            cache = new Cache();
-        return cache;
+        return getSession().getCache();
     }
 
     public static Logger getLogger() {
-        if (logger == null)
-            logger = new Logger();
-
-        return logger;
+        return getSession().getLogger();
     }
 
 
@@ -232,147 +156,89 @@ public class Tr8n extends Observable {
      */
     private List<Map> blockOptions;
 
-    /**
-     * Default constructor
-     */
-    public Tr8n() {
-        // Do nothing
+
+    public static Language getCurrentLanguage() {
+        return getSession().getCurrentLanguage();
     }
 
-    /**
-     * Initializes current application
-     * @param key
-     * @param secret
-     * @param host
-     */
-    public void initialize(String key, String secret, String host) {
-        setApplication(new Application(Utils.buildMap(
-                "key", key,
-                "secret", secret,
-                "host", host
-        )));
-        getApplication().load();
-        getApplication().setSession(this);
-        setCurrentSource("undefined");
-        setCurrentLanguage(getApplication().getLanguage());
-    }
-
-    public Language getCurrentLanguage() {
-        return currentLanguage;
-    }
-
-    public void switchLanguage(Language language) {
-        if (getCurrentLanguage().equals(language))
-            return;
-        setCurrentLanguage(language);
-
-        getApplication().resetTranslations();
-        getApplication().loadTranslations(language);
-
-        setChanged();
-        notifyObservers(language);
+    public static void switchLanguage(Language language) {
+    	getSession().switchLanguage(language);
     }
 
     public void setCurrentLanguage(Language language) {
-        this.currentLanguage = language;
+        getSession().setCurrentLanguage(language);
     }
 
     public String getCurrentSource() {
-        return currentSource;
+        return getSession().getCurrentSource();
     }
 
     public void setCurrentSource(String currentSource) {
-        this.currentSource = currentSource;
+        getSession().setCurrentSource(currentSource);
     }
 
     public void beginBlockWithOptions(Map options) {
-        if (this.blockOptions == null) {
-            this.blockOptions = new ArrayList<Map>();
-        }
-
-        this.blockOptions.add(0, options);
+        getSession().beginBlockWithOptions(options);
     }
 
     public Map getBlockOptions() {
-        if (this.blockOptions == null)
-            this.blockOptions = new ArrayList<Map>();
-
-        if (this.blockOptions.size() == 0)
-            return new HashMap();
-
-        return this.blockOptions.get(0);
+        return getSession().getBlockOptions();
     }
 
     public void endBlock() {
-        if (this.blockOptions == null || this.blockOptions.size() == 0)
-            return;
-
-        this.blockOptions.remove(0);
+        getSession().endBlock();
     }
 
-    public Object getBlockOption(String key) {
-        return getBlockOptions().get(key);
+    public static Object getBlockOption(String key) {
+        return getSession().getBlockOptions().get(key);
     }
 
-    public Application getApplication() {
-        return application;
+    public static Application getApplication() {
+        return getSession().getApplication();
     }
 
-    public void setApplication(Application application) {
-        this.application = application;
+    public static void setApplication(Application application) {
+        getSession().setApplication(application);
     }
 
-    public Translator getCurrentTranslator() {
-        return currentTranslator;
+    public static Translator getCurrentTranslator() {
+        return getSession().getCurrentTranslator();
     }
 
-    public void setCurrentTranslator(Translator currentTranslator) {
-        this.currentTranslator = currentTranslator;
+    public static void setCurrentTranslator(Translator currentTranslator) {
+        getSession().setCurrentTranslator(currentTranslator);
     }
+
+
+    /******************************************************************************************************
+     *
+     * Helper Methods for translations
+     *
+     *******************************************************************************************************/
 
     /**
-     * Translates a simple label
      *
      * @param label Label to be translated
-     * @return
+     * @return translated label
      */
-    public String translate(String label) {
-        return translate(label, "");
+    public static String tr(String label) {
+        return getSession().translate(label);
     }
 
-    /**
-     * Translates label with description
-     *
-     * @param label         Label to be translated
-     * @param description   Contextual description of the label
-     * @return
-     */
-    public String translate(String label, String description) {
-        return translate(label, description, null);
+    public static String tr(String label, String description) {
+        return getSession().translate(label, description);
     }
 
-    /**
-     * Translates label with description and tokens
-     *
-     * @param label
-     * @param description
-     * @param tokens
-     * @return
-     */
-    public String translate(String label, String description, Map<String, Object> tokens) {
-        return translate(label, description, null, null);
+    public static String tr(String label, String description, Map<String, Object> tokens) {
+        return getSession().translate(label, description, tokens);
     }
 
-    public String translate(String label, Map<String, Object> tokens) {
-        return translate(label, "", tokens, null);
+    public static String tr(String label, Map<String, Object> tokens) {
+        return getSession().translate(label, tokens);
     }
 
-    public String translate(String label, Map<String, Object> tokens, Map<String, Object> options) {
-        return translate(label, "", tokens, options);
-    }
-
-    public String translate(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
-        return (String) getCurrentLanguage().translate(label, description, tokens, options);
+    public static String tr(String label, Map<String, Object> tokens, Map<String, Object> options) {
+        return getSession().translate(label, tokens, options);
     }
 
     /**
@@ -380,32 +246,23 @@ public class Tr8n extends Observable {
      * @param label
      * @return
      */
-    public AttributedString translateAttributedString(String label) {
-        return translateAttributedString(label, "");
+    public static AttributedString tras(String label) {
+        return getSession().translateAttributedString(label);
     }
 
-    public AttributedString translateAttributedString(String label, String description) {
-        return translateAttributedString(label, description, null);
+    public static AttributedString tras(String label, String description) {
+        return getSession().translateAttributedString(label, description);
     }
 
-    public AttributedString translateAttributedString(String label, String description, Map<String, Object> tokens) {
-        return getInstance().translateAttributedString(label, description, null, null);
+    public static AttributedString tras(String label, String description, Map<String, Object> tokens) {
+        return getSession().translateAttributedString(label, description, tokens);
     }
 
-    public AttributedString translateAttributedString(String label, Map<String, Object> tokens) {
-        return getInstance().translateAttributedString(label, "", tokens, null);
+    public static AttributedString tras(String label, Map<String, Object> tokens) {
+        return getSession().translateAttributedString(label, tokens);
     }
 
-    public AttributedString translateAttributedString(String label, Map<String, Object> tokens, Map<String, Object> options) {
-        return getInstance().translateAttributedString(label, "", tokens, options);
+    public static AttributedString tras(String label, Map<String, Object> tokens, Map<String, Object> options) {
+        return getSession().translateAttributedString(label, tokens, options);
     }
-
-    public AttributedString translateAttributedString(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
-        if (options == null)
-            options = new HashMap<String, Object>();
-
-        options.put("tokenizer", "attributed");
-        return (AttributedString) getCurrentLanguage().translate(label, description, tokens, options);
-    }
-
 }
