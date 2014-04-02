@@ -35,42 +35,6 @@ import java.util.Observable;
 public class Session extends Observable {
 
     /**
-     * Tr8n configuration attribute
-     */
-    private static Configuration config;
-
-    /**
-     * Tr8n cache
-     */
-    private static Cache cache;
-
-    /**
-     * Tr8n logger
-     */
-    private static Logger logger;
-
-
-    public static Configuration getConfig() {
-        if (config == null)
-            config = new Configuration();
-
-        return config;
-    }
-
-    public static Cache getCache() {
-        if (cache  == null)
-            cache = new Cache();
-        return cache;
-    }
-
-    public static Logger getLogger() {
-        if (logger == null)
-            logger = new Logger();
-
-        return logger;
-    }
-
-    /**
      * Current application
      */
     private Application application;
@@ -93,16 +57,38 @@ public class Session extends Observable {
     /**
      * Allows developers to group translation keys for management only
      */
-    private List<Map> blockOptions;
+    private List<Map<String, Object>> blockOptions;
 
 
     /**
      * Default constructor
      */
     public Session() {
-        // Do nothing
+    	this(Tr8n.getConfig().getApplication());
     }
 
+    /**
+     * Initialize with a configuration
+     * 
+     * @param config
+     */
+    public Session(Map<String, Object> config) {
+    	this(
+			(String) config.get("key"),
+			(String) config.get("secret"), 
+			(String) config.get("host")
+    	);
+    }
+
+    /**
+     * Initializes a read-only session with key only
+     * 
+     * @param key
+     */
+    public Session(String key) {
+    	this(key, null, null);
+    }
+    
     /**
      * 
      * @param key
@@ -130,6 +116,28 @@ public class Session extends Observable {
         setCurrentLanguage(getApplication().getLanguage());
     }
 
+    
+    @SuppressWarnings("unchecked")
+	public void init(String cookie) {
+    	if (cookie==null)
+    		return;
+    	
+    	Map <String, Object> params = Utils.decodeAndVerify(cookie, getApplication().getSecret());
+    	if (params == null)
+    		return;
+
+    	Tr8n.getConfig().setDecorator("html");
+    	
+//    	{"translator":{"id":3,"manager":true,"email":"theiceberk@gmail.com","inline":true,"name":"Safari","features":{"show_locked_keys":false,"fallback_language":false}},"locale":"ru","code":"a0f135d6b42818c46"}    	
+    	
+    	if (params.get("translator") != null) {
+    		setCurrentTranslator(new Translator((Map<String, Object>) params.get("translator")));
+    	}
+    	
+    	if (params.get("locale") != null)
+    		setCurrentLocale((String)params.get("locale"));
+    }
+    
     public Language getCurrentLanguage() {
         return currentLanguage;
     }
@@ -166,20 +174,20 @@ public class Session extends Observable {
         this.currentSource = currentSource;
     }
 
-    public void beginBlockWithOptions(Map options) {
+    public void beginBlockWithOptions(Map<String, Object> options) {
         if (this.blockOptions == null) {
-            this.blockOptions = new ArrayList<Map>();
+            this.blockOptions = new ArrayList<Map<String, Object>>();
         }
 
         this.blockOptions.add(0, options);
     }
 
-    public Map getBlockOptions() {
+    public Map<String, Object> getBlockOptions() {
         if (this.blockOptions == null)
-            this.blockOptions = new ArrayList<Map>();
+            this.blockOptions = new ArrayList<Map<String, Object>>();
 
         if (this.blockOptions.size() == 0)
-            return new HashMap();
+            return new HashMap<String, Object>();
 
         return this.blockOptions.get(0);
     }

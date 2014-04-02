@@ -71,6 +71,7 @@ public class DataTokenizer extends Tokenizer {
      *
      */
     // TODO: verify if reflection is too slow and switch to method invocation instead
+	@SuppressWarnings("unchecked")
     protected void tokenize() {
         try {
             this.tokens = new ArrayList<Token>();
@@ -88,7 +89,7 @@ public class DataTokenizer extends Tokenizer {
                     String match = matcher.group();
                     if (tokenMatches.contains(match)) continue;
                     tokenMatches.add(match);
-                    Constructor constructor = tokenClass.getConstructor(String.class, String.class);
+					Constructor<Token> constructor = tokenClass.getConstructor(String.class, String.class);
                     Token registeredToken = (Token) constructor.newInstance(match, this.label);
                     this.tokens.add(registeredToken);
                     matchingLabel = matchingLabel.replaceAll(Pattern.quote(match), "");

@@ -32,7 +32,7 @@ public class Logger {
     private org.apache.log4j.Logger theLogger;
 
     public Logger() {
-        this.theLogger = LogManager.getRootLogger();
+        this.theLogger = LogManager.getLogger("Tr8n");
         theLogger.setLevel(Level.DEBUG);
         PatternLayout layout = new PatternLayout("%d{ISO8601} [%t] %-5p %c %x - %m%n");
         theLogger.addAppender(new ConsoleAppender(layout));

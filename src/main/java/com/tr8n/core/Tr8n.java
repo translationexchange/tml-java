@@ -22,6 +22,7 @@
 
 package com.tr8n.core;
 
+import java.lang.reflect.Constructor;
 import java.text.AttributedString;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -29,16 +30,34 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import com.tr8n.core.tokenizers.tokens.Token;
+
 /**
  * A utility session wrapper class for using by Mobile and Desktop application.
  */
 public class Tr8n {
 
     /**
-     * Static instance of Tr8n session
+     * Static instance of Tr8n session. For mobile and desktop applications, only a singleton session is needed. 
+     * For web applications, the session must be created for every request. Session contains dynamic information per user/language.
      */
     private static Session session = null;
 
+    /**
+     * Tr8n configuration attribute
+     */
+    private static Configuration config;
+
+    /**
+     * Tr8n cache
+     */
+    private static Cache cache;
+
+    /**
+     * Tr8n logger
+     */
+    private static Logger logger;
+    
     /**
      * Periodically send missing keys to the server, should only be used in a single user mode (desktop, mobile)
      */
@@ -108,16 +127,52 @@ public class Tr8n {
         applicationScheduleHandler = null;
     }
 
+    
+    /**
+     * Get an instance of the configuration object
+     * 
+     * @return
+     */
     public static Configuration getConfig() {
-        return getSession().getConfig();
+        if (config == null)
+            config = new Configuration();
+
+        return config;
     }
 
+    /**
+     * Get an instance of the Cache object
+     * 
+     * @return
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Cache getCache() {
-        return getSession().getCache();
+    	if (!getConfig().isCacheEnabled())
+    		return null;
+    	
+        if (cache  == null) {
+        	try {
+        		Map<String, Object> cacheData = getConfig().getCache();
+				Class cacheClass = Class.forName((String) cacheData.get("class"));
+        		Constructor<Cache> constructor = cacheClass.getConstructor(Map.class);
+        		cache = constructor.newInstance(cacheData);
+        	} catch (Exception ex) {
+        		getLogger().logException(ex);
+        	}
+        }
+        return cache;
     }
 
+    /**
+     * Get an instance of the logger object
+     * 
+     * @return
+     */
     public static Logger getLogger() {
-        return getSession().getLogger();
+        if (logger == null)
+            logger = new Logger();
+
+        return logger;
     }
 
 

@@ -72,7 +72,7 @@ public class HttpClient {
     private String getAccessToken() throws Exception {
         if (getApplication().getAccessToken() == null) {
             // TODO: check if access token is expired
-            Map accessTokenData = getJSONMap("oauth/request_token", Utils.buildMap(
+            Map<String, Object> accessTokenData = getJSONMap("oauth/request_token", Utils.buildMap(
                     "client_id", getApplication().getKey(),
                     "client_secret", getApplication().getSecret(),
                     "grant_type", "client_credentials"),
@@ -89,39 +89,106 @@ public class HttpClient {
         return (String) getApplication().getAccessToken().get("token");
     }
 
-    private void prepareParams(Map params, Map options) throws Exception {
+    /**
+     * Prepares URL params
+     * 
+     * @param params
+     * @param options
+     * @throws Exception
+     */
+    private void prepareParams(Map<String, Object> params, Map<String, Object> options) throws Exception {
         if (options != null && options.get("oauth") != null)
             return;
 
         params.put("access_token", this.getAccessToken());
     }
 
-    public List getJSONList(String path, Map params) throws Exception {
-        return (List) getJSON(path, params);
-    }
-
-    public Map<String, Object> getJSONMap(String path, Map params, Map options) throws Exception {
+    /**
+     * Requests data from URL and returns JSON Map
+     * 
+     * @param path
+     * @param params
+     * @param options
+     * @return
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+	public Map<String, Object> getJSONMap(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
         return (Map<String, Object>) getJSON(path, params, options);
     }
 
-    public Map<String, Object> getJSONMap(String path, Map params) throws Exception {
+    /**
+     * Requests data from URL and returns JSON Map
+     * 
+     * @param path
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+	public Map<String, Object> getJSONMap(String path, Map<String, Object> params) throws Exception {
         return (Map<String, Object>) getJSON(path, params);
     }
 
-    public Object getJSON(String path, Map params) throws Exception {
+    /**
+     * Requests data from URL and returns JSON Map
+     * 
+     * @param path
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    public Object getJSON(String path, Map<String, Object> params) throws Exception {
         return getJSON(path, params, null);
     }
 
-    public Object getJSON(String path, Map params, Map options) throws Exception {
-        String responseText = get(path, params, options);
-        Map data = (Map) Utils.parseJSON(responseText);
-        if (data.get("error") != null)
-            throw new Exception((String) data.get("error"));
-
-        return data;
+    /**
+     * 
+     * @param path
+     * @param params
+     * @param options
+     * @return
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    public Object getJSON(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
+    	String responseText = null;
+    	String cacheKey = (options == null || !Tr8n.getConfig().isCacheEnabled() ? null : (String) options.get("cache_key"));
+    	
+    	if (cacheKey != null) {
+    		responseText = (String) Tr8n.getCache().fetch(cacheKey, options);
+    		if (responseText == null) {
+    			responseText = get(path, params, options);
+    			Tr8n.getCache().store(cacheKey, responseText, options);
+    		}
+    	} else {
+    		responseText = get(path, params, options);
+    	}
+    	
+    	Object result = (Map<String, Object>) Utils.parseJSON(responseText);
+    	
+    	if (result instanceof Map) {
+    		Map<String, Object> data = (Map<String, Object>) Utils.parseJSON(responseText);
+		
+	        if (data.get("error") != null) {
+	        	if (cacheKey != null)  Tr8n.getCache().delete(cacheKey, options);
+	            throw new Exception((String) data.get("error"));
+	        }
+    	}
+    	
+        return result;
     }
 
-    public String get(String path, Map params, Map options) throws Exception {
+    /**
+     * Gets data from an API URL.
+     * 
+     * @param path
+     * @param params
+     * @param options
+     * @return
+     * @throws Exception
+     */
+    public String get(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
         prepareParams(params, options);
 
         URL url = Utils.buildURL(getApplication().getHost(), TR8N_API_PATH + path, params);
@@ -146,11 +213,20 @@ public class HttpClient {
         }
     }
 
-    public Object post(String path, Map params) throws Exception {
+    public Object post(String path, Map<String, Object> params) throws Exception {
         return post(path, params, null);
     }
 
-    public Object post(String path, Map params, Map options) throws Exception {
+    /**
+     * Posts data to an API URL. Posts are never cached.
+     * 
+     * @param path
+     * @param params
+     * @param options
+     * @return
+     * @throws Exception
+     */
+    public Object post(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
         URL url = Utils.buildURL(getApplication().getHost(), TR8N_API_PATH + path, Utils.buildMap("access_token", this.getAccessToken()));
 
         String bodyStr = Utils.buildQueryString(params);

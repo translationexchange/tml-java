@@ -100,21 +100,25 @@ public class Source extends Base {
         }
     }
 
+    public String getCacheKey() {
+    	return getLocale() + "/" + getKey();
+    }
+    
     /**
      * Loading source from service
      */
-    public void load() {
+    public void load(Map<String, Object> options) {
         try {
-            Map data = getApplication().getHttpClient().getJSONMap("source", Utils.buildMap(
-                    "source", getKey(),
-                    "locale", getLocale(),
-                    "translations", "true")
-            );
-            this.updateAttributes(data);
+        	if (options==null) options = new HashMap<String, Object>();
+        	options.put("cache_key", getCacheKey());
+        	
+            this.updateAttributes(getApplication().getHttpClient().getJSONMap("source", 
+            		Utils.buildMap("source", getKey(), "locale", getLocale(), "translations", "true"),
+            		options
+            ));
+            
         } catch (Exception ex) {
-            Tr8n.getLogger().error("Failed to load source");
-            Tr8n.getLogger().error(ex);
-            Tr8n.getLogger().error(StringUtils.join(ex.getStackTrace(), "\n"));
+            Tr8n.getLogger().logException(ex);
         }
     }
 

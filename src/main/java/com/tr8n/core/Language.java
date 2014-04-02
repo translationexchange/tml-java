@@ -120,16 +120,21 @@ public class Language extends Base {
         }
     }
 
+    public String getCacheKey() {
+    	return getLocale() + "/language";
+    }
+    
     public void load() {
         try {
-            this.updateAttributes(getApplication().getHttpClient().getJSONMap("language", Utils.buildMap(
-                    "locale", this.locale,
-                    "definition", "true"
-            )));
+        	Map<String, Object> options = new HashMap<String, Object>();
+        	options.put("cache_key", getCacheKey());
+        	
+            this.updateAttributes(getApplication().getHttpClient().getJSONMap("language", 
+            		Utils.buildMap("locale", this.locale, "definition", "true"),
+            		options
+            ));
         } catch (Exception ex) {
-            Tr8n.getLogger().error("Failed to load language");
-            Tr8n.getLogger().error(ex);
-            Tr8n.getLogger().error(StringUtils.join(ex.getStackTrace(), "\n"));
+            Tr8n.getLogger().logException(ex);
         }
     }
 
@@ -235,11 +240,11 @@ public class Language extends Base {
     }
 
 
-    private TranslationKey createTranslationKey(String keyHash, String label, String description, Map options) {
+    private TranslationKey createTranslationKey(String keyHash, String label, String description, Map<String, Object> options) {
         String locale = (String) getOptionsValue("locale", options, getApplication().getDefaultLocale());
         Long level = (Long) getOptionsValue("level", options, getApplication().getTranslatorLevel());
 
-        Map attributes = Utils.buildMap(
+        Map<String, Object> attributes = Utils.buildMap(
                 "application", getApplication(),
                 "key", keyHash,
                 "label", label,
@@ -259,7 +264,7 @@ public class Language extends Base {
      * @param options
      * @return
      */
-    public Object translate(String label, String description, Map tokens, Map options) {
+    public Object translate(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
         String keyHash = TranslationKey.generateKey(label, description);
 
         if (getApplication().isKeyRegistrationEnabled()) {
@@ -268,7 +273,7 @@ public class Language extends Base {
             if (sourceKey == null)
                 sourceKey = "undefined";
 
-            Source source = getApplication().getSource(sourceKey, this.getLocale());
+            Source source = getApplication().getSource(sourceKey, this.getLocale(), options);
             if (source != null) {
                 TranslationKey matchedKey = source.getTranslationKey(keyHash);
                 if (matchedKey != null) return matchedKey.translate(this, tokens, options);

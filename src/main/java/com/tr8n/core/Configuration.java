@@ -22,6 +22,9 @@
 
 package com.tr8n.core;
 
+import com.tr8n.core.decorators.Decorator;
+import com.tr8n.core.decorators.HtmlDecorator;
+import com.tr8n.core.decorators.PlainDecorator;
 import com.tr8n.core.rulesengine.Variable;
 
 import java.lang.reflect.Method;
@@ -92,13 +95,14 @@ public class Configuration {
      */
     private Map<String, Object> localization;
 
+    /**
+     * Decorator class
+     */
+    private Decorator decorator;
+    
     public Configuration() {
-//        this.application = Utils.buildMap(
-//            "host", "https://localhost:3000",
-//            "key", "default",
-//            "secret", "12345"
-//        );
-
+    	this.decorator = new PlainDecorator();
+    	
         this.tokenClasses = Utils.buildStringList(
                 "com.tr8n.core.tokenizers.tokens.DataToken",
                 "com.tr8n.core.tokenizers.tokens.MethodToken",
@@ -113,6 +117,7 @@ public class Configuration {
 
         this.cache = Utils.buildMap(
             "enabled", true,
+        	"class", "com.tr8n.core.cache.FileCache",
             "host", "localhost:11211",
             "adapter", "memcache",
             "version", 1,
@@ -357,7 +362,7 @@ public class Configuration {
         return tokenClasses;
     }
 
-    public Map getApplication() {
+    public Map<String, Object> getApplication() {
         return application;
     }
 
@@ -469,5 +474,33 @@ public class Configuration {
 
     public void setLocalization(Map<String, Object> localization) {
         this.localization = localization;
+    }
+
+    public void setDecorator(String type) {
+    	if (type.equals("html"))
+    		decorator = new HtmlDecorator();
+    	else
+    		decorator = new PlainDecorator();
+    }
+    
+    public void setDecorator(Decorator decorator) {
+    	this.decorator = decorator;
+    }
+    
+    public Decorator getDecorator() {
+    	return decorator;
+    }
+    
+    public boolean isCacheEnabled() {
+    	if (this.cache == null) return false;
+    	if (this.cache.get("enabled") == null) return true;
+    	return (Boolean)this.cache.get("enabled");
+    }
+    
+    public String getApplicationName() {
+    	if (getApplication() == null || getApplication().get("name") == null)
+    		return "Tr8n";
+    	
+    	return (String) getApplication().get("name");
     }
 }

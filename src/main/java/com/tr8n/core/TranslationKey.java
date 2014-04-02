@@ -22,6 +22,7 @@
 
 package com.tr8n.core;
 
+import com.tr8n.core.decorators.Decorator;
 import com.tr8n.core.tokenizers.AttributedStringTokenizer;
 import com.tr8n.core.tokenizers.DataTokenizer;
 import com.tr8n.core.tokenizers.DecorationTokenizer;
@@ -43,7 +44,7 @@ public class TranslationKey extends Base {
      * Unique key (md5 hash) identifying this translation key
      */
     private String key;
-
+    
     /**
      * Text to be translated
      */
@@ -79,7 +80,16 @@ public class TranslationKey extends Base {
      */
     private List decorationTokens;
 
-
+    /**
+     * Indicates whether the key is locked
+     */
+    private Boolean locked;
+    
+    /**
+     * Indicates whether the key is registered
+     */
+    private Boolean registered;
+    
     /**
      * List of data token names from the original label
      */
@@ -122,6 +132,8 @@ public class TranslationKey extends Base {
 
         setLevel((Long) attributes.get("level"));
 
+        setLocked((Boolean) attributes.get("locked"));
+
         if (attributes.get("translations") != null && this.application != null) {
             Iterator entries = ((Map) attributes.get("translations")).entrySet().iterator();
             while (entries.hasNext()) {
@@ -142,7 +154,6 @@ public class TranslationKey extends Base {
             }
         }
     }
-
 
     /**
      * Generates unique hash key for the translation key using label
@@ -166,9 +177,10 @@ public class TranslationKey extends Base {
         String s = sb.toString();
 
         try {
-            MessageDigest m=MessageDigest.getInstance("MD5");
-            m.update(s.getBytes(),0,s.length());
-            return new BigInteger(1,m.digest()).toString(16);
+            MessageDigest m = MessageDigest.getInstance("MD5");
+            String hashText = new BigInteger(1,m.digest(s.getBytes("UTF-8"))).toString(16);
+            while(hashText.length() < 32 ) hashText = "0" + hashText;
+            return hashText;
         } catch (Exception ex) {
             Tr8n.getLogger().error("Failed to generate md5 key for " + label + " " + description);
             Tr8n.getLogger().error(ex);
@@ -236,17 +248,15 @@ public class TranslationKey extends Base {
      */
     public Object translate(Language language, Map tokens, Map options) {
         if (getLocale().equals(language.getLocale())) {
-            return substitute(label, tokens, language, options);
+            return substitute(label, tokens, language, language, options);
         }
 
         Translation translation = findFirstAcceptableTranslation(language, tokens);
 
-        // TODO: add support for decorators in J2EE
-
         if (translation != null)
-            return substitute(translation.getLabel(), tokens, language, options);
+            return substitute(translation.getLabel(), tokens, translation.getLanguage(), language, options);
 
-        return substitute(getLabel(), tokens, getApplication().getLanguage(), options);
+        return substitute(getLabel(), tokens, getApplication().getLanguage(), language, options);
     }
 
     /**
@@ -281,10 +291,10 @@ public class TranslationKey extends Base {
      * @param options
      * @return
      */
-    public Object substitute(String translatedLabel, Map tokens, Language language, Map options) {
+    public Object substitute(String translatedLabel, Map<String, Object> tokens, Language translationLanguage, Language targetLanguage, Map<String, Object> options) {
         if (DataTokenizer.shouldBeUsed(translatedLabel)) {
             DataTokenizer dt = new DataTokenizer(translatedLabel, getAllowedDataTokenNames());
-            translatedLabel = dt.substitute(tokens, language, options);
+            translatedLabel = dt.substitute(tokens, translationLanguage, options);
         }
 
         if (options != null && options.get("tokenizer") != null && options.get("tokenizer").equals("attributed")) {
@@ -297,12 +307,12 @@ public class TranslationKey extends Base {
 
         if (DecorationTokenizer.shouldBeUsed(translatedLabel)) {
             HtmlTokenizer ht = new HtmlTokenizer(translatedLabel, getAllowedDecorationTokenNames());
-            return ht.substitute(tokens, language, options);
+            translatedLabel = ht.substitute(tokens, translationLanguage, options);
         }
-
-        return translatedLabel;
+        
+        Decorator decorator = Tr8n.getConfig().getDecorator();
+        return decorator.decorate(translatedLabel, translationLanguage, targetLanguage, this, options);
     }
-
 
     /****************************************************************************************************/
 
@@ -406,7 +416,17 @@ public class TranslationKey extends Base {
         this.key = key;
     }
 
-    public Map toMap() {
+    public Boolean isLocked() {
+    	if (locked == null)
+    		return false;
+		return locked;
+	}
+
+	public void setLocked(Boolean locked) {
+		this.locked = locked;
+	}
+
+	public Map toMap() {
         Map data = new HashMap();
         data.put("label", label);
         if (description != null)

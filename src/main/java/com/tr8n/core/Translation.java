@@ -70,19 +70,19 @@ public class Translation extends Base {
      *
      * @param attributes
      */
-    public void updateAttributes(Map<String, Object> attributes) {
+    @SuppressWarnings("rawtypes")
+	public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("language") != null)
-            this.language = (Language) attributes.get("language");
+        	setLanguage((Language) attributes.get("language"));
 
         if (attributes.get("translation_key") != null)
-            this.translationKey = (TranslationKey) attributes.get("translation_key");
+        	setTranslationKey((TranslationKey) attributes.get("translation_key"));
 
-        if (this.language == null && attributes.get("locale") != null && this.translationKey != null) {
-            this.language = this.translationKey.getApplication().getLanguage((String) attributes.get("locale"));
-        }
-
-        this.label = (String) attributes.get("label");
-        this.context = (Map) attributes.get("context");
+        if (language == null && attributes.get("locale") != null && translationKey != null)
+        	setLanguage(translationKey.getApplication().getLanguage((String) attributes.get("locale")));
+        
+        setLabel((String) attributes.get("label"));
+        setContext((Map) attributes.get("context"));
     }
 
     public String getLabel() {

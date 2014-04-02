@@ -167,4 +167,17 @@ public class UtilsTest extends BaseTest {
         );
     }
 
+    @Test
+    public void testEncodeDecodeParams() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("key", "value");
+
+        String signedData = Utils.signAndEncode(map, "secret");
+
+        Assert.assertEquals(
+                map,
+                Utils.decodeAndVerify(signedData, "secret")
+        );
+    }
+
 }

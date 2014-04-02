@@ -143,7 +143,8 @@ public class Application extends Base {
         super(attributes);
     }
 
-    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
     public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("host") != null)
             setHost((String) attributes.get("host"));
@@ -198,9 +199,9 @@ public class Application extends Base {
      */
     public void load() {
         try {
-            this.updateAttributes(getHttpClient().getJSONMap("application", Utils.buildMap(
-                    "client_id", key,
-                    "definition", "true")
+            this.updateAttributes(getHttpClient().getJSONMap("application", 
+            		Utils.buildMap("client_id", key, "definition", "true"),
+            		Utils.buildMap("cache_key", "application")
             ));
         } catch (Exception ex) {
             Tr8n.getLogger().logException("Failed to load application", ex);
@@ -227,13 +228,24 @@ public class Application extends Base {
     }
 
     /**
+     * Returns translations cache key
+     * @return
+     */
+    public String getTranslationsCacheKey() {
+    	return getDefaultLocale() + "/translations";
+    }
+    
+    /**
      * Loads translations from the service for a given language and caches them in the application
      * @param language
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	public void loadTranslations(Language language) {
         try {
-            Map<String, Object> results = getHttpClient().getJSONMap("application/translations", Utils.buildMap("locale", language.getLocale()));
+            Map<String, Object> results = getHttpClient().getJSONMap("application/translations", 
+            		Utils.buildMap("locale", language.getLocale()),
+            		Utils.buildMap("cache_key", getTranslationsCacheKey())
+            );
 			List keys = (List) results.get("translation_keys");
             for (Object key : keys) {
 				Map<String, Object> attributes = new HashMap<String, Object>((Map)key);
@@ -339,28 +351,19 @@ public class Application extends Base {
     }
 
     /**
-     *
-     * @param key
-     * @return
-     */
-    public Source getSource(String key) {
-        return this.getSource(key, this.defaultLocale);
-    }
-
-    /**
      * Get source with translations for a specific locale
      * @param key
      * @param locale
      * @return
      */
-    public Source getSource(String key, String locale) {
+    public Source getSource(String key, String locale, Map<String, Object> options) {
         if (sourcesByKeys == null) {
             sourcesByKeys = new HashMap<String, Source>();
         }
 
         if (sourcesByKeys.get(key) == null) {
             Source source = new Source(Utils.buildMap("application", this, "key", key, "locale", locale));
-            source.load();
+            source.load(options);
             sourcesByKeys.put(key, source);
         }
 

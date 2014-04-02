@@ -22,9 +22,6 @@
 
 package com.tr8n.core;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Map;
 
 public abstract class Base {
@@ -50,32 +47,5 @@ public abstract class Base {
      * @param attributes
      */
     public abstract void updateAttributes(Map<String, Object> attributes);
-
-    /**
-     *
-     */
-    public void load() {
-        // Optionally can be overloaded by the extending class
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Map toMap() {
-        // Optionally can be overloaded by the extending class
-        return null;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String toJSON() {
-        return "";
-    }
-
-
-
 
 }

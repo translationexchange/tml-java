@@ -22,9 +22,55 @@
 
 package com.tr8n.core;
 
-public class Cache {
+import java.util.Map;
 
-    public void resetVersion() {
 
+public abstract class Cache {
+	private Map<String, Object> config;
+	
+	public Cache(Map<String, Object> config) {
+		this.config = config;
+	}
+	
+	public Integer getVersion() {
+		return (Integer) getConfig().get("version");
+	}
+	
+	public void setVersion(Integer version) {
+		getConfig().put("version", version);
+	}
+
+	public void incrementVersion() {
+		setVersion(getVersion() + 1);
+	}
+
+	protected String getVersionedKey(String key) {
+		return key;
+	}
+	
+    public boolean isInlineMode(Map<String, Object> options) {
+		if (options == null || options.get("session") == null) 
+			return false;
+		
+		Session session = (Session) options.get("session"); 
+		if (session.getCurrentTranslator() == null)
+			return false;
+		
+		return session.getCurrentTranslator().isInline();
     }
+    
+    public abstract Object fetch(String key, Map<String, Object> options);
+    
+    public abstract void store(String key, Object data, Map<String, Object> options);
+
+    public abstract void delete(String key, Map<String, Object> options);
+
+	public Map<String, Object> getConfig() {
+		return config;
+	}
+
+	public void setConfig(Map<String, Object> config) {
+		this.config = config;
+	}
+
 }
