@@ -398,9 +398,8 @@ public class Evaluator {
                 Object v1 = params.get(0);
                 Object v2 = params.get(1);
 
-                if (Utils.isInteger(v1) && Utils.isInteger(v2)) {
+                if (Utils.isInteger(v1) && Utils.isInteger(v2)) 
                     return Utils.parseInt(v1) % Utils.parseInt(v2);
-                }
 
                 return null;
             }

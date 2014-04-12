@@ -186,10 +186,6 @@ public class TranslationKey extends Base {
         getTranslationsByLocale().put(locale, translations);
     }
 
-    public List<Translation> getTranslations(String locale) {
-        return getTranslationsByLocale().get(locale);
-    }
-
     public List<String> getTranslationLocales() {
         return new ArrayList<String>(getTranslationsByLocale().keySet());
     }
@@ -268,25 +264,55 @@ public class TranslationKey extends Base {
 
         setLocked((Boolean) attributes.get("locked"));
 
-        if (attributes.get("translations") != null && this.application != null) {
+        if (attributes.get("translations") != null && getApplication() != null) {
             Iterator<Map.Entry<String, List<Map<String, Object>>>> entries = ((Map) attributes.get("translations")).entrySet().iterator();
             while (entries.hasNext()) {
                 Map.Entry<String, List<Map<String, Object>>> entry = entries.next();
                 Language language = getApplication().getLanguage(entry.getKey());
 
-                List<Translation> translations = new ArrayList<Translation>();
                 for (Map<String, Object> translationData : entry.getValue()) {
-                    Map<String, Object> attrs = new HashMap<String, Object>(translationData);
-                    attrs.put("language", language);
-                    attrs.put("translation_key", this);
-                    Translation translation = new Translation(attrs);
-                    translations.add(translation);
+                    addTranslation(new Translation(Utils.extendMap(translationData, "language", language, "translation_key", this)));
                 }
-                setTranslations(language.getLocale(), translations);
             }
         }
     }
+    
+    /**
+     * Returns a list of translations for a locale
+     * 
+     * @param locale
+     * @return
+     */
+    public List<Translation> getTranslations(String locale) {
+        if (getTranslationsByLocale().get(locale) == null) {
+        	getTranslationsByLocale().put(locale, new ArrayList<Translation>());
+        }
 
+        return getTranslationsByLocale().get(locale);
+    }
+    
+    /**
+     * Adds a translation
+     * 
+     * @param translation
+     */
+    public void addTranslation(Translation translation) {
+    	List<Translation> translations = getTranslations(translation.getLocale());
+        translation.setTranslationKey(this);
+        translations.add(translation);
+    }
+    
+    /**
+     * Adds translations
+     * @param locale
+     * @param translations
+     */
+    public void addTranslations(List<Translation> translations) {
+        for (Translation translation : translations) {
+        	addTranslation(translation);
+        }
+    }
+    
     /**
      * Generates unique hash key for the translation key using label
      * @param label

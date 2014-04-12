@@ -52,6 +52,13 @@ public class Component extends Base {
     private String state;
 
     /**
+     * Default constructor
+     */
+    public Component() {
+        super();
+    }
+    
+    /**
      *
      * @param attributes Object attributes
      */
@@ -65,12 +72,12 @@ public class Component extends Base {
      */
     public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("application") != null)
-            this.application = (Application) attributes.get("application");
+        	setApplication((Application) attributes.get("application"));
 
-        this.key = (String) attributes.get("key");
-        this.name = (String) attributes.get("name");
-        this.description = (String) attributes.get("description");
-        this.state = (String) attributes.get("state");
+        setKey((String) attributes.get("key"));
+        setName((String) attributes.get("name"));
+        setDescription((String) attributes.get("description"));
+        setState((String) attributes.get("state"));
     }
 
     public Application getApplication() {
@@ -92,4 +99,26 @@ public class Component extends Base {
     public String getState() {
         return state;
     }
+
+	protected void setApplication(Application application) {
+		this.application = application;
+	}
+
+	protected void setKey(String key) {
+		this.key = key;
+	}
+
+	protected void setName(String name) {
+		this.name = name;
+	}
+
+	protected void setDescription(String description) {
+		this.description = description;
+	}
+
+	protected void setState(String state) {
+		this.state = state;
+	}
+    
+    
 }

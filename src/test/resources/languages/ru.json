@@ -385,7 +385,7 @@
                 "other"
             ],
             "default_key":"vowel",
-            "token_expression":"/.*$/",
+            "token_expression":"explicit",
             "variables":[
                 "@value"
             ],

@@ -3,8 +3,6 @@ package com.tr8n.core;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Map;
-
 /**
  * Created by michael on 3/15/14.
  */

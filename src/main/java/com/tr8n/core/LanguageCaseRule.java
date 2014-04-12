@@ -32,6 +32,9 @@ import com.tr8n.core.rulesengine.Parser;
 
 public class LanguageCaseRule extends Base {
 
+	public static final String VARIABLE_NAME_VALUE = "@value";
+	public static final String VARIABLE_NAME_GENDER = "@gender";
+	
     /**
      * Reference back to the language case the rule belongs to
      */
@@ -107,7 +110,7 @@ public class LanguageCaseRule extends Base {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getOperationsExpression() {
-        if (this.operationsExpression == null) {
+        if (this.operationsExpression == null && this.getOperations() != null) {
             Parser p = new Parser(this.operations);
             this.operationsExpression = (List<Object>) p.parse();
         }
@@ -117,8 +120,8 @@ public class LanguageCaseRule extends Base {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getConditionsExpression() {
-        if (this.conditionsExpression == null) {
-            Parser p = new Parser(this.conditions);
+        if (this.conditionsExpression == null && this.getConditions() != null) {
+            Parser p = new Parser(this.getConditions());
             this.conditionsExpression = (List<Object>) p.parse();
         }
 
@@ -141,18 +144,18 @@ public class LanguageCaseRule extends Base {
      * @return
      */
     public boolean evaluate(String value, Object object) {
-    	if (conditions == null)
+    	if (getConditionsExpression() == null)
     		return false;
     	
     	Evaluator e = new Evaluator();
-    	e.setVariable("@value", value);
+    	e.setVariable(VARIABLE_NAME_VALUE, value);
     	
     	if (object != null) {
     		Map<String, Object> variables = getGenderVariables(object);
     		if (variables != null) {
                 Iterator<Entry<String, Object>> entries = variables.entrySet().iterator();
                 while (entries.hasNext()) {
-					Map.Entry<String, Object> entry = (Map.Entry<String, Object>) entries.next();
+					Map.Entry<String, Object> entry = entries.next();
                     e.setVariable((String) entry.getKey(), entry.getValue());
                 }
     		}
@@ -168,15 +171,15 @@ public class LanguageCaseRule extends Base {
      * @return
      */
     private Map<String, Object> getGenderVariables(Object object) {
-    	if (!conditions.contains("@gender"))
+    	if (!conditions.contains(VARIABLE_NAME_GENDER))
     		return null;
     	
     	if (object == null)
-    		return Utils.buildMap("@gender", "unknown");
+    		return Utils.buildMap(VARIABLE_NAME_GENDER, "unknown");
     	
     	LanguageContext context = languageCase.getLanguage().getContextByKeyword("gender");
     	if (context == null)
-    		return Utils.buildMap("@gender", "unknown");
+    		return Utils.buildMap(VARIABLE_NAME_GENDER, "unknown");
     	
     	return context.getVariables(object);
     }
@@ -187,11 +190,11 @@ public class LanguageCaseRule extends Base {
      * @return
      */
     public String apply(String value) {
-    	if (operations == null)
+    	if (getOperationsExpression() == null)
     		return value;
 
     	Evaluator e = new Evaluator();
-    	e.setVariable("@value", value);
+    	e.setVariable(VARIABLE_NAME_VALUE, value);
     	return (String) e.evaluate(getOperationsExpression());
     }
 

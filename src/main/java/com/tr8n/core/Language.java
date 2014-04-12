@@ -82,7 +82,6 @@ public class Language extends Base {
     public Language(Map<String, Object> attributes) {
         super(attributes);
     }
-
     
     public Application getApplication() {
         return application;
@@ -98,10 +97,6 @@ public class Language extends Base {
 
     public void setLocale(String locale) {
         this.locale = locale;
-    }
-
-    public String toString() {
-        return  this.englishName;
     }
 
     public String getEnglishName() {
@@ -137,20 +132,18 @@ public class Language extends Base {
     }
 
     public Map<String, LanguageContext> getContexts() {
+    	if (contexts == null)
+    		contexts = new HashMap<String, LanguageContext>();
+    	
         return contexts;
     }
 
-    public void setContexts(Map<String, LanguageContext> contexts) {
-        this.contexts = contexts;
-    }
-
     public Map<String, LanguageCase> getCases() {
+    	if (cases == null)
+    		cases = new HashMap<String, LanguageCase>();
+    	
         return cases;
     }
-
-    public void setCases(Map<String, LanguageCase> cases) {
-        this.cases = cases;
-    }    
     
     /**
      *
@@ -171,9 +164,7 @@ public class Language extends Base {
             Iterator entries = ((Map) attributes.get("contexts")).entrySet().iterator();
             while (entries.hasNext()) {
                 Map.Entry entry = (Map.Entry) entries.next();
-                LanguageContext context = new LanguageContext((Map) entry.getValue());
-                context.setLanguage(this);
-                addContext(context);
+                addContext(new LanguageContext((Map) entry.getValue()));
             }
         }
 
@@ -181,9 +172,7 @@ public class Language extends Base {
             Iterator entries = ((Map) attributes.get("cases")).entrySet().iterator();
             while (entries.hasNext()) {
                 Map.Entry entry = (Map.Entry) entries.next();
-                LanguageCase languageCase = new LanguageCase((Map) entry.getValue());
-                languageCase.setLanguage(this);
-                addLanguageCase(languageCase);
+                addLanguageCase(new LanguageCase((Map) entry.getValue()));
             }
         }
     }
@@ -223,6 +212,9 @@ public class Language extends Base {
     public void addContext(LanguageContext languageContext) {
         if (contexts == null)
             contexts = new HashMap<String, LanguageContext>();
+        
+        languageContext.setLanguage(this);
+        
         contexts.put(languageContext.getKeyword(), languageContext);
     }
 
@@ -244,10 +236,7 @@ public class Language extends Base {
      * @return
      */
     public LanguageContext getContextByTokenName(String tokenName) {
-        if (contexts == null)
-            return null;
-
-        for (LanguageContext context : contexts.values()) {
+        for (LanguageContext context : getContexts().values()) {
             if (context.isApplicableToTokenName(tokenName))
                 return context;
         }
@@ -272,6 +261,9 @@ public class Language extends Base {
     public void addLanguageCase(LanguageCase languageCase) {
         if (cases == null)
             cases = new HashMap<String, LanguageCase>();
+        
+        languageCase.setLanguage(this);
+        
         cases.put(languageCase.getKeyword(), languageCase);
     }
 
@@ -280,7 +272,7 @@ public class Language extends Base {
      * @return
      */
     public boolean hasDefinition() {
-        return this.contexts != null;
+        return !getContexts().isEmpty();
     }
 
     /**
@@ -399,4 +391,7 @@ public class Language extends Base {
         return tempKey.translate(this, tokens, options);
     }
 
+    public String toString() {
+        return this.getEnglishName() + " (" + getLocale() + ")";
+    }
 }

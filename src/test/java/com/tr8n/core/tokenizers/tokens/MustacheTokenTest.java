@@ -1,10 +1,9 @@
 package com.tr8n.core.tokenizers.tokens;
 
-import com.tr8n.core.Utils;
-import com.tr8n.core.tokenizers.tokens.DataToken;
-import com.tr8n.core.tokenizers.tokens.MustacheToken;
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.tr8n.core.Utils;
 
 /**
  * Created by michael on 3/12/14.

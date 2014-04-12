@@ -32,6 +32,48 @@ public class UtilsTest extends BaseTest {
     }
 
     @Test
+    public void testExtendMap() {
+        Map<String, Object> expectation = new HashMap<String, Object>();
+        expectation.put("first_name", "Michael");
+        expectation.put("last_name", "Berk");
+        
+        Assert.assertEquals(
+	        expectation,
+	        Utils.buildMap(
+	            "first_name", "Michael",
+	            "last_name", "Berk"
+	        )
+        );
+        
+        expectation.put("gender", "male");
+
+        Assert.assertEquals(
+    	        expectation,
+    	        Utils.extendMap(Utils.buildMap(
+    	            "first_name", "Michael",
+    	            "last_name", "Berk"
+    	        ), "gender", "male")
+            );
+    }    
+    
+    @Test
+    public void testBuildingStringMap() {
+        Map<String, Object> expectation = new HashMap<String, Object>();
+        expectation.put("name", "Michael");
+        expectation.put("gender", "male");
+
+        Map<String, String> result = Utils.buildStringMap(
+                "name", "Michael",
+                "gender", "male"
+        );
+
+        Assert.assertEquals(
+                expectation,
+                result
+        );
+    }
+    
+    @Test
     public void testBuildingList() {
         List<Object> expectation = new ArrayList<Object>();
         expectation.add("Michael");
@@ -91,14 +133,9 @@ public class UtilsTest extends BaseTest {
 
     }
 
-
-
-
     @Test
     public void testSetNestedMapValues() {
-        Configuration config = new Configuration();
-
-        Map root = new HashMap();
+        Map<String, Object> root = new HashMap<String, Object>();
 
         Utils.setNestedMapValue(root, "a.b.c", "hello");
 
@@ -149,6 +186,14 @@ public class UtilsTest extends BaseTest {
     }
 
     @Test(expected=IllegalArgumentException.class)
+    public void testBuildStringMapWithOneArgumentFails() {
+        Assert.assertEquals(
+                null,
+                Utils.buildStringMap("a")
+        );
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
     public void testBuildMapWithNullValueFails() {
         Assert.assertEquals(
                 null,
@@ -156,6 +201,14 @@ public class UtilsTest extends BaseTest {
         );
     }
 
+    @Test(expected=IllegalArgumentException.class)
+    public void testBuildStringMapWithNullValueFails() {
+        Assert.assertEquals(
+                null,
+                Utils.buildStringMap("a", "b", null, "c")
+        );
+    }
+    
     @Test
     public void testBuildMap() {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -167,6 +220,15 @@ public class UtilsTest extends BaseTest {
         );
     }
 
+    @Test
+    public void testJoin() {
+        Assert.assertEquals(
+        		"1, 2, 3",
+        		Utils.join(Utils.buildList("1", "2", "3"), ", ")
+        );
+    }
+    
+    
 //    @Test
 //    public void testEncodeDecodeParams() {
 //        Map<String, Object> map = new HashMap<String, Object>();

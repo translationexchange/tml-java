@@ -1,10 +1,7 @@
 package com.tr8n.core;
 
-import com.tr8n.core.rulesengine.Evaluator;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 /**
  * Created by michael on 3/10/14.

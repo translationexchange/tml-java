@@ -73,7 +73,7 @@ public class EvaluatorTest extends BaseTest {
         org.junit.Assert.assertTrue((Boolean) e.getExpression("atom").evaluate(e, Utils.buildList(true)));
         org.junit.Assert.assertTrue((Boolean) e.getExpression("atom").evaluate(e, Utils.buildList(1.4)));
         org.junit.Assert.assertTrue((Boolean) e.getExpression("atom").evaluate(e, Utils.buildList(new Date())));
-        org.junit.Assert.assertFalse((Boolean) e.getExpression("atom").evaluate(e, Utils.buildList(new ArrayList())));
+        org.junit.Assert.assertFalse((Boolean) e.getExpression("atom").evaluate(e, Utils.buildList(new ArrayList<Object>())));
 
         org.junit.Assert.assertEquals(
             "yes",
@@ -545,7 +545,7 @@ public class EvaluatorTest extends BaseTest {
 
         Map<String, Expression> ext = new HashMap<String, Expression>();
         ext.put("print", new Expression() {
-            public Object evaluate(Evaluator evaluator, List params) {
+            public Object evaluate(Evaluator evaluator, List<Object> params) {
                 String varName = (String) params.get(0);
                 String varValue = "" + evaluator.getVariable(varName);
                 return varName + " = " + varValue;

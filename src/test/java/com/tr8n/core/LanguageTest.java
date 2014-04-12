@@ -17,7 +17,23 @@ public class LanguageTest extends BaseTest {
                 russian.getLocale()
         );
 
+        Assert.assertEquals(
+                "Russian (ru)",
+                russian.toString()
+        );
+        
     }
 
+    
+    @Test
+    public void testContext() {
+        Language russian = new Language(loadJSONMap("/languages/ru.json"));
+
+        Assert.assertEquals(
+                "gender",
+                russian.getContextByTokenName("user").getKeyword()
+        );
+    	
+    }    
 }
 

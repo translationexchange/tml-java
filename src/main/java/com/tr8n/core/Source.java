@@ -127,14 +127,9 @@ public class Source extends Base {
         setName((String) attributes.get("name"));
         setDescription((String) attributes.get("description"));
 
-        if (attributes.get("translation_keys") != null && getApplication() != null) {
+        if (attributes.get("translation_keys") != null) {
             for (Object data : ((List) attributes.get("translation_keys"))) {
-                Map<String, Object> attrs = new HashMap<String, Object>((Map) data);
-                attrs.put("application", getApplication());
-
-                TranslationKey translationKey = new TranslationKey(attrs);
-                translationKey = getApplication().cacheTranslationKey(translationKey);
-                addTranslationKey(translationKey);
+                addTranslationKey(new TranslationKey(Utils.extendMap((Map<String, Object>) data, "application", getApplication())));
             }
         }
     }
@@ -179,14 +174,27 @@ public class Source extends Base {
     }
 
     /**
+     * Returns a map of translation keys 
+     * 
+     * @return
+     */
+    public Map<String, TranslationKey> getTranslationKeys() {
+        if (translationKeys == null) {
+            translationKeys = new HashMap<String, TranslationKey>();
+        }
+        
+        return translationKeys;
+    }
+    
+    /**
      * Adds translation key to the source
      * @param translationKey
      */
     public void addTranslationKey(TranslationKey translationKey) {
-        if (translationKeys == null) {
-            translationKeys = new HashMap<String, TranslationKey>();
-        }
-        translationKeys.put(translationKey.getKey(), translationKey);
+        if (getApplication() != null)
+        	translationKey = getApplication().cacheTranslationKey(translationKey);
+        
+        getTranslationKeys().put(translationKey.getKey(), translationKey);
     }
 
     /**

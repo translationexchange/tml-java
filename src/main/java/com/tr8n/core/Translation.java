@@ -40,10 +40,15 @@ public class Translation extends Base {
     private Language language;
 
     /**
+     * Translation locale
+     */
+    private String locale;
+
+	/**
      * Translation label
      */
     private String label;
-
+    
     /**
      * Translation context hash:
      * {token1: {context1: rule1}, token2: {context2: rule2}}
@@ -65,6 +70,14 @@ public class Translation extends Base {
         super(attributes);
     }
 
+    protected String getLocale() {
+		return locale;
+	}
+
+	protected void setLocale(String locale) {
+		this.locale = locale;
+	}
+    
     public String getLabel() {
         return label;
     }
@@ -109,7 +122,9 @@ public class Translation extends Base {
         if (attributes.get("translation_key") != null)
         	setTranslationKey((TranslationKey) attributes.get("translation_key"));
 
-        if (language == null && attributes.get("locale") != null && translationKey != null)
+        setLocale((String) attributes.get("locale"));
+        
+        if (getLanguage() == null && getLocale() != null && getTranslationKey() != null)
         	setLanguage(translationKey.getApplication().getLanguage((String) attributes.get("locale")));
         
         setLabel((String) attributes.get("label"));

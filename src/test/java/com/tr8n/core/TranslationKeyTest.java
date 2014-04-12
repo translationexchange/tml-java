@@ -1,5 +1,8 @@
 package com.tr8n.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -39,7 +42,15 @@ public class TranslationKeyTest extends BaseTest {
                 tkey.getDescription()
         );
 
-
+        List<Translation> translations = new ArrayList<Translation>();
+        translations.add(new Translation(Utils.buildMap("locale", "ru", "label", "Privet Mir")));
+        tkey.addTranslations(translations);
+        
+        Assert.assertEquals(
+                1,
+                tkey.getTranslations("ru").size()
+        );
+        
     }
 
 }

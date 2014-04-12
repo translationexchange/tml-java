@@ -252,20 +252,8 @@ public class Application extends Base {
         this.features = features;
     }
 
-    public List<Language> getlanguages() {
-        return languages;
-    }
-
-    public void setlanguages(List<Language> languages) {
-        this.languages = languages;
-    }
-
     public List<Language> getFeaturedLanguages() {
         return featuredLanguages;
-    }
-
-    public void setFeaturedLanguages(List<Language> featuredLanguages) {
-        this.featuredLanguages = featuredLanguages;
     }
 
     public Map<String, Object> getAccessToken() {
@@ -364,8 +352,8 @@ public class Application extends Base {
      * Resets cached translation keys for the application scope
      */
     public void resetTranslations() {
-        this.translationKeys = new HashMap<String, TranslationKey>();
-        this.sourcesByKeys = new HashMap<String, Source>();
+        this.translationKeys = null;
+        this.sourcesByKeys = null;
     }
 
     /**
@@ -464,21 +452,32 @@ public class Application extends Base {
             params.add(Utils.buildMap("source", source, "keys", keys));
         }
 
-        try {
-            getHttpClient().post("source/register_keys", Utils.buildMap("source_keys", Utils.buildJSON(params)));
-            this.missingTranslationKeysBySources.clear();
+        registerKeys(Utils.buildMap("source_keys", Utils.buildJSON(params)));
+        
+        this.missingTranslationKeysBySources.clear();
 
-            // All source caches must be reset for all languages, since the keys have changed
-            for (Language language : getLanguages()) {
-	            for (String sourceKey : sourceKeys) {
-	            	Tr8n.getCache().delete(Source.getCacheKey(language.getLocale(), sourceKey), null);
-	            }
-            }            
-        } catch (Exception ex) {
-            Tr8n.getLogger().logException("Failed to register missing translation keys", ex);
-        }
+        // All source caches must be reset for all languages, since the keys have changed
+        for (Language language : getLanguages()) {
+            for (String sourceKey : sourceKeys) {
+            	Tr8n.getCache().delete(Source.getCacheKey(language.getLocale(), sourceKey), null);
+            }
+        }            
     }
 
+    /**
+     * Registers keys on the server
+     * @param map
+     */
+    public boolean registerKeys(Map<String, Object> map) {
+        try {
+        	getHttpClient().post("source/register_keys", map);
+        	return true;
+        } catch (Exception ex) {
+            Tr8n.getLogger().logException("Failed to register missing translation keys", ex);
+            return false;
+        }
+    }
+    
     /**
      * Checks if the locale is in the list of supported locales
      * @param locale
@@ -520,25 +519,33 @@ public class Application extends Base {
     }
 
     /**
+     * Returns a map of sources by keys
+     * 
+     * @return
+     */
+    public Map<String, Source> getSourcesByKeys() {
+        if (sourcesByKeys == null) {
+            sourcesByKeys = new HashMap<String, Source>();
+        }
+
+        return sourcesByKeys;
+    }
+    
+    /**
      * Get source with translations for a specific locale
      * @param key
      * @param locale
      * @return
      */
     public Source getSource(String key, String locale, Map<String, Object> options) {
-        if (sourcesByKeys == null) {
-            sourcesByKeys = new HashMap<String, Source>();
-        }
-
-        if (sourcesByKeys.get(key) == null) {
+        if (getSourcesByKeys().get(key) == null) {
             Source source = new Source(Utils.buildMap("application", this, "key", key, "locale", locale));
             source.load(options);
-            sourcesByKeys.put(key, source);
+            getSourcesByKeys().put(key, source);
         }
 
-        return sourcesByKeys.get(key);
+        return getSourcesByKeys().get(key);
     }
-
 
     /**
      * Adds a language to the list of application languages.
@@ -576,17 +583,19 @@ public class Application extends Base {
     }
 
     public void addSource(Source source) {
-        if (sourcesByKeys == null)
-            sourcesByKeys =  new HashMap<String, Source>();
-
-        sourcesByKeys.put(source.getKey(), source);
+        getSourcesByKeys().put(source.getKey(), source);
     }
 
-    public void addComponent(Component component) {
+    
+    public Map<String, Component> getComponentsByKeys() {
         if (componentsByKeys == null)
             componentsByKeys =  new HashMap<String, Component>();
 
-        componentsByKeys.put(component.getKey(), component);
+        return componentsByKeys;
+    }
+    
+    public void addComponent(Component component) {
+    	getComponentsByKeys().put(component.getKey(), component);
     }
 
     /**
@@ -628,6 +637,10 @@ public class Application extends Base {
     public boolean isFeatureEnabled(String feature) {
     	if (getFeatures() == null)
     		return false;
+    	
+    	if (getFeatures().get(feature) == null)
+    		return false;
+    	
     	return getFeatures().get(feature);
     }
     
@@ -642,10 +655,6 @@ public class Application extends Base {
             httpClient = new HttpClient(this);
 
         return httpClient;
-    }
-
-    public void setHttpClient(HttpClient httpClient) {
-        this.httpClient = httpClient;
     }
 
     public String toString() {

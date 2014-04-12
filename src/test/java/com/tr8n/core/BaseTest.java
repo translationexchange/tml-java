@@ -7,12 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Date;
-
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 public class BaseTest {
 
@@ -83,13 +80,13 @@ public class BaseTest {
     }
 
     @SuppressWarnings("unchecked")
-    public static Map loadJsonMapFromString(String jsonText) {
-        return (Map) Utils.parseJSON(jsonText);
+    public static Map<String, Object> loadJsonMapFromString(String jsonText) {
+        return (Map<String, Object>) Utils.parseJSON(jsonText);
     }
 
     @SuppressWarnings("unchecked")
-    public static List loadJsonListFromString(String jsonText) {
-        return (List) Utils.parseJSON(jsonText);
+    public static List<Object> loadJsonListFromString(String jsonText) {
+        return (List<Object>) Utils.parseJSON(jsonText);
     }
 }
 

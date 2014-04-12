@@ -174,6 +174,19 @@ public class Utils {
     }
 
     /**
+     * Extends a map
+     * 
+     * @param original
+     * @param data
+     * @return
+     */
+    public static Map<String, Object> extendMap(Map<String, Object> original, Object... data) {
+    	Map<String, Object> map = new HashMap<String, Object>(original);
+    	map.putAll(buildMap(data));
+    	return map;
+    }
+    
+    /**
      * Builds a map out of parameters
      * @param data
      * @return
@@ -371,9 +384,6 @@ public class Utils {
      * @return
      */
     public static String join(Object[] objects, String joiner) {
-    	if (objects == null || objects.length == 0)
-    		return "";
-
     	if (objects.length == 1)
     		return objects[0].toString();
     	
