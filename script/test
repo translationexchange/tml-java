@@ -6,7 +6,7 @@ require 'terminal-notifier'
 class UnitTester < FSEvent
   def on_change(directories)
     puts "Detected change in: #{directories.inspect}"
-    run_php_unit
+    run_unit_tests
   end
 
   def start
@@ -14,7 +14,7 @@ class UnitTester < FSEvent
     super
   end
 
-  def run_php_unit
+  def run_unit_tests
     system('clear')
     if (system("mvn clean test"))
       system("mvn jacoco:report")
