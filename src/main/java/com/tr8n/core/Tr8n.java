@@ -211,7 +211,7 @@ public class Tr8n {
     public static void switchLanguage(Language language, Map<String, Object> options) {
     	// TODO: if the connection is not present, do it offline, if possible
     	// delete language cache
-    	if (options != null && options.get("offline") == null) {
+    	if (options == null || options.get("offline") == null) {
     		getCache().delete(language.getLocale(), Utils.buildMap("directory", true));
     	}
     	getSession().switchLanguage(language);
