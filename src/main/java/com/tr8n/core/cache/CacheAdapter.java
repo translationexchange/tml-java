@@ -20,15 +20,16 @@
  *  THE SOFTWARE.
  */
 
-package com.tr8n.core;
+package com.tr8n.core.cache;
 
 import java.util.Map;
 
+import com.tr8n.core.Session;
 
-public abstract class Cache {
+public abstract class CacheAdapter implements Cache {
 	private Map<String, Object> config;
 	
-	public Cache(Map<String, Object> config) {
+	public CacheAdapter(Map<String, Object> config) {
 		this.config = config;
 	}
 	
@@ -44,6 +45,12 @@ public abstract class Cache {
 		setVersion(getVersion() + 1);
 	}
 
+	public int getTimeout() {
+		if (getConfig().get("timeout") == null) 
+			return 0;
+		return (Integer) getConfig().get("timeout");
+	}
+	
 	protected String getVersionedKey(String key) {
 		return key;
 	}
@@ -59,12 +66,6 @@ public abstract class Cache {
 		return session.getCurrentTranslator().isInline();
     }
     
-    public abstract Object fetch(String key, Map<String, Object> options);
-    
-    public abstract void store(String key, Object data, Map<String, Object> options);
-
-    public abstract void delete(String key, Map<String, Object> options);
-
 	public Map<String, Object> getConfig() {
 		return config;
 	}

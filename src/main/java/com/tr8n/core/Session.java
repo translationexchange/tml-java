@@ -22,7 +22,6 @@
 
 package com.tr8n.core;
 
-import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +58,6 @@ public class Session extends Observable {
      */
     private List<Map<String, Object>> blockOptions;
 
-
     /**
      * Default constructor
      */
@@ -72,11 +70,11 @@ public class Session extends Observable {
      * 
      * @param config
      */
-    public Session(Map<String, Object> config) {
+    public Session(Map<String, String> config) {
     	this(
-			(String) config.get("key"),
-			(String) config.get("secret"), 
-			(String) config.get("host")
+			config.get("key"),
+			config.get("secret"), 
+			config.get("host")
     	);
     }
 
@@ -112,17 +110,12 @@ public class Session extends Observable {
         )));
         getApplication().load();
         getApplication().setSession(this);
-        setCurrentSource("undefined");
         setCurrentLanguage(getApplication().getLanguage());
     }
 
     
     @SuppressWarnings("unchecked")
-	public void init(String cookie) {
-    	if (cookie==null)
-    		return;
-    	
-    	Map <String, Object> params = Utils.decodeAndVerify(cookie, getApplication().getSecret());
+	public void init(Map <String, Object> params) {
     	if (params == null)
     		return;
 
@@ -143,8 +136,9 @@ public class Session extends Observable {
     }
 
     public void switchLanguage(Language language) {
-        if (getCurrentLanguage().equals(language))
-            return;
+//        if (getCurrentLanguage().equals(language))
+//            return;
+        
         setCurrentLanguage(language);
 
         getApplication().resetTranslations();
@@ -254,32 +248,32 @@ public class Session extends Observable {
      * @param label
      * @return
      */
-    public AttributedString translateAttributedString(String label) {
-        return translateAttributedString(label, "");
+    public Object translateStyledString(String label) {
+        return translateStyledString(label, "");
     }
 
-    public AttributedString translateAttributedString(String label, String description) {
-        return translateAttributedString(label, description, null);
+    public Object translateStyledString(String label, String description) {
+        return translateStyledString(label, description, null);
     }
 
-    public AttributedString translateAttributedString(String label, String description, Map<String, Object> tokens) {
-        return  translateAttributedString(label, description, tokens, null);
+    public Object translateStyledString(String label, String description, Map<String, Object> tokens) {
+        return  translateStyledString(label, description, tokens, null);
     }
 
-    public AttributedString translateAttributedString(String label, Map<String, Object> tokens) {
-        return translateAttributedString(label, "", tokens, null);
+    public Object translateStyledString(String label, Map<String, Object> tokens) {
+        return translateStyledString(label, "", tokens, null);
     }
 
-    public AttributedString translateAttributedString(String label, Map<String, Object> tokens, Map<String, Object> options) {
-        return translateAttributedString(label, "", tokens, options);
+    public Object translateStyledString(String label, Map<String, Object> tokens, Map<String, Object> options) {
+        return translateStyledString(label, "", tokens, options);
     }
 
-    public AttributedString translateAttributedString(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
+    public Object translateStyledString(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
         if (options == null)
             options = new HashMap<String, Object>();
 
-        options.put("tokenizer", "attributed");
-        return (AttributedString) getCurrentLanguage().translate(label, description, tokens, options);
+        options.put(TranslationKey.TOKENIZER_KEY, TranslationKey.DEFAULT_TOKENIZERS_STYLED);
+        return getCurrentLanguage().translate(label, description, tokens, options);
     }
 
 }

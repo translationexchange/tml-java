@@ -22,15 +22,14 @@
 
 package com.tr8n.core.tokenizers;
 
-import com.tr8n.core.Language;
-import com.tr8n.core.Utils;
-import org.apache.commons.lang.StringUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.tr8n.core.Language;
+import com.tr8n.core.Utils;
 
 public class DecorationTokenizer extends Tokenizer {
     public static final String TOKEN_BRACKET = "[";
@@ -50,17 +49,17 @@ public class DecorationTokenizer extends Tokenizer {
     /**
      * Compiled expression extracted from the label
      */
-    Object expression;
+    protected Object expression;
 
     /**
      * List of fragments, used internally
      */
-    List<String> fragments;
+    protected List<String> fragments;
 
     /**
      * List of elements, used internally
      */
-    List<String> elements;
+    protected List<String> elements;
 
     /**
      *
@@ -99,10 +98,10 @@ public class DecorationTokenizer extends Tokenizer {
     }
 
     /**
-     *
+     * Tokenizes the expression
      */
     protected void tokenize() {
-        String regex = StringUtils.join(Utils.buildList(
+        String regex = Utils.join(Utils.buildList(
                 RE_SHORT_TOKEN_START,
                 RE_SHORT_TOKEN_END,
                 RE_LONG_TOKEN_START,
@@ -124,6 +123,30 @@ public class DecorationTokenizer extends Tokenizer {
         this.fragments = new ArrayList<String>(this.elements);
     }
 
+	protected Object getExpression() {
+		return expression;
+	}
+
+	protected void setExpression(Object expression) {
+		this.expression = expression;
+	}
+
+	protected List<String> getFragments() {
+		return fragments;
+	}
+
+	protected void setFragments(List<String> fragments) {
+		this.fragments = fragments;
+	}
+
+	protected List<String> getElements() {
+		return elements;
+	}
+
+	protected void setElements(List<String> elements) {
+		this.elements = elements;
+	}
+    
     /**
      *
      * @return
@@ -191,7 +214,7 @@ public class DecorationTokenizer extends Tokenizer {
      * @return
      */
     protected Object parseTree(String name, String type) {
-        List tree = new ArrayList();
+        List<Object> tree = new ArrayList<Object>();
         tree.add(name);
 
         if (!tokenNames.contains(name) && !name.equals(RESERVED_TOKEN))
@@ -199,11 +222,10 @@ public class DecorationTokenizer extends Tokenizer {
 
         if (type.equals(TOKEN_TYPE_SHORT)) {
             boolean first = true;
-
             while (peek() != null && ! isMatchingExpression(peek(), RE_SHORT_TOKEN_END)) {
                 Object value = parse();
                 if (first && value instanceof String) {
-                    value = ((String) value).trim();
+                    value = ((String) value).replaceAll("^\\s+", "");
                     first = false;
                 }
                 tree.add(value);
@@ -243,20 +265,20 @@ public class DecorationTokenizer extends Tokenizer {
      * @param expr
      * @return
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected String evaluate(Object expr) {
         if (!(expr instanceof List))
             return expr.toString();
 
-        List args = new ArrayList((List) expr);
+		List<Object> args = new ArrayList<Object>((List) expr);
         String token = (String) args.remove(0);
 
-
-        List processedValues = new ArrayList();
+        List<Object> processedValues = new ArrayList<Object>();
         for (Object arg : args) {
             processedValues.add(evaluate(arg));
         }
 
-        String value = StringUtils.join(processedValues.toArray(), "");
+        String value = Utils.join(processedValues.toArray(), "");
         return applyToken(token, value);
     }
 
@@ -266,7 +288,7 @@ public class DecorationTokenizer extends Tokenizer {
      * @param options
      * @return
      */
-    public String substitute(Map tokensData, Language language, Map options) {
+    public Object substitute(Map<String, Object> tokensData, Language language, Map<String, Object> options) {
         this.tokensData = tokensData;
         this.options = options;
         return evaluate(this.expression);
@@ -277,7 +299,7 @@ public class DecorationTokenizer extends Tokenizer {
      * @param label
      * @return
      */
-    public static boolean shouldBeUsed(String label) {
+    public static boolean isApplicable(String label) {
         return label.contains(TOKEN_BRACKET);
     }
 

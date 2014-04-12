@@ -22,13 +22,12 @@
 
 package com.tr8n.core.tokenizers.tokens;
 
-import com.tr8n.core.Language;
-import com.tr8n.core.Tr8n;
-
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import com.tr8n.core.Language;
+import com.tr8n.core.Tr8n;
 
 public class MethodToken extends DataToken {
 
@@ -97,14 +96,15 @@ public class MethodToken extends DataToken {
      * @param method
      * @return
      */
-    public String getObjectValue(Object object, String method) {
+    @SuppressWarnings("unchecked")
+	public String getObjectValue(Object object, String method) {
         if (object == null) {
             Tr8n.getLogger().error("{" + getName() + "} in " + getOriginalLabel() + " : object is not provided}");
             return getFullName();
         }
 
         if (object instanceof Map) {
-            Map obj = (Map) object;
+            Map<String, Object> obj = (Map<String, Object>) object;
             if (obj.get(method) == null) {
                 Tr8n.getLogger().error("{" + getName() + "} in " + getOriginalLabel() + " : map attribute is missing}");
                 return getFullName();
@@ -114,8 +114,7 @@ public class MethodToken extends DataToken {
         }
 
         try {
-            Class tokenClass = object.getClass();
-            Method m = tokenClass.getMethod(method);
+            Method m = object.getClass().getMethod(method);
             if (m == null) {
                 Tr8n.getLogger().error("{" + getName() + "} in " + getOriginalLabel() + " : object does not provide a method}");
                 return getFullName();
@@ -135,7 +134,7 @@ public class MethodToken extends DataToken {
      * @param options           options for substitutions
      * @return
      */
-    public String substitute(String translatedLabel, Map tokensData, Language language, Map options) {
+    public String substitute(String translatedLabel, Map<String, Object> tokensData, Language language, Map<String, Object> options) {
         Object object = getContextObject(tokensData);
         String value = getObjectValue(object, getMethodName());
         value = applyLanguageCases(value, object, language, options);

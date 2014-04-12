@@ -22,18 +22,31 @@
 
 package com.tr8n.core.tokenizers.tokens;
 
-import com.tr8n.core.*;
-
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.tr8n.core.Language;
+import com.tr8n.core.LanguageContext;
+import com.tr8n.core.LanguageContextRule;
+import com.tr8n.core.Tr8n;
+import com.tr8n.core.Utils;
 
 /**
  *
  */
 public class PipedToken extends DataToken {
 
+    public static final String SEPARATOR_INCLUSIVE = "||";
+    public static final String SEPARATOR_EXCLUSIVE = "|";
+    public static final String SEPARATOR_PARAMS = ",";
+    public static final String SEPARATOR_PARAM_VALUES = ":";
+    
     /**
      * Separator | or ||
      */
@@ -81,7 +94,7 @@ public class PipedToken extends DataToken {
      */
     public String getSeparator() {
         if (this.separator == null) {
-            this.separator = getFullName().contains("||") ? "||" : "|";
+            this.separator = getFullName().contains(SEPARATOR_INCLUSIVE) ? SEPARATOR_INCLUSIVE : SEPARATOR_EXCLUSIVE;
         }
         return this.separator;
     }
@@ -95,7 +108,7 @@ public class PipedToken extends DataToken {
             this.parameters = Utils.trimListValues(Arrays.asList(
                     getParenslessName().split(
                             Pattern.quote(getSeparator())
-                    )[1].split(","))
+                    )[1].split(SEPARATOR_PARAMS))
             );
         }
         return this.parameters;
@@ -104,7 +117,7 @@ public class PipedToken extends DataToken {
     
     public String getPipelessName() {
         if (this.pipelessName == null) {
-            this.pipelessName = getParenslessName().split("\\|")[0];
+            this.pipelessName = getParenslessName().split(Pattern.quote(SEPARATOR_EXCLUSIVE))[0];
         }
         return this.pipelessName;
 
@@ -115,7 +128,7 @@ public class PipedToken extends DataToken {
      */
     public String getName() {
         if (this.shortName == null) {
-            this.shortName = getPipelessName().split(":")[0].trim();
+            this.shortName = getPipelessName().split(Pattern.quote(SEPARATOR_CONTEXT))[0].trim();
         }
         return this.shortName;
     }    
@@ -127,7 +140,7 @@ public class PipedToken extends DataToken {
    public List<String> getLanguageContextKeys() {
        if (this.languageContextKeys == null) {
            this.languageContextKeys = Utils.trimListValues(
-               Arrays.asList(getPipelessName().split("::")[0].split(":"))
+               Arrays.asList(getPipelessName().split(Pattern.quote(SEPARATOR_CASE))[0].split(Pattern.quote(SEPARATOR_CONTEXT)))
            );
            this.languageContextKeys.remove(0);
        }
@@ -141,7 +154,7 @@ public class PipedToken extends DataToken {
    public List<String> getLanguageCaseKeys() {
        if (this.languageCaseKeys == null) {
            this.languageCaseKeys = Utils.trimListValues(
-               Arrays.asList(getPipelessName().split("::"))
+               Arrays.asList(getPipelessName().split(Pattern.quote(SEPARATOR_CASE)))
            );
            this.languageCaseKeys.remove(0);
        }
@@ -175,13 +188,14 @@ public class PipedToken extends DataToken {
 	 * @param options
 	 * @return
 	 */
-    public Map<String, String> getParameterMap(Object tokenMappingOptions, Language language, Map options) {
+    @SuppressWarnings("unchecked")
+	public Map<String, String> getParameterMap(Object tokenMappingOptions, Language language, Map<String, Object> options) {
         Map<String, String> values = new HashMap<String, String>();
 
-        if (getParameters().get(0).contains(":")) {
+        if (getParameters().get(0).contains(SEPARATOR_PARAM_VALUES)) {
             for (String param : getParameters()) {
-                List parts = Utils.trimListValues(Arrays.asList(param.split(":")));
-                values.put((String)parts.get(0), (String)parts.get(1));
+                List<String> parts = Utils.trimListValues(Arrays.asList(param.split(Pattern.quote(SEPARATOR_PARAM_VALUES))));
+                values.put(parts.get(0), parts.get(1));
             }
             return values;
         }
@@ -196,10 +210,10 @@ public class PipedToken extends DataToken {
             return null;
         }
 
-        Map tokenMapping = null;
+        Map<String, String> tokenMapping = null;
 
         if (tokenMappingOptions instanceof List) {
-            List tokenMappingArray = (List) tokenMappingOptions;
+            List<Object> tokenMappingArray = (List<Object>) tokenMappingOptions;
             if (this.getParameters().size() > tokenMappingArray.size()) {
                 Tr8n.getLogger().error(getFullName() + " context parameter sequence is not supported");
                 return null;
@@ -210,24 +224,22 @@ public class PipedToken extends DataToken {
                 return null;
             }
 
-            tokenMapping = (Map) tokenMappingArray.get(this.getParameters().size()-1);
+            tokenMapping = (Map<String, String>) tokenMappingArray.get(this.getParameters().size()-1);
         } else if (tokenMappingOptions instanceof Map) {
-            tokenMapping = (Map) tokenMappingOptions;
+            tokenMapping = (Map<String, String>) tokenMappingOptions;
         }
 
         if (tokenMapping != null) {
-            Iterator entries = tokenMapping.entrySet().iterator();
+            Iterator<Map.Entry<String, String>> entries = tokenMapping.entrySet().iterator();
             while (entries.hasNext()) {
-                Map.Entry entry = (Map.Entry) entries.next();
-                String key = (String) entry.getKey();
-                String value = (String) entry.getValue();
-                values.put(key, value);
+                Map.Entry<String, String> entry = entries.next();
+                values.put(entry.getKey(), entry.getValue());
 
                 Pattern pattern = Pattern.compile("\\{\\$\\d(::[\\w]+)*\\}");
-                Matcher matcher = pattern.matcher(value);
+                Matcher matcher = pattern.matcher(entry.getValue());
                 while(matcher.find()) {
                     String match = matcher.group();
-                    List<String> parts = new ArrayList<String>(Arrays.asList(match.replaceAll("[\\{\\}]", "").split("::")));
+                    List<String> parts = new ArrayList<String>(Arrays.asList(match.replaceAll("[\\{\\}]", "").split(Pattern.quote(SEPARATOR_CASE))));
                     String indexValue = parts.get(0);
                     Integer index = Integer.parseInt(indexValue.trim().replaceAll("\\$", ""));
 
@@ -243,7 +255,7 @@ public class PipedToken extends DataToken {
                         val = applyLanguageCases(val, null, language, parts, options);
                     }
 
-                    values.put(key, values.get(key).replaceAll(Pattern.quote(match), val));
+                    values.put(entry.getKey(), values.get(entry.getKey()).replaceAll(Pattern.quote(match), val));
                 }
             }
         }
@@ -268,7 +280,7 @@ public class PipedToken extends DataToken {
      * @param options           options for substitutions
      * @return
      */
-    public String substitute(String translatedLabel, Map tokensData, Language language, Map options) {
+    public String substitute(String translatedLabel, Map<String, Object> tokensData, Language language, Map<String, Object> options) {
         Object object = getContextObject(tokensData);
 
         if (object == null) {
@@ -315,7 +327,7 @@ public class PipedToken extends DataToken {
         }
 
         StringBuilder replacementValue = new StringBuilder();
-        if (getSeparator().equals("||")) {
+        if (getSeparator().equals(SEPARATOR_INCLUSIVE)) {
             replacementValue.append(getValue(tokensData));
             replacementValue.append(" ");
         }

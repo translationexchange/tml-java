@@ -27,11 +27,17 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import com.tr8n.core.Utils;
 
 public class Parser {
 
-    private static final String REGEX_PARENS = "[()]";
+    private static final String OPENING_PAREN = "(";
+    private static final String CLOSING_PAREN = ")";
+    private static final String SINGLE_QUOTE = "'";
+    private static final String DOUBLE_QUOTE = "\"";
+    
+    private static final String REGEX_JOINER = "|";
+    private static final String REGEX_PARENS = "[" + OPENING_PAREN + CLOSING_PAREN + "]";
     private static final String REGEX_CONSTANTS = "\\w+";
     private static final String REGEX_VARIABLES = "@\\w+";
     private static final String REGEX_OPERATORS = "[\\+\\-\\!\\|\\=>&<\\*\\/%]+";
@@ -40,7 +46,7 @@ public class Parser {
     private ArrayList<String> tokens;
 
     /**
-     *
+     * Default constructor
      */
     public Parser() {
         this.tokens = new ArrayList<String>();
@@ -55,7 +61,7 @@ public class Parser {
     }
 
     public void tokenize(String expression) {
-        String regex = StringUtils.join(new String[] {REGEX_PARENS, REGEX_CONSTANTS, REGEX_VARIABLES, REGEX_OPERATORS, REGEX_STRINGS}, "|");
+        String regex = Utils.join(new String[] {REGEX_PARENS, REGEX_CONSTANTS, REGEX_VARIABLES, REGEX_OPERATORS, REGEX_STRINGS}, REGEX_JOINER);
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(expression);
 
@@ -96,11 +102,11 @@ public class Parser {
         String token = nextToken();
         if (token == null) return null;
 
-        if (token.equals("(")) {
+        if (token.equals(OPENING_PAREN)) {
             return parseList();
         }
 
-        if (token.startsWith("'") || token.startsWith("\"")) {
+        if (token.startsWith(SINGLE_QUOTE) || token.startsWith(DOUBLE_QUOTE)) {
             return token.substring(1, token.length()-1);
         }
 
@@ -112,7 +118,7 @@ public class Parser {
 
     private List<Object> parseList() {
         List<Object> list = new ArrayList<Object>();
-        while (peek() != null && !peek().equals(")")) {
+        while (peek() != null && !peek().equals(CLOSING_PAREN)) {
             list.add(parse());
         }
         nextToken();

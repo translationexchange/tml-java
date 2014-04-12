@@ -22,9 +22,9 @@
 
 package com.tr8n.core.tokenizers.tokens;
 
-import com.tr8n.core.Language;
-
 import java.util.Map;
+
+import com.tr8n.core.Language;
 
 /**
  * Base abstract class for all tokens supported by TML
@@ -122,7 +122,7 @@ public abstract class Token {
      * @param options
      * @return
      */
-    public String getName(Map options) {
+    public String getName(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
         if (options.get(OPTIONS_PARENS).equals(true))
             sb.append("{");
@@ -147,5 +147,5 @@ public abstract class Token {
      * @param options
      * @return
      */
-    public abstract String substitute(String translatedLabel, Map tokensData, Language language, Map options);
+    public abstract String substitute(String translatedLabel, Map<String, Object> tokensData, Language language, Map<String, Object> options);
 }

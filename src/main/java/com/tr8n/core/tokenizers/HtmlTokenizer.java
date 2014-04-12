@@ -22,15 +22,22 @@
 
 package com.tr8n.core.tokenizers;
 
-import com.tr8n.core.Tr8n;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.tr8n.core.Tr8n;
+
 public class HtmlTokenizer extends DecorationTokenizer {
 
+	/**
+	 * Default constructor
+	 */
+    public HtmlTokenizer() {
+        super();
+    }
+	
     /**
      *
      * @param label
@@ -54,7 +61,8 @@ public class HtmlTokenizer extends DecorationTokenizer {
      * @param value
      * @return
      */
-    protected String applyToken(String token, String value) {
+    @SuppressWarnings("unchecked")
+	protected String applyToken(String token, String value) {
         if (token.equals(RESERVED_TOKEN) || !isTokenAllowed(token))
             return value;
 
@@ -65,10 +73,10 @@ public class HtmlTokenizer extends DecorationTokenizer {
             defaultValue = defaultValue.replaceAll(Pattern.quote(PLACEHOLDER), value);
 
             if (this.tokensData != null && this.tokensData.get(token) instanceof Map) {
-                Map map = (Map) this.tokensData.get(token);
-                Iterator entries = map.entrySet().iterator();
+                Map<String, Object> map = (Map<String, Object>) this.tokensData.get(token);
+                Iterator<Map.Entry<String, Object>> entries = map.entrySet().iterator();
                 while (entries.hasNext()) {
-                    Map.Entry entry = (Map.Entry) entries.next();
+                    Map.Entry<String, Object> entry = entries.next();
                     String param = "{$" + entry.getKey() + "}";
                     defaultValue = defaultValue.replaceAll(Pattern.quote(param), (String) entry.getValue());
                 }
@@ -91,6 +99,5 @@ public class HtmlTokenizer extends DecorationTokenizer {
 
         return value;
     }
-
 
 }

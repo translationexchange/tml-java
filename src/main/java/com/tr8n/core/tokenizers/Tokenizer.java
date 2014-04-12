@@ -22,11 +22,11 @@
 
 package com.tr8n.core.tokenizers;
 
-import com.tr8n.core.Language;
-import com.tr8n.core.tokenizers.tokens.Token;
-
 import java.util.List;
 import java.util.Map;
+
+import com.tr8n.core.Language;
+import com.tr8n.core.tokenizers.tokens.Token;
 
 /**
  * Base class for all tokenizers
@@ -51,22 +51,21 @@ public abstract class Tokenizer {
     /**
      * Tokens data map, used internally
      */
-    protected Map tokensData;
+    protected Map<String, Object> tokensData;
 
     /**
      * Substitution options, used internally
      */
-    protected Map options;
+    protected Map<String, Object> options;
 
     /**
      * Default constructor
      */
     public Tokenizer() {
-        // Do nothing here
     }
 
     /**
-     * Constructs Base with label
+     * Constructs tokenizer with label
      *
      * @param label label to be tokenized
      */
@@ -74,7 +73,12 @@ public abstract class Tokenizer {
         this(label, null);
     }
 
-
+    /**
+     * Constructs tokenizer with label and list of allowed token names
+     *   
+     * @param label
+     * @param allowedTokenNames
+     */
     public Tokenizer(String label, List<String> allowedTokenNames) {
         tokenize(label, allowedTokenNames);
     }
@@ -99,6 +103,9 @@ public abstract class Tokenizer {
         tokenize();
     }
 
+    /**
+     * Tokenizes the expression
+     */
     protected abstract void tokenize();
 
     public List<String> getTokenNames() {
@@ -130,7 +137,7 @@ public abstract class Tokenizer {
      * @param tokensData
      * @return
      */
-    public Object substitute(Map tokensData) {
+    public Object substitute(Map<String, Object> tokensData) {
         return substitute(tokensData, null);
     }
 
@@ -140,7 +147,7 @@ public abstract class Tokenizer {
      * @param language
      * @return
      */
-    public String substitute(Map tokensData, Language language) {
+    public Object substitute(Map<String, Object> tokensData, Language language) {
         return substitute(tokensData, language, null);
     }
 
@@ -151,7 +158,17 @@ public abstract class Tokenizer {
      * @param options
      * @return
      */
-    public abstract String substitute(Map tokensData, Language language, Map options);
+    public abstract Object substitute(Map<String, Object> tokensData, Language language, Map<String, Object> options);
 
+    /**
+     * Returns true/false whether the tokenizer is applicable to the label
+     * 
+     * @param label
+     * @return
+     */
+    public static boolean isApplicable(String label) {
+        return false;
+    }
+    
 }
 

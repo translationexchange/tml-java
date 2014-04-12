@@ -22,11 +22,8 @@
 
 package com.tr8n.core;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 public class Language extends Base {
@@ -75,6 +72,7 @@ public class Language extends Base {
      * Default constructor
      */
     public Language() {
+    	super();
     }
 
     /**
@@ -85,241 +83,7 @@ public class Language extends Base {
         super(attributes);
     }
 
-    /**
-     *
-     * @param attributes
-     */
-    public void updateAttributes(Map<String, Object> attributes) {
-        if (attributes.get("application") != null)
-            setApplication((Application) attributes.get("application"));
-
-        setLocale((String) attributes.get("locale"));
-        setEnglishName((String) attributes.get("english_name"));
-        setNativeName((String) attributes.get("native_name"));
-        setRightToLeft((Boolean) attributes.get("right_to_left"));
-        setFlagUrl((String) attributes.get("flag_url"));
-
-        if (attributes.get("contexts") != null) {
-            Iterator entries = ((Map) attributes.get("contexts")).entrySet().iterator();
-            while (entries.hasNext()) {
-                Map.Entry entry = (Map.Entry) entries.next();
-                LanguageContext context = new LanguageContext((Map) entry.getValue());
-                context.setLanguage(this);
-                addContext(context);
-            }
-        }
-
-        if (attributes.get("cases") != null) {
-            Iterator entries = ((Map) attributes.get("cases")).entrySet().iterator();
-            while (entries.hasNext()) {
-                Map.Entry entry = (Map.Entry) entries.next();
-                LanguageCase languageCase = new LanguageCase((Map) entry.getValue());
-                languageCase.setLanguage(this);
-                addLanguageCase(languageCase);
-            }
-        }
-    }
-
-    public String getCacheKey() {
-    	return getLocale() + "/language";
-    }
     
-    public void load() {
-        try {
-        	Map<String, Object> options = new HashMap<String, Object>();
-        	options.put("cache_key", getCacheKey());
-        	
-            this.updateAttributes(getApplication().getHttpClient().getJSONMap("language", 
-            		Utils.buildMap("locale", this.locale, "definition", "true"),
-            		options
-            ));
-        } catch (Exception ex) {
-            Tr8n.getLogger().logException(ex);
-        }
-    }
-
-
-    public void addContext(LanguageContext languageContext) {
-        if (contexts == null)
-            contexts = new HashMap<String, LanguageContext>();
-        contexts.put(languageContext.getKeyword(), languageContext);
-    }
-
-
-    /**
-     * Returns language context based on the keyword
-     * @param keyword
-     * @return
-     */
-    public LanguageContext getContextByKeyword(String keyword) {
-        if (contexts == null)
-            return null;
-        return this.contexts.get(keyword);
-    }
-
-    /**
-     * Returns language context based on the token name
-     * @param tokenName
-     * @return
-     */
-    public LanguageContext getContextByTokenName(String tokenName) {
-        if (contexts == null)
-            return null;
-
-        for (LanguageContext context : contexts.values()) {
-            if (context.isApplicableToTokenName(tokenName))
-                return context;
-        }
-        return null;
-    }
-
-
-    /**
-     * Returns language case based on the keyword
-     * @param keyword
-     * @return
-     */
-    public LanguageCase getLanguageCaseByKeyword(String keyword) {
-        if (cases == null)
-            return null;
-        return cases.get(keyword);
-    }
-
-    public void addLanguageCase(LanguageCase languageCase) {
-        if (cases == null)
-            cases = new HashMap<String, LanguageCase>();
-        cases.put(languageCase.getKeyword(), languageCase);
-    }
-
-    /**
-     * Languages are loaded without definition by default, this will tell if the language has definition or it needs to be loaded
-     * @return
-     */
-    public boolean hasDefinition() {
-        return this.contexts != null;
-    }
-
-    /**
-     * Check if the language is application default
-     * @return
-     */
-    public boolean isDefault() {
-        return false;
-    }
-
-    /**
-     * Generates new translation key
-     * @param key
-     * @param label
-     * @param description
-     * @param options
-     * @return
-     */
-    public TranslationKey getTranslationKey(String key, String label, String description, Map options) {
-        return null;
-    }
-
-    /**
-     *
-     * @param key
-     * @param options
-     * @param defaultValue
-     * @return
-     */
-    private Object getOptionsValue(String key, Map options, Object defaultValue) {
-        Object value = null;
-        if (options != null) {
-            value = options.get(key);
-            if (value!=null) return value;
-        }
-
-        value = getApplication().getSession().getBlockOption(key);
-        if (value!=null) return value;
-
-        return defaultValue;
-    }
-
-
-    private TranslationKey createTranslationKey(String keyHash, String label, String description, Map<String, Object> options) {
-        String locale = (String) getOptionsValue("locale", options, getApplication().getDefaultLocale());
-        Long level = (Long) getOptionsValue("level", options, getApplication().getTranslatorLevel());
-
-        Map<String, Object> attributes = Utils.buildMap(
-                "application", getApplication(),
-                "key", keyHash,
-                "label", label,
-                "description", description,
-                "locale", locale,
-                "level", level
-        );
-
-        return new TranslationKey(attributes);
-    }
-
-    /**
-     * Translation method
-     * @param label
-     * @param description
-     * @param tokens
-     * @param options
-     * @return
-     */
-    public Object translate(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
-        String keyHash = TranslationKey.generateKey(label, description);
-
-        if (getApplication().isKeyRegistrationEnabled()) {
-            String sourceKey = (String) getOptionsValue("source", options, getApplication().getSession().getCurrentSource());
-
-            if (sourceKey == null)
-                sourceKey = "undefined";
-
-            Source source = getApplication().getSource(sourceKey, this.getLocale(), options);
-            if (source != null) {
-                TranslationKey matchedKey = source.getTranslationKey(keyHash);
-                if (matchedKey != null) return matchedKey.translate(this, tokens, options);
-
-                TranslationKey tempKey = createTranslationKey(keyHash, label, description, options);
-                getApplication().registerMissingTranslationKey(tempKey, source);
-            }
-        }
-
-        TranslationKey matchedKey = getApplication().getTranslationKey(keyHash);
-        if (matchedKey != null) return matchedKey.translate(this, tokens, options);
-
-        TranslationKey tempKey = createTranslationKey(keyHash, label, description, options);
-        return tempKey.translate(this, tokens, options);
-    }
-
-
-    /**
-     *
-     * @param label
-     * @return
-     */
-    public Object translate(String label) {
-        return translate(label, "");
-    }
-
-    /**
-     *
-     * @param label
-     * @param description
-     * @return
-     */
-    public Object translate(String label, String description) {
-        return translate(label, description, null, null);
-    }
-
-    /**
-     *
-     * @param label
-     * @param tokens
-     * @return
-     */
-    public Object translate(String label, Map tokens) {
-        return translate(label, "", tokens, null);
-    }
-
     public Application getApplication() {
         return application;
     }
@@ -356,7 +120,7 @@ public class Language extends Base {
         this.nativeName = nativeName;
     }
 
-    public Boolean getRightToLeft() {
+    public Boolean isRightToLeft() {
         return rightToLeft;
     }
 
@@ -386,5 +150,253 @@ public class Language extends Base {
 
     public void setCases(Map<String, LanguageCase> cases) {
         this.cases = cases;
+    }    
+    
+    /**
+     *
+     * @param attributes
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public void updateAttributes(Map<String, Object> attributes) {
+        if (attributes.get("application") != null)
+            setApplication((Application) attributes.get("application"));
+
+        setLocale((String) attributes.get("locale"));
+        setEnglishName((String) attributes.get("english_name"));
+        setNativeName((String) attributes.get("native_name"));
+        setRightToLeft((Boolean) attributes.get("right_to_left"));
+        setFlagUrl((String) attributes.get("flag_url"));
+
+        if (attributes.get("contexts") != null) {
+            Iterator entries = ((Map) attributes.get("contexts")).entrySet().iterator();
+            while (entries.hasNext()) {
+                Map.Entry entry = (Map.Entry) entries.next();
+                LanguageContext context = new LanguageContext((Map) entry.getValue());
+                context.setLanguage(this);
+                addContext(context);
+            }
+        }
+
+        if (attributes.get("cases") != null) {
+            Iterator entries = ((Map) attributes.get("cases")).entrySet().iterator();
+            while (entries.hasNext()) {
+                Map.Entry entry = (Map.Entry) entries.next();
+                LanguageCase languageCase = new LanguageCase((Map) entry.getValue());
+                languageCase.setLanguage(this);
+                addLanguageCase(languageCase);
+            }
+        }
     }
+
+    /**
+     * Returns cache key of the language
+     * @return
+     */
+    public String getCacheKey() {
+    	return getLocale() + "/language";
+    }
+    
+    /**
+     * Loads language from the server
+     */
+    public void load() {
+        try {
+        	Map<String, Object> options = new HashMap<String, Object>();
+        	options.put("cache_key", getCacheKey());
+        	
+            this.updateAttributes(getApplication().getHttpClient().getJSONMap("language", 
+            		Utils.buildMap("locale", getLocale(), "definition", "true"),
+            		options
+            ));
+            setLoaded(true);
+        } catch (Exception ex) {
+        	setLoaded(false);
+//            Tr8n.getLogger().logException(ex);
+        }
+    }
+
+
+    /**
+     * Adds a context for the language
+     * @param languageContext
+     */
+    public void addContext(LanguageContext languageContext) {
+        if (contexts == null)
+            contexts = new HashMap<String, LanguageContext>();
+        contexts.put(languageContext.getKeyword(), languageContext);
+    }
+
+
+    /**
+     * Returns language context based on the keyword
+     * @param keyword
+     * @return
+     */
+    public LanguageContext getContextByKeyword(String keyword) {
+        if (contexts == null)
+            return null;
+        return this.contexts.get(keyword);
+    }
+
+    /**
+     * Returns language context based on the token name
+     * @param tokenName
+     * @return
+     */
+    public LanguageContext getContextByTokenName(String tokenName) {
+        if (contexts == null)
+            return null;
+
+        for (LanguageContext context : contexts.values()) {
+            if (context.isApplicableToTokenName(tokenName))
+                return context;
+        }
+        return null;
+    }
+
+    /**
+     * Returns language case based on the keyword
+     * @param keyword
+     * @return
+     */
+    public LanguageCase getLanguageCaseByKeyword(String keyword) {
+        if (cases == null)
+            return null;
+        return cases.get(keyword);
+    }
+
+    /**
+     * Adds a language case for the language
+     * @param languageCase
+     */
+    public void addLanguageCase(LanguageCase languageCase) {
+        if (cases == null)
+            cases = new HashMap<String, LanguageCase>();
+        cases.put(languageCase.getKeyword(), languageCase);
+    }
+
+    /**
+     * Languages are loaded without definition by default, this will tell if the language has definition or it needs to be loaded
+     * @return
+     */
+    public boolean hasDefinition() {
+        return this.contexts != null;
+    }
+
+    /**
+     * Returns a value from options or block options
+     * @param key
+     * @param options
+     * @param defaultValue
+     * @return
+     */
+    private Object getOptionsValue(String key, Map<String, Object> options, Object defaultValue) {
+        Object value = null;
+        if (options != null) {
+            value = options.get(key);
+            if (value!=null) return value;
+        }
+
+        value = getApplication().getSession().getBlockOption(key);
+        if (value!=null) return value;
+
+        return defaultValue;
+    }
+
+
+    /**
+     * Creates a new translation key
+     * 
+     * @param keyHash
+     * @param label
+     * @param description
+     * @param options
+     * @return
+     */
+    private TranslationKey createTranslationKey(String keyHash, String label, String description, Map<String, Object> options) {
+        Map<String, Object> attributes = Utils.buildMap(
+                "application", getApplication(),
+                "key", keyHash,
+                "label", label,
+                "description", description,
+                "locale", getOptionsValue("locale", options, getApplication().getDefaultLocale()),
+                "level", getOptionsValue("level", options, getApplication().getTranslatorLevel())
+        );
+
+        return new TranslationKey(attributes);
+    }
+
+    /**
+     *
+     * @param label
+     * @return
+     */
+    public Object translate(String label) {
+       return translate(label, "");
+    }
+    
+    /**
+     *
+     * @param label
+     * @param description
+     * @return
+     */
+    public Object translate(String label, String description) {
+       return translate(label, description, null, null);
+    }
+
+	/**
+	 *
+	 * @param label
+	 * @param tokens
+	 * @return
+	 */
+    public Object translate(String label, Map<String, Object> tokens) {
+       return translate(label, "", tokens, null);
+    }    
+    
+    /**
+     * Translation method
+     * @param label
+     * @param description
+     * @param tokens
+     * @param options
+     * @return
+     */
+    public Object translate(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
+        String keyHash = TranslationKey.generateKey(label, description);
+
+        // Key registration is only enabled when secret is provided. In all other cases, it will fallback onto cache.
+        if (getApplication().isKeyRegistrationEnabled()) {
+            String sourceKey = (String) getOptionsValue("source", options, getApplication().getSession().getCurrentSource());
+
+            // Application keys without a source belong directly to the application, the source does not need to be loaded
+            if (sourceKey == null) {
+                TranslationKey matchedKey = getApplication().getTranslationKey(keyHash);
+                if (matchedKey != null) return matchedKey.translate(this, tokens, options);
+
+                TranslationKey tempKey = createTranslationKey(keyHash, label, description, options);
+                getApplication().registerMissingTranslationKey(tempKey);
+                getApplication().cacheTranslationKey(tempKey);
+                return tempKey.translate(this, tokens, options);
+            } 
+            
+            // Source based keys in mobile or desktop environments require sources to be pre-loading in a separate thread
+            Source source = getApplication().getSource(sourceKey, this.getLocale(), options);
+            if (source != null) {
+                TranslationKey matchedKey = source.getTranslationKey(keyHash);
+                if (matchedKey != null) return matchedKey.translate(this, tokens, options);
+
+                TranslationKey tempKey = createTranslationKey(keyHash, label, description, options);
+                getApplication().registerMissingTranslationKey(tempKey, source.getKey());
+            }
+        }
+
+        TranslationKey matchedKey = getApplication().getTranslationKey(keyHash);
+        if (matchedKey != null) return matchedKey.translate(this, tokens, options);
+
+        TranslationKey tempKey = createTranslationKey(keyHash, label, description, options);
+        return tempKey.translate(this, tokens, options);
+    }
+
 }

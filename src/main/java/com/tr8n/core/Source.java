@@ -22,8 +22,6 @@
 
 package com.tr8n.core;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,67 +73,6 @@ public class Source extends Base {
         super(attributes);
     }
 
-    /**
-     *
-     * @param attributes
-     */
-    public void updateAttributes(Map<String, Object> attributes) {
-        if (attributes.get("application") != null)
-            setApplication((Application) attributes.get("application"));
-
-        setKey((String) attributes.get("key"));
-        setLocale((String) attributes.get("locale"));
-        setName((String) attributes.get("name"));
-        setDescription((String) attributes.get("description"));
-
-        if (attributes.get("translation_keys") != null && getApplication() != null) {
-            for (Object data : ((List) attributes.get("translation_keys"))) {
-                Map attrs = new HashMap((Map) data);
-                attrs.put("application", getApplication());
-
-                TranslationKey translationKey = new TranslationKey(attrs);
-                translationKey = getApplication().cacheTranslationKey(translationKey);
-                addTranslationKey(translationKey);
-            }
-        }
-    }
-
-    public String getCacheKey() {
-    	return getLocale() + "/" + getKey();
-    }
-    
-    /**
-     * Loading source from service
-     */
-    public void load(Map<String, Object> options) {
-        try {
-        	if (options==null) options = new HashMap<String, Object>();
-        	options.put("cache_key", getCacheKey());
-        	
-            this.updateAttributes(getApplication().getHttpClient().getJSONMap("source", 
-            		Utils.buildMap("source", getKey(), "locale", getLocale(), "translations", "true"),
-            		options
-            ));
-            
-        } catch (Exception ex) {
-            Tr8n.getLogger().logException(ex);
-        }
-    }
-
-    public void addTranslationKey(TranslationKey translationKey) {
-        if (translationKeys == null) {
-            translationKeys = new HashMap<String, TranslationKey>();
-        }
-        translationKeys.put(translationKey.getKey(), translationKey);
-    }
-
-    public TranslationKey getTranslationKey(String key) {
-        if (translationKeys == null)
-            return null;
-
-        return translationKeys.get(key);
-    }
-
     public String getKey() {
         return key;
     }
@@ -175,4 +112,93 @@ public class Source extends Base {
     public void setDescription(String description) {
         this.description = description;
     }
+    
+    /**
+     *
+     * @param attributes
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public void updateAttributes(Map<String, Object> attributes) {
+        if (attributes.get("application") != null)
+            setApplication((Application) attributes.get("application"));
+
+        setKey((String) attributes.get("key"));
+        setLocale((String) attributes.get("locale"));
+        setName((String) attributes.get("name"));
+        setDescription((String) attributes.get("description"));
+
+        if (attributes.get("translation_keys") != null && getApplication() != null) {
+            for (Object data : ((List) attributes.get("translation_keys"))) {
+                Map<String, Object> attrs = new HashMap<String, Object>((Map) data);
+                attrs.put("application", getApplication());
+
+                TranslationKey translationKey = new TranslationKey(attrs);
+                translationKey = getApplication().cacheTranslationKey(translationKey);
+                addTranslationKey(translationKey);
+            }
+        }
+    }
+
+    /**
+     * Creates cache key for source
+     * 
+     * @param locale
+     * @param key
+     * @return
+     */
+    public static String getCacheKey(String locale, String key) {
+    	return locale + "/" + key;
+    }
+    
+    /**
+     * Creates cache key for the source
+     * @return
+     */
+    public String getCacheKey() {
+    	return getCacheKey(getLocale(), getKey());
+    }
+    
+    /**
+     * Loading source from service
+     */
+    public void load(Map<String, Object> options) {
+        try {
+        	if (options==null) options = new HashMap<String, Object>();
+        	options.put("cache_key", getCacheKey());
+        	
+            this.updateAttributes(getApplication().getHttpClient().getJSONMap("source", 
+            		Utils.buildMap("source", getKey(), "locale", getLocale(), "translations", "true"),
+            		options
+            ));
+            
+            setLoaded(true);
+        } catch (Exception ex) {
+            setLoaded(false);
+//            Tr8n.getLogger().logException("Failed to load source", ex);
+        }
+    }
+
+    /**
+     * Adds translation key to the source
+     * @param translationKey
+     */
+    public void addTranslationKey(TranslationKey translationKey) {
+        if (translationKeys == null) {
+            translationKeys = new HashMap<String, TranslationKey>();
+        }
+        translationKeys.put(translationKey.getKey(), translationKey);
+    }
+
+    /**
+     * Returns translation key from the source
+     * @param key
+     * @return
+     */
+    public TranslationKey getTranslationKey(String key) {
+        if (translationKeys == null)
+            return null;
+
+        return translationKeys.get(key);
+    }
+    
 }

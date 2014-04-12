@@ -1,12 +1,12 @@
 package com.tr8n.core.tokenizers;
 
-import com.tr8n.core.Utils;
-import com.tr8n.core.tokenizers.tokens.Token;
-import com.tr8n.core.tokenizers.tokens.DataToken;
+import java.util.Arrays;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Arrays;
+import com.tr8n.core.Utils;
+import com.tr8n.core.tokenizers.tokens.Token;
 
 /**
  * Created by michael on 3/11/14.

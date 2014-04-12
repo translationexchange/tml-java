@@ -3,4 +3,6 @@ tr8n_java_core.iml
 tr8n_java_core.ipr
 tr8n_java_core.iws
 log
-src/main/java/com/tr8n/samples
+.settings
+.project
+.classpath

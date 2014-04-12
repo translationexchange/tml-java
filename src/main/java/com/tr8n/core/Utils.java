@@ -22,25 +22,21 @@
 
 package com.tr8n.core;
 
-import org.json.simple.JSONValue;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.StringUtils;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class Utils {
 
@@ -102,11 +98,11 @@ public class Utils {
      * @param params
      * @return
      */
-    public static String buildQueryString(Map params) throws Exception {
+    public static String buildQueryString(Map<String, Object> params) throws Exception {
         StringBuilder sb = new StringBuilder();
-        Iterator entries = params.entrySet().iterator();
+        Iterator<Map.Entry<String, Object>> entries = params.entrySet().iterator();
         while (entries.hasNext()) {
-            Map.Entry e = (Map.Entry) entries.next();
+            Map.Entry<String, Object> e = entries.next();
             if(sb.length() > 0) {
                 sb.append('&');
             }
@@ -121,7 +117,7 @@ public class Utils {
      * @return
      * @throws MalformedURLException
      */
-    public static URL buildURL(String host, String path, Map params) throws Exception {
+    public static URL buildURL(String host, String path, Map<String, Object> params) throws Exception {
         StringBuilder url = new StringBuilder();
         url.append(host);
         if (!host.endsWith("/") && !path.startsWith("/"))
@@ -177,6 +173,37 @@ public class Utils {
         return result;
     }
 
+    /**
+     * Builds a map out of parameters
+     * @param data
+     * @return
+     */
+    public static Map<String, String> buildStringMap(String... data) {
+        HashMap<String, String> result = new HashMap<String, String>();
+
+        if(data.length % 2 != 0)
+            throw new IllegalArgumentException("Odd number of arguments");
+
+        String key = null;
+        Integer step = -1;
+
+        for(String value : data){
+            step++;
+            switch(step % 2){
+                case 0:
+                    if(value == null)
+                        throw new IllegalArgumentException("Null key value");
+                    key = (String) value;
+                    continue;
+                case 1:
+                    result.put(key, value);
+                    break;
+            }
+        }
+
+        return result;
+    }
+    
 
     /**
      * Builds a list from parameters
@@ -252,8 +279,8 @@ public class Utils {
      * @param original
      * @return
      */
-    public static List<String> trimListValues(List original) {
-        List trimmedList = new ArrayList<String>();
+    public static List<String> trimListValues(List<String> original) {
+        List<String> trimmedList = new ArrayList<String>();
         for (int i = 0; i < original.size(); i++)
             trimmedList.add((original.get(i).toString()).trim());
         return trimmedList;
@@ -267,14 +294,15 @@ public class Utils {
      * @param separator
      * @return
      */
-    public static Object getNestedMapValue(Map map, String key, String separator) {
+    @SuppressWarnings("unchecked")
+	public static Object getNestedMapValue(Map<String, Object> map, String key, String separator) {
         String[] parts = key.split(separator);
 
         for (int i=0; i<parts.length-1; i++) {
             String part = parts[i];
             Object obj = map.get(part);
             if (!(obj instanceof Map)) return null;
-            map = (Map) obj;
+            map = (Map<String, Object>) obj;
         }
 
         return map.get(parts[parts.length-1]);
@@ -287,7 +315,7 @@ public class Utils {
      * @param key
      * @return
      */
-    public static Object getNestedMapValue(Map map, String key) {
+    public static Object getNestedMapValue(Map<String, Object> map, String key) {
         return getNestedMapValue(map, key, "\\.");
     }
 
@@ -298,15 +326,16 @@ public class Utils {
      * @param value
      * @param separator
      */
-    public static void setNestedMapValue(Map map, String key, Object value, String separator) {
+    @SuppressWarnings("unchecked")
+	public static void setNestedMapValue(Map<String, Object> map, String key, Object value, String separator) {
         String[] parts = key.split(separator);
 
         for (int i=0; i<parts.length-1; i++) {
             String part = parts[i];
-            Map child = (Map) map.get(part);
+            Map<String, Object> child = (Map<String, Object>) map.get(part);
             if (child == null) {
-                map.put(part, new HashMap());
-                child = (Map) map.get(part);
+                map.put(part, new HashMap<String, Object>());
+                child = (Map<String, Object>) map.get(part);
             }
             map = child;
         }
@@ -320,80 +349,39 @@ public class Utils {
      * @param key
      * @param value
      */
-    public static void setNestedMapValue(Map map, String key, Object value) {
+    public static void setNestedMapValue(Map<String, Object> map, String key, Object value) {
         setNestedMapValue(map, key, value, "\\.");
     }
 
-
     /**
-     *
-     * @param params
-     * @param secret
+     * 
+     * @param objects
+     * @param joiner
      * @return
      */
-    public static String signAndEncode(Map<String, Object> params, String secret) {
-        try {
-            Map<String, Object> encoded = new HashMap<String, Object>(params);
-            encoded.put("algorithm", "HMAC-SHA256");
-            encoded.put("ts", "" + (new Date()).getTime());
-            String payload = buildJSON(encoded);
-            payload = Base64.encodeBase64String(StringUtils.getBytesUtf8(payload));
-
-            Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
-            SecretKeySpec secretKey = new SecretKeySpec(StringUtils.getBytesUtf8(secret), "HmacSHA256");
-            sha256_HMAC.init(secretKey);
-            String sig = Base64.encodeBase64String(sha256_HMAC.doFinal(StringUtils.getBytesUtf8(payload)));
-
-            String singedPayload = Base64.encodeBase64String(StringUtils.getBytesUtf8(sig + "." + payload));
-            return URLEncoder.encode(singedPayload, "UTF-8");
-        } catch (Exception ex) {
-            Tr8n.getLogger().logException(ex);
-            return null;
-        }
+    @SuppressWarnings("rawtypes")
+	public static String join(List objects, String joiner) {
+    	return join(objects.toArray(), joiner);
     }
-
-
+    
     /**
-     *
-     * @param payload
-     * @param secret
+     * 
+     * @param objects
+     * @param joiner
      * @return
      */
-    @SuppressWarnings("unchecked")
-	public static Map<String, Object> decodeAndVerify(String payload, String secret) {
-        try {
-            String data = URLDecoder.decode(payload, "UTF-8");
-            String signedRequest = StringUtils.newStringUtf8(Base64.decodeBase64(data));
-            String parts[] = signedRequest.split("\\.");
-            if (parts.length != 2) {
-                Tr8n.getLogger().error("Invalid parameters");
-                return null;
-            }
+    public static String join(Object[] objects, String joiner) {
+    	if (objects == null || objects.length == 0)
+    		return "";
 
-            String jsonString = StringUtils.newStringUtf8(Base64.decodeBase64(parts[1]));
-            Map<String, Object> params = (Map<String, Object>) parseJSON(jsonString);
-
-            if (params.get("algorithm").equals("HMAC-SHA256")) {
-                Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
-                SecretKeySpec secretKey = new SecretKeySpec(StringUtils.getBytesUtf8(secret), "HmacSHA256");
-                sha256_HMAC.init(secretKey);
-                String expectedSig = Base64.encodeBase64String(sha256_HMAC.doFinal(StringUtils.getBytesUtf8(parts[1])));
-                if (!expectedSig.trim().equals(parts[0].trim())) {
-                    Tr8n.getLogger().error("Failed to verify signature");
-                    return null;
-                }
-            } else {
-                Tr8n.getLogger().error("Unsupported signature");
-                return null;
-            }
-
-            params.remove("algorithm");
-            params.remove("ts");
-            return params;
-        } catch (Exception ex) {
-            Tr8n.getLogger().logException(ex);
-            return null;
-        }
+    	if (objects.length == 1)
+    		return objects[0].toString();
+    	
+    	StringBuilder sb = new StringBuilder();
+    	for (int i=0; i<objects.length; i++) {
+    		sb.append(objects[i].toString());
+    		if (i<objects.length-1) sb.append(joiner);
+    	}
+    	return sb.toString();
     }
-
 }

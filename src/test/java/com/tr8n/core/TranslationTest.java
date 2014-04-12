@@ -72,7 +72,7 @@ public class TranslationTest extends BaseTest {
                 t.isValidTranslationForTokens(Utils.buildMap("count", "1"))
         );
 
-        t.setContext(Utils.buildMap("count", Utils.buildMap("number", "one")));
+        t.setContext(Utils.buildMap("count", Utils.buildStringMap("number", "one")));
 
         Assert.assertEquals(
                 true,

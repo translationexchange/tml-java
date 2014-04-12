@@ -26,6 +26,8 @@ import java.util.Map;
 
 public abstract class Base {
 
+	private Boolean loaded;
+	
     /**
      * Default constructor
      */
@@ -48,4 +50,16 @@ public abstract class Base {
      */
     public abstract void updateAttributes(Map<String, Object> attributes);
 
+    /**
+     * Checks if the model has been loaded from the server
+     * @return
+     */
+	public Boolean isLoaded() {
+		return loaded;
+	}
+
+	public void setLoaded(Boolean loaded) {
+		this.loaded = loaded;
+	}
+    
 }

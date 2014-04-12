@@ -26,7 +26,7 @@ import java.util.List;
 
 public interface Expression {
 
-    public Object evaluate(Evaluator evaluator, List params);
+    public Object evaluate(Evaluator evaluator, List<Object> params);
 
 }
    

@@ -22,16 +22,16 @@
 
 package com.tr8n.core;
 
-import com.tr8n.core.decorators.Decorator;
-import com.tr8n.core.decorators.HtmlDecorator;
-import com.tr8n.core.decorators.PlainDecorator;
-import com.tr8n.core.rulesengine.Variable;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.tr8n.core.decorators.Decorator;
+import com.tr8n.core.decorators.HtmlDecorator;
+import com.tr8n.core.decorators.PlainDecorator;
+import com.tr8n.core.rulesengine.Variable;
 
 public class Configuration {
 
@@ -68,7 +68,7 @@ public class Configuration {
     /**
      * Application configuration
      */
-    private Map<String, Object> application;
+    private Map<String, String> application;
 
     /**
      * Context rules configuration and variable mapping
@@ -99,14 +99,24 @@ public class Configuration {
      * Decorator class
      */
     private Decorator decorator;
+
+    /**
+     * Decorator class
+     */
+    private Map<String, String> tokenizerClasses;
     
     public Configuration() {
     	this.decorator = new PlainDecorator();
     	
+        this.tokenizerClasses = Utils.buildStringMap(
+			"data", "com.tr8n.core.tokenizers.DataTokenizer",
+			"html", "com.tr8n.core.tokenizers.HtmlTokenizer"
+        );
+    	
         this.tokenClasses = Utils.buildStringList(
-                "com.tr8n.core.tokenizers.tokens.DataToken",
-                "com.tr8n.core.tokenizers.tokens.MethodToken",
-                "com.tr8n.core.tokenizers.tokens.PipedToken"
+		    "com.tr8n.core.tokenizers.tokens.DataToken",
+		    "com.tr8n.core.tokenizers.tokens.MethodToken",
+		    "com.tr8n.core.tokenizers.tokens.PipedToken"
         );
 
         this.logger = Utils.buildMap(
@@ -144,18 +154,19 @@ public class Configuration {
             "gender", Utils.buildMap(
                 "variables", Utils.buildMap(
                     "@gender", new Variable() {
-                        public Object getValue(LanguageContext context, Object object) {
+                        @SuppressWarnings("unchecked")
+						public Object getValue(LanguageContext context, Object object) {
                             if (object instanceof Map) {
-                                Map map = (Map) object;
+                                Map<String, Object> map = (Map<String, Object>) object;
                                 if (map.get("object") != null) {
-                                    map = (Map) map.get("object");
+                                    map = (Map<String, Object>) map.get("object");
                                 }
                                 return map.get("gender");
                             }
                             try {
-                                Method method = object.getClass().getMethod("getGender", null);
+                                Method method = object.getClass().getMethod("getGender");
                                 if (method != null)
-                                    return method.invoke(object, null);
+                                    return method.invoke(object);
                             } catch (Exception ex) {
                                 Tr8n.getLogger().error("Object " + object.getClass().getName() + " does not support gender method");
                             }
@@ -168,22 +179,23 @@ public class Configuration {
             "genders", Utils.buildMap(
                 "variables", Utils.buildMap(
                     "@genders", new Variable() {
-                        public Object getValue(LanguageContext context, Object object) {
-                            List genders = new ArrayList();
+                        @SuppressWarnings("unchecked")
+						public Object getValue(LanguageContext context, Object object) {
+                            List<String> genders = new ArrayList<String>();
 
                             if (!(object instanceof List)) {
-                                genders.add(getContextVariable("gender", "@gender").getValue(context, object));
+                                genders.add(getContextVariable("gender", "@gender").getValue(context, object).toString());
                                 return genders;
                             }
 
-                            for (Object obj : ((List) object)) {
+                            for (Object obj : ((List<Object>) object)) {
                                 if (obj instanceof Map) {
-                                    genders.add(((Map) object).get("gender"));
+                                    genders.add(((Map<String, Object>) object).get("gender").toString());
                                 } else {
                                     try {
-                                        Method method = obj.getClass().getMethod("getGender", null);
+                                        Method method = obj.getClass().getMethod("getGender");
                                         if (method != null)
-                                            genders.add(method.invoke(obj, null));
+                                            genders.add((String)method.invoke(obj));
                                     } catch (Exception ex) {
                                         Tr8n.getLogger().error("Object " + obj.getClass().getName() + " does not support gender method");
                                     }
@@ -193,9 +205,10 @@ public class Configuration {
                         }
                     },
                     "@count",   new Variable() {
-                        public Object getValue(LanguageContext context, Object object) {
+                        @SuppressWarnings("unchecked")
+						public Object getValue(LanguageContext context, Object object) {
                             if (!(object instanceof List)) return 1;
-                            return ((List) object).size();
+                            return ((List<Object>) object).size();
                         }
                     }
                 )
@@ -212,9 +225,10 @@ public class Configuration {
             "list", Utils.buildMap(
                 "variables", Utils.buildMap(
                     "@count",   new Variable() {
-                        public Object getValue(LanguageContext context, Object object) {
+                        @SuppressWarnings("unchecked")
+						public Object getValue(LanguageContext context, Object object) {
                             if (!(object instanceof List)) return 1;
-                            return ((List) object).size();
+                            return ((List<Object>) object).size();
                         }
                     }
                 )
@@ -362,7 +376,7 @@ public class Configuration {
         return tokenClasses;
     }
 
-    public Map<String, Object> getApplication() {
+    public Map<String, String> getApplication() {
         return application;
     }
 
@@ -391,8 +405,9 @@ public class Configuration {
         return (Variable) Utils.getNestedMapValue(contextRules, contextKeyword + ".variables." + varName);
     }
 
-    public void setContextVariable(String contextKeyword, String varName, Variable var) {
-        Map vars = (Map) Utils.getNestedMapValue(contextRules, contextKeyword + ".variables");
+	@SuppressWarnings("unchecked")
+	public void setContextVariable(String contextKeyword, String varName, Variable var) {
+        Map<String, Object> vars = (Map<String, Object>) Utils.getNestedMapValue(contextRules, contextKeyword + ".variables");
         vars.put(varName, var);
     }
 
@@ -432,7 +447,7 @@ public class Configuration {
         this.tokenClasses = tokenClasses;
     }
 
-    public void setApplication(Map<String, Object> application) {
+    public void setApplication(Map<String, String> application) {
         this.application = application;
     }
 
@@ -503,4 +518,19 @@ public class Configuration {
     	
     	return (String) getApplication().get("name");
     }
+    
+    public void addTokenizerClass(String key, String tokenizerClass) {
+    	if (this.tokenizerClasses == null)
+    		this.tokenizerClasses = new HashMap<String, String>();
+    	
+    	this.tokenizerClasses.put(key, tokenizerClass);
+    }
+    
+    public String getTokenizerClass(String key) {
+    	if (this.tokenizerClasses == null)
+    		return null;
+    	
+    	return this.tokenizerClasses.get(key);
+    }
+    
 }

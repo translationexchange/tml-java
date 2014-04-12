@@ -22,15 +22,18 @@
 
 package com.tr8n.core;
 
-import com.squareup.okhttp.OkHttpClient;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import com.squareup.okhttp.OkHttpClient;
 
 public class HttpClient {
     public static final String TR8N_API_PATH = "tr8n/api/";
@@ -130,6 +133,17 @@ public class HttpClient {
         return (Map<String, Object>) getJSON(path, params);
     }
 
+    
+    /**
+     * 
+     * @param path
+     * @return
+     * @throws Exception
+     */
+    public Object getJSON(String path) throws Exception {
+        return getJSON(path, Utils.buildMap());
+    }
+    
     /**
      * Requests data from URL and returns JSON Map
      * 
@@ -139,7 +153,7 @@ public class HttpClient {
      * @throws Exception
      */
     public Object getJSON(String path, Map<String, Object> params) throws Exception {
-        return getJSON(path, params, null);
+        return getJSON(path, params, Utils.buildMap());
     }
 
     /**
@@ -205,7 +219,7 @@ public class HttpClient {
             }
             String responseText = new String(out.toByteArray(), "UTF-8");
 
-            Tr8n.getLogger().debug("Received data: " + responseText);
+//            Tr8n.getLogger().debug("Received data: " + responseText);
 
             return responseText;
         } finally {
@@ -255,7 +269,7 @@ public class HttpClient {
                 builder.append(aux);
             }
             String responseStr = builder.toString();
-            Tr8n.getLogger().debug(responseStr);
+//            Tr8n.getLogger().debug(responseStr);
             return responseStr;
         } finally {
             if (out != null) out.close();

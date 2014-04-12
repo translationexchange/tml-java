@@ -1,13 +1,15 @@
 package com.tr8n.core.rulesengine;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.tr8n.core.BaseTest;
+import com.tr8n.core.Utils;
 
 public class EvaluatorTest extends BaseTest {
 
@@ -17,82 +19,82 @@ public class EvaluatorTest extends BaseTest {
 
         org.junit.Assert.assertEquals(
                 "Michael",
-                e.getExpression("label").evaluate(e, Arrays.asList("name", "Michael"))
+                e.getExpression("label").evaluate(e, Utils.buildList("name", "Michael"))
         );
         org.junit.Assert.assertEquals(
                 "Michael",
                 e.getVariable("name")
         );
 
-        List list = Arrays.asList("one", "two");
+        List<Object> list = Utils.buildList("one", "two");
         org.junit.Assert.assertEquals(
                 list,
-                e.getExpression("quote").evaluate(e, Arrays.asList(list))
+                e.getExpression("quote").evaluate(e, Utils.buildList(list))
         );
 
-        list = Arrays.asList("+", "one", "two");
+        list = Utils.buildList("+", "one", "two");
         org.junit.Assert.assertEquals(
                 "one",
-                e.getExpression("car").evaluate(e, Arrays.asList(list))
+                e.getExpression("car").evaluate(e, Utils.buildList(list))
         );
 
         org.junit.Assert.assertEquals(
-                e.getExpression("cdr").evaluate(e, Arrays.asList(list)),
-                Arrays.asList("one", "two")
+                e.getExpression("cdr").evaluate(e,Utils.buildList(list)),
+                Utils.buildList("one", "two")
         );
 
         // ["cons", 1, ["quote", [2, 3]]] => [1, 2, 3]
         org.junit.Assert.assertEquals(
-                Arrays.asList("1", "2", "3"),
-                e.getExpression("cons").evaluate(e, Arrays.asList("1", Arrays.asList("2", "3")))
+                Utils.buildList("1", "2", "3"),
+                e.getExpression("cons").evaluate(e, Utils.buildList("1", Utils.buildList("2", "3")))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("eq").evaluate(e, Arrays.asList("1", "1"))
+                (Boolean) e.getExpression("eq").evaluate(e, Utils.buildList("1", "1"))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("eq").evaluate(e, Arrays.asList(1, 1))
+                (Boolean) e.getExpression("eq").evaluate(e, Utils.buildList(1, 1))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("eq").evaluate(e, Arrays.asList(1, 2))
+                (Boolean) e.getExpression("eq").evaluate(e, Utils.buildList(1, 2))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("eq").evaluate(e, Arrays.asList(parseDate("2010-01-01"), parseDate("2010-01-01")))
+                (Boolean) e.getExpression("eq").evaluate(e, Utils.buildList(parseDate("2010-01-01"), parseDate("2010-01-01")))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("eq").evaluate(e, Arrays.asList(parseDate("2010-02-01"), parseDate("2010-01-02")))
+                (Boolean) e.getExpression("eq").evaluate(e, Utils.buildList(parseDate("2010-02-01"), parseDate("2010-01-02")))
         );
 
-        org.junit.Assert.assertTrue((Boolean) e.getExpression("atom").evaluate(e, Arrays.asList(1)));
-        org.junit.Assert.assertTrue((Boolean) e.getExpression("atom").evaluate(e, Arrays.asList(true)));
-        org.junit.Assert.assertTrue((Boolean) e.getExpression("atom").evaluate(e, Arrays.asList(1.4)));
-        org.junit.Assert.assertTrue((Boolean) e.getExpression("atom").evaluate(e, Arrays.asList(new Date())));
-        org.junit.Assert.assertFalse((Boolean) e.getExpression("atom").evaluate(e, Arrays.asList(new ArrayList())));
+        org.junit.Assert.assertTrue((Boolean) e.getExpression("atom").evaluate(e, Utils.buildList(1)));
+        org.junit.Assert.assertTrue((Boolean) e.getExpression("atom").evaluate(e, Utils.buildList(true)));
+        org.junit.Assert.assertTrue((Boolean) e.getExpression("atom").evaluate(e, Utils.buildList(1.4)));
+        org.junit.Assert.assertTrue((Boolean) e.getExpression("atom").evaluate(e, Utils.buildList(new Date())));
+        org.junit.Assert.assertFalse((Boolean) e.getExpression("atom").evaluate(e, Utils.buildList(new ArrayList())));
 
         org.junit.Assert.assertEquals(
             "yes",
-            e.getExpression("cond").evaluate(e, Arrays.asList(true, "yes", "no"))
+            e.getExpression("cond").evaluate(e, Utils.buildList(true, "yes", "no"))
         );
 
         org.junit.Assert.assertEquals(
             "no",
-            e.getExpression("cond").evaluate(e, Arrays.asList(false, "yes", "no"))
+            e.getExpression("cond").evaluate(e, Utils.buildList(false, "yes", "no"))
         );
 
 
         org.junit.Assert.assertEquals(
             "no",
-            e.getExpression("cond").evaluate(e, Arrays.asList(false, "yes", "no"))
+            e.getExpression("cond").evaluate(e, Utils.buildList(false, "yes", "no"))
         );
 
 
         org.junit.Assert.assertEquals(
             3,
-            e.getExpression("+").evaluate(e, Arrays.asList(1, 2))
+            e.getExpression("+").evaluate(e, Utils.buildList(1, 2))
         );
 
     }
@@ -102,7 +104,7 @@ public class EvaluatorTest extends BaseTest {
         Evaluator e = new Evaluator();
         org.junit.Assert.assertEquals(
             "Michael",
-            e.getExpression("let").evaluate(e, Arrays.asList("@name", "Michael"))
+            e.getExpression("let").evaluate(e, Utils.buildList("@name", "Michael"))
         );
         org.junit.Assert.assertEquals(
             "Michael",
@@ -115,111 +117,111 @@ public class EvaluatorTest extends BaseTest {
     public void testEvaluatingBooleanExpressions() {
         Evaluator e = new Evaluator();
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("=").evaluate(e, Arrays.asList("a", "a"))
+                (Boolean) e.getExpression("=").evaluate(e, Utils.buildList("a", "a"))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("!=").evaluate(e, Arrays.asList(1, 2))
+                (Boolean) e.getExpression("!=").evaluate(e, Utils.buildList(1, 2))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("!=").evaluate(e, Arrays.asList(1, 1))
+                (Boolean) e.getExpression("!=").evaluate(e, Utils.buildList(1, 1))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("<").evaluate(e, Arrays.asList("ab", "abc"))
+                (Boolean) e.getExpression("<").evaluate(e, Utils.buildList("ab", "abc"))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("<").evaluate(e, Arrays.asList(parseDate("2010-01-01"), parseDate("2011-01-01")))
+                (Boolean) e.getExpression("<").evaluate(e, Utils.buildList(parseDate("2010-01-01"), parseDate("2011-01-01")))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("<").evaluate(e, Arrays.asList(1, 2))
+                (Boolean) e.getExpression("<").evaluate(e, Utils.buildList(1, 2))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("<").evaluate(e, Arrays.asList(2, 2))
+                (Boolean) e.getExpression("<").evaluate(e, Utils.buildList(2, 2))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("<").evaluate(e, Arrays.asList(5, 2))
+                (Boolean) e.getExpression("<").evaluate(e, Utils.buildList(5, 2))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("<=").evaluate(e, Arrays.asList(2, 2))
+                (Boolean) e.getExpression("<=").evaluate(e, Utils.buildList(2, 2))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("<=").evaluate(e, Arrays.asList(4, 2))
+                (Boolean) e.getExpression("<=").evaluate(e, Utils.buildList(4, 2))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression(">").evaluate(e, Arrays.asList(3, 2))
+                (Boolean) e.getExpression(">").evaluate(e, Utils.buildList(3, 2))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression(">=").evaluate(e, Arrays.asList(2, 2))
+                (Boolean) e.getExpression(">=").evaluate(e, Utils.buildList(2, 2))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression(">=").evaluate(e, Arrays.asList(4, 12))
+                (Boolean) e.getExpression(">=").evaluate(e, Utils.buildList(4, 12))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("true").evaluate(e, Arrays.asList())
+                (Boolean) e.getExpression("true").evaluate(e, Utils.buildList())
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("false").evaluate(e, Arrays.asList())
+                (Boolean) e.getExpression("false").evaluate(e, Utils.buildList())
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("!").evaluate(e, Arrays.asList(true))
+                (Boolean) e.getExpression("!").evaluate(e, Utils.buildList(true))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("!").evaluate(e, Arrays.asList(false))
+                (Boolean) e.getExpression("!").evaluate(e, Utils.buildList(false))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("not").evaluate(e, Arrays.asList(false))
+                (Boolean) e.getExpression("not").evaluate(e, Utils.buildList(false))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("&&").evaluate(e, Arrays.asList(true))
+                (Boolean) e.getExpression("&&").evaluate(e, Utils.buildList(true))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("&&").evaluate(e, Arrays.asList(true, true, true))
+                (Boolean) e.getExpression("&&").evaluate(e, Utils.buildList(true, true, true))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("&&").evaluate(e, Arrays.asList(true, true, false))
+                (Boolean) e.getExpression("&&").evaluate(e, Utils.buildList(true, true, false))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("and").evaluate(e, Arrays.asList(true, true, false))
+                (Boolean) e.getExpression("and").evaluate(e, Utils.buildList(true, true, false))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("||").evaluate(e, Arrays.asList(true, false, false))
+                (Boolean) e.getExpression("||").evaluate(e, Utils.buildList(true, false, false))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("||").evaluate(e, Arrays.asList(false, false))
+                (Boolean) e.getExpression("||").evaluate(e, Utils.buildList(false, false))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("or").evaluate(e, Arrays.asList(false, false))
+                (Boolean) e.getExpression("or").evaluate(e, Utils.buildList(false, false))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("if").evaluate(e, Arrays.asList(true, true, false))
+                (Boolean) e.getExpression("if").evaluate(e, Utils.buildList(true, true, false))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("if").evaluate(e, Arrays.asList(false, true, false))
+                (Boolean) e.getExpression("if").evaluate(e, Utils.buildList(false, true, false))
         );
     }
 
@@ -228,92 +230,92 @@ public class EvaluatorTest extends BaseTest {
         Evaluator e = new Evaluator();
         org.junit.Assert.assertEquals(
                 2,
-                e.getExpression("+").evaluate(e, Arrays.asList(1, 1))
+                e.getExpression("+").evaluate(e, Utils.buildList(1, 1))
         );
 
         org.junit.Assert.assertEquals(
                 0,
-                e.getExpression("+").evaluate(e, Arrays.asList(-1, 1))
+                e.getExpression("+").evaluate(e, Utils.buildList(-1, 1))
         );
 
         org.junit.Assert.assertEquals(
                 4.2,
-                e.getExpression("+").evaluate(e, Arrays.asList(3.2, 1))
+                e.getExpression("+").evaluate(e, Utils.buildList(3.2, 1))
         );
 
         org.junit.Assert.assertEquals(
                 "Hello World",
-                e.getExpression("+").evaluate(e, Arrays.asList("Hello ", "World"))
+                e.getExpression("+").evaluate(e, Utils.buildList("Hello ", "World"))
         );
 
         org.junit.Assert.assertEquals(
                 9,
-                e.getExpression("-").evaluate(e, Arrays.asList(10, 1))
+                e.getExpression("-").evaluate(e, Utils.buildList(10, 1))
         );
 
         org.junit.Assert.assertEquals(
                 9.1,
-                e.getExpression("-").evaluate(e, Arrays.asList(10.1, 1))
+                e.getExpression("-").evaluate(e, Utils.buildList(10.1, 1))
         );
 
         org.junit.Assert.assertEquals(
                 null,
-                e.getExpression("-").evaluate(e, Arrays.asList(10.1, "abc"))
+                e.getExpression("-").evaluate(e, Utils.buildList(10.1, "abc"))
         );
 
         org.junit.Assert.assertEquals(
                 11,
-                e.getExpression("-").evaluate(e, Arrays.asList(10, -1))
+                e.getExpression("-").evaluate(e, Utils.buildList(10, -1))
         );
 
         org.junit.Assert.assertEquals(
                 50,
-                e.getExpression("*").evaluate(e, Arrays.asList(10, 5))
+                e.getExpression("*").evaluate(e, Utils.buildList(10, 5))
         );
 
         org.junit.Assert.assertEquals(
                 52.0,
-                e.getExpression("*").evaluate(e, Arrays.asList(10, 5.2))
+                e.getExpression("*").evaluate(e, Utils.buildList(10, 5.2))
         );
 
         org.junit.Assert.assertEquals(
                 null,
-                e.getExpression("*").evaluate(e, Arrays.asList(10, "a"))
+                e.getExpression("*").evaluate(e, Utils.buildList(10, "a"))
         );
 
         org.junit.Assert.assertEquals(
                 2,
-                e.getExpression("/").evaluate(e, Arrays.asList(10, 5))
+                e.getExpression("/").evaluate(e, Utils.buildList(10, 5))
         );
 
         org.junit.Assert.assertEquals(
                 0.5,
-                e.getExpression("/").evaluate(e, Arrays.asList(5, 10.0))
+                e.getExpression("/").evaluate(e, Utils.buildList(5, 10.0))
         );
 
         org.junit.Assert.assertEquals(
                 null,
-                e.getExpression("/").evaluate(e, Arrays.asList(10, "a"))
+                e.getExpression("/").evaluate(e, Utils.buildList(10, "a"))
         );
 
         org.junit.Assert.assertEquals(
                 0,
-                e.getExpression("%").evaluate(e, Arrays.asList(10, 5))
+                e.getExpression("%").evaluate(e, Utils.buildList(10, 5))
         );
 
         org.junit.Assert.assertEquals(
                 null,
-                e.getExpression("%").evaluate(e, Arrays.asList(10, 5.5))
+                e.getExpression("%").evaluate(e, Utils.buildList(10, 5.5))
         );
 
         org.junit.Assert.assertEquals(
                 1,
-                e.getExpression("%").evaluate(e, Arrays.asList(10, 3))
+                e.getExpression("%").evaluate(e, Utils.buildList(10, 3))
         );
 
         org.junit.Assert.assertEquals(
                 1,
-                e.getExpression("mod").evaluate(e, Arrays.asList(10, 3))
+                e.getExpression("mod").evaluate(e, Utils.buildList(10, 3))
         );
 
     }
@@ -323,27 +325,27 @@ public class EvaluatorTest extends BaseTest {
         Evaluator e = new Evaluator();
         org.junit.Assert.assertEquals(
                 parseDate("2011-01-01"),
-                e.getExpression("date").evaluate(e, Arrays.asList("2011-01-01"))
+                e.getExpression("date").evaluate(e, Utils.buildList("2011-01-01"))
         );
 
         org.junit.Assert.assertEquals(
                 null,
-                e.getExpression("date").evaluate(e, Arrays.asList("2011-01"))
+                e.getExpression("date").evaluate(e, Utils.buildList("2011-01"))
         );
 
         org.junit.Assert.assertEquals(
                 parseTime("2011-01-01 10:01:02"),
-                e.getExpression("time").evaluate(e, Arrays.asList("2011-01-01 10:01:02"))
+                e.getExpression("time").evaluate(e, Utils.buildList("2011-01-01 10:01:02"))
         );
 
         org.junit.Assert.assertEquals(
                 null,
-                e.getExpression("time").evaluate(e, Arrays.asList("2011-01"))
+                e.getExpression("time").evaluate(e, Utils.buildList("2011-01"))
         );
 
         org.junit.Assert.assertEquals(
                 new Date(),
-                e.getExpression("now").evaluate(e, Arrays.asList())
+                e.getExpression("now").evaluate(e, Utils.buildList())
         );
 
     }
@@ -353,12 +355,12 @@ public class EvaluatorTest extends BaseTest {
         Evaluator e = new Evaluator();
         org.junit.Assert.assertEquals(
                 "Hello World",
-                e.getExpression("append").evaluate(e, Arrays.asList(" World", "Hello"))
+                e.getExpression("append").evaluate(e, Utils.buildList(" World", "Hello"))
         );
 
         org.junit.Assert.assertEquals(
                 "Hello World",
-                e.getExpression("prepend").evaluate(e, Arrays.asList("Hello", " World"))
+                e.getExpression("prepend").evaluate(e, Utils.buildList("Hello", " World"))
         );
     }
 
@@ -366,47 +368,47 @@ public class EvaluatorTest extends BaseTest {
     public void testEvaluatingRegularExpressions() {
         Evaluator e = new Evaluator();
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("match").evaluate(e, Arrays.asList("/ello/", "Hello World"))
+                (Boolean) e.getExpression("match").evaluate(e, Utils.buildList("/ello/", "Hello World"))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("match").evaluate(e, Arrays.asList("/ello/i", "Hello World"))
+                (Boolean) e.getExpression("match").evaluate(e, Utils.buildList("/ello/i", "Hello World"))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("match").evaluate(e, Arrays.asList("/^He/", "Hello World"))
+                (Boolean) e.getExpression("match").evaluate(e, Utils.buildList("/^He/", "Hello World"))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("match").evaluate(e, Arrays.asList("/([m|l])ouse$/i", "mouse"))
+                (Boolean) e.getExpression("match").evaluate(e, Utils.buildList("/([m|l])ouse$/i", "mouse"))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("match").evaluate(e, Arrays.asList("/World$/", "Hello World"))
+                (Boolean) e.getExpression("match").evaluate(e, Utils.buildList("/World$/", "Hello World"))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("match").evaluate(e, Arrays.asList("/none/", "Hello World"))
+                (Boolean) e.getExpression("match").evaluate(e, Utils.buildList("/none/", "Hello World"))
         );
 
         org.junit.Assert.assertEquals(
                 "Hi World",
-                e.getExpression("replace").evaluate(e, Arrays.asList("/Hello/", "Hi", "Hello World"))
+                e.getExpression("replace").evaluate(e, Utils.buildList("/Hello/", "Hi", "Hello World"))
         );
 
         org.junit.Assert.assertEquals(
                 "Hi World",
-                e.getExpression("replace").evaluate(e, Arrays.asList("/Hello/", "Hi", "Hello World"))
+                e.getExpression("replace").evaluate(e, Utils.buildList("/Hello/", "Hi", "Hello World"))
         );
 
         org.junit.Assert.assertEquals(
                 "mice",
-                e.getExpression("replace").evaluate(e, Arrays.asList("/([m|l])ouse$/i", "$1ice", "mouse"))
+                e.getExpression("replace").evaluate(e, Utils.buildList("/([m|l])ouse$/i", "$1ice", "mouse"))
         );
 
         org.junit.Assert.assertEquals(
                 "vertices",
-                e.getExpression("replace").evaluate(e, Arrays.asList("/(matr|vert|ind)ix|ex$/i", "$1ices", "vertex"))
+                e.getExpression("replace").evaluate(e, Utils.buildList("/(matr|vert|ind)ix|ex$/i", "$1ices", "vertex"))
         );
     }
 
@@ -414,89 +416,89 @@ public class EvaluatorTest extends BaseTest {
     public void testEvaluatingHelperExpressions() {
         Evaluator e = new Evaluator();
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("in").evaluate(e, Arrays.asList("1,2,3,5..10,20..24", "1"))
+                (Boolean) e.getExpression("in").evaluate(e, Utils.buildList("1,2,3,5..10,20..24", "1"))
         );
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("in").evaluate(e, Arrays.asList("1,2,3,5..10,20..24", "5"))
+                (Boolean) e.getExpression("in").evaluate(e, Utils.buildList("1,2,3,5..10,20..24", "5"))
         );
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("in").evaluate(e, Arrays.asList("1,2,3,5..10,20..24", "6"))
+                (Boolean) e.getExpression("in").evaluate(e, Utils.buildList("1,2,3,5..10,20..24", "6"))
         );
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("in").evaluate(e, Arrays.asList("1,2,3,5..10,20..24", "24"))
+                (Boolean) e.getExpression("in").evaluate(e, Utils.buildList("1,2,3,5..10,20..24", "24"))
         );
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("in").evaluate(e, Arrays.asList("1,2,3,5..10,20..24", "25"))
+                (Boolean) e.getExpression("in").evaluate(e, Utils.buildList("1,2,3,5..10,20..24", "25"))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("within").evaluate(e, Arrays.asList("0..3", "4"))
+                (Boolean) e.getExpression("within").evaluate(e, Utils.buildList("0..3", "4"))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("within").evaluate(e, Arrays.asList("0..3", "3"))
+                (Boolean) e.getExpression("within").evaluate(e, Utils.buildList("0..3", "3"))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("within").evaluate(e, Arrays.asList("0..3", "2.5"))
+                (Boolean) e.getExpression("within").evaluate(e, Utils.buildList("0..3", "2.5"))
         );
 
-        e.setVariable("@genders", Arrays.asList("male", "male", "female"));
+        e.setVariable("@genders", Utils.buildList("male", "male", "female"));
         org.junit.Assert.assertEquals(
                 3,
-                e.getExpression("count").evaluate(e, Arrays.asList("@genders"))
+                e.getExpression("count").evaluate(e, Utils.buildList("@genders"))
         );
 
         org.junit.Assert.assertEquals(
                 3,
-                e.getExpression("count").evaluate(e, Arrays.asList(Arrays.asList("male", "male", "female")))
+                e.getExpression("count").evaluate(e, Utils.buildList(Utils.buildList("male", "male", "female")))
         );
 
         org.junit.Assert.assertEquals(
                 0,
-                e.getExpression("count").evaluate(e, Arrays.asList(Arrays.asList()))
+                e.getExpression("count").evaluate(e, Utils.buildList(Utils.buildList()))
         );
 
-        e.setVariable("@genders", Arrays.asList("male", "male", "female"));
+        e.setVariable("@genders", Utils.buildList("male", "male", "female"));
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("any").evaluate(e, Arrays.asList("@genders", "male"))
+                (Boolean) e.getExpression("any").evaluate(e, Utils.buildList("@genders", "male"))
         );
 
-        e.setVariable("@genders", Arrays.asList("female", "female", "female"));
+        e.setVariable("@genders", Utils.buildList("female", "female", "female"));
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("any").evaluate(e, Arrays.asList("@genders", "male"))
+                (Boolean) e.getExpression("any").evaluate(e, Utils.buildList("@genders", "male"))
         );
 
-
-        org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("any").evaluate(e, Arrays.asList(Arrays.asList("female", "female", "female"), "male"))
-        );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("any").evaluate(e, Arrays.asList(Arrays.asList(), "male"))
+                (Boolean) e.getExpression("any").evaluate(e, Utils.buildList(Utils.buildList("female", "female", "female"), "male"))
         );
 
-        e.setVariable("@genders", Arrays.asList("female", "female", "female"));
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("all").evaluate(e, Arrays.asList("@genders", "male"))
+                (Boolean) e.getExpression("any").evaluate(e, Utils.buildList(Utils.buildList(), "male"))
         );
 
-        e.setVariable("@genders", Arrays.asList("female", "female", "male"));
+        e.setVariable("@genders", Utils.buildList("female", "female", "female"));
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("all").evaluate(e, Arrays.asList("@genders", "female"))
+                (Boolean) e.getExpression("all").evaluate(e, Utils.buildList("@genders", "male"))
         );
 
-        e.setVariable("@genders", Arrays.asList("female", "female", "female"));
+        e.setVariable("@genders", Utils.buildList("female", "female", "male"));
+        org.junit.Assert.assertFalse(
+                (Boolean) e.getExpression("all").evaluate(e, Utils.buildList("@genders", "female"))
+        );
+
+        e.setVariable("@genders", Utils.buildList("female", "female", "female"));
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("all").evaluate(e, Arrays.asList("@genders", "female"))
+                (Boolean) e.getExpression("all").evaluate(e, Utils.buildList("@genders", "female"))
         );
 
         org.junit.Assert.assertTrue(
-                (Boolean) e.getExpression("all").evaluate(e, Arrays.asList(Arrays.asList("female", "female", "female"), "female"))
+                (Boolean) e.getExpression("all").evaluate(e, Utils.buildList(Utils.buildList("female", "female", "female"), "female"))
         );
 
         org.junit.Assert.assertFalse(
-                (Boolean) e.getExpression("all").evaluate(e, Arrays.asList(Arrays.asList(), "female"))
+                (Boolean) e.getExpression("all").evaluate(e, Utils.buildList(Utils.buildList(), "female"))
         );
 
     }

@@ -22,11 +22,10 @@
 
 package com.tr8n.core;
 
-import com.tr8n.core.tokenizers.tokens.DataToken;
-
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+
+import com.tr8n.core.tokenizers.tokens.DataToken;
 
 public class Translation extends Base {
 
@@ -49,7 +48,7 @@ public class Translation extends Base {
      * Translation context hash:
      * {token1: {context1: rule1}, token2: {context2: rule2}}
      */
-    private Map context;
+    private Map<String, Object> context;
 
 
     /**
@@ -64,25 +63,6 @@ public class Translation extends Base {
      */
     public Translation(Map<String, Object> attributes) {
         super(attributes);
-    }
-
-    /**
-     *
-     * @param attributes
-     */
-    @SuppressWarnings("rawtypes")
-	public void updateAttributes(Map<String, Object> attributes) {
-        if (attributes.get("language") != null)
-        	setLanguage((Language) attributes.get("language"));
-
-        if (attributes.get("translation_key") != null)
-        	setTranslationKey((TranslationKey) attributes.get("translation_key"));
-
-        if (language == null && attributes.get("locale") != null && translationKey != null)
-        	setLanguage(translationKey.getApplication().getLanguage((String) attributes.get("locale")));
-        
-        setLabel((String) attributes.get("label"));
-        setContext((Map) attributes.get("context"));
     }
 
     public String getLabel() {
@@ -109,12 +89,31 @@ public class Translation extends Base {
         this.translationKey = translationKey;
     }
 
-    public Map getContext() {
+    public Map<String,Object> getContext() {
         return context;
     }
 
-    public void setContext(Map context) {
+    public void setContext(Map<String, Object> context) {
         this.context = context;
+    }
+    
+    /**
+     *
+     * @param attributes
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public void updateAttributes(Map<String, Object> attributes) {
+        if (attributes.get("language") != null)
+        	setLanguage((Language) attributes.get("language"));
+
+        if (attributes.get("translation_key") != null)
+        	setTranslationKey((TranslationKey) attributes.get("translation_key"));
+
+        if (language == null && attributes.get("locale") != null && translationKey != null)
+        	setLanguage(translationKey.getApplication().getLanguage((String) attributes.get("locale")));
+        
+        setLabel((String) attributes.get("label"));
+        setContext((Map) attributes.get("context"));
     }
 
     /**
@@ -136,33 +135,31 @@ public class Translation extends Base {
      * @param tokens
      * @return
      */
-    public boolean isValidTranslationForTokens(Map tokens) {
+    @SuppressWarnings("unchecked")
+	public boolean isValidTranslationForTokens(Map<String, Object> tokens) {
         if (!hasContext()) return true;
 
-        Iterator entries = this.context.entrySet().iterator();
+        Iterator<Map.Entry<String, Object>> entries = this.context.entrySet().iterator();
         while (entries.hasNext()) {
-            Map.Entry entry = (Map.Entry) entries.next();
-            String tokenName = (String) entry.getKey();
-            Map rules = (Map) entry.getValue();
+            Map.Entry<String, Object> entry = entries.next();
+            Map<String, String> rules = (Map<String, String>) entry.getValue();
 
-            Object tokenObject = DataToken.getContextObject(tokens, tokenName);
+            Object tokenObject = DataToken.getContextObject(tokens, entry.getKey());
             if (tokenObject == null) return false;
 
-            Iterator ruleEntries = rules.entrySet().iterator();
+            Iterator<Map.Entry<String, String>> ruleEntries = rules.entrySet().iterator();
             while (ruleEntries.hasNext()) {
-                Map.Entry ruleEntry = (Map.Entry) ruleEntries.next();
-                String contextKeyword = (String) ruleEntry.getKey();
-                String ruleKeyword = (String) ruleEntry.getValue();
+                Map.Entry<String, String> ruleEntry = ruleEntries.next();
 
-                if (ruleKeyword.equals(LanguageContextRule.TR8N_DEFAULT_RULE_KEYWORD))
+                if (ruleEntry.getValue().equals(LanguageContextRule.TR8N_DEFAULT_RULE_KEYWORD))
                     continue;
 
-                LanguageContext context = language.getContextByKeyword(contextKeyword);
+                LanguageContext context = getLanguage().getContextByKeyword(ruleEntry.getKey());
                 if (context == null)
                     return false;
 
                 LanguageContextRule rule = context.findMatchingRule(tokenObject);
-                if (rule == null || !rule.getKeyword().equals(ruleKeyword))
+                if (rule == null || !rule.getKeyword().equals(ruleEntry.getValue()))
                     return false;
             }
         }
@@ -170,5 +167,8 @@ public class Translation extends Base {
         return true;
     }
 
+    public String toString() {
+        return label + " (" + getLanguage().getLocale() + ")";
+    }
 
 }

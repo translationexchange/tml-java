@@ -22,11 +22,15 @@
 
 package com.tr8n.core;
 
-import com.tr8n.core.rulesengine.Variable;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.tr8n.core.rulesengine.Variable;
 
 public class LanguageContext extends Base {
 

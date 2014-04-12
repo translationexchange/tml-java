@@ -22,9 +22,9 @@
 
 package com.tr8n.core.tokenizers.tokens;
 
-import com.tr8n.core.Language;
-
 import java.util.Map;
+
+import com.tr8n.core.Language;
 
 /**
  * Not yet supported by the service
@@ -64,7 +64,7 @@ public class EscapedToken extends Token {
      * @param options
      * @return
      */
-    public String substitute(String translatedLabel, Map tokensData, Language language, Map options) {
+    public String substitute(String translatedLabel, Map<String, Object> tokensData, Language language, Map<String, Object> options) {
         return translatedLabel;
     }
 

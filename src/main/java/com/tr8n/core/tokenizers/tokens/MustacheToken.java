@@ -22,9 +22,9 @@
 
 package com.tr8n.core.tokenizers.tokens;
 
-import com.tr8n.core.Language;
-
 import java.util.Map;
+
+import com.tr8n.core.Language;
 
 /**
  * Not yet supported by the service
@@ -61,7 +61,7 @@ public class MustacheToken extends Token {
      * @param options
      * @return
      */
-    public String getName(Map options) {
+    public String getName(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
         if (options.get("parens").equals(true))
             sb.append("{{");
@@ -79,7 +79,7 @@ public class MustacheToken extends Token {
      * @param options
      * @return
      */
-    public String substitute(String translatedLabel, Map tokensData, Language language, Map options) {
+    public String substitute(String translatedLabel, Map<String, Object> tokensData, Language language, Map<String, Object> options) {
         return translatedLabel;
     }
 

@@ -22,11 +22,13 @@
 
 package com.tr8n.core;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.*;
-import org.apache.log4j.LogManager;
-
 import java.io.IOException;
+
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.PatternLayout;
 
 public class Logger {
     private org.apache.log4j.Logger theLogger;
@@ -35,24 +37,29 @@ public class Logger {
         this.theLogger = LogManager.getLogger("Tr8n");
         theLogger.setLevel(Level.DEBUG);
         PatternLayout layout = new PatternLayout("%d{ISO8601} [%t] %-5p %c %x - %m%n");
+        
+        // TODO: disable console writer
         theLogger.addAppender(new ConsoleAppender(layout));
-        try {
-            FileAppender fileAppender = new FileAppender(layout, "log/tr8n.log");
-            fileAppender.setName("FileLogger");
-            fileAppender.setImmediateFlush(true);
-            fileAppender.setThreshold(Level.DEBUG);
-            fileAppender.setAppend(true);
-            fileAppender.activateOptions();
-            theLogger.addAppender(fileAppender);
-        } catch (IOException e) {
-            System.out.println("Failed to add appender !!");
+        
+        if (Tr8n.getConfig().getLogger().get("enabled").equals(Boolean.TRUE)) {
+	        try {
+	            FileAppender fileAppender = new FileAppender(layout, "log/tr8n.log");
+	            fileAppender.setName("FileLogger");
+	            fileAppender.setImmediateFlush(true);
+	            fileAppender.setThreshold(Level.DEBUG);
+	            fileAppender.setAppend(true);
+	            fileAppender.activateOptions();
+	            theLogger.addAppender(fileAppender);
+	        } catch (IOException e) {
+	            System.out.println("Failed to add appender !!");
+	        }
         }
     }
 
     public void logException(String message, Exception ex) {
         if (message != null) error(message);
         error(ex);
-        error(StringUtils.join(ex.getStackTrace(), "\n"));
+        error(Utils.join(ex.getStackTrace(), "\n"));
     }
 
     public void logException(Exception ex) {

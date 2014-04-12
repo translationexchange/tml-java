@@ -22,19 +22,28 @@
 
 package com.tr8n.core;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import com.tr8n.core.decorators.Decorator;
-import com.tr8n.core.tokenizers.AttributedStringTokenizer;
 import com.tr8n.core.tokenizers.DataTokenizer;
 import com.tr8n.core.tokenizers.DecorationTokenizer;
-import com.tr8n.core.tokenizers.HtmlTokenizer;
-
-import java.math.BigInteger;
-import java.text.AttributedString;
-import java.util.*;
-import java.security.*;
+import com.tr8n.core.tokenizers.Tokenizer;
 
 public class TranslationKey extends Base {
 
+	public static final String TOKENIZER_KEY = "tokenizer";
+	public static final String DEFAULT_TOKENIZERS_DATA = "data";
+	public static final String DEFAULT_TOKENIZERS_HTML = "html";
+	public static final String DEFAULT_TOKENIZERS_STYLED = "styled";
+	
     /**
      * Reference to the application where the key came from
      */
@@ -55,7 +64,7 @@ public class TranslationKey extends Base {
      */
     private String description;
 
-    /*
+    /**
      * Locale of the text to be translated
      */
     private String locale;
@@ -69,16 +78,6 @@ public class TranslationKey extends Base {
      * Hash of translations for each locale needed by the application
      */
     private Map<String, List<Translation>> translationsByLocale;
-
-    /**
-     * Holds all data tokens found in the translation key
-     */
-    private List dataTokens;
-
-    /**
-     * Holds all decoration tokens found in the translation key
-     */
-    private List decorationTokens;
 
     /**
      * Indicates whether the key is locked
@@ -100,7 +99,13 @@ public class TranslationKey extends Base {
      */
     private List<String> allowedDecorationTokenNames;
 
-    /****************************************************************************************************/
+    /**
+     * Default constructor
+     */
+    public TranslationKey() {
+        super();
+    }
+    
     /**
      *
      * @param attributes
@@ -108,213 +113,6 @@ public class TranslationKey extends Base {
     public TranslationKey(Map<String, Object> attributes) {
         super(attributes);
     }
-
-    /**
-     *
-     * @param attributes
-     */
-    public void updateAttributes(Map<String, Object> attributes) {
-        if (attributes.get("application") != null)
-            setApplication((Application) attributes.get("application"));
-
-        setLabel((String) attributes.get("label"));
-        setDescription((String) attributes.get("description"));
-
-        if (attributes.get("key") != null) {
-            setKey((String) attributes.get("key"));
-        } else {
-            setKey(generateKey(getLabel(), getDescription()));
-        }
-
-        setLocale((String) attributes.get("locale"));
-        if (getLocale() == null)
-            setLocale(Tr8n.getConfig().getDefaultLocale());
-
-        setLevel((Long) attributes.get("level"));
-
-        setLocked((Boolean) attributes.get("locked"));
-
-        if (attributes.get("translations") != null && this.application != null) {
-            Iterator entries = ((Map) attributes.get("translations")).entrySet().iterator();
-            while (entries.hasNext()) {
-                Map.Entry entry = (Map.Entry) entries.next();
-                List localeData = (List) entry.getValue();
-                String locale = (String) entry.getKey();
-                Language language = getApplication().getLanguage(locale);
-
-                List<Translation> translations = new ArrayList<Translation>();
-                for (Object translationData : localeData) {
-                    Map attrs = new HashMap((Map) translationData);
-                    attrs.put("language", language);
-                    attrs.put("translation_key", this);
-                    Translation translation = new Translation(attrs);
-                    translations.add(translation);
-                }
-                setTranslations(locale, translations);
-            }
-        }
-    }
-
-    /**
-     * Generates unique hash key for the translation key using label
-     * @param label
-     * @return
-     */
-    public static String generateKey(String label) {
-        return generateKey(label, null);
-    }
-
-    /**
-     * Generates unique hash key for the translation key using label and description
-     * @param label
-     * @param description
-     * @return
-     */
-    public static String generateKey(String label, String description) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(label); sb.append(";;;");
-        if (description != null) sb.append(description);
-        String s = sb.toString();
-
-        try {
-            MessageDigest m = MessageDigest.getInstance("MD5");
-            String hashText = new BigInteger(1,m.digest(s.getBytes("UTF-8"))).toString(16);
-            while(hashText.length() < 32 ) hashText = "0" + hashText;
-            return hashText;
-        } catch (Exception ex) {
-            Tr8n.getLogger().error("Failed to generate md5 key for " + label + " " + description);
-            Tr8n.getLogger().error(ex);
-            return null;
-        }
-    }
-
-    /**
-     * Returns YES if there are translations available for the key
-     * @return
-     */
-    public boolean hasTranslations() {
-        return getTranslationLocales().size() > 0;
-    }
-
-    /**
-     *
-     * @param language
-     * @param tokens
-     * @return
-     */
-    private Translation findFirstAcceptableTranslation(Language language, Map tokens) {
-        List<Translation> availableTranslations = getTranslations(language.getLocale());
-        if (availableTranslations == null || availableTranslations.size() == 0)
-            return null;
-
-        if (availableTranslations.size() == 1) {
-            Translation translation = availableTranslations.get(0);
-            if (!translation.hasContext()) return translation;
-        }
-
-        for (Translation translation : availableTranslations) {
-            if (translation.isValidTranslationForTokens(tokens))
-                return translation;
-        }
-
-        return null;
-    }
-
-    /**
-     *
-     * @param language
-     * @return
-     */
-    public Object translate(Language language) {
-        return translate(language, null);
-    }
-
-    /**
-     *
-     * @param language
-     * @param tokens
-     * @return
-     */
-    public Object translate(Language language, Map tokens) {
-        return translate(language, null, null);
-    }
-
-    /**
-     *
-     * @param language
-     * @param tokens
-     * @param options
-     * @return
-     */
-    public Object translate(Language language, Map tokens, Map options) {
-        if (getLocale().equals(language.getLocale())) {
-            return substitute(label, tokens, language, language, options);
-        }
-
-        Translation translation = findFirstAcceptableTranslation(language, tokens);
-
-        if (translation != null)
-            return substitute(translation.getLabel(), tokens, translation.getLanguage(), language, options);
-
-        return substitute(getLabel(), tokens, getApplication().getLanguage(), language, options);
-    }
-
-    /**
-     *
-     * @return
-     */
-    public List<String> getAllowedDataTokenNames() {
-        if (allowedDataTokenNames == null) {
-            DataTokenizer dt = new DataTokenizer(getLabel());
-            allowedDataTokenNames = dt.getTokenNames();
-        }
-        return allowedDataTokenNames;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public List<String> getAllowedDecorationTokenNames() {
-        if (allowedDecorationTokenNames == null) {
-            DecorationTokenizer dt = new DecorationTokenizer(getLabel());
-            allowedDecorationTokenNames = dt.getTokenNames();
-        }
-        return allowedDecorationTokenNames;
-    }
-
-    /**
-     *
-     * @param translatedLabel
-     * @param tokens
-     * @param language
-     * @param options
-     * @return
-     */
-    public Object substitute(String translatedLabel, Map<String, Object> tokens, Language translationLanguage, Language targetLanguage, Map<String, Object> options) {
-        if (DataTokenizer.shouldBeUsed(translatedLabel)) {
-            DataTokenizer dt = new DataTokenizer(translatedLabel, getAllowedDataTokenNames());
-            translatedLabel = dt.substitute(tokens, translationLanguage, options);
-        }
-
-        if (options != null && options.get("tokenizer") != null && options.get("tokenizer").equals("attributed")) {
-            if (DecorationTokenizer.shouldBeUsed(translatedLabel)) {
-                AttributedStringTokenizer ht = new AttributedStringTokenizer(translatedLabel, getAllowedDecorationTokenNames());
-                return ht.generateAttributedString(tokens, options);
-            }
-            return new AttributedString(translatedLabel);
-        }
-
-        if (DecorationTokenizer.shouldBeUsed(translatedLabel)) {
-            HtmlTokenizer ht = new HtmlTokenizer(translatedLabel, getAllowedDecorationTokenNames());
-            translatedLabel = ht.substitute(tokens, translationLanguage, options);
-        }
-        
-        Decorator decorator = Tr8n.getConfig().getDecorator();
-        return decorator.decorate(translatedLabel, translationLanguage, targetLanguage, this, options);
-    }
-
-    /****************************************************************************************************/
 
     public String getLabel() {
         return label;
@@ -343,7 +141,31 @@ public class TranslationKey extends Base {
     public void setApplication(Application application) {
         this.application = application;
     }
+    
+    /**
+     *
+     * @return
+     */
+    public List<String> getAllowedDataTokenNames() {
+       if (allowedDataTokenNames == null) {
+           DataTokenizer dt = new DataTokenizer(getLabel());
+           allowedDataTokenNames = dt.getTokenNames();
+       }
+       return allowedDataTokenNames;
+    }
 
+    /**
+     *
+     * @return
+     */
+    public List<String> getAllowedDecorationTokenNames() {
+       if (allowedDecorationTokenNames == null) {
+           DecorationTokenizer dt = new DecorationTokenizer(getLabel());
+           allowedDecorationTokenNames = dt.getTokenNames();
+       }
+       return allowedDecorationTokenNames;
+    }
+    
     public Map<String, List<Translation>> getTranslationsByLocale() {
         if (translationsByLocale == null)
             translationsByLocale = new HashMap<String, List<Translation>>();
@@ -388,22 +210,6 @@ public class TranslationKey extends Base {
         this.level = level;
     }
 
-    public List getDataTokens() {
-        return dataTokens;
-    }
-
-    public void setDataTokens(List dataTokens) {
-        this.dataTokens = dataTokens;
-    }
-
-    public List getDecorationTokens() {
-        return decorationTokens;
-    }
-
-    public void setDecorationTokens(List decorationTokens) {
-        this.decorationTokens = decorationTokens;
-    }
-
     public void setAllowedDataTokenNames(List<String> allowedDataTokenNames) {
         this.allowedDataTokenNames = allowedDataTokenNames;
     }
@@ -425,9 +231,225 @@ public class TranslationKey extends Base {
 	public void setLocked(Boolean locked) {
 		this.locked = locked;
 	}
+	
+	public Boolean isRegistered() {
+		return registered;
+	}
 
-	public Map toMap() {
-        Map data = new HashMap();
+	public void setRegistered(Boolean registered) {
+		this.registered = registered;
+	}
+	
+    /**
+     *
+     * @param attributes
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public void updateAttributes(Map<String, Object> attributes) {
+        if (attributes.get("application") != null)
+            setApplication((Application) attributes.get("application"));
+
+        setLabel((String) attributes.get("label"));
+        setDescription((String) attributes.get("description"));
+
+        if (attributes.get("key") != null) {
+            setKey((String) attributes.get("key"));
+        } else {
+            setKey(generateKey(getLabel(), getDescription()));
+        }
+
+        setLocale((String) attributes.get("locale"));
+        if (getLocale() == null)
+            setLocale(Tr8n.getConfig().getDefaultLocale());
+
+        setRegistered(attributes.get("id") != null);
+        
+        setLevel((Long) attributes.get("level"));
+
+        setLocked((Boolean) attributes.get("locked"));
+
+        if (attributes.get("translations") != null && this.application != null) {
+            Iterator<Map.Entry<String, List<Map<String, Object>>>> entries = ((Map) attributes.get("translations")).entrySet().iterator();
+            while (entries.hasNext()) {
+                Map.Entry<String, List<Map<String, Object>>> entry = entries.next();
+                Language language = getApplication().getLanguage(entry.getKey());
+
+                List<Translation> translations = new ArrayList<Translation>();
+                for (Map<String, Object> translationData : entry.getValue()) {
+                    Map<String, Object> attrs = new HashMap<String, Object>(translationData);
+                    attrs.put("language", language);
+                    attrs.put("translation_key", this);
+                    Translation translation = new Translation(attrs);
+                    translations.add(translation);
+                }
+                setTranslations(language.getLocale(), translations);
+            }
+        }
+    }
+
+    /**
+     * Generates unique hash key for the translation key using label
+     * @param label
+     * @return
+     */
+    public static String generateKey(String label) {
+        return generateKey(label, null);
+    }
+
+    /**
+     * Generates unique hash key for the translation key using label and description
+     * @param label
+     * @param description
+     * @return
+     */
+    public static String generateKey(String label, String description) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(label); sb.append(";;;");
+        if (description != null) sb.append(description);
+        String s = sb.toString();
+
+        try {
+            MessageDigest m = MessageDigest.getInstance("MD5");
+            String hashText = new BigInteger(1,m.digest(s.getBytes("UTF-8"))).toString(16);
+            while(hashText.length() < 32 ) hashText = "0" + hashText;
+            return hashText;
+        } catch (Exception ex) {
+            Tr8n.getLogger().logException("Failed to generate md5 key for " + label + " " + description, ex);
+            return null;
+        }
+    }
+
+    /**
+     * Returns YES if there are translations available for the key
+     * @return
+     */
+    public boolean hasTranslations() {
+        return getTranslationLocales().size() > 0;
+    }
+
+    /**
+     * Returns frist acceptable translation based on the token values and language rules
+     * 
+     * @param language
+     * @param tokens
+     * @return
+     */
+    private Translation findFirstAcceptableTranslation(Language language, Map<String, Object> tokens) {
+        List<Translation> availableTranslations = getTranslations(language.getLocale());
+        if (availableTranslations == null || availableTranslations.size() == 0)
+            return null;
+
+        if (availableTranslations.size() == 1) {
+            Translation translation = availableTranslations.get(0);
+            if (!translation.hasContext()) return translation;
+        }
+
+        for (Translation translation : availableTranslations) {
+            if (translation.isValidTranslationForTokens(tokens))
+                return translation;
+        }
+
+        return null;
+    }
+
+    /**
+     *
+     * @param language
+     * @return
+     */
+    public Object translate(Language language) {
+        return translate(language, null);
+    }
+
+    /**
+     *
+     * @param language
+     * @param tokens
+     * @return
+     */
+    public Object translate(Language language, Map<String, Object> tokens) {
+        return translate(language, null, null);
+    }
+
+    /**
+     *
+     * @param language
+     * @param tokens
+     * @param options
+     * @return
+     */
+    public Object translate(Language language, Map<String, Object> tokens, Map<String, Object> options) {
+        if (getLocale().equals(language.getLocale())) {
+            return substitute(label, tokens, language, language, options);
+        }
+
+        Translation translation = findFirstAcceptableTranslation(language, tokens);
+
+        if (translation != null)
+            return substitute(translation.getLabel(), tokens, translation.getLanguage(), language, options);
+
+        return substitute(getLabel(), tokens, getApplication().getLanguage(), language, options);
+    }
+
+    /**
+     * 
+     * @param key
+     * @param translatedLabel
+     * @param translationLanguage
+     * @param tokens
+     * @param options
+     * @return
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    protected Object applyTokenizer(String key, String translatedLabel, Language translationLanguage, List<String> allowedTokenNames, Map<String, Object> tokens, Map<String, Object> options) {
+    	try {
+			Class tokenizerClass = Class.forName(Tr8n.getConfig().getTokenizerClass(key));
+			if (tokenizerClass == null) return translatedLabel;
+			
+			Method method = tokenizerClass.getMethod("isApplicable", String.class);
+	        if ((Boolean) method.invoke(null, translatedLabel)) {
+				Constructor<Tokenizer> constructor = tokenizerClass.getConstructor(String.class, List.class);            
+	        	Tokenizer tokenizer = (Tokenizer) constructor.newInstance(translatedLabel, allowedTokenNames);
+	        	return tokenizer.substitute(tokens, translationLanguage, options);
+	        }
+    	} catch (Exception ex) {
+    		Tr8n.getLogger().logException("Failed to tokenize \"" + translatedLabel + "\" using " + key, ex);
+    	}
+		return translatedLabel;
+    }
+    
+    /**
+     *
+     * @param translatedLabel
+     * @param tokens
+     * @param language
+     * @param options
+     * @return
+     */
+	public Object substitute(String translatedLabel, Map<String, Object> tokens, Language translationLanguage, Language targetLanguage, Map<String, Object> options) {
+		// Data tokenizer must always be present
+		translatedLabel = (String) applyTokenizer(DEFAULT_TOKENIZERS_DATA, translatedLabel, translationLanguage, getAllowedDataTokenNames(), tokens, options);
+		
+		String tokenizerKey = DEFAULT_TOKENIZERS_HTML; 
+        if (options != null && options.get(TOKENIZER_KEY) != null)
+        	tokenizerKey = (String) options.get(TOKENIZER_KEY); 
+        
+        Object result = applyTokenizer(tokenizerKey, translatedLabel, translationLanguage, getAllowedDecorationTokenNames(), tokens, options);
+        
+        if (result instanceof String) {
+        	Decorator decorator = Tr8n.getConfig().getDecorator();
+        	return decorator.decorate(result, translationLanguage, targetLanguage, this, options);
+        }
+        
+        return result;
+    }
+
+	/**
+	 * Returns map representation for the translation key
+	 * @return
+	 */
+	public Map<String, Object> toMap() {
+        Map<String, Object> data = new HashMap<String, Object>();
         data.put("label", label);
         if (description != null)
             data.put("description", description);

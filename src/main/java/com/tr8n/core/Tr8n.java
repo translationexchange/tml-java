@@ -23,17 +23,18 @@
 package com.tr8n.core;
 
 import java.lang.reflect.Constructor;
-import java.text.AttributedString;
-import java.util.*;
+import java.util.Map;
+import java.util.Observer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import com.tr8n.core.tokenizers.tokens.Token;
+import com.tr8n.core.cache.Cache;
+import com.tr8n.core.cache.CacheAdapter;
 
 /**
- * A utility session wrapper class for using by Mobile and Desktop application.
+ * A static utility session wrapper class for using by Mobile and Desktop application.
  */
 public class Tr8n {
 
@@ -62,6 +63,10 @@ public class Tr8n {
      * Periodically send missing keys to the server, should only be used in a single user mode (desktop, mobile)
      */
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    
+    /**
+     * Schedule handler
+     */
     private static ScheduledFuture<?> applicationScheduleHandler;
 
 
@@ -91,6 +96,10 @@ public class Tr8n {
         getSession().setCurrentLanguage(getSession().getApplication().getLanguage(locale));
     }
 
+    public static void init() {
+        init(getConfig().getApplication());
+    }
+    
     public static void init(String key) {
         init(key, null);
     }
@@ -99,11 +108,15 @@ public class Tr8n {
         init(key, null, null);
     }
 
+    public static void init(Map<String, String> params) {
+    	init(params.get("key"), params.get("secret"), params.get("host"));
+    }
+    
     public static void init(String key, String secret, String host) {
         setSession(new Session(key, secret, host));
         if (!isSchedulerRunning()) startScheduledTasks();
     }
-
+    
     public static boolean isSchedulerRunning() {
         return applicationScheduleHandler != null;
     }
@@ -113,7 +126,7 @@ public class Tr8n {
 
         applicationScheduleHandler = scheduler.scheduleAtFixedRate(new Runnable() {
             public void run() {
-                getLogger().debug("Running scheduled tasks...");
+//                getLogger().debug("Running scheduled tasks...");
                 getSession().getApplication().submitMissingTranslationKeys();
             }
         }, 5, 5, TimeUnit.SECONDS);
@@ -154,7 +167,7 @@ public class Tr8n {
         	try {
         		Map<String, Object> cacheData = getConfig().getCache();
 				Class cacheClass = Class.forName((String) cacheData.get("class"));
-        		Constructor<Cache> constructor = cacheClass.getConstructor(Map.class);
+        		Constructor<CacheAdapter> constructor = cacheClass.getConstructor(Map.class);
         		cache = constructor.newInstance(cacheData);
         	} catch (Exception ex) {
         		getLogger().logException(ex);
@@ -186,37 +199,21 @@ public class Tr8n {
      *
      ****************************************************************************************************/
 
-    /**
-     * Current application
-     */
-    private Application application;
-
-    /**
-     * Stores the current language selected by the user
-     */
-    private Language currentLanguage;
-
-    /**
-     * Stores the current translator info
-     */
-    private Translator currentTranslator;
-
-    /**
-     * Allows to set a source for the entire request
-     */
-    private String currentSource;
-
-    /**
-     * Allows developers to group translation keys for management only
-     */
-    private List<Map> blockOptions;
-
 
     public static Language getCurrentLanguage() {
         return getSession().getCurrentLanguage();
     }
 
     public static void switchLanguage(Language language) {
+    	switchLanguage(language, null);
+    }
+    
+    public static void switchLanguage(Language language, Map<String, Object> options) {
+    	// TODO: if the connection is not present, do it offline, if possible
+    	// delete language cache
+    	if (options != null && options.get("offline") == null) {
+    		getCache().delete(language.getLocale(), Utils.buildMap("directory", true));
+    	}
     	getSession().switchLanguage(language);
     }
 
@@ -232,15 +229,15 @@ public class Tr8n {
         getSession().setCurrentSource(currentSource);
     }
 
-    public void beginBlockWithOptions(Map options) {
+    public static void beginBlockWithOptions(Map<String, Object> options) {
         getSession().beginBlockWithOptions(options);
     }
 
-    public Map getBlockOptions() {
+    public static Map<String, Object> getBlockOptions() {
         return getSession().getBlockOptions();
     }
 
-    public void endBlock() {
+    public static void endBlock() {
         getSession().endBlock();
     }
 
@@ -264,7 +261,22 @@ public class Tr8n {
         getSession().setCurrentTranslator(currentTranslator);
     }
 
+    public static void initSource(String key) {
+    	initSource(key, getCurrentLanguage().getLocale());
+    }
 
+    public static void initSource(String key, String locale) {
+    	getApplication().getSource(key, locale, null);
+    }
+    
+    public static void initLanguage(String locale) {
+    	getApplication().getLanguage(locale);
+    }
+    
+    public static void addObserver(Observer observer) {
+    	getSession().addObserver(observer);
+    }
+    
     /******************************************************************************************************
      *
      * Helper Methods for translations
@@ -276,23 +288,23 @@ public class Tr8n {
      * @param label Label to be translated
      * @return translated label
      */
-    public static String tr(String label) {
+    public static String translate(String label) {
         return getSession().translate(label);
     }
 
-    public static String tr(String label, String description) {
+    public static String translate(String label, String description) {
         return getSession().translate(label, description);
     }
 
-    public static String tr(String label, String description, Map<String, Object> tokens) {
+    public static String translate(String label, String description, Map<String, Object> tokens) {
         return getSession().translate(label, description, tokens);
     }
 
-    public static String tr(String label, Map<String, Object> tokens) {
+    public static String translate(String label, Map<String, Object> tokens) {
         return getSession().translate(label, tokens);
     }
 
-    public static String tr(String label, Map<String, Object> tokens, Map<String, Object> options) {
+    public static String translate(String label, Map<String, Object> tokens, Map<String, Object> options) {
         return getSession().translate(label, tokens, options);
     }
 
@@ -301,23 +313,23 @@ public class Tr8n {
      * @param label
      * @return
      */
-    public static AttributedString tras(String label) {
-        return getSession().translateAttributedString(label);
+    public static Object translateStyledString(String label) {
+        return getSession().translateStyledString(label);
     }
 
-    public static AttributedString tras(String label, String description) {
-        return getSession().translateAttributedString(label, description);
+    public static Object translateStyledString(String label, String description) {
+        return getSession().translateStyledString(label, description);
     }
 
-    public static AttributedString tras(String label, String description, Map<String, Object> tokens) {
-        return getSession().translateAttributedString(label, description, tokens);
+    public static Object translateStyledString(String label, String description, Map<String, Object> tokens) {
+        return getSession().translateStyledString(label, description, tokens);
     }
 
-    public static AttributedString tras(String label, Map<String, Object> tokens) {
-        return getSession().translateAttributedString(label, tokens);
+    public static Object translateStyledString(String label, Map<String, Object> tokens) {
+        return getSession().translateStyledString(label, tokens);
     }
 
-    public static AttributedString tras(String label, Map<String, Object> tokens, Map<String, Object> options) {
-        return getSession().translateAttributedString(label, tokens, options);
+    public static Object translateStyledString(String label, Map<String, Object> tokens, Map<String, Object> options) {
+        return getSession().translateStyledString(label, tokens, options);
     }
 }

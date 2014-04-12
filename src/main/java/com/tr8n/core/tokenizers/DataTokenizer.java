@@ -22,10 +22,6 @@
 
 package com.tr8n.core.tokenizers;
 
-import com.tr8n.core.Language;
-import com.tr8n.core.Tr8n;
-import com.tr8n.core.tokenizers.tokens.Token;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -34,9 +30,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.tr8n.core.Language;
+import com.tr8n.core.Tr8n;
+import com.tr8n.core.tokenizers.tokens.Token;
+
 public class DataTokenizer extends Tokenizer {
     public static final String TOKEN_BRACKET = "{";
-
+    public static final String EXPRESSION_METHOD = "getExpression";
+    
     /**
      * Token objects generated from the label
      */
@@ -68,18 +69,17 @@ public class DataTokenizer extends Tokenizer {
     }
 
     /**
-     *
+     * Extract tokens from a string
      */
-    // TODO: verify if reflection is too slow and switch to method invocation instead
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
     protected void tokenize() {
         try {
-            this.tokens = new ArrayList<Token>();
+        	this.tokens = new ArrayList<Token>();
             List<String> tokenMatches = new ArrayList<String>();
             String matchingLabel = this.label;
             for (String token : Tr8n.getConfig().getTokenClasses()) {
                 Class tokenClass = Class.forName(token);
-                Method method = tokenClass.getMethod("getExpression");
+                Method method = tokenClass.getMethod(EXPRESSION_METHOD);
                 String expression = (String) method.invoke(null);
 
                 Pattern pattern = Pattern.compile(expression);
@@ -87,11 +87,11 @@ public class DataTokenizer extends Tokenizer {
 
                 while(matcher.find()) {
                     String match = matcher.group();
-                    if (tokenMatches.contains(match)) continue;
+                    if (tokenMatches.contains(match)) 
+                    	continue;
                     tokenMatches.add(match);
 					Constructor<Token> constructor = tokenClass.getConstructor(String.class, String.class);
-                    Token registeredToken = (Token) constructor.newInstance(match, this.label);
-                    this.tokens.add(registeredToken);
+                    addToken(constructor.newInstance(match, this.label));
                     matchingLabel = matchingLabel.replaceAll(Pattern.quote(match), "");
                 }
             }
@@ -100,6 +100,24 @@ public class DataTokenizer extends Tokenizer {
         }
     }
 
+	/**
+	 * Returns list of tokens found in the label
+	 * @return
+	 */
+	public List<Token> getTokens() {
+		if (this.tokens == null)
+			this.tokens = new ArrayList<Token>();
+		return this.tokens;
+	}
+	
+	/**
+	 * Adds a token to the list of tokens
+	 * @param token
+	 */
+	private void addToken(Token token) {
+		getTokens().add(token);
+	}
+	
     /**
      *
      * @return List of token names derived from the label
@@ -121,7 +139,7 @@ public class DataTokenizer extends Tokenizer {
      * @param options
      * @return
      */
-    public String substitute(Map tokensData, Language language, Map options) {
+    public Object substitute(Map<String, Object> tokensData, Language language, Map<String, Object> options) {
         this.tokensData = tokensData;
         this.options = options;
 
@@ -137,7 +155,7 @@ public class DataTokenizer extends Tokenizer {
      * @param label
      * @return
      */
-    public static boolean shouldBeUsed(String label) {
+    public static boolean isApplicable(String label) {
         return label.contains(TOKEN_BRACKET);
     }
 

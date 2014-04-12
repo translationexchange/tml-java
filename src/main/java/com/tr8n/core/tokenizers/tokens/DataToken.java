@@ -22,16 +22,22 @@
 
 package com.tr8n.core.tokenizers.tokens;
 
-import com.tr8n.core.*;
-import com.tr8n.core.tokenizers.DataTokenValue;
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.tr8n.core.Language;
+import com.tr8n.core.LanguageCase;
+import com.tr8n.core.LanguageContext;
+import com.tr8n.core.Tr8n;
+import com.tr8n.core.Utils;
+import com.tr8n.core.tokenizers.DataTokenValue;
+
 public class DataToken extends Token {
+	
+    public static final String SEPARATOR_CONTEXT = ":";
+    public static final String SEPARATOR_CASE = "::";
 
     private static final String MAP_OBJECT_NAME = "object";
     private static final String MAP_OBJECT_VALUE = "value";
@@ -80,7 +86,7 @@ public class DataToken extends Token {
     public List<String> getLanguageContextKeys() {
         if (this.languageContextKeys == null) {
             this.languageContextKeys = Utils.trimListValues(
-                Arrays.asList(getParenslessName().split("::")[0].split(":"))
+                Arrays.asList(getParenslessName().split(SEPARATOR_CASE)[0].split(SEPARATOR_CONTEXT))
             );
             this.languageContextKeys.remove(0);
         }
@@ -94,7 +100,7 @@ public class DataToken extends Token {
     public List<String> getLanguageCaseKeys() {
         if (this.languageCaseKeys == null) {
             this.languageCaseKeys = Utils.trimListValues(
-                Arrays.asList(getParenslessName().split("::"))
+                Arrays.asList(getParenslessName().split(SEPARATOR_CASE))
             );
             this.languageCaseKeys.remove(0);
         }
@@ -106,7 +112,7 @@ public class DataToken extends Token {
      * @param options
      * @return
      */
-    public String getName(Map options) {
+    public String getName(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
         if (options.get("parens") != null && options.get("parens").equals(true))
@@ -116,12 +122,12 @@ public class DataToken extends Token {
 
         if (options.get("context_keys") != null && options.get("context_keys").equals(true) && this.getLanguageContextKeys().size() > 0) {
             sb.append(":");
-            sb.append(StringUtils.join(this.getLanguageContextKeys().toArray(), ":"));
+            sb.append(Utils.join(this.getLanguageContextKeys().toArray(), SEPARATOR_CONTEXT));
         }
 
         if (options.get("case_keys") != null && options.get("case_keys").equals(true) && this.getLanguageCaseKeys().size() > 0) {
             sb.append("::");
-            sb.append(StringUtils.join(this.getLanguageCaseKeys().toArray(), "::"));
+            sb.append(Utils.join(this.getLanguageCaseKeys().toArray(), SEPARATOR_CASE));
         }
 
         if (options.get("parens") != null && options.get("parens").equals(true))
@@ -182,11 +188,12 @@ public class DataToken extends Token {
      * @param tokenMap
      * @return
      */
-    public Object getContextObject(Map tokenMap) {
+    public Object getContextObject(Map<String, Object> tokenMap) {
         return getContextObject(tokenMap, this.getObjectName());
     }
 
-    public static Object getContextObject(Map tokenMap, String name) {
+    @SuppressWarnings("unchecked")
+	public static Object getContextObject(Map<String, Object> tokenMap, String name) {
         if (tokenMap == null)
             return null;
 
@@ -200,12 +207,12 @@ public class DataToken extends Token {
         }
 
         if (object instanceof List) {
-            List list = (List) object;
+            List<Object> list = (List<Object>) object;
             return list.get(0);
         }
 
         if (object instanceof Map) {
-            Map map = (Map) object;
+            Map<String, Object> map = (Map<String, Object>) object;
             if (map.get(MAP_OBJECT_NAME) != null)
                 return map.get(MAP_OBJECT_NAME);
             return map;
@@ -219,7 +226,8 @@ public class DataToken extends Token {
      * @param tokenMap map of token names to values
      * @return value of the token
      */
-    public String getValue(Map tokenMap) {
+    @SuppressWarnings("unchecked")
+	public String getValue(Map<String, Object> tokenMap) {
         if (tokenMap == null || tokenMap.get(this.getName()) == null) {
             String tokenValue = Tr8n.getConfig().getDefaultTokenValue(getName());
             if (tokenValue != null) return tokenValue;
@@ -234,7 +242,7 @@ public class DataToken extends Token {
         }
 
         if (object instanceof List) {
-            List list = (List) object;
+            List<Object> list = (List<Object>) object;
             if (list.size() != 2) {
                 Tr8n.getLogger().error("{" + getName() + "} in " + getOriginalLabel() + " : list substitution value is not provided}");
                 return getFullName();
@@ -243,7 +251,7 @@ public class DataToken extends Token {
         }
 
         if (object instanceof Map) {
-            Map map = (Map) object;
+            Map<String, Object> map = (Map<String, Object>) object;
 
             if (map.get(MAP_OBJECT_VALUE) != null) {
                 return map.get(MAP_OBJECT_VALUE).toString();
@@ -259,7 +267,7 @@ public class DataToken extends Token {
                 return getFullName();
             }
 
-            Map obj = (Map) map.get(MAP_OBJECT_NAME);
+            Map<String, Object> obj = (Map<String, Object>) map.get(MAP_OBJECT_NAME);
 
             if (map.get(MAP_ATTRIBUTE_NAME) != null) {
                return obj.get(map.get(MAP_ATTRIBUTE_NAME)).toString();
@@ -284,7 +292,7 @@ public class DataToken extends Token {
      * @param options
      * @return
      */
-    public String applyLanguageCases(String tokenValue, Object object, Language language, List<String> languageCaseKeys, Map options) {
+    public String applyLanguageCases(String tokenValue, Object object, Language language, List<String> languageCaseKeys, Map<String, Object> options) {
         if (languageCaseKeys.size() == 0)
             return tokenValue;
 
@@ -305,7 +313,7 @@ public class DataToken extends Token {
      * @param options
      * @return
      */
-    public String applyLanguageCases(String tokenValue, Object object, Language language, Map options) {
+    public String applyLanguageCases(String tokenValue, Object object, Language language, Map<String, Object> options) {
        return applyLanguageCases(tokenValue, object, language, this.getLanguageCaseKeys(), options);
     }
 
@@ -340,7 +348,7 @@ public class DataToken extends Token {
      * @param options           options for substitutions
      * @return                  label with substituted tokens
      */
-    public String substitute(String translatedLabel, Map tokensData, Language language, Map options) {
+    public String substitute(String translatedLabel, Map<String, Object> tokensData, Language language, Map<String, Object> options) {
         String value = applyLanguageCases(getValue(tokensData), getContextObject(tokensData), language, options);
         return translatedLabel.replaceAll(Pattern.quote(getFullName()), value);
     }

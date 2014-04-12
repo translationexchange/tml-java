@@ -22,13 +22,13 @@
 
 package com.tr8n.core;
 
-import com.tr8n.core.rulesengine.Evaluator;
-import com.tr8n.core.rulesengine.Parser;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.tr8n.core.rulesengine.Evaluator;
+import com.tr8n.core.rulesengine.Parser;
 
 public class LanguageCaseRule extends Base {
 
