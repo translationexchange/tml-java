@@ -35,7 +35,7 @@ If you are building an application using any of the following frameworks, you sh
 * J2EE web applications (standard): [tr8n_j2ee_clientsdk](https://github.com/tr8n/tr8n_j2ee_clientsdk)
 * J2EE web applications (Struts 2): [tr8n_struts2_clientsdk](https://github.com/tr8n/tr8n_struts2_clientsdk)
 
-The SDKs provide extensions based that allow for quicker and smoother integration. For example, Android SDK provides SpannableStringTokenizer that you can use for decorating strings.
+The SDKs provide extensions that allow for quicker and smoother integration with your application. For example, Android SDK provides SpannableStringTokenizer that you can use for decorating strings.
 At the same time, Swing SDK provides AttributedStringTokenizer for the same purposes, but using AWT classes. J2EE SDK provides tag libraries that can be used in JSPs and Struts SDK provides action extensions. 
 
 If you are not using any of the above frameworks, you can use Tr8n core directly and customize functionality based on what you need.
