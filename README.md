@@ -30,4 +30,23 @@ Integration
 
 If you are building an application using any of the following frameworks, the we suggest that you use the SDK for the framework:
 
-* Android applications [tr8n_android_clientsdk](https://github.com/tr8n/tr8n_android_clientsdk)
+* Android applications: [tr8n_android_clientsdk](https://github.com/tr8n/tr8n_android_clientsdk)
+* Swing applications: [tr8n_swing_clientsdk](https://github.com/tr8n/tr8n_swing_clientsdk)
+* J2EE web applications (standard): [tr8n_j2ee_clientsdk](https://github.com/tr8n/tr8n_j2ee_clientsdk)
+* J2EE web applications (Struts 2): [tr8n_struts2_clientsdk](https://github.com/tr8n/tr8n_struts2_clientsdk)
+
+If you are not using any of the above frameworks, you can use Tr8n core directly and customize functionality based on what you need.
+
+
+Where can I get more information?
+==================
+
+* Visit Tr8nHub's documentation: http://wiki.tr8nhub.com/
+
+* Follow Tr8nHub on Twitter: https://twitter.com/Tr8nHub
+
+* Connect with Tr8nHub on Facebook: https://www.facebook.com/pages/tr8nhubcom/138407706218622
+
+* If you have any questions, contact: michael@tr8nhub.com
+
+
