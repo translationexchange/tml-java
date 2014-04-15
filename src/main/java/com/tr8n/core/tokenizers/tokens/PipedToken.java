@@ -166,6 +166,9 @@ public class PipedToken extends DataToken {
 	 * token:      {count|| one: message, many: messages}
 	 * results in: {"one": "message", "many": "messages"}
 	 *
+	 * token:      {count| one: a message, other: $count messages}
+	 * results in: {"one": "a message", "other": "$count messages"}
+	 * 
 	 * token:      {count|| message}
 	 * transform:  [{"one": "{$0}", "other": "{$0::plural}"}, {"one": "{$0}", "other": "{$1}"}]
 	 * results in: {"one": "message", "other": "messages"}
@@ -323,13 +326,14 @@ public class PipedToken extends DataToken {
         if (value == null) {
             Tr8n.getLogger().error("no value matched in " + getFullName() + " of " + getOriginalLabel());
             return translatedLabel;
-
         }
 
         StringBuilder replacementValue = new StringBuilder();
         if (getSeparator().equals(SEPARATOR_INCLUSIVE)) {
             replacementValue.append(getValue(tokensData));
             replacementValue.append(" ");
+        } else {
+            value = value.replaceAll(Pattern.quote("#" + getName() + "#"), getValue(tokensData));
         }
         replacementValue.append(value);
 

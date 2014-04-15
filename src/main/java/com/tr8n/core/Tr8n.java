@@ -307,29 +307,4 @@ public class Tr8n {
     public static String translate(String label, Map<String, Object> tokens, Map<String, Object> options) {
         return getSession().translate(label, tokens, options);
     }
-
-    /**
-     *
-     * @param label
-     * @return
-     */
-    public static Object translateStyledString(String label) {
-        return getSession().translateStyledString(label);
-    }
-
-    public static Object translateStyledString(String label, String description) {
-        return getSession().translateStyledString(label, description);
-    }
-
-    public static Object translateStyledString(String label, String description, Map<String, Object> tokens) {
-        return getSession().translateStyledString(label, description, tokens);
-    }
-
-    public static Object translateStyledString(String label, Map<String, Object> tokens) {
-        return getSession().translateStyledString(label, tokens);
-    }
-
-    public static Object translateStyledString(String label, Map<String, Object> tokens, Map<String, Object> options) {
-        return getSession().translateStyledString(label, tokens, options);
-    }
 }
