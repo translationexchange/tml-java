@@ -14,12 +14,14 @@ This java package provides the core classes for the Tr8n translation service.
 Installation
 ==================
 
+If you are using Maven:
+
 Add the following dependency to your pom.xml:
 
 ```xml
 <dependency>
-  <groupId>tr8n</groupId>
-  <artifactId>tr8n_core</artifactId>
+  <groupId>com.tr8nhub</groupId>
+  <artifactId>core</artifactId>
   <version>0.1.0</version>
 </dependency>
 ```
@@ -28,7 +30,7 @@ Add the following dependency to your pom.xml:
 Integration
 ==================
 
-If you are building an application using any of the following frameworks, you should use the SDKs for those frameworks:
+If you are building an application using any of the following frameworks, you should use the SDKs for those frameworks instead:
 
 * Android applications: [tr8n_android_clientsdk](https://github.com/tr8n/tr8n_android_clientsdk)
 * Swing applications: [tr8n_swing_clientsdk](https://github.com/tr8n/tr8n_swing_clientsdk)
