@@ -8,6 +8,7 @@
 	<version>0.1.0</version>
 
 	<name>tr8n-core</name>
+	<description>Core library for Tr8nHub.com Java SDKs</description>
 	<url>https://github.com/tr8n/tr8n_java_core</url>
 	<inceptionYear>2014</inceptionYear>
 
@@ -31,10 +32,16 @@
 		</license>
 	</licenses>
 
+	<parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+  
 	<scm>
 		<connection>scm:git:git://github.com/tr8n/tr8n_java_core.git</connection>
 		<developerConnection>scm:git:git://github.com/tr8n/tr8n_java_core.git</developerConnection>
-		<url>https://github.com/tr8n/tr8n_java_core</url>
+		<url>git@github.com:tr8n/tr8n_java_core.git</url>
 	</scm>
 
 	<properties>
