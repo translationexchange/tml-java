@@ -7,7 +7,6 @@ TML for Java
 
 [![Build Status](https://travis-ci.org/translationexchange/tml-java.png?branch=master)](https://travis-ci.org/translationexchange/tml-java)
 [![Coverage Status](https://coveralls.io/repos/translationexchange/tml-java/badge.png?branch=master)](https://coveralls.io/r/translationexchange/tml-java?branch=master)
-[![Project status](http://stillmaintained.com/translationexchange/tml-java.png)](http://stillmaintained.com/translationexchange/tml-java.png)
 
 This java package provides the core classes for the TML language.
 
