@@ -2,25 +2,25 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.tr8nhub</groupId>
-	<artifactId>core</artifactId>
+	<groupId>com.translationexchange</groupId>
+	<artifactId>tml</artifactId>
 	<packaging>jar</packaging>
 	<version>0.1.0</version>
 
-	<name>tr8n-core</name>
-	<description>Core library for Tr8nHub.com Java SDKs</description>
-	<url>https://github.com/tr8n/tr8n_java_core</url>
+	<name>tml</name>
+	<description>Core library for Translation Exchange Java Extensions</description>
+	<url>https://github.com/translationexchange/tml-java</url>
 	<inceptionYear>2014</inceptionYear>
 
 	<organization>
-		<name>Tr8nHub</name>
-		<url>https://tr8nhub.com</url>
+		<name>Translation Exchange, Inc</name>
+		<url>http://translationexchange.com</url>
 	</organization>
 
 	<developers>
 		<developer>
 			<name>Michael Berkovich</name>
-			<email>michael@tr8nhub.com</email>
+			<email>michael@translationexchange.com</email>
 		</developer>
 	</developers>
 
@@ -46,9 +46,9 @@
 	</distributionManagement>
 
 	<scm>
-		<connection>scm:git:git://github.com/tr8n/tr8n_java_core.git</connection>
-		<developerConnection>scm:git:git://github.com/tr8n/tr8n_java_core.git</developerConnection>
-		<url>git@github.com:tr8n/tr8n_java_core.git</url>
+		<connection>scm:git:git://github.com/translationexchange/tml-java.git</connection>
+		<developerConnection>scm:git:git://github.com/translationexchange/tml-java.git</developerConnection>
+		<url>git@github.com:translationexchange/tml-java.git</url>
 	</scm>
 
 	<properties>

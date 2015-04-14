@@ -1,8 +1,10 @@
 target
-tr8n_java_core.iml
-tr8n_java_core.ipr
-tr8n_java_core.iws
+tml-java.iml
+tml-java.ipr
+tml-java.iws
+core.iml
 log
 .settings
 .project
 .classpath
+.idea
