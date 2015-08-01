@@ -42,8 +42,9 @@ import com.translationexchange.core.Utils;
 public class TmlTest extends BaseTest {
 
 //    @Test
-    public void testIntegrationWithSandbox() {
-        Tml.init("37f812fac93a71088", "a9dc95ff798e6e1d1", "https://sandbox.tr8nhub.com");
+    public void testIntegrationWithSampleApp() {
+        Tml.init("37f812fac93a71088");
+        
         Assert.assertEquals(
             "Hello World",
             Tml.translate("Hello World")

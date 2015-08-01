@@ -76,7 +76,7 @@ public class PipedToken extends DataToken {
      * @return
      */
     public static String getExpression() {
-        return "(\\{[^_:|][\\w]*(:[\\w]+)*(::[\\w]+)*\\s*\\|\\|?[^{^}]+\\})";
+        return "(%?\\{{1,2}\\s*[\\w]*\\s*(:\\s*\\w+)*\\s*\\|\\|?[^\\{\\}\\|]+\\}{1,2})";
     }
 
     /**

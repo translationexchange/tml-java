@@ -55,9 +55,11 @@ public class HtmlDecorator implements Decorator {
 		if (!session.getCurrentTranslator().isInline()) return label;
 		if (translationKey.isLocked() && !session.getCurrentTranslator().isManager()) return label;
 
-		String element = "span";
+		String element = "tml:label";
 		if (options.get("use_div") != null)
 			element = "div";
+		else if (options.get("use_span") != null)
+			element = "span";
 
 		StringBuilder sb = new StringBuilder();
 		

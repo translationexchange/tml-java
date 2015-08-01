@@ -129,6 +129,7 @@ public class LanguageContext extends Base {
             while (entries.hasNext()) {
                 Map.Entry entry = (Map.Entry) entries.next();
                 LanguageContextRule rule = new LanguageContextRule((Map) entry.getValue());
+                rule.setKeyword((String)entry.getKey());
                 rule.setLanguageContext(this);
                 if (rule.isFallback()) setFallbackRule(rule);
                 addRule(rule);

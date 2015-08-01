@@ -60,7 +60,6 @@ public class DecorationTokenizerTest {
                 dt.getTokenNames()
         );
 
-
         // broken
         dt.tokenize("[bold: Hello World");
         Assert.assertEquals(
@@ -110,6 +109,13 @@ public class DecorationTokenizerTest {
                 Arrays.asList("link", "italic", "bold", "light"),
                 dt.getTokenNames()
         );
+        
+        dt.tokenize("<link>you have [italic: <bold>{count}</bold> messages] [light: in your mailbox]</link>");
+        Assert.assertEquals(
+                Arrays.asList("link", "italic", "bold", "light"),
+                dt.getTokenNames()
+        );
+        
     }
 
     @Test
@@ -126,7 +132,7 @@ public class DecorationTokenizerTest {
                 dt.substitute(Utils.buildMap())
         );
 
-        dt.tokenize("[link]you have [italic: [bold: {count}] messages] [light: in your mailbox][/link]");
+        dt.tokenize("<link>you have [italic: [bold: {count}] messages] [light: in your mailbox]</link>");
         Assert.assertEquals(
                 "you have {count} messages in your mailbox",
                 dt.substitute(Utils.buildMap())

@@ -56,7 +56,7 @@ public class MethodToken extends DataToken {
      * @return
      */
     public static String getExpression() {
-        return "(\\{[^_:.][\\w]*(\\.[\\w]+)(:[\\w]+)*(::[\\w]+)*\\})";
+        return "(%?\\{{1,2}\\s*[\\w]*\\.\\w*\\s*(:\\s*\\w+)*\\s*(::\\s*\\w+)*\\s*\\}{1,2})";
     }
 
     /**

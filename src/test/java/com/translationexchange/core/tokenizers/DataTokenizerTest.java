@@ -78,14 +78,26 @@ public class DataTokenizerTest {
                 Arrays.asList("user"),
                 dt.getTokenNames()
         );
-
-        dt = new DataTokenizer("Hello {user}", Utils.buildStringList("user"));
-
-        Assert.assertEquals(
-                Arrays.asList("user"),
-                dt.getAllowedTokenNames()
-        );
-
+        
+        for(String label : Utils.buildStringList(
+        		"Hello {user}",
+        		"Hello {user:gender}",
+        		"Hello {user : gender}",
+        		"Hello {user : gender :: gen}",
+        		"Hello {user.name::gen}",
+        		"Hello { user }",
+        		"Hello {{user}}",
+        		"Hello {{ user }}",
+        		"Hello %{user}",
+        		"Hello %{ user }"
+        )) {
+            dt = new DataTokenizer(label, Utils.buildStringList("user"));
+            Assert.assertEquals(
+	            Arrays.asList("user"),
+	            dt.getAllowedTokenNames()
+            );
+        }
+        
     }
 
     @Test

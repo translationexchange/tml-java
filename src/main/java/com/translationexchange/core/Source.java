@@ -31,7 +31,12 @@
 
 package com.translationexchange.core;
 
+import java.io.File;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -144,6 +149,49 @@ public class Source extends Base {
     }
 
     /**
+     * Updates translation keys in the app and in the source
+     * 
+     * @param data
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public void updateTranslationKeys(Map<String, Object> data) {
+    	Iterator entries = ((Map) data.get("results")).entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry entry = (Map.Entry) entries.next();
+            String key = (String) entry.getKey();
+            Map<String, Object> keyData = (Map<String, Object>) entry.getValue();
+            
+            TranslationKey tkey = null;
+            if (getApplication() != null)
+            	tkey = getApplication().getTranslationKey(key);
+            
+            if (tkey == null) {
+            	tkey = new TranslationKey((Map<String, Object>) keyData.get("original"));
+            	
+            	if (getApplication() != null)
+            		getApplication().addTranslationKey(tkey);
+            }
+            
+            List<Translation> translations = new ArrayList<Translation>();
+            for (Map<String, Object> translationData : (List<Map<String, Object>>) keyData.get("translations")) {
+                Translation translation = new Translation(translationData);
+                String locale = (String) translationData.get("locale");
+                
+                if (locale == null)
+                	locale = getLocale();
+                
+                if (getApplication() != null)
+                	translation.setLanguage(getApplication().getLanguage(locale));
+                
+                translations.add(translation);
+            }
+            
+            tkey.setTranslations(getLocale(), translations);
+            addTranslationKey(tkey);
+        }
+    }
+    
+    /**
      * Creates cache key for source
      * 
      * @param locale
@@ -151,7 +199,7 @@ public class Source extends Base {
      * @return
      */
     public static String getCacheKey(String locale, String key) {
-    	return locale + "/" + key;
+    	return locale + File.separator + "sources" + File.separator + key;
     }
     
     /**
@@ -163,22 +211,38 @@ public class Source extends Base {
     }
     
     /**
+     * Generates MD5 representation of the key - used for API calls 
+     * @return
+     */
+    public String generateMD5Key() {
+    	try {
+            MessageDigest m = MessageDigest.getInstance("MD5");
+            String hashText = new BigInteger(1,m.digest(this.getKey().getBytes("UTF-8"))).toString(16);
+            while(hashText.length() < 32 ) hashText = "0" + hashText;
+            return hashText;
+        } catch (Exception ex) {
+            Tml.getLogger().logException("Failed to generate md5 key for source: " + this.getKey(), ex);
+            return null;
+        }    	
+    }
+    
+    /**
      * Loading source from service
      */
     public void load(Map<String, Object> options) {
         try {
         	if (options==null) options = new HashMap<String, Object>();
         	options.put("cache_key", getCacheKey());
-        	
-            this.updateAttributes(getApplication().getHttpClient().getJSONMap("source", 
-            		Utils.buildMap("source", getKey(), "locale", getLocale(), "translations", "true"),
-            		options
+
+        	this.updateTranslationKeys(getApplication().getHttpClient().getJSONMap("sources/" + this.generateMD5Key() + "/translations", 
+	    		Utils.buildMap("original", "true", "per_page", "10000", "locale", getLocale()),
+	    		options
             ));
             
             setLoaded(true);
         } catch (Exception ex) {
             setLoaded(false);
-//            Tr8n.getLogger().logException("Failed to load source", ex);
+//            Tml.getLogger().logException("Failed to load source", ex);
         }
     }
 

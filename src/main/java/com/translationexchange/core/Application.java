@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Application extends Base {
-    public static final String TREX_HOST = "https://api.translationexchange.com";
+    public static final String TREX_API_HOST = "https://api.translationexchange.com";
 
     /**
      * Current TrEx session
@@ -125,11 +125,6 @@ public class Application extends Base {
      * Sources by keys
      */
     private Map<String, Source> sourcesByKeys;
-
-    /**
-     * Components by keys
-     */
-    private Map<String, Component> componentsByKeys;
 
     /**
      * Application Translation keys
@@ -266,8 +261,15 @@ public class Application extends Base {
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
     public void updateAttributes(Map<String, Object> attributes) {
+        if (attributes.get("token") != null)
+            setAccessToken((String) attributes.get("token"));
+
+        if (attributes.get("access_token") != null)
+            setAccessToken((String) attributes.get("access_token"));
+        
         if (attributes.get("host") != null)
             setHost((String) attributes.get("host"));
+        
         if (attributes.get("key") != null)
             setKey((String) attributes.get("key"));
 
@@ -304,12 +306,6 @@ public class Application extends Base {
                 addSource(new Source((Map) data));
             }
         }
-
-        if (attributes.get("components") != null) {
-            for (Object data : ((List) attributes.get("components"))) {
-                addComponent(new Component((Map) data));
-            }
-        }
     }
 
     /**
@@ -319,14 +315,14 @@ public class Application extends Base {
         try {
         	Tml.getLogger().debug("Loading application...");
         	
-            this.updateAttributes(getHttpClient().getJSONMap("application", 
-            		Utils.buildMap("client_id", getKey(), "definition", "true"),
+            this.updateAttributes(getHttpClient().getJSONMap("application/current/definition", 
             		Utils.buildMap("cache_key", "application")
             ));
+            
             setLoaded(true);
         } catch (Exception ex) {
         	setLoaded(false);
-//            Tr8n.getLogger().logException("Failed to load application", ex);
+//            Tml.getLogger().logException("Failed to load application", ex);
         }
     }
 
@@ -364,7 +360,7 @@ public class Application extends Base {
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	public void loadTranslations(Language language) {
         try {
-            Map<String, Object> results = getHttpClient().getJSONMap("application/translations", 
+            Map<String, Object> results = getHttpClient().getJSONMap("application/current/translations", 
             		Utils.buildMap("locale", language.getLocale()),
             		Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()))
             );
@@ -579,18 +575,6 @@ public class Application extends Base {
         getSourcesByKeys().put(source.getKey(), source);
     }
 
-    
-    public Map<String, Component> getComponentsByKeys() {
-        if (componentsByKeys == null)
-            componentsByKeys =  new HashMap<String, Component>();
-
-        return componentsByKeys;
-    }
-    
-    public void addComponent(Component component) {
-    	getComponentsByKeys().put(component.getKey(), component);
-    }
-
     /**
      * Caches translation key in the application scope for source fallback
      *
@@ -639,7 +623,7 @@ public class Application extends Base {
     
     public String getHost() {
         if (host == null)
-            return TREX_HOST;
+            return TREX_API_HOST;
         return host;
     }
 

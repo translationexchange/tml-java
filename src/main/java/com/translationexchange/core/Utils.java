@@ -197,6 +197,14 @@ public class Utils {
     
     /**
      * Builds a map out of parameters
+     * 
+     * For instance:
+     * 
+     * buildStringMap(
+     *     "name", "Peter",
+     *     "age", "35"
+     * )
+     * 
      * @param data
      * @return
      */

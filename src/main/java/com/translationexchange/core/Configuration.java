@@ -77,7 +77,7 @@ public class Configuration {
     /**
      * Application configuration
      */
-    private Map<String, String> application;
+    private Map<String, Object> application;
 
     /**
      * Context rules configuration and variable mapping
@@ -384,7 +384,7 @@ public class Configuration {
         return tokenClasses;
     }
 
-    public Map<String, String> getApplication() {
+    public Map<String, Object> getApplication() {
         return application;
     }
 
@@ -455,7 +455,7 @@ public class Configuration {
         this.tokenClasses = tokenClasses;
     }
 
-    public void setApplication(Map<String, String> application) {
+    public void setApplication(Map<String, Object> application) {
         this.application = application;
     }
 

@@ -31,6 +31,7 @@
 
 package com.translationexchange.core;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -173,7 +174,9 @@ public class Language extends Base {
             Iterator entries = ((Map) attributes.get("contexts")).entrySet().iterator();
             while (entries.hasNext()) {
                 Map.Entry entry = (Map.Entry) entries.next();
-                addContext(new LanguageContext((Map) entry.getValue()));
+                LanguageContext context = new LanguageContext((Map) entry.getValue());
+                context.setKeyword((String)entry.getKey());
+                addContext(context);
             }
         }
 
@@ -181,7 +184,9 @@ public class Language extends Base {
             Iterator entries = ((Map) attributes.get("cases")).entrySet().iterator();
             while (entries.hasNext()) {
                 Map.Entry entry = (Map.Entry) entries.next();
-                addLanguageCase(new LanguageCase((Map) entry.getValue()));
+                LanguageCase lcase = new LanguageCase((Map) entry.getValue());
+                lcase.setKeyword((String)entry.getKey());
+                addLanguageCase(lcase);
             }
         }
     }
@@ -191,7 +196,7 @@ public class Language extends Base {
      * @return
      */
     public String getCacheKey() {
-    	return getLocale() + "/language";
+    	return getLocale() + File.separator + "language";
     }
     
     /**
@@ -202,14 +207,15 @@ public class Language extends Base {
         	Map<String, Object> options = new HashMap<String, Object>();
         	options.put("cache_key", getCacheKey());
         	
-            this.updateAttributes(getApplication().getHttpClient().getJSONMap("language", 
-            		Utils.buildMap("locale", getLocale(), "definition", "true"),
-            		options
+            this.updateAttributes(getApplication().getHttpClient().getJSONMap("language/" + getLocale(), 
+        		Utils.buildMap("definition", "true"),
+        		options
             ));
+            
             setLoaded(true);
         } catch (Exception ex) {
         	setLoaded(false);
-//            Tr8n.getLogger().logException(ex);
+//            Tml.getLogger().logException(ex);
         }
     }
 
@@ -367,7 +373,6 @@ public class Language extends Base {
     public Object translate(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
         String keyHash = TranslationKey.generateKey(label, description);
 
-        // Key registration is only enabled when secret is provided. In all other cases, it will fallback onto cache.
         if (getApplication().isKeyRegistrationEnabled()) {
             String sourceKey = (String) getOptionsValue("source", options, getApplication().getSession().getCurrentSource());
 

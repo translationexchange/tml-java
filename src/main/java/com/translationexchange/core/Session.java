@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Observable;
 
 /**
- * Represents a Tr8n session or web request
+ * Represents a TML application session or a web request
  */
 public class Session extends Observable {
 
@@ -79,44 +79,30 @@ public class Session extends Observable {
      * 
      * @param config
      */
-    public Session(Map<String, String> config) {
-    	this(
-			config.get("key"),
-			config.get("secret"), 
-			config.get("host")
-    	);
+    public Session(Map<String, Object> config) {
+    	this((String) config.get("token"), config);
     }
 
     /**
-     * Initializes a read-only session with key only
+     * Initializes a session with token only
      * 
-     * @param key
+     * @param token
      */
-    public Session(String key) {
-    	this(key, null, null);
+    public Session(String token) {
+    	this(token, null);
     }
-    
-    /**
-     * 
-     * @param key
-     * @param secret
-     */
-    public Session(String key, String secret) {
-    	this(key, secret, null);
-    }
-    
+
     /**
      * Initializes current application
-     * @param key
-     * @param secret
-     * @param host
+     * @param token
+     * @param options
      */
-    public Session(String key, String secret, String host) {
-        setApplication(new Application(Utils.buildMap(
-                "key", key,
-                "secret", secret,
-                "host", host
-        )));
+    public Session(String token, Map <String, Object> options) {
+    	if (options == null) {
+    		options = new HashMap<String, Object>();
+    	}
+    	options.put("token", token);
+        setApplication(new Application(options));
         getApplication().load();
         getApplication().setSession(this);
         setCurrentLanguage(getApplication().getLanguage());
@@ -124,20 +110,20 @@ public class Session extends Observable {
 
     
     @SuppressWarnings("unchecked")
-	public void init(Map <String, Object> params) {
-    	if (params == null)
+	public void init(Map <String, Object> options) {
+    	if (options == null)
     		return;
 
     	Tml.getConfig().setDecorator("html");
     	
 //    	{"translator":{"id":3,"manager":true,"email":"theiceberk@gmail.com","inline":true,"name":"Safari","features":{"show_locked_keys":false,"fallback_language":false}},"locale":"ru","code":"a0f135d6b42818c46"}    	
     	
-    	if (params.get("translator") != null) {
-    		setCurrentTranslator(new Translator((Map<String, Object>) params.get("translator")));
+    	if (options.get("translator") != null) {
+    		setCurrentTranslator(new Translator((Map<String, Object>) options.get("translator")));
     	}
     	
-    	if (params.get("locale") != null)
-    		setCurrentLocale((String)params.get("locale"));
+    	if (options.get("locale") != null)
+    		setCurrentLocale((String)options.get("locale"));
     }
     
     public Language getCurrentLanguage() {

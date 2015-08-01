@@ -33,6 +33,12 @@ package com.translationexchange.core;
 
 import java.util.Map;
 
+/**
+ * Base class for all TML library objects
+ * 
+ * @author Michael Berkovich
+ *
+ */
 public abstract class Base {
 
 	private Boolean loaded;
@@ -67,6 +73,10 @@ public abstract class Base {
 		return loaded;
 	}
 
+	/**
+	 * Indicates that the model has been loaded from Cache or API
+	 * @param loaded
+	 */
 	public void setLoaded(Boolean loaded) {
 		this.loaded = loaded;
 	}

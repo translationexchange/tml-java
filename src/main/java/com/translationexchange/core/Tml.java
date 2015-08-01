@@ -48,23 +48,23 @@ import com.translationexchange.core.cache.CacheAdapter;
 public class Tml {
 
     /**
-     * Static instance of Tr8n session. For mobile and desktop applications, only a singleton session is needed. 
+     * Static instance of Tml session. For mobile and desktop applications, only a singleton session is needed. 
      * For web applications, the session must be created for every request. Session contains dynamic information per user/language.
      */
     private static Session session = null;
 
     /**
-     * Tr8n configuration attribute
+     * Tml configuration attribute
      */
     private static Configuration config;
 
     /**
-     * Tr8n cache
+     * Tml cache
      */
     private static Cache cache;
 
     /**
-     * Tr8n logger
+     * Tml logger
      */
     private static Logger logger;
     
@@ -82,7 +82,7 @@ public class Tml {
     /**
      * Get the current session
      *
-     * @return Tr8n instance
+     * @return Tml instance
      */
     public static Session getSession() {
         return session;
@@ -106,29 +106,23 @@ public class Tml {
     }
 
     public static void init() {
-        init(getConfig().getApplication());
+    	Map <String, Object> options = getConfig().getApplication();
+        init((String) options.get("token"), options);
     }
     
-    public static void init(String key) {
-        init(key, null);
+    public static void init(String token) {
+        init(token, null);
     }
 
-    public static void init(String key, String secret) {
-        init(key, null, null);
-    }
-
-    public static void init(Map<String, String> params) {
-    	init(params.get("key"), params.get("secret"), params.get("host"));
-    }
-    
-    public static void init(String key, String secret, String host) {
-        setSession(new Session(key, secret, host));
+    public static void init(String token, Map<String, Object> options) {
+        setSession(new Session(token, options));
         if (!isSchedulerRunning()) startScheduledTasks();
     }
     
     public static boolean isSchedulerRunning() {
         return applicationScheduleHandler != null;
     }
+    
     public static void startScheduledTasks() {
         if (applicationScheduleHandler != null)
             return;
@@ -148,7 +142,6 @@ public class Tml {
         applicationScheduleHandler.cancel(true);
         applicationScheduleHandler = null;
     }
-
     
     /**
      * Get an instance of the configuration object
@@ -202,7 +195,7 @@ public class Tml {
      *
      * Instance Definition
      *
-     * For web environment, where every request needs its own set of attributes, an instance of Tr8n must
+     * For web environment, where every request needs its own set of attributes, an instance of Tml must
      * be created and propagated with the request context. In those scenarios, a shared cache, like Memcached
      * or Redis should be used to ensure that all instances of application servers can reuse translations.
      *

@@ -462,14 +462,21 @@ public class TranslationKey extends Base {
      * @return
      */
 	public Object substitute(String translatedLabel, Map<String, Object> tokens, Language translationLanguage, Language targetLanguage, Map<String, Object> options) {
-		// Data tokenizer must always be present
-		translatedLabel = (String) applyTokenizer(DEFAULT_TOKENIZERS_DATA, translatedLabel, translationLanguage, getAllowedDataTokenNames(), tokens, options);
-		
 		String tokenizerKey = DEFAULT_TOKENIZERS_HTML; 
         if (options != null && options.get(TOKENIZER_KEY) != null)
         	tokenizerKey = (String) options.get(TOKENIZER_KEY); 
+
+        Object result = null;
         
-        Object result = applyTokenizer(tokenizerKey, translatedLabel, translationLanguage, getAllowedDecorationTokenNames(), tokens, options);
+        // HTML Tokenizer should always be invoked before the data tokenizer for web pages, to avoid HTML injection through data tokens
+        // Non-HTML tokenizer must reverse the order to properly decorate labels
+        if (tokenizerKey == DEFAULT_TOKENIZERS_HTML) {
+        	translatedLabel = (String) applyTokenizer(DEFAULT_TOKENIZERS_HTML, translatedLabel, translationLanguage, getAllowedDecorationTokenNames(), tokens, options);
+    		result = applyTokenizer(DEFAULT_TOKENIZERS_DATA, translatedLabel, translationLanguage, getAllowedDataTokenNames(), tokens, options);
+        } else {
+    		translatedLabel = (String) applyTokenizer(DEFAULT_TOKENIZERS_DATA, translatedLabel, translationLanguage, getAllowedDataTokenNames(), tokens, options);
+            result = applyTokenizer(tokenizerKey, translatedLabel, translationLanguage, getAllowedDecorationTokenNames(), tokens, options);
+        }
         
         if (result instanceof String) {
         	Decorator decorator = Tml.getConfig().getDecorator();

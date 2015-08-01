@@ -203,11 +203,6 @@ public class ApplicationTest extends BaseTest {
     			Utils.buildMap(),
     			app.getSourcesByKeys()
     	);
-
-    	Assert.assertEquals(
-    			Utils.buildMap(),
-    			app.getComponentsByKeys()
-    	);
     	
     }    
 }

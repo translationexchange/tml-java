@@ -80,6 +80,12 @@ public class HtmlTokenizerTest {
             dt.substitute(Utils.buildMap("link", Utils.buildMap("href", "www.google.com")))
         );
 
+        dt.tokenize("<link>you have {count} messages</link>");
+        Assert.assertEquals(
+            "<a href=\"www.google.com\">you have {count} messages</a>",
+            dt.substitute(Utils.buildMap("link", Utils.buildMap("href", "www.google.com")))
+        );
+        
         dt.tokenize("[link]you have [italic: [bold: {count}] messages] [light: in your mailbox][/link]");
         Assert.assertEquals(
                 "<a href=\"www.google.com\">you have <i><b>{count}</b> messages</i> <l>in your mailbox</l></a>",
@@ -91,6 +97,16 @@ public class HtmlTokenizerTest {
                 ))
         );
 
+        dt.tokenize("<link>you have <italic><bold>{count}</bold> messages</italic> [light: in your mailbox]</link>");
+        Assert.assertEquals(
+                "<a href=\"www.google.com\">you have <i><b>{count}</b> messages</i> <l>in your mailbox</l></a>",
+                dt.substitute(Utils.buildMap(
+                        "link", Utils.buildMap("href", "www.google.com"),
+                        "italic", "<i>{$0}</i>",
+                        "bold", "<b>{$0}</b>",
+                        "light", "<l>{$0}</l>"
+                ))
+        );        
 
         dt.tokenize("[custom: test]");
         Assert.assertEquals(

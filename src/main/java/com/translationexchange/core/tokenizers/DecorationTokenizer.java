@@ -43,15 +43,18 @@ import com.translationexchange.core.Utils;
 public class DecorationTokenizer extends Tokenizer {
     public static final String TOKEN_BRACKET = "[";
 
-    public static final String RESERVED_TOKEN  = "tr8n";
-    public static final String RE_SHORT_TOKEN_START = "\\[[\\w]*:";
-    public static final String RE_SHORT_TOKEN_END   = "\\]";
-    public static final String RE_LONG_TOKEN_START  = "\\[[\\w]*\\]";
-    public static final String RE_LONG_TOKEN_END    = "\\[\\/[\\w]*\\]";
-    public static final String RE_TEXT              = "[^\\[\\]]+";
+    public static final String RESERVED_TOKEN  = "tml";
+    public static final String RE_SHORT_TOKEN_START = "\\[[\\w]*:";				// [link:
+    public static final String RE_SHORT_TOKEN_END   = "\\]";					// ]	
+    public static final String RE_LONG_TOKEN_START  = "\\[[\\w]*\\]";			// [link]
+    public static final String RE_LONG_TOKEN_END    = "\\[\\/[\\w]*\\]";		// [/link]	
+    public static final String RE_HTML_TOKEN_START  = "<[^\\>]*>";              // <link> 	 
+    public static final String RE_HTML_TOKEN_END    = "<\\/[^\\>]*>";			// </link>             
+    public static final String RE_TEXT              = "[^\\[\\]<>]+";			// anything that is left
 
     public static final String TOKEN_TYPE_SHORT     = "short";
     public static final String TOKEN_TYPE_LONG      = "long";
+    public static final String TOKEN_TYPE_HTML      = "html";
     public static final String PLACEHOLDER          = "{$0}";
 
 
@@ -115,6 +118,8 @@ public class DecorationTokenizer extends Tokenizer {
                 RE_SHORT_TOKEN_END,
                 RE_LONG_TOKEN_START,
                 RE_LONG_TOKEN_END,
+                RE_HTML_TOKEN_START,
+                RE_HTML_TOKEN_END,
                 RE_TEXT
             ).toArray(), "|"
         );
@@ -204,15 +209,27 @@ public class DecorationTokenizer extends Tokenizer {
         String token = pop();
 
         if (isMatchingExpression(token, RE_SHORT_TOKEN_START)) {
-            token = token.trim().replaceAll("[\\[:]", "");
-            return parseTree(token, TOKEN_TYPE_SHORT);
+            return parseTree(
+	    		token.trim().replaceAll("[\\[:]", ""), 
+	    		TOKEN_TYPE_SHORT
+            );
         }
 
         if (isMatchingExpression(token, RE_LONG_TOKEN_START)) {
-            token = token.trim().replaceAll("[\\[\\]]", "");
-            return parseTree(token, TOKEN_TYPE_LONG);
+            return parseTree(
+	    		token.trim().replaceAll("[\\[\\]]", ""), 
+	    		TOKEN_TYPE_LONG
+    		);
         }
 
+        if (isMatchingExpression(token, RE_HTML_TOKEN_START)) {
+            if (token.indexOf("/>") != -1) return token;
+            return parseTree(
+	    		token.trim().replaceAll("[<>]", ""), 
+	    		TOKEN_TYPE_HTML
+    		);
+        }
+        
         return token;
     }
 
@@ -242,6 +259,10 @@ public class DecorationTokenizer extends Tokenizer {
 
         } else if (type.equals(TOKEN_TYPE_LONG)) {
             while (peek() != null && ! isMatchingExpression(peek(), RE_LONG_TOKEN_END)) {
+                tree.add(parse());
+            }
+        } else if (type.equals(TOKEN_TYPE_HTML)) {
+            while (peek() != null && ! isMatchingExpression(peek(), RE_HTML_TOKEN_END)) {
                 tree.add(parse());
             }
         }
@@ -300,7 +321,7 @@ public class DecorationTokenizer extends Tokenizer {
     public Object substitute(Map<String, Object> tokensData, Language language, Map<String, Object> options) {
         this.tokensData = tokensData;
         this.options = options;
-        return evaluate(this.expression);
+        return evaluate(this.expression).replaceAll("\\[/tml\\]", "");
     }
 
     /**
