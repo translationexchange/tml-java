@@ -32,7 +32,7 @@ Integration
 If you are building an application using any of the following frameworks, you should use the SDKs for those frameworks instead:
 
 * Android applications: [tml-java-android](https://github.com/translationexchange/tml-java-android)
-* Swing applications: [tml-java-swing](https://github.com/translationexchange/tml-java-swingk)
+* Swing applications: [tml-java-swing](https://github.com/translationexchange/tml-java-swing)
 * J2EE web applications (standard): [tml-java-j2ee](https://github.com/translationexchange/tml-java-j2ee)
 * J2EE web applications (Struts 2): [tml-java-j2ee-struts2](https://github.com/translationexchange/tml-java-j2ee-struts2)
 
