@@ -204,18 +204,14 @@ public class Language extends Base {
      */
     public void load() {
         try {
-        	Map<String, Object> options = new HashMap<String, Object>();
-        	options.put("cache_key", getCacheKey());
-        	
-            this.updateAttributes(getApplication().getHttpClient().getJSONMap("language/" + getLocale(), 
-        		Utils.buildMap("definition", "true"),
-        		options
+            this.updateAttributes(getApplication().getHttpClient().getJSONMap("languages/" + getLocale() + "/definition", 
+        		Utils.buildMap(),
+        		Utils.buildMap("cache_key", getCacheKey())
             ));
-            
             setLoaded(true);
         } catch (Exception ex) {
         	setLoaded(false);
-//            Tml.getLogger().logException(ex);
+            Tml.getLogger().logException(ex);
         }
     }
 

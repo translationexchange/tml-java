@@ -93,13 +93,18 @@ public class Application extends Base {
      * CSS classes for decorator
      */
     private String css;
-
+    
     /**
      * Application shortcuts
      */
     private Map<String, String> shortcuts;
 
     /**
+     * Application tools
+     */
+    private Map<String, String> tools;
+
+	/**
      * Application features
      */
     private Map<String, Boolean> features;
@@ -258,6 +263,14 @@ public class Application extends Base {
         return translatorLevel;
     }
     
+    protected Map<String, String> getTools() {
+		return tools;
+	}
+
+	protected void setTools(Map<String, String> tools) {
+		this.tools = tools;
+	}
+    
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
     public void updateAttributes(Map<String, Object> attributes) {
@@ -289,6 +302,9 @@ public class Application extends Base {
         if (attributes.get("features") != null)
             setFeatures(new HashMap<String, Boolean>((Map) attributes.get("features")));
 
+        if (attributes.get("tools") != null)
+            setTools(new HashMap<String, String>((Map) attributes.get("tools")));
+        
         if (attributes.get("languages") != null) {
             for (Object data : ((List) attributes.get("languages"))) {
                 addLanguage(new Language((Map) data));
@@ -315,7 +331,8 @@ public class Application extends Base {
         try {
         	Tml.getLogger().debug("Loading application...");
         	
-            this.updateAttributes(getHttpClient().getJSONMap("application/current/definition", 
+            this.updateAttributes(getHttpClient().getJSONMap("applications/current/definition", 
+            		Utils.buildMap(),
             		Utils.buildMap("cache_key", "application")
             ));
             
@@ -459,7 +476,7 @@ public class Application extends Base {
      */
     public boolean registerKeys(Map<String, Object> map) {
         try {
-        	getHttpClient().post("source/register_keys", map);
+        	getHttpClient().post("sources/register_keys", map);
         	return true;
         } catch (Exception ex) {
             Tml.getLogger().logException("Failed to register missing translation keys", ex);
@@ -619,6 +636,11 @@ public class Application extends Base {
     		return false;
     	
     	return getFeatures().get(feature);
+    }
+    
+    public String getTools(String type) {
+    	if (getTools() == null) return "";
+    	return getTools().get(type);
     }
     
     public String getHost() {

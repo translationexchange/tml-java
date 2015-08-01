@@ -161,15 +161,15 @@ public class HttpClient {
     	String responseText = null;
     	String cacheKey = (options == null || !Tml.getConfig().isCacheEnabled() ? null : (String) options.get("cache_key"));
     	
-    	if (cacheKey != null) {
-    		responseText = (String) Tml.getCache().fetch(cacheKey, options);
-    		if (responseText == null) {
-    			responseText = get(path, params, options);
-    			Tml.getCache().store(cacheKey, responseText, options);
-    		}
-    	} else {
+//    	if (cacheKey != null) {
+//    		responseText = (String) Tml.getCache().fetch(cacheKey, options);
+//    		if (responseText == null) {
+//    			responseText = get(path, params, options);
+//    			Tml.getCache().store(cacheKey, responseText, options);
+//    		}
+//    	} else {
     		responseText = get(path, params, options);
-    	}
+//    	}
     	
     	Object result = (Map<String, Object>) Utils.parseJSON(responseText);
     	
@@ -211,7 +211,7 @@ public class HttpClient {
             }
             String responseText = new String(out.toByteArray(), "UTF-8");
 
-//            Tr8n.getLogger().debug("Received data: " + responseText);
+            Tml.getLogger().debug("Received data: " + responseText);
 
             return responseText;
         } finally {
