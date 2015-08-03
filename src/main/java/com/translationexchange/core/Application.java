@@ -331,7 +331,7 @@ public class Application extends Base {
         try {
         	Tml.getLogger().debug("Loading application...");
         	
-            this.updateAttributes(getHttpClient().getJSONMap("applications/current/definition", 
+            this.updateAttributes(getHttpClient().getJSONMap("projects/current/definition", 
             		Utils.buildMap(),
             		Utils.buildMap("cache_key", "application")
             ));
@@ -377,7 +377,7 @@ public class Application extends Base {
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	public void loadTranslations(Language language) {
         try {
-            Map<String, Object> results = getHttpClient().getJSONMap("application/current/translations", 
+            Map<String, Object> results = getHttpClient().getJSONMap("projects/current/translations", 
             		Utils.buildMap("locale", language.getLocale()),
             		Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()))
             );
