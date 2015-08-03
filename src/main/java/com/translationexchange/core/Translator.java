@@ -112,6 +112,7 @@ public class Translator extends Base {
 	}
 
 	public Boolean isInline() {
+		if (inline == null) return false;
 		return inline;
 	}
 
