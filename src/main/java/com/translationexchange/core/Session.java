@@ -117,13 +117,13 @@ public class Session extends Observable {
     	Tml.getConfig().setDecorator("html");
     	
 //    	{"translator":{"id":3,"manager":true,"email":"theiceberk@gmail.com","inline":true,"name":"Safari","features":{"show_locked_keys":false,"fallback_language":false}},"locale":"ru","code":"a0f135d6b42818c46"}    	
+
+    	if (options.get("locale") != null)
+    		setCurrentLocale((String)options.get("locale"));
     	
     	if (options.get("translator") != null) {
     		setCurrentTranslator(new Translator((Map<String, Object>) options.get("translator")));
     	}
-    	
-    	if (options.get("locale") != null)
-    		setCurrentLocale((String)options.get("locale"));
     }
     
     public Language getCurrentLanguage() {
