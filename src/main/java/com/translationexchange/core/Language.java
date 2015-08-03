@@ -387,9 +387,14 @@ public class Language extends Base {
             Source source = getApplication().getSource(sourceKey, this.getLocale(), options);
             if (source != null) {
                 TranslationKey matchedKey = source.getTranslationKey(keyHash);
-                if (matchedKey != null) return matchedKey.translate(this, tokens, options);
+                
+                if (matchedKey != null)  
+                	return matchedKey.translate(this, tokens, options);
 
-                TranslationKey tempKey = createTranslationKey(keyHash, label, description, options);
+                HashMap<String, Object> opts = new HashMap<String, Object>(options);
+                opts.put("pending", "true");
+                
+                TranslationKey tempKey = createTranslationKey(keyHash, label, description, opts);
                 getApplication().registerMissingTranslationKey(tempKey, source.getKey());
             }
         }
