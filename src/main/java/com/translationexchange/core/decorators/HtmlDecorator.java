@@ -53,7 +53,6 @@ public class HtmlDecorator implements Decorator {
 		if (session == null) return label;
 		if (session.getCurrentTranslator() == null) return label;
 		if (!session.getCurrentTranslator().isInline()) return label;
-		if (translationKey.isLocked() && !session.getCurrentTranslator().isManager()) return label;
 
 		String element = "tml:label";
 		if (options.get("use_div") != null)
@@ -62,28 +61,24 @@ public class HtmlDecorator implements Decorator {
 			element = "span";
 
 		StringBuilder sb = new StringBuilder();
-		
-		if (!translationKey.isRegistered()) {
-			sb.append("<" + element + " class='tr8n_translatable tr8n_pending'>");
-			sb.append(label);
-			sb.append("</" + element + ">");
-			return sb.toString();
-		}
-		
+				
 		List<String> classes = new ArrayList<String>();
-		classes.add("tr8n_translatable");
+		classes.add("tml_translatable");
 		
-		if (translationKey.isLocked()) {
-			if (!session.getCurrentTranslator().isFeatureEnabled("show_locked_keys")) return label;
-			classes.add("tr8n_locked");
+		if (options.get("locked") != null && options.get("locked").equals("true")) {
+			classes.add("tml_locked");
 		} else if (translationLanguage.getLocale().equals(translationKey.getLocale())) {
-			classes.add("tr8n_not_translated");
+			if (options.get("pending") != null && options.get("pending").equals("true")) {
+				classes.add("tml_pending");
+			} else {
+				classes.add("tml_not_translated");
+			}
 		} else if (translationLanguage.getLocale().equals(targetLanguage.getLocale())) {
-			classes.add("tr8n_translated");
+			classes.add("tml_translated");
 		} else {
-			classes.add("tr8n_fallback");
+			classes.add("tml_fallback");
 		}
-		
+
 		sb.append("<" + element);
 		sb.append(" class='" + Utils.join(classes.toArray(), " ") + "'");
 		sb.append(" data-translation_key='" + translationKey.getKey() + "'");
