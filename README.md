@@ -45,7 +45,7 @@ If you are not using any of the above frameworks, you can use Tr8n core directly
 Links
 ==================
 
-* Register on TranslationExchange.com: https://translationexchange.com
+* Register on TranslationExchange.com: http://translationexchange.com
 
 * Follow TranslationExchange on Twitter: https://twitter.com/translationx
 
