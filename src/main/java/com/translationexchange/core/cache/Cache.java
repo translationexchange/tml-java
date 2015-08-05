@@ -41,6 +41,13 @@ public interface Cache {
 
     public void delete(String key, Map<String, Object> options);
 
-    public void reset();
+    public String getVersion();
+
+    public void setVersion(String version);
+
+    public String fetchVersion();
+
+    public void storeVersion(String version);
     
+    public void resetVersion();
 }

@@ -274,6 +274,9 @@ public class Application extends Base {
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
     public void updateAttributes(Map<String, Object> attributes) {
+        if (attributes.get("key") != null)
+            setKey((String) attributes.get("key"));
+
         if (attributes.get("token") != null)
             setAccessToken((String) attributes.get("token"));
 
@@ -282,9 +285,6 @@ public class Application extends Base {
         
         if (attributes.get("host") != null)
             setHost((String) attributes.get("host"));
-        
-        if (attributes.get("key") != null)
-            setKey((String) attributes.get("key"));
 
         setName((String) attributes.get("name"));
         setDescription((String) attributes.get("description"));
@@ -332,8 +332,8 @@ public class Application extends Base {
         	Tml.getLogger().debug("Loading application...");
         	
             this.updateAttributes(getHttpClient().getJSONMap("projects/current/definition", 
-            		Utils.buildMap(),
-            		Utils.buildMap("cache_key", "application")
+	    		Utils.buildMap(),
+	    		Utils.buildMap("cache_key", "application")
             ));
             
             setLoaded(true);
@@ -378,10 +378,10 @@ public class Application extends Base {
 	public void loadTranslations(Language language) {
         try {
             Map<String, Object> results = getHttpClient().getJSONMap("projects/current/translations", 
-            		Utils.buildMap("locale", language.getLocale()),
-            		Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()))
+        		Utils.buildMap("locale", language.getLocale()),
+        		Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()))
             );
-			List keys = (List) results.get("translation_keys");
+			List keys = (List) results.get("results");
             for (Object key : keys) {
 				Map<String, Object> attributes = new HashMap<String, Object>((Map)key);
                 attributes.put("application", this);
@@ -588,6 +588,11 @@ public class Application extends Base {
             featuredLanguages.add(language);
     }
 
+    /**
+     * Adds a new source
+     * 
+     * @param source
+     */
     public void addSource(Source source) {
         getSourcesByKeys().put(source.getKey(), source);
     }
@@ -613,21 +618,43 @@ public class Application extends Base {
         return translationKey;
     }
 
+    /**
+     * Returns translation key map
+     * 
+     * @return
+     */
     private Map<String, TranslationKey> getTranslationKeys() {
         if (translationKeys == null)
             translationKeys = new HashMap<String, TranslationKey>();
         return translationKeys;
     }
 
+    /**
+     * Returns a translation key by hash
+     * 
+     * @param key
+     * @return
+     */
     public TranslationKey getTranslationKey(String key) {
         return getTranslationKeys().get(key);
     }
 
-    public void addTranslationKey(TranslationKey translationKey) {
+    /**
+     * Adds a new translation key to the application
+     * 
+     * @param translationKey
+     */
+    public synchronized void addTranslationKey(TranslationKey translationKey) {
         translationKey.setApplication(this);
         getTranslationKeys().put(translationKey.getKey(), translationKey);
     }
 
+    /**
+     * Checks if feature is enabled
+     * 
+     * @param feature
+     * @return
+     */
     public boolean isFeatureEnabled(String feature) {
     	if (getFeatures() == null)
     		return false;
@@ -638,17 +665,32 @@ public class Application extends Base {
     	return getFeatures().get(feature);
     }
     
+    /**
+     * Returns tools hash
+     * 
+     * @param type
+     * @return
+     */
     public String getTools(String type) {
     	if (getTools() == null) return "";
     	return getTools().get(type);
     }
     
+    /**
+     * Returns API host
+     * 
+     * @return
+     */
     public String getHost() {
         if (host == null)
             return TREX_API_HOST;
         return host;
     }
 
+    /**
+     * Returns HTTP client 
+     * @return
+     */
     public HttpClient getHttpClient() {
         if (httpClient == null)
             httpClient = new HttpClient(this);
@@ -656,6 +698,9 @@ public class Application extends Base {
         return httpClient;
     }
 
+    /**
+     * Returns a string representation of the object
+     */
     public String toString() {
         return  this.name + " (" + this.key + ")";
     }

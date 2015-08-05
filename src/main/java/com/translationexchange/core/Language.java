@@ -406,6 +406,15 @@ public class Language extends Base {
         return tempKey.translate(this, tokens, options);
     }
 
+    public String getAlignment(String target) {
+    	if (isRightToLeft()) return target;
+    	return target == "left" ? "right" : "left"; 
+    }
+
+    public String getDirection() {
+    	return isRightToLeft() ? "rtl" : "ltr";
+    }
+    
     public String toString() {
         return this.getEnglishName() + " (" + getLocale() + ")";
     }

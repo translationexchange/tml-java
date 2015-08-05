@@ -32,6 +32,7 @@
 package com.translationexchange.core;
 
 import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Observer;
 import java.util.concurrent.Executors;
@@ -107,15 +108,20 @@ public class Tml {
 
     public static void init() {
     	Map <String, Object> options = getConfig().getApplication();
-        init((String) options.get("token"), options);
+        init((String) options.get("key"), (String) options.get("token"), options);
     }
     
-    public static void init(String token) {
-        init(token, null);
+    public static void init(String key, String token) {
+        init(key, token, null);
     }
 
-    public static void init(String token, Map<String, Object> options) {
-        setSession(new Session(token, options));
+    public static void init(String key, String token, Map<String, Object> options) {
+    	if (options == null) {
+    		options = new HashMap<String, Object>();
+    	}
+    	options.put("key", key);
+    	options.put("token", token);
+        setSession(new Session(options));
         if (!isSchedulerRunning()) startScheduledTasks();
     }
     

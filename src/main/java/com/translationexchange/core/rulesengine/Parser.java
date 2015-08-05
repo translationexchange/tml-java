@@ -27,6 +27,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * @author Michael Berkovich, michael@translationexchange.com
+ * 
  */
 
 package com.translationexchange.core.rulesengine;
@@ -69,6 +72,12 @@ public class Parser {
         tokenize(expression);
     }
 
+    /**
+     * Tokenizes an expression
+     * (+ 1 1) becomes ["(", "1", "1" + ")"]
+     *  
+     * @param expression
+     */
     public void tokenize(String expression) {
         String regex = Utils.join(new String[] {REGEX_PARENS, REGEX_CONSTANTS, REGEX_VARIABLES, REGEX_OPERATORS, REGEX_STRINGS}, REGEX_JOINER);
         Pattern p = Pattern.compile(regex);
@@ -82,31 +91,65 @@ public class Parser {
         }
     }
 
+    /**
+     * Returns a list of expression tokens
+     * 
+     * @return
+     */
     public ArrayList<String> getTokens() {
         return tokens;
     }
 
+    /**
+     * Looks up the token at the top of the stack
+     * 
+     * @return
+     */
     private String peek() {
         if (tokens.size() == 0) return null;
         return tokens.get(0);
     }
 
+    /**
+     * Fetches the token from the top of the stack
+     * 
+     * @return
+     */
     private String nextToken() {
         if (tokens.size() == 0) return null;
         return tokens.remove(0);
     }
 
+    /**
+     * Matches regular expression
+     * 
+     * @param regex
+     * @param subject
+     * @return
+     */
     private boolean pregMatch(String regex, String subject) {
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(subject);
         return m.matches();
     }
 
+    /**
+     * Parses the expression into prefix form
+     * (+ 1 1) becomes ["+", 1, 1]
+     * 
+     * @param expression
+     * @return
+     */
     public Object parse(String expression) {
         tokenize(expression);
         return parse();
     }
 
+    /**
+     * Parses the expression
+     * 
+     * @return
+     */
     public Object parse() {
         String token = nextToken();
         if (token == null) return null;
@@ -125,6 +168,11 @@ public class Parser {
         return token;
     }
 
+    /**
+     * Parses a list
+     * 
+     * @return
+     */
     private List<Object> parseList() {
         List<Object> list = new ArrayList<Object>();
         while (peek() != null && !peek().equals(CLOSING_PAREN)) {

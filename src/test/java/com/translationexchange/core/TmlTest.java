@@ -43,7 +43,7 @@ public class TmlTest extends BaseTest {
 
 //    @Test
     public void testIntegrationWithSampleApp() {
-        Tml.init("37f812fac93a71088");
+        Tml.init("37f812fac93a71088", "37f812fac93a71088");
         
         Assert.assertEquals(
             "Hello World",

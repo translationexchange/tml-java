@@ -33,54 +33,125 @@ package com.translationexchange.core.cache;
 
 import java.util.Map;
 
-import com.translationexchange.core.Session;
+import com.translationexchange.core.Tml;
+import com.translationexchange.core.Utils;
 
 public abstract class CacheAdapter implements Cache {
 	private Map<String, Object> config;
+	protected static String VERSION_KEY = "current_version";
+	protected static String KEY_PREFIX  = "tml";
 	
+	private String version;
+	
+	/**
+	 * Initialized Cache Adapter
+	 * 
+	 * @param config
+	 */
 	public CacheAdapter(Map<String, Object> config) {
 		this.config = config;
 	}
-	
-	public Integer getVersion() {
-		return (Integer) getConfig().get("version");
+
+	/**
+	 * Fetches current version from cache
+	 * 
+	 * @return
+	 */
+	public String fetchVersion() {
+		String version = (String) fetch(VERSION_KEY, Utils.buildMap());
+		Tml.getLogger().debug("Fetched cache version: " + version);
+		return version;
 	}
 	
-	public void setVersion(Integer version) {
-		getConfig().put("version", version);
+	/**
+	 * Stores current version in the cache
+	 * 
+	 * @param version
+	 */
+	public void storeVersion(String version) {
+		setVersion(version);
+		store(VERSION_KEY, version, null);
+	}
+	
+	/**
+	 * Returns current version
+	 * 
+	 * @return
+	 */
+	public String getVersion() {
+		return version;
+	}
+	
+	/**
+	 * Sets current version
+	 * 
+	 * @param version
+	 */
+	public void setVersion(String version) {
+		this.version = version; 
 	}
 
-	public void incrementVersion() {
-		setVersion(getVersion() + 1);
-	}
-
+	/**
+	 * Returns cache timeout
+	 * 
+	 * @return
+	 */
 	public int getTimeout() {
 		if (getConfig().get("timeout") == null) 
 			return 0;
 		return (Integer) getConfig().get("timeout");
 	}
 	
+	/**
+	 * Returns key wrapped in version
+	 * 
+	 * @param key
+	 * @return
+	 */
+	
+	// TODO: move it out to HTTP Client - version is not thread safe!
 	protected String getVersionedKey(String key) {
-		return key;
+		String elements[] = {
+	         KEY_PREFIX,
+	         (getConfig().get("namespace") == null ? "" : (String) getConfig().get("namespace")),
+	         (key == VERSION_KEY) ? "v" : "v" + (getVersion() == null ? "0" : getVersion().toString()),
+	         key
+		};
+		
+		return Utils.join(elements, "_");
 	}
 	
-    public boolean isInlineMode(Map<String, Object> options) {
-		if (options == null || options.get("session") == null) 
-			return false;
-		
-		Session session = (Session) options.get("session"); 
-		if (session.getCurrentTranslator() == null)
-			return false;
-		
-		return session.getCurrentTranslator().isInline();
-    }
-    
+	/**
+	 * Return cache configuration
+	 * 
+	 * @return
+	 */
 	public Map<String, Object> getConfig() {
 		return config;
 	}
 
+	/**
+	 * Sets cache configuration
+	 * 
+	 * @param config
+	 */
 	public void setConfig(Map<String, Object> config) {
 		this.config = config;
 	}
 
+	/**
+	 * Writes debug info
+	 * 
+	 * @param msg
+	 */
+	protected void debug(String msg) {
+		Tml.getLogger().debug(this.getClass().getName() + " - " + msg);
+	}
+
+    /**
+     * Resets version
+     */
+    public void resetVersion() {
+    	delete(VERSION_KEY, null);
+    }
 }

@@ -75,57 +75,41 @@ public class Session extends Observable {
     }
 
     /**
-     * Initialize with a configuration
-     * 
-     * @param config
-     */
-    public Session(Map<String, Object> config) {
-    	this((String) config.get("token"), config);
-    }
-
-    /**
-     * Initializes a session with token only
-     * 
-     * @param token
-     */
-    public Session(String token) {
-    	this(token, null);
-    }
-
-    /**
      * Initializes current application
      * @param token
      * @param options
      */
-    public Session(String token, Map <String, Object> options) {
+    @SuppressWarnings("unchecked")
+	public Session(Map <String, Object> options) {
     	if (options == null) {
     		options = new HashMap<String, Object>();
     	}
-    	options.put("token", token);
-        setApplication(new Application(options));
-        getApplication().load();
-        getApplication().setSession(this);
-        setCurrentLanguage(getApplication().getLanguage());
-    }
 
-    
-    @SuppressWarnings("unchecked")
-	public void init(Map <String, Object> options) {
-    	if (options == null)
-    		return;
+    	String[] keys = {"key", "token", "host"};
+    	for (String key :  keys) {
+        	if (options.get(key) == null)
+        		options.put(key, Tml.getConfig().getApplication().get(key));
+    	}
 
-    	Tml.getConfig().setDecorator("html");
-    	
-//    	{"translator":{"id":3,"manager":true,"email":"theiceberk@gmail.com","inline":true,"name":"Safari","features":{"show_locked_keys":false,"fallback_language":false}},"locale":"ru","code":"a0f135d6b42818c46"}    	
-
-    	if (options.get("locale") != null)
-    		setCurrentLocale((String)options.get("locale"));
-    	
     	if (options.get("translator") != null) {
     		setCurrentTranslator(new Translator((Map<String, Object>) options.get("translator")));
     	}
+    	
+        setApplication(new Application(options));
+        getApplication().setSession(this);
+        getApplication().load();
+
+    	if (options.get("locale") != null)
+    		setCurrentLocale((String)options.get("locale"));
+    	else
+            setCurrentLanguage(getApplication().getLanguage());
+
+    	if (options.get("source") != null)
+    		setCurrentSource((String)options.get("source"));
+        
+        Tml.getConfig().setDecorator("html");
     }
-    
+        
     public Language getCurrentLanguage() {
         return currentLanguage;
     }
@@ -208,6 +192,11 @@ public class Session extends Observable {
         this.currentTranslator = currentTranslator;
     }
 
+    public boolean isInlineModeEnabled() {
+    	if (getCurrentTranslator() == null) return false;
+    	return getCurrentTranslator().isInline();
+    }
+    
     /**
      * Translates a simple label
      *

@@ -37,6 +37,7 @@ import java.util.Map;
 
 import com.translationexchange.core.Language;
 import com.translationexchange.core.Session;
+import com.translationexchange.core.Tml;
 import com.translationexchange.core.TranslationKey;
 import com.translationexchange.core.Utils;
 
@@ -44,6 +45,8 @@ public class HtmlDecorator implements Decorator {
 
 	public Object decorate(Object translatedLabel, Language translationLanguage, Language targetLanguage, TranslationKey translationKey, Map<String, Object> options) {
 		String label = (String) translatedLabel;
+		
+		// Tml.getLogger().debug(label + " : " + translationLanguage.getLocale() + " :: " + translationKey.getLocale() + " => " + targetLanguage.getLocale());
 		
 		if (options == null) return label;
 		if (options.get("skip_decorations") != null) return label;

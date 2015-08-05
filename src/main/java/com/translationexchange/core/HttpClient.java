@@ -33,6 +33,7 @@ package com.translationexchange.core;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -44,7 +45,10 @@ import java.util.Map;
 import com.squareup.okhttp.OkHttpClient;
 
 public class HttpClient {
-    public static final String TREX_API_PATH = "v1/";
+    public static final String API_PATH = "v1/";
+    public static final String UNRELEASED_VERSION = "0";
+//	protected static String CDN_URL      = "https://cdn.translationexchange.com";
+	protected static String CDN_URL      = "https://trex-snapshots.s3-us-west-1.amazonaws.com";
 
     /**
      * Application that uses the HttpClient
@@ -149,6 +153,79 @@ public class HttpClient {
     }
 
     /**
+     * Checks if cache should be used
+     * 
+     * @param options
+     * @return
+     */
+    public boolean isCacheEnabled(Map<String, Object> options) {
+    	if (!Tml.getConfig().isCacheEnabled()) return false;
+    	if (options == null) return false;
+
+    	if (options.get("cache_key") == null) 
+			return false;
+    	
+		Session session = getApplication().getSession(); 
+		return !session.isInlineModeEnabled();
+    }
+    
+    /**
+     * Retrieves cache version from the API
+     * 
+     * @return
+     */
+    private String getCacheVersion() {
+    	try {
+    		return get("projects/current/version", Utils.buildMap(), Utils.buildMap());
+    	} catch(Exception ex) {
+    		Tml.getLogger().logException("Failed to retrieve cache version", ex);
+    		return null;
+    	}
+    }
+    
+    /**
+     * Verify that the current cache version is correct
+     * Check it against the API 
+     */
+    private void verifyCacheVersion() {
+    	if (Tml.getCache().getVersion() != null)
+    		return;
+    	
+    	// Fetch version from cache itself
+    	String currentVersion = Tml.getCache().fetchVersion();
+    	
+    	// If it is present, use it, otherwise fetch it from API
+    	if (currentVersion != null)
+    		Tml.getCache().setVersion(currentVersion);
+    	else
+    		Tml.getCache().storeVersion(getCacheVersion());
+    	
+    	Tml.getLogger().debug("Cache Version: " + Tml.getCache().getVersion());
+    }
+    
+    /**
+     * Fetch data from the CDN
+     * 
+     * @param cacheKey
+     * @return
+     */
+    private String getFromCDN(String cacheKey) throws Exception {
+    	String version = Tml.getCache().getVersion(); 
+    	if (version == null || version.equals(UNRELEASED_VERSION))
+    		return null;
+    	
+    	try {
+    		if (!cacheKey.startsWith(File.separator))
+    			cacheKey = File.separator + cacheKey;
+    		
+    		// TODO: switch to application key instead of token
+    		return get(Utils.buildURL(CDN_URL, getAccessToken() + cacheKey + ".json"));
+    	} catch (Exception ex) {
+    		return null;
+    	}
+    }
+    
+    /**
      * 
      * @param path
      * @param params
@@ -159,17 +236,23 @@ public class HttpClient {
     @SuppressWarnings("unchecked")
     public Object getJSON(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
     	String responseText = null;
-    	String cacheKey = (options == null || !Tml.getConfig().isCacheEnabled() ? null : (String) options.get("cache_key"));
+    	String cacheKey = (String) options.get("cache_key");
     	
-//    	if (cacheKey != null) {
-//    		responseText = (String) Tml.getCache().fetch(cacheKey, options);
-//    		if (responseText == null) {
-//    			responseText = get(path, params, options);
-//    			Tml.getCache().store(cacheKey, responseText, options);
-//    		}
-//    	} else {
+    	if (isCacheEnabled(options)) {
+    		verifyCacheVersion();
+    		
+    		responseText = (String) Tml.getCache().fetch(cacheKey, options);
+    		if (responseText == null) {
+    			responseText = getFromCDN(cacheKey);
+    			
+    			if (responseText == null)
+    				responseText = get(path, params, options);
+    			
+    			Tml.getCache().store(cacheKey, responseText, options);
+    		}
+    	} else {
     		responseText = get(path, params, options);
-//    	}
+    	}
     	
     	Object result = (Map<String, Object>) Utils.parseJSON(responseText);
     	
@@ -177,7 +260,8 @@ public class HttpClient {
     		Map<String, Object> data = (Map<String, Object>) Utils.parseJSON(responseText);
 		
 	        if (data.get("error") != null) {
-	        	if (cacheKey != null)  Tml.getCache().delete(cacheKey, options);
+	        	if (isCacheEnabled(options)) 
+	        		Tml.getCache().delete(cacheKey, options);
 	            throw new Exception((String) data.get("error"));
 	        }
     	}
@@ -186,7 +270,7 @@ public class HttpClient {
     }
 
     /**
-     * Gets data from an API URL.
+     * Gets data from an API path.
      * 
      * @param path
      * @param params
@@ -196,29 +280,45 @@ public class HttpClient {
      */
     public String get(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
         prepareParams(params, options);
-
-        URL url = Utils.buildURL(getApplication().getHost(), TREX_API_PATH + path, params);
-        Tml.getLogger().debug("Requesting: " + url.toString());
-
-        HttpURLConnection connection = getOkHttpClient().open(url);
-        InputStream in = null;
-        try {
-            in = connection.getInputStream();
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            for (int count; (count = in.read(buffer)) != -1; ) {
-                out.write(buffer, 0, count);
-            }
-            String responseText = new String(out.toByteArray(), "UTF-8");
-
-            Tml.getLogger().debug("Received data: " + responseText);
-
-            return responseText;
-        } finally {
-            if (in != null) in.close();
-        }
+        return get(Utils.buildURL(getApplication().getHost(), API_PATH + path, params));
     }
 
+    /** 
+     * Gets data from a URL
+     * 
+     * @param url
+     * @return
+     * @throws Exception
+     */
+    public String get(URL url) throws Exception {
+        Tml.getLogger().debug("Requesting: " + url.toString());
+		HttpURLConnection connection = getOkHttpClient().open(url);
+		InputStream in = null;
+		try {
+			in = connection.getInputStream();
+		    ByteArrayOutputStream out = new ByteArrayOutputStream();
+		    byte[] buffer = new byte[1024];
+		    for (int count; (count = in.read(buffer)) != -1; ) {
+		         out.write(buffer, 0, count);
+		    }
+		    String responseText = new String(out.toByteArray(), "UTF-8");
+		
+		    Tml.getLogger().debug("Received data: " + responseText);
+
+		    return responseText;
+		} finally {
+			if (in != null) in.close();
+		}
+    }
+
+    /**
+     * Posts to a path
+     * 
+     * @param path
+     * @param params
+     * @return
+     * @throws Exception
+     */
     public Object post(String path, Map<String, Object> params) throws Exception {
         return post(path, params, null);
     }
@@ -233,7 +333,7 @@ public class HttpClient {
      * @throws Exception
      */
     public Object post(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
-        URL url = Utils.buildURL(getApplication().getHost(), TREX_API_PATH + path, Utils.buildMap("access_token", this.getAccessToken()));
+        URL url = Utils.buildURL(getApplication().getHost(), API_PATH + path, Utils.buildMap("access_token", this.getAccessToken()));
 
         String bodyStr = Utils.buildQueryString(params);
         Tml.getLogger().debug(bodyStr);

@@ -139,7 +139,7 @@ public class Utils {
         }
         return new URL(url.toString());
     }
-
+   
     /**
      * Builds a URL
      * @param host

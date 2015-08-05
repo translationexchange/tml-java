@@ -199,7 +199,7 @@ public class Source extends Base {
      * @return
      */
     public static String getCacheKey(String locale, String key) {
-    	return locale + File.separator + "sources" + File.separator + key;
+    	return locale + File.separator + "sources" + (key.startsWith(File.separator) ? "" : File.separator) + key;
     }
     
     /**
