@@ -44,6 +44,11 @@ import com.translationexchange.core.rulesengine.Variable;
 
 public class Configuration {
 
+	/**
+	 * Joins source fragments together
+	 */
+	public final static String SOURCE_SEPARATOR = "@:@";
+	
     /**
      * Enables/Disables Tml
      */

@@ -47,6 +47,7 @@ import com.translationexchange.core.cache.CacheAdapter;
  * A static utility session wrapper class for using by Mobile and Desktop application.
  */
 public class Tml {
+    public static final String VERSION = "0.2.1";
 
     /**
      * Static instance of Tml session. For mobile and desktop applications, only a singleton session is needed. 

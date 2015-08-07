@@ -95,18 +95,24 @@ public class Session extends Observable {
     		setCurrentTranslator(new Translator((Map<String, Object>) options.get("translator")));
     	}
     	
+    	Map<String, Object> applicationParams = Utils.buildMap();
+    	if (options.get("locale") != null) {
+    		applicationParams.put("locale", options.get("locale"));
+    	}
+    	if (options.get("source") != null) {
+    		applicationParams.put("source", options.get("source"));
+    		setCurrentSource((String)options.get("source"));
+    	}
+    		
         setApplication(new Application(options));
         getApplication().setSession(this);
-        getApplication().load();
+        getApplication().load(applicationParams);
 
     	if (options.get("locale") != null)
     		setCurrentLocale((String)options.get("locale"));
     	else
             setCurrentLanguage(getApplication().getLanguage());
 
-    	if (options.get("source") != null)
-    		setCurrentSource((String)options.get("source"));
-        
         Tml.getConfig().setDecorator("html");
     }
         
@@ -176,6 +182,21 @@ public class Session extends Observable {
         return getBlockOptions().get(key);
     }
 
+    @SuppressWarnings("rawtypes")
+    public List<String> getSourcePath() {
+    	List<String> path = new ArrayList<String>();
+    	path.add(getCurrentSource());
+    	if (this.blockOptions == null)
+    		return path;
+    	
+    	for (Map options : this.blockOptions) {
+    		if (options.get("source") != null)
+    			path.add((String)options.get("source"));	
+    	}
+    	
+    	return path;
+    }
+    
     public Application getApplication() {
         return application;
     }

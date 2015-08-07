@@ -34,6 +34,7 @@ package com.translationexchange.core;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class Language extends Base {
@@ -369,34 +370,35 @@ public class Language extends Base {
     public Object translate(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
         String keyHash = TranslationKey.generateKey(label, description);
 
-        if (getApplication().isKeyRegistrationEnabled()) {
-            String sourceKey = (String) getOptionsValue("source", options, getApplication().getSession().getCurrentSource());
+        String sourceKey = (String) getOptionsValue("source", options, getApplication().getSession().getCurrentSource());
 
-            // Application keys without a source belong directly to the application, the source does not need to be loaded
-            if (sourceKey == null) {
-                TranslationKey matchedKey = getApplication().getTranslationKey(keyHash);
-                if (matchedKey != null) return matchedKey.translate(this, tokens, options);
+        // Application keys without a source belong directly to the application, the source does not need to be loaded
+        if (sourceKey == null) {
+            TranslationKey matchedKey = getApplication().getTranslationKey(keyHash);
+            if (matchedKey != null) return matchedKey.translate(this, tokens, options);
 
-                TranslationKey tempKey = createTranslationKey(keyHash, label, description, options);
-                getApplication().registerMissingTranslationKey(tempKey);
-                getApplication().cacheTranslationKey(tempKey);
-                return tempKey.translate(this, tokens, options);
-            } 
+            TranslationKey tempKey = createTranslationKey(keyHash, label, description, options);
+            getApplication().registerMissingTranslationKey(tempKey);
+            getApplication().cacheTranslationKey(tempKey);
+            return tempKey.translate(this, tokens, options);
+        } 
+        
+        String sourcePath = Utils.join(getApplication().getSession().getSourcePath(), Configuration.SOURCE_SEPARATOR);
+        
+        // Source based keys in mobile or desktop environments require sources to be pre-loading in a separate thread
+        Source source = getApplication().getSource(sourceKey, this.getLocale(), options);
+        if (source != null) {
+            TranslationKey matchedKey = source.getTranslationKey(keyHash);
             
-            // Source based keys in mobile or desktop environments require sources to be pre-loading in a separate thread
-            Source source = getApplication().getSource(sourceKey, this.getLocale(), options);
-            if (source != null) {
-                TranslationKey matchedKey = source.getTranslationKey(keyHash);
-                
-                if (matchedKey != null)  
-                	return matchedKey.translate(this, tokens, options);
+            if (matchedKey != null)  
+            	return matchedKey.translate(this, tokens, options);
 
-                HashMap<String, Object> opts = new HashMap<String, Object>(options);
-                opts.put("pending", "true");
-                
-                TranslationKey tempKey = createTranslationKey(keyHash, label, description, opts);
-                getApplication().registerMissingTranslationKey(tempKey, source.getKey());
-            }
+            HashMap<String, Object> opts = new HashMap<String, Object>(options);
+            opts.put("pending", "true");
+            
+            TranslationKey tempKey = createTranslationKey(keyHash, label, description, opts);
+            
+            getApplication().registerMissingTranslationKey(tempKey, sourcePath);
         }
 
         TranslationKey matchedKey = getApplication().getTranslationKey(keyHash);

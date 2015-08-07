@@ -32,17 +32,24 @@
 package com.translationexchange.core;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
+import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Request.Builder;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 public class HttpClient {
     public static final String API_PATH = "v1/";
@@ -50,6 +57,8 @@ public class HttpClient {
 //	protected static String CDN_URL      = "https://cdn.translationexchange.com";
 	protected static String CDN_URL      = "https://trex-snapshots.s3-us-west-1.amazonaws.com";
 
+	private String cacheVersion = null;
+	
     /**
      * Application that uses the HttpClient
      */
@@ -76,6 +85,9 @@ public class HttpClient {
     private OkHttpClient getOkHttpClient() {
         if (client == null) {
             client = new OkHttpClient();
+            client.setConnectTimeout(10, TimeUnit.SECONDS);
+            client.setWriteTimeout(10, TimeUnit.SECONDS);
+            client.setReadTimeout(30, TimeUnit.SECONDS);            
         }
         return client;
     }
@@ -88,6 +100,14 @@ public class HttpClient {
         return getApplication().getAccessToken();
     }
 
+    /** 
+     * @return Application Key
+     * @throws Exception
+     */
+    private String getCdnPath(String version) throws Exception {
+        return getApplication().getKey() + "/" + version;
+    }
+    
     /**
      * Prepares URL params
      * 
@@ -96,8 +116,10 @@ public class HttpClient {
      * @throws Exception
      */
     private void prepareParams(Map<String, Object> params, Map<String, Object> options) throws Exception {
-        if (options != null && options.get("oauth") != null)
-            return;
+        if (options != null) {
+        	if (options.get("oauth") != null)
+        		return;
+        }
 
         params.put("access_token", this.getAccessToken());
     }
@@ -111,9 +133,8 @@ public class HttpClient {
      * @return
      * @throws Exception
      */
-    @SuppressWarnings("unchecked")
 	public Map<String, Object> getJSONMap(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
-        return (Map<String, Object>) getJSON(path, params, options);
+        return getJSON(path, params, options);
     }
 
     /**
@@ -124,19 +145,17 @@ public class HttpClient {
      * @return
      * @throws Exception
      */
-    @SuppressWarnings("unchecked")
 	public Map<String, Object> getJSONMap(String path, Map<String, Object> params) throws Exception {
-        return (Map<String, Object>) getJSON(path, params);
+        return getJSON(path, params);
     }
 
-    
-    /**
+	/**
      * 
      * @param path
      * @return
      * @throws Exception
      */
-    public Object getJSON(String path) throws Exception {
+    public Map<String, Object> getJSON(String path) throws Exception {
         return getJSON(path, Utils.buildMap());
     }
     
@@ -148,7 +167,7 @@ public class HttpClient {
      * @return
      * @throws Exception
      */
-    public Object getJSON(String path, Map<String, Object> params) throws Exception {
+    public Map<String, Object> getJSON(String path, Map<String, Object> params) throws Exception {
         return getJSON(path, params, Utils.buildMap());
     }
 
@@ -170,36 +189,23 @@ public class HttpClient {
     }
     
     /**
-     * Retrieves cache version from the API
-     * 
-     * @return
-     */
-    private String getCacheVersion() {
-    	try {
-    		return get("projects/current/version", Utils.buildMap(), Utils.buildMap());
-    	} catch(Exception ex) {
-    		Tml.getLogger().logException("Failed to retrieve cache version", ex);
-    		return null;
-    	}
-    }
-    
-    /**
      * Verify that the current cache version is correct
      * Check it against the API 
      */
-    private void verifyCacheVersion() {
-    	if (Tml.getCache().getVersion() != null)
+    private void verifyCacheVersion() throws Exception {
+    	if (cacheVersion != null)
     		return;
     	
     	// Fetch version from cache itself
-    	String currentVersion = Tml.getCache().fetchVersion();
+    	cacheVersion = Tml.getCache().fetchVersion();
     	
-    	// If it is present, use it, otherwise fetch it from API
-    	if (currentVersion != null)
-    		Tml.getCache().setVersion(currentVersion);
-    	else
-    		Tml.getCache().storeVersion(getCacheVersion());
-    	
+    	// If no version in cache, fetch it from the API
+    	if (cacheVersion == null) {
+    		cacheVersion = get("projects/current/version", Utils.buildMap(), Utils.buildMap());
+    		Tml.getCache().storeVersion(cacheVersion);
+    	}
+
+    	Tml.getCache().setVersion(cacheVersion);
     	Tml.getLogger().debug("Cache Version: " + Tml.getCache().getVersion());
     }
     
@@ -209,7 +215,7 @@ public class HttpClient {
      * @param cacheKey
      * @return
      */
-    private String getFromCDN(String cacheKey) throws Exception {
+    private String getFromCDN(String cacheKey, Map<String, Object> options) throws Exception {
     	String version = Tml.getCache().getVersion(); 
     	if (version == null || version.equals(UNRELEASED_VERSION))
     		return null;
@@ -218,8 +224,9 @@ public class HttpClient {
     		if (!cacheKey.startsWith(File.separator))
     			cacheKey = File.separator + cacheKey;
     		
-    		// TODO: switch to application key instead of token
-    		return get(Utils.buildURL(CDN_URL, getAccessToken() + cacheKey + ".json"));
+    		String responseText = get(Utils.buildURL(CDN_URL, getCdnPath(version) + cacheKey + ".json.gz"), options);
+
+    		return responseText; 
     	} catch (Exception ex) {
     		return null;
     	}
@@ -234,41 +241,72 @@ public class HttpClient {
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    public Object getJSON(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
+    public Map<String, Object> getJSON(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
     	String responseText = null;
     	String cacheKey = (String) options.get("cache_key");
+    	Map<String, Object> result = null;
     	
     	if (isCacheEnabled(options)) {
     		verifyCacheVersion();
     		
     		responseText = (String) Tml.getCache().fetch(cacheKey, options);
     		if (responseText == null) {
-    			responseText = getFromCDN(cacheKey);
-    			
-    			if (responseText == null)
-    				responseText = get(path, params, options);
-    			
-    			Tml.getCache().store(cacheKey, responseText, options);
-    		}
-    	} else {
-    		responseText = get(path, params, options);
-    	}
-    	
-    	Object result = (Map<String, Object>) Utils.parseJSON(responseText);
-    	
-    	if (result instanceof Map) {
-    		Map<String, Object> data = (Map<String, Object>) Utils.parseJSON(responseText);
-		
-	        if (data.get("error") != null) {
-	        	if (isCacheEnabled(options)) 
-	        		Tml.getCache().delete(cacheKey, options);
-	            throw new Exception((String) data.get("error"));
-	        }
-    	}
-    	
-        return result;
-    }
+    			responseText = getFromCDN(cacheKey, options);
 
+    			if (responseText == null) {
+    				responseText = get(path, params, options);
+    			}
+
+    			result = processJSONResponse(responseText, options);
+
+    			Map<String, Object> extensions = (Map<String, Object>) result.get("extensions");
+    			// never store extension in cache
+    			if (extensions != null) {
+    				result.remove("extensions");
+    				responseText = Utils.buildJSON(result);
+    				result.put("extensions", extensions);
+    			}
+    			Tml.getCache().store(cacheKey, responseText, options);
+    		} else {
+    			result = processJSONResponse(responseText, options);
+    		}
+
+    		return result;
+    	} 
+    		
+    	responseText = get(path, params, options);
+    	return processJSONResponse(responseText, options);
+    }
+    
+    /**
+     * Converts response text to JSON
+     * 
+     * @param responseText
+     * @param options
+     * @return
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> processJSONResponse(String responseText, Map<String, Object> options) throws Exception {
+    	String cacheKey = (String) options.get("cache_key");
+
+    	Map<String, Object> result = (Map<String, Object>) Utils.parseJSON(responseText);
+    	
+    	if (!(result instanceof Map)) {
+    		throw new Exception("Invalid response type: response must always be a map.");
+    	}
+
+    	Map<String, Object> data = (Map<String, Object>) Utils.parseJSON(responseText);
+	
+        if (data != null && data.get("error") != null) {
+        	if (isCacheEnabled(options)) 
+        		Tml.getCache().delete(cacheKey, options);
+            throw new Exception((String) data.get("error"));
+        }
+    	
+    	return result;
+    }
+    
     /**
      * Gets data from an API path.
      * 
@@ -280,7 +318,7 @@ public class HttpClient {
      */
     public String get(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
         prepareParams(params, options);
-        return get(Utils.buildURL(getApplication().getHost(), API_PATH + path, params));
+        return get(Utils.buildURL(getApplication().getHost(), API_PATH + path, params), options);
     }
 
     /** 
@@ -290,25 +328,18 @@ public class HttpClient {
      * @return
      * @throws Exception
      */
-    public String get(URL url) throws Exception {
+    public String get(URL url, Map<String, Object> options) throws Exception {
         Tml.getLogger().debug("Requesting: " + url.toString());
-		HttpURLConnection connection = getOkHttpClient().open(url);
-		InputStream in = null;
-		try {
-			in = connection.getInputStream();
-		    ByteArrayOutputStream out = new ByteArrayOutputStream();
-		    byte[] buffer = new byte[1024];
-		    for (int count; (count = in.read(buffer)) != -1; ) {
-		         out.write(buffer, 0, count);
-		    }
-		    String responseText = new String(out.toByteArray(), "UTF-8");
-		
-		    Tml.getLogger().debug("Received data: " + responseText);
-
-		    return responseText;
-		} finally {
-			if (in != null) in.close();
-		}
+        
+        Builder builder = new Request.Builder().url(url.toString()).header("User-Agent", getUserAgent());
+        
+        builder = builder.addHeader("Accept", "application/json");
+        builder = builder.addHeader("Accept-Encoding", "gzip, deflate");
+        
+        Request request = builder.build();        
+        Response response = getOkHttpClient().newCall(request).execute();
+        
+        return decompress(response.body().bytes());
     }
 
     /**
@@ -323,6 +354,10 @@ public class HttpClient {
         return post(path, params, null);
     }
 
+    private String getUserAgent() {
+    	return "tml-java v" + Tml.VERSION + " (OkHttp v2.4.0)";	
+    }
+    
     /**
      * Posts data to an API URL. Posts are never cached.
      * 
@@ -332,41 +367,30 @@ public class HttpClient {
      * @return
      * @throws Exception
      */
+    @SuppressWarnings("rawtypes")
     public Object post(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
         URL url = Utils.buildURL(getApplication().getHost(), API_PATH + path, Utils.buildMap("access_token", this.getAccessToken()));
 
-        String bodyStr = Utils.buildQueryString(params);
-        Tml.getLogger().debug(bodyStr);
+//        Tml.getLogger().debug(Utils.buildJSON(params));
 
-        byte[] body = bodyStr.getBytes("UTF-8");
+        FormEncodingBuilder formBuilder = new FormEncodingBuilder();
 
-        HttpURLConnection connection = getOkHttpClient().open(url);
-        OutputStream out = null;
-        InputStream in = null;
-        try {
-            connection.setRequestMethod("POST");
-            out = connection.getOutputStream();
-            out.write(body);
-            out.close();
-
-            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                throw new IOException("Unexpected HTTP response: "
-                        + connection.getResponseCode() + " " + connection.getResponseMessage());
-            }
-            in = connection.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            StringBuilder builder = new StringBuilder();
-            String aux = "";
-            while ((aux = reader.readLine()) != null) {
-                builder.append(aux);
-            }
-            String responseStr = builder.toString();
-            Tml.getLogger().debug(responseStr);
-            return responseStr;
-        } finally {
-            if (out != null) out.close();
-            if (in != null) in.close();
+        Iterator entries = params.entrySet().iterator();
+        while (entries.hasNext()) {
+			Map.Entry entry = (Map.Entry) entries.next();
+			formBuilder = formBuilder.add((String) entry.getKey(), (String) entry.getValue());
         }
+        RequestBody formBody = formBuilder.build();
+                
+        Builder builder = new Request.Builder().url(url.toString()).header("User-Agent", getUserAgent());
+        builder = builder.post(formBody);
+        Request request = builder.build();
+        
+        Response response = getOkHttpClient().newCall(request).execute();
+        if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+//        String responseStr = response.body().string(); 
+//        Tml.getLogger().debug(responseStr);
+        return response.body().string();
     }
 
     public Application getApplication() {
@@ -376,4 +400,45 @@ public class HttpClient {
     public void setApplication(Application application) {
         this.application = application;
     }
+    
+    /**
+     * Compress a string using GZIP 
+     * 
+     * @param str
+     * @return
+     * @throws IOException
+     */
+    public static String compress(String str) throws IOException {
+        if (str == null || str.length() == 0) {
+            return str;
+        }
+//        System.out.println("String length : " + str.length());
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        GZIPOutputStream gzip = new GZIPOutputStream(out);
+        gzip.write(str.getBytes());
+        gzip.close();
+        String outStr = out.toString("ISO-8859-1");
+//        System.out.println("Output String length : " + outStr.length());
+        return outStr;
+     }
+    
+    /**
+     * Decompress a string using GZIP
+     * 
+     * @param str
+     * @return
+     * @throws IOException
+     */
+    public static String decompress(byte[] bytes) throws IOException {
+        GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(bytes));
+        BufferedReader bf = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
+        String outStr = "";
+        String line;
+        while ((line=bf.readLine())!=null) {
+          outStr += line;
+        }
+        Tml.getLogger().debug("Compressed: " + bytes.length + " Uncompressed: " + outStr.length());
+        return outStr;
+     }    
+  
 }

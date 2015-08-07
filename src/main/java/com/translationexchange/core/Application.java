@@ -322,36 +322,95 @@ public class Application extends Base {
                 addSource(new Source((Map) data));
             }
         }
+        
+        if (attributes.get("extensions") != null) {
+        	loadExtensions((Map<String, Object>) attributes.get("extensions"));	
+        }
     }
 
     /**
-     * Loads application from the service
+     * Loads application from the service with extra parameters
      */
-    public void load() {
+    public void load(Map<String, Object> params) {
         try {
         	Tml.getLogger().debug("Loading application...");
         	
+        	// params = Utils.buildMap();
+        	
             this.updateAttributes(getHttpClient().getJSONMap("projects/current/definition", 
-	    		Utils.buildMap(),
+            	params,
 	    		Utils.buildMap("cache_key", "application")
             ));
             
             setLoaded(true);
         } catch (Exception ex) {
         	setLoaded(false);
-//            Tml.getLogger().logException("Failed to load application", ex);
+            Tml.getLogger().logException("Failed to load application", ex);
         }
     }
 
     /**
-     * When application is in production mode, secret should not be provided.
-     * Without the secret, the app will not be submitting missing keys to the server,
-     * and only use the default language values.
+     * Loads application from the service
+     */
+    public void load() {
+    	load(Utils.buildMap());	
+    }
+    
+    /**
+     * Load extensions from the definition API
+     * @param extensions
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	private void loadExtensions(Map<String, Object> extensions) {
+    	String sourceLocale = null;
+    	
+    	if (extensions.get("languages") != null) {
+    		Map<String, Object> languages = (Map<String, Object>) extensions.get("languages");
+			Iterator entries = languages.entrySet().iterator();
+            while (entries.hasNext()) {
+				Map.Entry entry = (Map.Entry) entries.next();
+                String locale = (String) entry.getKey();
+                
+                if (!locale.equals(getDefaultLocale()))
+                	sourceLocale = locale;
+                
+                Map<String, Object> data = (Map<String, Object>) entry.getValue();
+                Language language = getLanguagesByLocale().get(locale);
+                if (language == null) {
+                	language = new Language(Utils.buildMap("application", this)); 
+                	getLanguagesByLocale().put(locale, language);
+                }
+            	language.updateAttributes(data);
+            	language.setLoaded(true);
+            }
+    	}
+    	
+    	if (extensions.get("sources") != null && sourceLocale != null) {
+    		Map<String, Object> sources = (Map<String, Object>) extensions.get("sources");
+			Iterator entries = sources.entrySet().iterator();
+            while (entries.hasNext()) {
+				Map.Entry entry = (Map.Entry) entries.next();
+                String key = (String) entry.getKey();
+                Map<String, Object> data = (Map<String, Object>) entry.getValue();
+                Source source = getSourcesByKeys().get(key);
+                if (source == null) {
+                	source = new Source(Utils.buildMap("application", this, "key", key, "locale", sourceLocale));
+                	getSourcesByKeys().put(key, source);
+                }
+            	source.updateTranslationKeys(data);
+            	source.setLoaded(true);
+            }
+    	}
+    }
+    
+    /**
      *
-     * @return true/false based on whether the app is in production mode
+     * @return true/false based on whether the app is in translation mode
      */
     public boolean isKeyRegistrationEnabled() {
-        return true;
+    	if (getSession() == null) return false;
+    	
+        return getSession().isInlineModeEnabled();
     }
 
     /**
@@ -506,19 +565,27 @@ public class Application extends Base {
     }
 
     /**
+     * Returns languages by locale map
+     * 
+     * @return
+     */
+    protected Map<String, Language> getLanguagesByLocale() {
+        if (languagesByLocales == null)
+            languagesByLocales = new HashMap<String, Language>();
+        return languagesByLocales; 
+    }
+    
+    /**
      *
      * @param locale
      * @return
      */
     public Language getLanguage(String locale) {
-        if (languagesByLocales == null)
-            languagesByLocales = new HashMap<String, Language>();
-
-        if (languagesByLocales.get(locale) == null) {
-            languagesByLocales.put(locale, new Language(Utils.buildMap("application", this, "locale", locale)));
+        if (getLanguagesByLocale().get(locale) == null) {
+        	getLanguagesByLocale().put(locale, new Language(Utils.buildMap("application", this, "locale", locale)));
         }
 
-        Language language = languagesByLocales.get(locale);
+        Language language = getLanguagesByLocale().get(locale);
         if (!language.hasDefinition()) language.load();
 
         return language;
