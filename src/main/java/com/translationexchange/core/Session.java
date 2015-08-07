@@ -32,6 +32,7 @@
 package com.translationexchange.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -189,11 +190,14 @@ public class Session extends Observable {
     	if (this.blockOptions == null)
     		return path;
     	
+    	List<String> subpath = new ArrayList<String>();
     	for (Map options : this.blockOptions) {
     		if (options.get("source") != null)
-    			path.add((String)options.get("source"));	
+    			subpath.add((String)options.get("source"));	
     	}
     	
+    	Collections.reverse(subpath);
+    	path.addAll(subpath);
     	return path;
     }
     

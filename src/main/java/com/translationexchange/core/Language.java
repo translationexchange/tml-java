@@ -34,7 +34,6 @@ package com.translationexchange.core;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 public class Language extends Base {
@@ -384,6 +383,7 @@ public class Language extends Base {
         } 
         
         String sourcePath = Utils.join(getApplication().getSession().getSourcePath(), Configuration.SOURCE_SEPARATOR);
+//        Tml.getLogger().debug("Source path: " + sourcePath + " Key: " + label);
         
         // Source based keys in mobile or desktop environments require sources to be pre-loading in a separate thread
         Source source = getApplication().getSource(sourceKey, this.getLocale(), options);
