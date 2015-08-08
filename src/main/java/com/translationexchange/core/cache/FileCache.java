@@ -173,7 +173,7 @@ public class FileCache extends CacheAdapter implements Cache {
         return directory.delete();
     }
       
-    public void reset() {
+    public void resetVersion() {
     	deleteDirectory(getCachePath());
     }
     

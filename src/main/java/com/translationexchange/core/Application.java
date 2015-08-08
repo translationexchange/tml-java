@@ -45,7 +45,7 @@ public class Application extends Base {
     private Session session;
 
     /**
-     * Application host - points to the Tr8nHub server
+     * Application host 
      */
     private String host;
 
@@ -404,6 +404,26 @@ public class Application extends Base {
     }
     
     /**
+     * Returns the first accepted locale from the application languages
+     * 
+     * @param locales
+     * @return
+     */
+    public String getFirstAcceptedLocale(String locale) {
+    	if (locale == null)
+    		return getDefaultLocale();
+    	
+    	String[] locales = locale.split(",");
+    	 
+    	for(String loc : locales) {
+    		if (getLanguagesByLocale().get(loc) != null) 
+    			return loc;
+    	}
+    	
+    	return getDefaultLocale();
+    }
+    
+    /**
      *
      * @return true/false based on whether the app is in translation mode
      */
@@ -429,23 +449,49 @@ public class Application extends Base {
     	return locale + "/translations";
     }
     
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public void updateTranslationKeys(Language language, Map<String, Object> data) {
+    	Iterator entries = ((Map) data.get("results")).entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry entry = (Map.Entry) entries.next();
+            String key = (String) entry.getKey();
+            Map<String, Object> keyData = (Map<String, Object>) entry.getValue();
+            
+            TranslationKey tkey = getTranslationKey(key);
+            
+            if (tkey == null) {
+            	tkey = new TranslationKey((Map<String, Object>) keyData.get("original"));
+        		addTranslationKey(tkey);
+            }
+            
+            List<Translation> translations = new ArrayList<Translation>();
+            for (Map<String, Object> translationData : (List<Map<String, Object>>) keyData.get("translations")) {
+                Translation translation = new Translation(translationData);
+                String locale = (String) translationData.get("locale");
+                
+                if (locale == null)
+                	locale = language.getLocale();
+                
+                translation.setLanguage(getLanguage(locale));
+                translations.add(translation);
+            }
+            
+            tkey.setTranslations(language.getLocale(), translations);
+            addTranslationKey(tkey);
+        }
+    }
+    
+    
     /**
      * Loads translations from the service for a given language and caches them in the application
      * @param language
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-	public void loadTranslations(Language language) {
+    public void loadTranslations(Language language) {
         try {
-            Map<String, Object> results = getHttpClient().getJSONMap("projects/current/translations", 
-        		Utils.buildMap("locale", language.getLocale()),
+        	this.updateTranslationKeys(language, getHttpClient().getJSONMap("projects/current/translations",
+            	Utils.buildMap("original", "true", "per_page", "10000", "locale", language.getLocale()),
         		Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()))
-            );
-			List keys = (List) results.get("results");
-            for (Object key : keys) {
-				Map<String, Object> attributes = new HashMap<String, Object>((Map)key);
-                attributes.put("application", this);
-                cacheTranslationKey(new TranslationKey(attributes));
-            }
+            ));
         } catch (Exception ex) {
             Tml.getLogger().logException(ex);
         }

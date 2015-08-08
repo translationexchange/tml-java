@@ -100,6 +100,7 @@ public class Session extends Observable {
     	if (options.get("locale") != null) {
     		applicationParams.put("locale", options.get("locale"));
     	}
+
     	if (options.get("source") != null) {
     		applicationParams.put("source", options.get("source"));
     		setCurrentSource((String)options.get("source"));
@@ -109,10 +110,7 @@ public class Session extends Observable {
         getApplication().setSession(this);
         getApplication().load(applicationParams);
 
-    	if (options.get("locale") != null)
-    		setCurrentLocale((String)options.get("locale"));
-    	else
-            setCurrentLanguage(getApplication().getLanguage());
+		setCurrentLocale(getApplication().getFirstAcceptedLocale((String) options.get("locale")));
 
         Tml.getConfig().setDecorator("html");
     }
@@ -125,6 +123,7 @@ public class Session extends Observable {
 //        if (getCurrentLanguage().equals(language))
 //            return;
         
+    	language = getApplication().getLanguage(language.getLocale());
         setCurrentLanguage(language);
 
         getApplication().resetTranslations();
