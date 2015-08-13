@@ -173,9 +173,10 @@ public class Tml {
     		return null;
     	
         if (cache  == null) {
-        	try {
+        	try {        		
         		Map<String, Object> cacheData = getConfig().getCache();
-				Class cacheClass = Class.forName((String) cacheData.get("class"));
+        		String className = (String) cacheData.get("class");
+				Class cacheClass = Class.forName(className);
         		Constructor<CacheAdapter> constructor = cacheClass.getConstructor(Map.class);
         		cache = constructor.newInstance(cacheData);
         	} catch (Exception ex) {
