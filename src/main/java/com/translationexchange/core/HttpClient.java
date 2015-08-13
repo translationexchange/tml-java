@@ -184,7 +184,9 @@ public class HttpClient {
     	if (options.get("cache_key") == null) 
 			return false;
     	
-		Session session = getApplication().getSession(); 
+		Session session = getApplication().getSession();
+		
+		if (session == null) return false;
 		return !session.isInlineModeEnabled();
     }
     

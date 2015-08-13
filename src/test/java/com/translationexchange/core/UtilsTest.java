@@ -128,14 +128,14 @@ public class UtilsTest extends BaseTest {
         String query = Utils.buildQueryString(Utils.buildMap("name", "Michael", "gender", "male"));
 
         Assert.assertEquals(
-                "name=Michael&gender=male",
+                "gender=male&name=Michael",
                 query
         );
 
         query = Utils.buildQueryString(Utils.buildMap("name", "John Peterson", "gender", "male"));
 
         Assert.assertEquals(
-                "name=John+Peterson&gender=male",
+                "gender=male&name=John+Peterson",
                 query
         );
 
