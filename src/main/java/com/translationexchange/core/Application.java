@@ -375,6 +375,8 @@ public class Application extends Base {
                 	sourceLocale = locale;
                 
                 Map<String, Object> data = (Map<String, Object>) entry.getValue();
+                // TODO: cache language if caching is enabled
+                
                 Language language = getLanguagesByLocale().get(locale);
                 if (language == null) {
                 	language = new Language(Utils.buildMap("application", this)); 
@@ -392,6 +394,8 @@ public class Application extends Base {
 				Map.Entry entry = (Map.Entry) entries.next();
                 String key = (String) entry.getKey();
                 Map<String, Object> data = (Map<String, Object>) entry.getValue();
+                // TODO: cache source if caching is enabled
+                
                 Source source = getSourcesByKeys().get(key);
                 if (source == null) {
                 	source = new Source(Utils.buildMap("application", this, "key", key, "locale", sourceLocale));
