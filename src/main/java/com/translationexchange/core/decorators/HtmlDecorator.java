@@ -37,7 +37,6 @@ import java.util.Map;
 
 import com.translationexchange.core.Language;
 import com.translationexchange.core.Session;
-import com.translationexchange.core.Tml;
 import com.translationexchange.core.TranslationKey;
 import com.translationexchange.core.Utils;
 
@@ -48,15 +47,21 @@ public class HtmlDecorator implements Decorator {
 		
 		// Tml.getLogger().debug(label + " : " + translationLanguage.getLocale() + " :: " + translationKey.getLocale() + " => " + targetLanguage.getLocale());
 		
-		if (options == null) return label;
-		if (options.get("skip_decorations") != null) return label;
-		if (translationKey.getLocale().equals(targetLanguage.getLocale())) return label;
-		
+		if (options == null) options = Utils.buildMap(); 
 		Session session = (Session) options.get("session");
-		if (session == null) return label;
-		if (session.getCurrentTranslator() == null) return label;
-		if (!session.getCurrentTranslator().isInline()) return label;
-
+		
+		if (
+			session == null
+			|| session.getCurrentTranslator() == null
+			|| !session.getCurrentTranslator().isInline()
+			|| options.get("skip_decorations") != null
+			|| translationKey.getApplication() == null
+			|| (
+				 translationKey.getApplication().isFeatureEnabled("lock_original_content") 
+				 && translationKey.getLocale().equals(targetLanguage.getLocale())
+			   )
+		) return label;
+		
 		String element = "tml:label";
 		if (options.get("use_div") != null)
 			element = "div";

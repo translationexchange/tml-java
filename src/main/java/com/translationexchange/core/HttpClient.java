@@ -54,8 +54,8 @@ import com.squareup.okhttp.Response;
 public class HttpClient {
     public static final String API_PATH = "v1/";
     public static final String UNRELEASED_VERSION = "0";
-//	protected static String CDN_URL      = "https://cdn.translationexchange.com";
-	protected static String CDN_URL      = "https://trex-snapshots.s3-us-west-1.amazonaws.com";
+	protected static String CDN_URL      = "https://cdn.translationexchange.com";
+//	protected static String CDN_URL      = "https://trex-snapshots.s3-us-west-1.amazonaws.com";
 
 	private String cacheVersion = null;
 	
