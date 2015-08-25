@@ -38,9 +38,10 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.json.simple.JSONValue;
@@ -109,13 +110,14 @@ public class Utils {
      */
     public static String buildQueryString(Map<String, Object> params) throws Exception {
         StringBuilder sb = new StringBuilder();
-        Iterator<Map.Entry<String, Object>> entries = params.entrySet().iterator();
-        while (entries.hasNext()) {
-            Map.Entry<String, Object> e = entries.next();
-            if(sb.length() > 0) {
-                sb.append('&');
-            }
-            sb.append(URLEncoder.encode((String) e.getKey(), "UTF-8")).append('=').append(URLEncoder.encode((String) e.getValue(), "UTF-8"));
+        
+        SortedSet<String> keys = new TreeSet<String>(params.keySet());
+        for (String key : keys) { 
+           String value = (String) params.get(key);
+           if(sb.length() > 0) {
+               sb.append('&');
+           }
+           sb.append(URLEncoder.encode(key, "UTF-8")).append('=').append(URLEncoder.encode(value, "UTF-8"));
         }
         return sb.toString();
     }
