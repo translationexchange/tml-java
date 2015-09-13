@@ -33,7 +33,7 @@ package com.translationexchange.core.tokenizers.tokens;
 
 import com.translationexchange.core.Utils;
 import com.translationexchange.core.models.User;
-import com.translationexchange.core.tokenizers.tokens.MethodToken;
+import com.translationexchange.core.tokens.MethodToken;
 
 import org.junit.Assert;
 import org.junit.Test;

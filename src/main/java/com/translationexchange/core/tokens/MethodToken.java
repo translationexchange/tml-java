@@ -29,7 +29,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.translationexchange.core.tokenizers.tokens;
+package com.translationexchange.core.tokens;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -37,6 +37,7 @@ import java.util.regex.Pattern;
 
 import com.translationexchange.core.Language;
 import com.translationexchange.core.Tml;
+import com.translationexchange.core.decorators.Decorator;
 
 public class MethodToken extends DataToken {
 
@@ -49,7 +50,6 @@ public class MethodToken extends DataToken {
      * Name of the method
      */
     String methodName;
-
 
     /**
      *
@@ -134,7 +134,14 @@ public class MethodToken extends DataToken {
             return getFullName();
         }
     }
-
+    
+    /**
+     * Returns decoration name
+     */
+    public String getDecorationName() {
+    	return "method";
+    }
+    
     /**
      *
      * @param translatedLabel   label in which the substitution happens
@@ -147,7 +154,10 @@ public class MethodToken extends DataToken {
         Object object = getContextObject(tokensData);
         String value = getObjectValue(object, getMethodName());
         value = applyLanguageCases(value, object, language, options);
-        return translatedLabel.replaceAll(Pattern.quote(getFullName()), value);
+
+        Decorator decorator = Tml.getConfig().getDecorator();
+        return translatedLabel.replaceAll(Pattern.quote(getFullName()), decorator.decorateToken(this, value, options));
     }
 
+    
 }

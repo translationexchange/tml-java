@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 
 import com.translationexchange.core.Language;
 import com.translationexchange.core.Tml;
-import com.translationexchange.core.tokenizers.tokens.Token;
+import com.translationexchange.core.tokens.Token;
 
 public class DataTokenizer extends Tokenizer {
     public static final String TOKEN_BRACKET = "{";

@@ -34,7 +34,7 @@ package com.translationexchange.core.tokenizers.tokens;
 import com.translationexchange.core.Utils;
 import com.translationexchange.core.models.User;
 import com.translationexchange.core.tokenizers.DataTokenValue;
-import com.translationexchange.core.tokenizers.tokens.DataToken;
+import com.translationexchange.core.tokens.DataToken;
 
 import org.junit.Assert;
 import org.junit.Test;

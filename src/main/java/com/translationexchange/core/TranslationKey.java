@@ -480,7 +480,7 @@ public class TranslationKey extends Base {
         
         if (result instanceof String) {
         	Decorator decorator = Tml.getConfig().getDecorator();
-        	return decorator.decorate(result, translationLanguage, targetLanguage, this, options);
+        	return decorator.decorate((String) result, translationLanguage, targetLanguage, this, options);
         }
         
         return result;

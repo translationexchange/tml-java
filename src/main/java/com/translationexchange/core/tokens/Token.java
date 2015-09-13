@@ -29,8 +29,9 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.translationexchange.core.tokenizers.tokens;
+package com.translationexchange.core.tokens;
 
+import java.util.List;
 import java.util.Map;
 
 import com.translationexchange.core.Language;
@@ -149,6 +150,29 @@ public abstract class Token {
         return getFullName();
     }
 
+    /**
+     * Returns the name of the decoration class
+     * 
+     * @return
+     */
+    public String getDecorationName() {
+    	return "data";
+    }
+    
+    /**
+     * Returns language context keys
+     * 
+     * @return
+     */
+    public abstract List<String> getLanguageContextKeys();
+
+    /**
+     * Returns language case keys
+     * 
+     * @return
+     */
+    public abstract List<String> getLanguageCaseKeys();
+    
     /**
      * Substitution method that must be implemented by each token
      * @param tokensData

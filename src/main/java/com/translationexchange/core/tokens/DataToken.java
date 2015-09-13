@@ -29,7 +29,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.translationexchange.core.tokenizers.tokens;
+package com.translationexchange.core.tokens;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,6 +41,7 @@ import com.translationexchange.core.LanguageCase;
 import com.translationexchange.core.LanguageContext;
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.Utils;
+import com.translationexchange.core.decorators.Decorator;
 import com.translationexchange.core.tokenizers.DataTokenValue;
 
 public class DataToken extends Token {
@@ -150,17 +151,17 @@ public class DataToken extends Token {
      *
      * - if an object is passed without a substitution value, it will use toString() to get the value:
      *
-     *     Tr8n.translate("Hello {user}", Utils.buildMap("user", current_user))
-     *     Tr8n.translate("{count||message}", Utils.buildMap("count", counter))
+     *     Tml.translate("Hello {user}", Utils.buildMap("user", current_user))
+     *     Tml.translate("{count||message}", Utils.buildMap("count", counter))
      *
      * - if an object is a list, the first value is the context object, the second value is the substitution value:
      *
-     *     Tr8n.translate("Hello {user}", Utils.buildMap("user", Utils.buildList(current_user, "Michael")))
-     *     Tr8n.translate("Hello {user}", Utils.buildMap("user", Utils.buildList(current_user, current_user.name)))
+     *     Tml.translate("Hello {user}", Utils.buildMap("user", Utils.buildList(current_user, "Michael")))
+     *     Tml.translate("Hello {user}", Utils.buildMap("user", Utils.buildList(current_user, current_user.name)))
      *
      * - if an object is a map (mostly used for JSON), it must provide the object and the value/attribute for substitution:
      *
-     *     Tr8n.translate("Hello {user}", Utils.buildMap("user", Utils.buildMap(
+     *     Tml.translate("Hello {user}", Utils.buildMap("user", Utils.buildMap(
      *                                       "object", Utils.buildMap(
      *                                           "name", "Michael",
      *                                           "gender", "male"
@@ -168,7 +169,7 @@ public class DataToken extends Token {
      *                                       "value", "Michael"
      *                                    ))
      *
-     *     Tr8n.translate("Hello {user}", Utils.buildMap("user", Utils.buildMap(
+     *     Tml.translate("Hello {user}", Utils.buildMap("user", Utils.buildMap(
      *                                       "object", Utils.buildMap(
      *                                           "name", "Michael",
      *                                           "gender", "male"
@@ -178,14 +179,14 @@ public class DataToken extends Token {
      *
      * - if you don't need the substitution, you can provide an object directly:
      *
-     *     Tr8n.translate("{user| He, She}", Utils.buildMap("user", Utils.buildMap(
+     *     Tml.translate("{user| He, She}", Utils.buildMap("user", Utils.buildMap(
      *                                           "name", "Michael",
      *                                           "gender", "male"
      *                                       ))
      *
      * - the most explicit way is to use the DataTokenValue interface:
      *
-     *     Tr8n.translate("Hello {user}", Utils.buildMap("user", new DataTokenValue() {
+     *     Tml.translate("Hello {user}", Utils.buildMap("user", new DataTokenValue() {
      *                                        public Object getContextObject() {
      *                                           return user;
      *                                        }
@@ -364,7 +365,9 @@ public class DataToken extends Token {
         	return translatedLabel;
         
         value = applyLanguageCases(value, getContextObject(tokensData), language, options);
-        return translatedLabel.replaceAll(Pattern.quote(getFullName()), value);
+        
+    	Decorator decorator = Tml.getConfig().getDecorator();
+        return translatedLabel.replaceAll(Pattern.quote(getFullName()), decorator.decorateToken(this, value, options));
     }
 
 }

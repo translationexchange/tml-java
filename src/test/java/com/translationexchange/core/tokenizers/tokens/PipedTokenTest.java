@@ -35,7 +35,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.translationexchange.core.Utils;
-import com.translationexchange.core.tokenizers.tokens.PipedToken;
+import com.translationexchange.core.tokens.PipedToken;
 
 /**
  * Created by michael on 3/12/14.

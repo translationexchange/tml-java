@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.translationexchange.core.decorators.Decorator;
+
 public class LanguageCase extends Base {
 
     public static final String TR8N_HTML_TAGS_REGEX = "/<\\/?[^>]*>/";
@@ -164,14 +166,16 @@ public class LanguageCase extends Base {
     	}
     	
         // TODO: use RegEx to split words and assemble them right back
+    	Decorator decorator = Tml.getConfig().getDecorator();
     	
     	String transformedValue = value;
     	for (String element : elements) {
     		LanguageCaseRule rule = findMatchingRule(element, object);
-    		if (rule == null)
-    			continue;
+    		
+    		if (rule == null) continue;
     		
     		transformedValue = transformedValue.replaceAll(Pattern.quote(element), rule.apply(element));
+        	transformedValue = decorator.decorateLanguageCase(this, rule, element, transformedValue, options);
     	}
     	
         return transformedValue;

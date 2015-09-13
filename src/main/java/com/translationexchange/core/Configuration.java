@@ -128,9 +128,9 @@ public class Configuration {
         );
     	
         this.tokenClasses = Utils.buildStringList(
-		    "com.translationexchange.core.tokenizers.tokens.DataToken",
-		    "com.translationexchange.core.tokenizers.tokens.MethodToken",
-		    "com.translationexchange.core.tokenizers.tokens.PipedToken"
+		    "com.translationexchange.core.tokens.DataToken",
+		    "com.translationexchange.core.tokens.MethodToken",
+		    "com.translationexchange.core.tokens.PipedToken"
         );
 
         this.logger = Utils.buildMap(

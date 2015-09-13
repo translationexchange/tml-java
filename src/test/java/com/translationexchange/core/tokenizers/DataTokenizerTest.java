@@ -38,7 +38,7 @@ import org.junit.Test;
 
 import com.translationexchange.core.Utils;
 import com.translationexchange.core.tokenizers.DataTokenizer;
-import com.translationexchange.core.tokenizers.tokens.Token;
+import com.translationexchange.core.tokens.Token;
 
 /**
  * Created by michael on 3/11/14.

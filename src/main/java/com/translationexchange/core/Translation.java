@@ -34,7 +34,7 @@ package com.translationexchange.core;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.translationexchange.core.tokenizers.tokens.DataToken;
+import com.translationexchange.core.tokens.DataToken;
 
 public class Translation extends Base {
 

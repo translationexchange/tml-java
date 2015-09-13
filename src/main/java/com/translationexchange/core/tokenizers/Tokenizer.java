@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.translationexchange.core.Language;
-import com.translationexchange.core.tokenizers.tokens.Token;
+import com.translationexchange.core.tokens.Token;
 
 /**
  * Base class for all tokenizers

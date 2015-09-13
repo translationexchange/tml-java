@@ -35,38 +35,52 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.StringUtils;
+
 import com.translationexchange.core.Language;
+import com.translationexchange.core.LanguageCase;
+import com.translationexchange.core.LanguageCaseRule;
 import com.translationexchange.core.Session;
 import com.translationexchange.core.TranslationKey;
 import com.translationexchange.core.Utils;
+import com.translationexchange.core.tokens.Token;
 
 public class HtmlDecorator implements Decorator {
 
-	public Object decorate(Object translatedLabel, Language translationLanguage, Language targetLanguage, TranslationKey translationKey, Map<String, Object> options) {
-		String label = (String) translatedLabel;
-		
+	private boolean isEnabled(Map<String, Object> options) {
+		if (options.get("skip_decorations") != null)
+            return false;
+
+		Session session = (Session) options.get("session");
+		return (session != null && session.getCurrentTranslator() != null && session.getCurrentTranslator().isInline());
+    }
+	
+	private String getDecorationElement(String defaultName, Map<String, Object> options) {
+        if (options.get("use_span") != null)
+            return "span";
+
+        if (options.get("use_div") != null)
+            return "div";
+
+        return defaultName;
+    }
+	
+	public String decorate(String translatedLabel, Language translationLanguage, Language targetLanguage, TranslationKey translationKey, Map<String, Object> options) {
 		// Tml.getLogger().debug(label + " : " + translationLanguage.getLocale() + " :: " + translationKey.getLocale() + " => " + targetLanguage.getLocale());
 		
-		if (options == null) options = Utils.buildMap(); 
-		Session session = (Session) options.get("session");
+		if (!isEnabled(options))
+			return translatedLabel;
 		
 		if (
-			session == null
-			|| session.getCurrentTranslator() == null
-			|| !session.getCurrentTranslator().isInline()
-			|| options.get("skip_decorations") != null
-			|| translationKey.getApplication() == null
+			translationKey.getApplication() == null
 			|| (
 				 translationKey.getApplication().isFeatureEnabled("lock_original_content") 
 				 && translationKey.getLocale().equals(targetLanguage.getLocale())
 			   )
-		) return label;
+		) return translatedLabel;
 		
-		String element = "tml:label";
-		if (options.get("use_div") != null)
-			element = "div";
-		else if (options.get("use_span") != null)
-			element = "span";
+		String element = getDecorationElement("tml:label", options);
 
 		StringBuilder sb = new StringBuilder();
 				
@@ -91,9 +105,85 @@ public class HtmlDecorator implements Decorator {
 		sb.append(" class='" + Utils.join(classes.toArray(), " ") + "'");
 		sb.append(" data-translation_key='" + translationKey.getKey() + "'");
 		sb.append(">");
-		sb.append(label);
+		sb.append(translatedLabel);
 		sb.append("</" + element + ">");
 		return sb.toString();
 	}
 
+	public String decorateLanguageCase(LanguageCase languageCase, LanguageCaseRule rule, String original, String transformed, Map<String, Object> options) {
+		if (!isEnabled(options))
+			return transformed;
+
+		Map<String, Object> data = Utils.buildMap(
+            "keyword"       , languageCase.getKeyword(),
+            "language_name" , languageCase.getLanguage().getEnglishName(),
+            "latin_name"    , languageCase.getLatinName(),
+            "native_name"   , languageCase.getNativeName(),
+            "conditions"    , (rule != null ? rule.getConditions() : ""),
+            "operations"    , (rule != null ? rule.getOperations() : ""),
+            "original"      , original,
+            "transformed"   , transformed
+        );
+		
+		String payload = Utils.buildJSON(data);
+        payload = Base64.encodeBase64String(StringUtils.getBytesUtf8(payload));
+        payload.replaceAll("\n", "");
+        
+		Map<String, Object> attributes = Utils.buildMap(
+            "class"         , "tml_language_case",
+            "data-locale"   , languageCase.getLanguage().getLocale(),
+            "data-rule"     , payload
+	    );
+
+		String element = getDecorationElement("tml:case", options);
+        StringBuilder html = new StringBuilder();
+
+		try {
+			html.append("<" + element + " " + Utils.buildQueryString(attributes) + ">");
+			html.append(transformed);
+			html.append("</" + element + ">");
+		} catch (Exception ex) {
+			html.append(transformed);
+		}
+		
+		return html.toString();		
+	}
+	
+	public String decorateToken(Token token, String value, Map<String, Object> options) {
+		if (!isEnabled(options))
+			return value;
+
+		String element = getDecorationElement("tml:token", options);
+		
+		List<String> classes = new ArrayList<String>();
+		classes.add("tml_token");
+		classes.add("tml_token_" + token.getDecorationName());
+
+		StringBuilder html = new StringBuilder();
+		html.append("<" + element + " class='" + Utils.join(classes.toArray(), " ") + "' data-name='" + token.getName() + "'");
+		
+		if (!token.getLanguageContextKeys().isEmpty())
+			html.append(" data-context='" + Utils.join(token.getLanguageContextKeys(), " ") + "'");
+		
+		if (!token.getLanguageCaseKeys().isEmpty())
+			html.append(" data-case='" + Utils.join(token.getLanguageCaseKeys(), " ") + "'");
+		html.append(">");
+		html.append(value);
+		html.append("</" + element + ">");
+		return html.toString();
+	}
+
+	public String decorateElement(Token token, String value, Map<String, Object> options) {
+		if (!isEnabled(options))
+			return value;
+
+		String element = getDecorationElement("tml:element", options);
+
+		StringBuilder html = new StringBuilder();
+		html.append("<" + element + ">");
+		html.append(value);
+		html.append("</" + element + ">");
+		return html.toString();
+	}
+	
 }

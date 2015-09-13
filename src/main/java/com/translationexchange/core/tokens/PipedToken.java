@@ -29,7 +29,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.translationexchange.core.tokenizers.tokens;
+package com.translationexchange.core.tokens;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +45,7 @@ import com.translationexchange.core.LanguageContext;
 import com.translationexchange.core.LanguageContextRule;
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.Utils;
+import com.translationexchange.core.decorators.Decorator;
 
 /**
  *
@@ -284,6 +285,10 @@ public class PipedToken extends DataToken {
        return getParameterMap(tokenMappingOptions, null, null);
     }
 
+    public String getDecorationName() {
+    	return "piped";
+    }
+    
     /**
      *
      * @param translatedLabel   label in which the substitution happens
@@ -337,12 +342,14 @@ public class PipedToken extends DataToken {
             return translatedLabel;
         }
 
-        StringBuilder replacementValue = new StringBuilder();
+    	Decorator decorator = Tml.getConfig().getDecorator();
+
+    	StringBuilder replacementValue = new StringBuilder();
         if (getSeparator().equals(SEPARATOR_INCLUSIVE)) {
-            replacementValue.append(getValue(tokensData));
+            replacementValue.append(decorator.decorateToken(this, getValue(tokensData), options));
             replacementValue.append(" ");
         } else {
-            value = value.replaceAll(Pattern.quote("#" + getName() + "#"), getValue(tokensData));
+            value = value.replaceAll(Pattern.quote("#" + getName() + "#"), decorator.decorateToken(this, getValue(tokensData), options));
         }
         replacementValue.append(value);
 

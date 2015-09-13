@@ -34,10 +34,19 @@ package com.translationexchange.core.decorators;
 import java.util.Map;
 
 import com.translationexchange.core.Language;
+import com.translationexchange.core.LanguageCase;
+import com.translationexchange.core.LanguageCaseRule;
 import com.translationexchange.core.TranslationKey;
+import com.translationexchange.core.tokens.Token;
 
 public interface Decorator {
 
-	public Object decorate(Object translatedLabel, Language translationLanguage, Language targetLanguage, TranslationKey translationKey, Map<String, Object> options);
+	public String decorate(String translatedLabel, Language translationLanguage, Language targetLanguage, TranslationKey translationKey, Map<String, Object> options);
+
+	public String decorateLanguageCase(LanguageCase languageCase, LanguageCaseRule rule, String original, String transformed, Map<String, Object> options);
+	
+	public String decorateToken(Token token, String value, Map<String, Object> options);
+
+	public String decorateElement(Token token, String value, Map<String, Object> options);
 	
 }
