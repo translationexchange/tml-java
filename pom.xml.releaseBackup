@@ -5,7 +5,7 @@
 	<groupId>com.translationexchange</groupId>
 	<artifactId>tml</artifactId>
 	<packaging>jar</packaging>
-	<version>0.2.1</version>
+	<version>0.2.1-SNAPSHOT</version>
 
 	<name>tml</name>
 	<description>Core library for Translation Exchange Java Extensions</description>
@@ -53,7 +53,6 @@
 		<connection>scm:git:git://github.com/translationexchange/tml-java.git</connection>
 		<developerConnection>scm:git:git://github.com/translationexchange/tml-java.git</developerConnection>
 		<url>git@github.com:translationexchange/tml-java.git</url>
-		<tag>tml-0.2.1</tag>
 	</scm>
 
 	<properties>
@@ -196,8 +195,9 @@
 					<artifactId>maven-release-plugin</artifactId>
 					<version>2.5</version>
 					<configuration>
+						<mavenExecutorId>forked-path</mavenExecutorId>
 						<useReleaseProfile>false</useReleaseProfile>
-						<releaseProfiles>release</releaseProfiles>
+						<arguments>${arguments} -Psonatype-oss-release</arguments>
 						<goals>deploy</goals>
 					</configuration>
 				</plugin>
