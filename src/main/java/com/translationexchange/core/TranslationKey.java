@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core;
@@ -45,12 +49,15 @@ import com.translationexchange.core.decorators.Decorator;
 import com.translationexchange.core.tokenizers.DataTokenizer;
 import com.translationexchange.core.tokenizers.DecorationTokenizer;
 import com.translationexchange.core.tokenizers.Tokenizer;
-
 public class TranslationKey extends Base {
 
+	/** Constant <code>TOKENIZER_KEY="tokenizer"</code> */
 	public static final String TOKENIZER_KEY = "tokenizer";
+	/** Constant <code>DEFAULT_TOKENIZERS_DATA="data"</code> */
 	public static final String DEFAULT_TOKENIZERS_DATA = "data";
+	/** Constant <code>DEFAULT_TOKENIZERS_HTML="html"</code> */
 	public static final String DEFAULT_TOKENIZERS_HTML = "html";
+	/** Constant <code>DEFAULT_TOKENIZERS_STYLED="styled"</code> */
 	public static final String DEFAULT_TOKENIZERS_STYLED = "styled";
 	
     /**
@@ -116,44 +123,81 @@ public class TranslationKey extends Base {
     }
     
     /**
+     * <p>Constructor for TranslationKey.</p>
      *
-     * @param attributes
+     * @param attributes a {@link java.util.Map} object.
      */
     public TranslationKey(Map<String, Object> attributes) {
         super(attributes);
     }
 
+    /**
+     * <p>Getter for the field <code>label</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getLabel() {
         return label;
     }
 
+    /**
+     * <p>Getter for the field <code>description</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * <p>Getter for the field <code>key</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getKey() {
         return key;
     }
 
+    /**
+     * <p>Getter for the field <code>locale</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getLocale() {
         return locale;
     }
 
+    /**
+     * <p>Getter for the field <code>level</code>.</p>
+     *
+     * @return a {@link java.lang.Long} object.
+     */
     public Long getLevel() {
         return level;
     }
 
+    /**
+     * <p>Getter for the field <code>application</code>.</p>
+     *
+     * @return a {@link com.translationexchange.core.Application} object.
+     */
     public Application getApplication() {
         return application;
     }
 
+    /**
+     * <p>Setter for the field <code>application</code>.</p>
+     *
+     * @param application a {@link com.translationexchange.core.Application} object.
+     */
     public void setApplication(Application application) {
         this.application = application;
     }
     
     /**
+     * <p>Getter for the field <code>allowedDataTokenNames</code>.</p>
      *
-     * @return
+     * @return a {@link java.util.List} object.
      */
     public List<String> getAllowedDataTokenNames() {
        if (allowedDataTokenNames == null) {
@@ -164,8 +208,9 @@ public class TranslationKey extends Base {
     }
 
     /**
+     * <p>Getter for the field <code>allowedDecorationTokenNames</code>.</p>
      *
-     * @return
+     * @return a {@link java.util.List} object.
      */
     public List<String> getAllowedDecorationTokenNames() {
        if (allowedDecorationTokenNames == null) {
@@ -175,6 +220,11 @@ public class TranslationKey extends Base {
        return allowedDecorationTokenNames;
     }
     
+    /**
+     * <p>Getter for the field <code>translationsByLocale</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     public Map<String, List<Translation>> getTranslationsByLocale() {
         if (translationsByLocale == null)
             translationsByLocale = new HashMap<String, List<Translation>>();
@@ -184,8 +234,9 @@ public class TranslationKey extends Base {
 
     /**
      * Sets translations for a specific locale. Translation key can have translations for multiple locales.
-     * @param locale
-     * @param translations
+     *
+     * @param locale a {@link java.lang.String} object.
+     * @param translations a {@link java.util.List} object.
      */
     public void setTranslations(String locale, List<Translation> translations) {
         for (Translation translation : translations) {
@@ -195,60 +246,117 @@ public class TranslationKey extends Base {
         getTranslationsByLocale().put(locale, translations);
     }
 
+    /**
+     * <p>getTranslationLocales.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     public List<String> getTranslationLocales() {
         return new ArrayList<String>(getTranslationsByLocale().keySet());
     }
 
+    /**
+     * <p>Setter for the field <code>label</code>.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     */
     public void setLabel(String label) {
         this.label = label;
     }
 
+    /**
+     * <p>Setter for the field <code>description</code>.</p>
+     *
+     * @param description a {@link java.lang.String} object.
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * <p>Setter for the field <code>locale</code>.</p>
+     *
+     * @param locale a {@link java.lang.String} object.
+     */
     public void setLocale(String locale) {
         this.locale = locale;
     }
 
+    /**
+     * <p>Setter for the field <code>level</code>.</p>
+     *
+     * @param level a {@link java.lang.Long} object.
+     */
     public void setLevel(Long level) {
         this.level = level;
     }
 
+    /**
+     * <p>Setter for the field <code>allowedDataTokenNames</code>.</p>
+     *
+     * @param allowedDataTokenNames a {@link java.util.List} object.
+     */
     public void setAllowedDataTokenNames(List<String> allowedDataTokenNames) {
         this.allowedDataTokenNames = allowedDataTokenNames;
     }
 
+    /**
+     * <p>Setter for the field <code>allowedDecorationTokenNames</code>.</p>
+     *
+     * @param allowedDecorationTokenNames a {@link java.util.List} object.
+     */
     public void setAllowedDecorationTokenNames(List<String> allowedDecorationTokenNames) {
         this.allowedDecorationTokenNames = allowedDecorationTokenNames;
     }
 
+    /**
+     * <p>Setter for the field <code>key</code>.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     */
     public void setKey(String key) {
         this.key = key;
     }
 
+    /**
+     * <p>isLocked.</p>
+     *
+     * @return a {@link java.lang.Boolean} object.
+     */
     public Boolean isLocked() {
     	if (locked == null)
     		return false;
 		return locked;
 	}
 
+	/**
+	 * <p>Setter for the field <code>locked</code>.</p>
+	 *
+	 * @param locked a {@link java.lang.Boolean} object.
+	 */
 	public void setLocked(Boolean locked) {
 		this.locked = locked;
 	}
 	
+	/**
+	 * <p>isRegistered.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	public Boolean isRegistered() {
 		return registered;
 	}
 
+	/**
+	 * <p>Setter for the field <code>registered</code>.</p>
+	 *
+	 * @param registered a {@link java.lang.Boolean} object.
+	 */
 	public void setRegistered(Boolean registered) {
 		this.registered = registered;
 	}
 	
-    /**
-     *
-     * @param attributes
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("application") != null)
@@ -288,9 +396,9 @@ public class TranslationKey extends Base {
     
     /**
      * Returns a list of translations for a locale
-     * 
-     * @param locale
-     * @return
+     *
+     * @param locale a {@link java.lang.String} object.
+     * @return a {@link java.util.List} object.
      */
     public List<Translation> getTranslations(String locale) {
         if (getTranslationsByLocale().get(locale) == null) {
@@ -302,8 +410,8 @@ public class TranslationKey extends Base {
     
     /**
      * Adds a translation
-     * 
-     * @param translation
+     *
+     * @param translation a {@link com.translationexchange.core.Translation} object.
      */
     public void addTranslation(Translation translation) {
     	List<Translation> translations = getTranslations(translation.getLocale());
@@ -313,8 +421,8 @@ public class TranslationKey extends Base {
     
     /**
      * Adds translations
-     * @param locale
-     * @param translations
+     *
+     * @param translations a {@link java.util.List} object.
      */
     public void addTranslations(List<Translation> translations) {
         for (Translation translation : translations) {
@@ -324,8 +432,9 @@ public class TranslationKey extends Base {
     
     /**
      * Generates unique hash key for the translation key using label
-     * @param label
-     * @return
+     *
+     * @param label a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
      */
     public static String generateKey(String label) {
         return generateKey(label, null);
@@ -333,9 +442,10 @@ public class TranslationKey extends Base {
 
     /**
      * Generates unique hash key for the translation key using label and description
-     * @param label
-     * @param description
-     * @return
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param description a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
      */
     public static String generateKey(String label, String description) {
         StringBuilder sb = new StringBuilder();
@@ -356,7 +466,8 @@ public class TranslationKey extends Base {
 
     /**
      * Returns YES if there are translations available for the key
-     * @return
+     *
+     * @return a boolean.
      */
     public boolean hasTranslations() {
         return getTranslationLocales().size() > 0;
@@ -388,30 +499,33 @@ public class TranslationKey extends Base {
     }
 
     /**
+     * <p>translate.</p>
      *
-     * @param language
-     * @return
+     * @param language a {@link com.translationexchange.core.Language} object.
+     * @return a {@link java.lang.Object} object.
      */
     public Object translate(Language language) {
         return translate(language, null);
     }
 
     /**
+     * <p>translate.</p>
      *
-     * @param language
-     * @param tokens
-     * @return
+     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @return a {@link java.lang.Object} object.
      */
     public Object translate(Language language, Map<String, Object> tokens) {
         return translate(language, null, null);
     }
 
     /**
+     * <p>translate.</p>
      *
-     * @param language
-     * @param tokens
-     * @param options
-     * @return
+     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @param options a {@link java.util.Map} object.
+     * @return a {@link java.lang.Object} object.
      */
     public Object translate(Language language, Map<String, Object> tokens, Map<String, Object> options) {
         if (getLocale().equals(language.getLocale())) {
@@ -427,13 +541,15 @@ public class TranslationKey extends Base {
     }
 
     /**
-     * 
-     * @param key
-     * @param translatedLabel
-     * @param translationLanguage
-     * @param tokens
-     * @param options
-     * @return
+     * <p>applyTokenizer.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     * @param translatedLabel a {@link java.lang.String} object.
+     * @param translationLanguage a {@link com.translationexchange.core.Language} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @param options a {@link java.util.Map} object.
+     * @param allowedTokenNames a {@link java.util.List} object.
+     * @return a {@link java.lang.Object} object.
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     protected Object applyTokenizer(String key, String translatedLabel, Language translationLanguage, List<String> allowedTokenNames, Map<String, Object> tokens, Map<String, Object> options) {
@@ -453,14 +569,16 @@ public class TranslationKey extends Base {
 		return translatedLabel;
     }
     
-    /**
-     *
-     * @param translatedLabel
-     * @param tokens
-     * @param language
-     * @param options
-     * @return
-     */
+	/**
+	 * <p>substitute.</p>
+	 *
+	 * @param translatedLabel a {@link java.lang.String} object.
+	 * @param tokens a {@link java.util.Map} object.
+	 * @param options a {@link java.util.Map} object.
+	 * @param translationLanguage a {@link com.translationexchange.core.Language} object.
+	 * @param targetLanguage a {@link com.translationexchange.core.Language} object.
+	 * @return a {@link java.lang.Object} object.
+	 */
 	public Object substitute(String translatedLabel, Map<String, Object> tokens, Language translationLanguage, Language targetLanguage, Map<String, Object> options) {
 		String tokenizerKey = DEFAULT_TOKENIZERS_HTML; 
         if (options != null && options.get(TOKENIZER_KEY) != null)
@@ -488,7 +606,8 @@ public class TranslationKey extends Base {
 
 	/**
 	 * Returns map representation for the translation key
-	 * @return
+	 *
+	 * @return a {@link java.util.Map} object.
 	 */
 	public Map<String, Object> toMap() {
         Map<String, Object> data = new HashMap<String, Object>();
@@ -502,6 +621,11 @@ public class TranslationKey extends Base {
         return data;
     }
 
+    /**
+     * <p>toString.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String toString() {
         return label + " (" + locale + ")";
     }

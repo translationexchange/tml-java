@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core;
@@ -35,8 +39,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 public class Application extends Base {
+    /** Constant <code>TREX_API_HOST="https://api.translationexchange.com"</code> */
     public static final String TREX_API_HOST = "https://api.translationexchange.com";
 
     /**
@@ -146,131 +150,285 @@ public class Application extends Base {
      */
     private HttpClient httpClient;
 
+    /**
+     * Default constructor
+     */
     public Application() {
     	super();
     }
     
+    /**
+     * <p>Constructor for Application.</p>
+     *
+     * @param attributes a {@link java.util.Map} object.
+     */
     public Application(Map<String, Object> attributes) {
         super(attributes);
     }
     
     
+    /**
+     * <p>Getter for the field <code>key</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getKey() {
         return key;
     }
 
+    /**
+     * <p>Getter for the field <code>name</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * <p>Getter for the field <code>description</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * <p>Getter for the field <code>tokens</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     public Map<String, Object> getTokens() {
         return tokens;
     }
 
+    /**
+     * <p>Getter for the field <code>threshold</code>.</p>
+     *
+     * @return a {@link java.lang.Long} object.
+     */
     public Long getThreshold() {
         return threshold;
     }
 
+    /**
+     * <p>Getter for the field <code>css</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getCss() {
         return css;
     }
 
+    /**
+     * <p>Getter for the field <code>shortcuts</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     public Map<String, String> getShortcuts() {
         return shortcuts;
     }
 
+    /**
+     * <p>Getter for the field <code>features</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     public Map<String, Boolean> getFeatures() {
         return features;
     }
 
+    /**
+     * <p>Getter for the field <code>languages</code>.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     public List<Language> getLanguages() {
         return languages;
     }
 
+    /**
+     * <p>Getter for the field <code>session</code>.</p>
+     *
+     * @return a {@link com.translationexchange.core.Session} object.
+     */
     public Session getSession() {
         return session;
     }
 
+    /**
+     * <p>Setter for the field <code>session</code>.</p>
+     *
+     * @param session a {@link com.translationexchange.core.Session} object.
+     */
     public void setSession(Session session) {
         this.session = session;
     }
 
+    /**
+     * <p>Setter for the field <code>host</code>.</p>
+     *
+     * @param host a {@link java.lang.String} object.
+     */
     public void setHost(String host) {
         this.host = host;
     }
 
+    /**
+     * <p>Setter for the field <code>key</code>.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     */
     public void setKey(String key) {
         this.key = key;
     }
 
+    /**
+     * <p>Setter for the field <code>accessToken</code>.</p>
+     *
+     * @param accessToken a {@link java.lang.String} object.
+     */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 
+    /**
+     * <p>Setter for the field <code>name</code>.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * <p>Setter for the field <code>description</code>.</p>
+     *
+     * @param description a {@link java.lang.String} object.
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * <p>Setter for the field <code>defaultLocale</code>.</p>
+     *
+     * @param defaultLocale a {@link java.lang.String} object.
+     */
     public void setDefaultLocale(String defaultLocale) {
         this.defaultLocale = defaultLocale;
     }
 
+    /**
+     * <p>Setter for the field <code>tokens</code>.</p>
+     *
+     * @param tokens a {@link java.util.Map} object.
+     */
     public void setTokens(Map<String, Object> tokens) {
         this.tokens = tokens;
     }
 
+    /**
+     * <p>Setter for the field <code>translatorLevel</code>.</p>
+     *
+     * @param translatorLevel a {@link java.lang.Long} object.
+     */
     public void setTranslatorLevel(Long translatorLevel) {
         this.translatorLevel = translatorLevel;
     }
 
+    /**
+     * <p>Setter for the field <code>threshold</code>.</p>
+     *
+     * @param threshold a {@link java.lang.Long} object.
+     */
     public void setThreshold(Long threshold) {
         this.threshold = threshold;
     }
 
+    /**
+     * <p>Setter for the field <code>css</code>.</p>
+     *
+     * @param css a {@link java.lang.String} object.
+     */
     public void setCss(String css) {
         this.css = css;
     }
 
+    /**
+     * <p>Setter for the field <code>shortcuts</code>.</p>
+     *
+     * @param shortcuts a {@link java.util.Map} object.
+     */
     public void setShortcuts(Map<String, String> shortcuts) {
         this.shortcuts = shortcuts;
     }
 
+    /**
+     * <p>Setter for the field <code>features</code>.</p>
+     *
+     * @param features a {@link java.util.Map} object.
+     */
     public void setFeatures(Map<String, Boolean> features) {
         this.features = features;
     }
 
+    /**
+     * <p>Getter for the field <code>featuredLanguages</code>.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     public List<Language> getFeaturedLanguages() {
         return featuredLanguages;
     }
 
+    /**
+     * <p>Getter for the field <code>accessToken</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getAccessToken() {
         return accessToken;
     }    
     
+    /**
+     * <p>Getter for the field <code>defaultLocale</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getDefaultLocale() {
         return defaultLocale;
     }
 
+    /**
+     * <p>Getter for the field <code>translatorLevel</code>.</p>
+     *
+     * @return a {@link java.lang.Long} object.
+     */
     public Long getTranslatorLevel() {
         return translatorLevel;
     }
     
+    /**
+     * <p>Getter for the field <code>tools</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     protected Map<String, String> getTools() {
 		return tools;
 	}
 
+	/**
+	 * <p>Setter for the field <code>tools</code>.</p>
+	 *
+	 * @param tools a {@link java.util.Map} object.
+	 */
 	protected void setTools(Map<String, String> tools) {
 		this.tools = tools;
 	}
     
+    /** {@inheritDoc} */
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
     public void updateAttributes(Map<String, Object> attributes) {
@@ -330,6 +488,8 @@ public class Application extends Base {
 
     /**
      * Loads application from the service with extra parameters
+     *
+     * @param params Options for loading application
      */
     public void load(Map<String, Object> params) {
         try {
@@ -356,10 +516,6 @@ public class Application extends Base {
     	load(Utils.buildMap());	
     }
     
-    /**
-     * Load extensions from the definition API
-     * @param extensions
-     */
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	private void loadExtensions(Map<String, Object> extensions) {
     	String sourceLocale = null;
@@ -409,9 +565,9 @@ public class Application extends Base {
     
     /**
      * Returns the first accepted locale from the application languages
-     * 
-     * @param locales
-     * @return
+     *
+     * @param locale Set of locales to be searched for
+     * @return a {@link java.lang.String} object.
      */
     public String getFirstAcceptedLocale(String locale) {
     	if (locale == null)
@@ -428,6 +584,7 @@ public class Application extends Base {
     }
     
     /**
+     * <p>isKeyRegistrationEnabled.</p>
      *
      * @return true/false based on whether the app is in translation mode
      */
@@ -447,12 +604,20 @@ public class Application extends Base {
 
     /**
      * Returns translations cache key
-     * @return
+     *
+     * @param locale a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
      */
     public String getTranslationsCacheKey(String locale) {
     	return locale + "/translations";
     }
     
+    /**
+     * <p>updateTranslationKeys.</p>
+     *
+     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param data a {@link java.util.Map} object.
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void updateTranslationKeys(Language language, Map<String, Object> data) {
     	Iterator entries = ((Map) data.get("results")).entrySet().iterator();
@@ -488,7 +653,8 @@ public class Application extends Base {
     
     /**
      * Loads translations from the service for a given language and caches them in the application
-     * @param language
+     *
+     * @param language a {@link com.translationexchange.core.Language} object.
      */
     public void loadTranslations(Language language) {
         try {
@@ -512,14 +678,20 @@ public class Application extends Base {
     }
 
     /**
+     * <p>registerMissingTranslationKey.</p>
      *
-     * @param translationKey
-     * @param source
+     * @param translationKey a {@link com.translationexchange.core.TranslationKey} object.
      */
     public synchronized void registerMissingTranslationKey(TranslationKey translationKey) {
     	registerMissingTranslationKey(translationKey, "undefined");
     }
     
+    /**
+     * <p>registerMissingTranslationKey.</p>
+     *
+     * @param translationKey a {@link com.translationexchange.core.TranslationKey} object.
+     * @param sourceKey a {@link java.lang.String} object.
+     */
     public synchronized void registerMissingTranslationKey(TranslationKey translationKey, String sourceKey) {
         if (!isKeyRegistrationEnabled())
             return;
@@ -581,7 +753,9 @@ public class Application extends Base {
 
     /**
      * Registers keys on the server
-     * @param map
+     *
+     * @param map a {@link java.util.Map} object.
+     * @return a boolean.
      */
     public boolean registerKeys(Map<String, Object> map) {
         try {
@@ -595,8 +769,9 @@ public class Application extends Base {
     
     /**
      * Checks if the locale is in the list of supported locales
-     * @param locale
-     * @return
+     *
+     * @param locale a {@link java.lang.String} object.
+     * @return a boolean.
      */
     public boolean isSupportedLocale(String locale) {
     	for (Language language : getLanguages()) {
@@ -607,8 +782,9 @@ public class Application extends Base {
     }
     
     /**
+     * <p>getLanguage.</p>
      *
-     * @return
+     * @return a {@link com.translationexchange.core.Language} object.
      */
     public Language getLanguage() {
         return getLanguage(defaultLocale);
@@ -616,8 +792,8 @@ public class Application extends Base {
 
     /**
      * Returns languages by locale map
-     * 
-     * @return
+     *
+     * @return a {@link java.util.Map} object.
      */
     protected Map<String, Language> getLanguagesByLocale() {
         if (languagesByLocales == null)
@@ -626,9 +802,10 @@ public class Application extends Base {
     }
     
     /**
+     * <p>getLanguage.</p>
      *
-     * @param locale
-     * @return
+     * @param locale a {@link java.lang.String} object.
+     * @return a {@link com.translationexchange.core.Language} object.
      */
     public Language getLanguage(String locale) {
         if (getLanguagesByLocale().get(locale) == null) {
@@ -643,8 +820,8 @@ public class Application extends Base {
 
     /**
      * Returns a map of sources by keys
-     * 
-     * @return
+     *
+     * @return a {@link java.util.Map} object.
      */
     public Map<String, Source> getSourcesByKeys() {
         if (sourcesByKeys == null) {
@@ -656,9 +833,11 @@ public class Application extends Base {
     
     /**
      * Get source with translations for a specific locale
-     * @param key
-     * @param locale
-     * @return
+     *
+     * @param key a {@link java.lang.String} object.
+     * @param locale a {@link java.lang.String} object.
+     * @param options a {@link java.util.Map} object.
+     * @return a {@link com.translationexchange.core.Source} object.
      */
     public Source getSource(String key, String locale, Map<String, Object> options) {
         if (getSourcesByKeys().get(key) == null) {
@@ -674,7 +853,7 @@ public class Application extends Base {
      * Adds a language to the list of application languages.
      * The language may contain basic information or entire definition.
      *
-     * @param language
+     * @param language a {@link com.translationexchange.core.Language} object.
      */
     public void addLanguage(Language language) {
         if (languages == null)
@@ -691,7 +870,7 @@ public class Application extends Base {
     /**
      * Adds a locale to a list of featured languages.
      *
-     * @param locale
+     * @param locale a {@link java.lang.String} object.
      */
     public void addFeaturedLanguage(String locale) {
         if (featuredLanguages == null)
@@ -707,8 +886,8 @@ public class Application extends Base {
 
     /**
      * Adds a new source
-     * 
-     * @param source
+     *
+     * @param source a {@link com.translationexchange.core.Source} object.
      */
     public void addSource(Source source) {
         getSourcesByKeys().put(source.getKey(), source);
@@ -717,8 +896,8 @@ public class Application extends Base {
     /**
      * Caches translation key in the application scope for source fallback
      *
-     * @param translationKey
-     * @return
+     * @param translationKey a {@link com.translationexchange.core.TranslationKey} object.
+     * @return a {@link com.translationexchange.core.TranslationKey} object.
      */
     public TranslationKey cacheTranslationKey(TranslationKey translationKey) {
         TranslationKey cachedKey = getTranslationKey(translationKey.getKey());
@@ -748,9 +927,9 @@ public class Application extends Base {
 
     /**
      * Returns a translation key by hash
-     * 
-     * @param key
-     * @return
+     *
+     * @param key a {@link java.lang.String} object.
+     * @return a {@link com.translationexchange.core.TranslationKey} object.
      */
     public TranslationKey getTranslationKey(String key) {
         return getTranslationKeys().get(key);
@@ -758,8 +937,8 @@ public class Application extends Base {
 
     /**
      * Adds a new translation key to the application
-     * 
-     * @param translationKey
+     *
+     * @param translationKey a {@link com.translationexchange.core.TranslationKey} object.
      */
     public synchronized void addTranslationKey(TranslationKey translationKey) {
         translationKey.setApplication(this);
@@ -768,9 +947,9 @@ public class Application extends Base {
 
     /**
      * Checks if feature is enabled
-     * 
-     * @param feature
-     * @return
+     *
+     * @param feature a {@link java.lang.String} object.
+     * @return a boolean.
      */
     public boolean isFeatureEnabled(String feature) {
     	if (getFeatures() == null)
@@ -784,9 +963,9 @@ public class Application extends Base {
     
     /**
      * Returns tools hash
-     * 
-     * @param type
-     * @return
+     *
+     * @param type a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
      */
     public String getTools(String type) {
     	if (getTools() == null) return "";
@@ -795,8 +974,8 @@ public class Application extends Base {
     
     /**
      * Returns API host
-     * 
-     * @return
+     *
+     * @return a {@link java.lang.String} object.
      */
     public String getHost() {
         if (host == null)
@@ -805,8 +984,9 @@ public class Application extends Base {
     }
 
     /**
-     * Returns HTTP client 
-     * @return
+     * Returns HTTP client
+     *
+     * @return a {@link com.translationexchange.core.HttpClient} object.
      */
     public HttpClient getHttpClient() {
         if (httpClient == null)
@@ -817,6 +997,8 @@ public class Application extends Base {
 
     /**
      * Returns a string representation of the object
+     *
+     * @return a {@link java.lang.String} object.
      */
     public String toString() {
         return  this.name + " (" + this.key + ")";

@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.tokenizers;
@@ -39,22 +43,34 @@ import java.util.regex.Pattern;
 
 import com.translationexchange.core.Language;
 import com.translationexchange.core.Utils;
-
 public class DecorationTokenizer extends Tokenizer {
+    /** Constant <code>TOKEN_BRACKET</code> */
     public static final String TOKEN_BRACKET = "[";
 
+    /** Constant <code>RESERVED_TOKEN</code> */
     public static final String RESERVED_TOKEN  = "tml";
+    /** Constant <code>RE_SHORT_TOKEN_START</code> */
     public static final String RE_SHORT_TOKEN_START = "\\[[\\w]*:";				// [link:
+    /** Constant <code>RE_SHORT_TOKEN_END</code> */
     public static final String RE_SHORT_TOKEN_END   = "\\]";					// ]	
+    /** Constant <code>RE_LONG_TOKEN_STAR</code> */
     public static final String RE_LONG_TOKEN_START  = "\\[[\\w]*\\]";			// [link]
+    /** Constant <code>RE_LONG_TOKEN_END</code> */
     public static final String RE_LONG_TOKEN_END    = "\\[\\/[\\w]*\\]";		// [/link]	
+    /** Constant <code>RE_HTML_TOKEN_START</code> */
     public static final String RE_HTML_TOKEN_START  = "<[^\\>]*>";              // <link> 	 
+    /** Constant <code>RE_HTML_TOKEN_END</code> */
     public static final String RE_HTML_TOKEN_END    = "<\\/[^\\>]*>";			// </link>             
+    /** Constant <code>RE_TEXT</code> */
     public static final String RE_TEXT              = "[^\\[\\]<>]+";			// anything that is left
 
+    /** Constant <code>TOKEN_TYPE_SHORT</code> */
     public static final String TOKEN_TYPE_SHORT     = "short";
+    /** Constant <code>TOKEN_TYPE_LONG</code> */
     public static final String TOKEN_TYPE_LONG      = "long";
+    /** Constant <code>TOKEN_TYPE_HTML</code> */
     public static final String TOKEN_TYPE_HTML      = "html";
+    /** Constant <code>PLACEHOLDER</code> */
     public static final String PLACEHOLDER          = "{$0}";
 
 
@@ -74,33 +90,32 @@ public class DecorationTokenizer extends Tokenizer {
     protected List<String> elements;
 
     /**
-     *
+     * <p>Constructor for DecorationTokenizer.</p>
      */
     public DecorationTokenizer() {
         super();
     }
 
     /**
+     * <p>Constructor for DecorationTokenizer.</p>
      *
-     * @param label
+     * @param label a {@link java.lang.String} object.
      */
     public DecorationTokenizer(String label) {
         super(label, null);
     }
 
     /**
+     * <p>Constructor for DecorationTokenizer.</p>
      *
-     * @param label
-     * @param allowedTokenNames
+     * @param label a {@link java.lang.String} object.
+     * @param allowedTokenNames a {@link java.util.List} object.
      */
     public DecorationTokenizer(String label, List<String> allowedTokenNames) {
         super(label, allowedTokenNames);
     }
 
-    /**
-     * @param label Label to be tokenized
-     * @param allowedTokenNames List of allowed tokens
-     */
+    /** {@inheritDoc} */
     public void tokenize(String label, List<String> allowedTokenNames) {
         this.label =  "[" + RESERVED_TOKEN + "]" + label + "[/" + RESERVED_TOKEN + "]";
         this.tokenNames = new ArrayList<String>();
@@ -137,26 +152,56 @@ public class DecorationTokenizer extends Tokenizer {
         this.fragments = new ArrayList<String>(this.elements);
     }
 
+	/**
+	 * <p>Getter for the field <code>expression</code>.</p>
+	 *
+	 * @return a {@link java.lang.Object} object.
+	 */
 	protected Object getExpression() {
 		return expression;
 	}
 
+	/**
+	 * <p>Setter for the field <code>expression</code>.</p>
+	 *
+	 * @param expression a {@link java.lang.Object} object.
+	 */
 	protected void setExpression(Object expression) {
 		this.expression = expression;
 	}
 
+	/**
+	 * <p>Getter for the field <code>fragments</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	protected List<String> getFragments() {
 		return fragments;
 	}
 
+	/**
+	 * <p>Setter for the field <code>fragments</code>.</p>
+	 *
+	 * @param fragments a {@link java.util.List} object.
+	 */
 	protected void setFragments(List<String> fragments) {
 		this.fragments = fragments;
 	}
 
+	/**
+	 * <p>Getter for the field <code>elements</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	protected List<String> getElements() {
 		return elements;
 	}
 
+	/**
+	 * <p>Setter for the field <code>elements</code>.</p>
+	 *
+	 * @param elements a {@link java.util.List} object.
+	 */
 	protected void setElements(List<String> elements) {
 		this.elements = elements;
 	}
@@ -202,8 +247,9 @@ public class DecorationTokenizer extends Tokenizer {
     }
 
     /**
+     * <p>parse.</p>
      *
-     * @return
+     * @return a {@link java.lang.Object} object.
      */
     protected Object parse() {
         String token = pop();
@@ -234,10 +280,11 @@ public class DecorationTokenizer extends Tokenizer {
     }
 
     /**
+     * <p>parseTree.</p>
      *
-     * @param name
-     * @param type
-     * @return
+     * @param name a {@link java.lang.String} object.
+     * @param type a {@link java.lang.String} object.
+     * @return a {@link java.lang.Object} object.
      */
     protected Object parseTree(String name, String type) {
         List<Object> tree = new ArrayList<Object>();
@@ -272,28 +319,31 @@ public class DecorationTokenizer extends Tokenizer {
     }
 
     /**
+     * <p>isTokenAllowed.</p>
      *
-     * @param token
-     * @return
+     * @param token a {@link java.lang.String} object.
+     * @return a boolean.
      */
     protected boolean isTokenAllowed(String token) {
         return this.allowedTokenNames == null || allowedTokenNames.contains(token);
     }
 
     /**
+     * <p>applyToken.</p>
      *
-     * @param token
-     * @param value
-     * @return
+     * @param token a {@link java.lang.String} object.
+     * @param value a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
      */
     protected String applyToken(String token, String value) {
         return value;
     }
 
     /**
+     * <p>evaluate.</p>
      *
-     * @param expr
-     * @return
+     * @param expr a {@link java.lang.Object} object.
+     * @return a {@link java.lang.String} object.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected String evaluate(Object expr) {
@@ -312,23 +362,14 @@ public class DecorationTokenizer extends Tokenizer {
         return applyToken(token, value);
     }
 
-    /**
-     *
-     * @param tokensData
-     * @param options
-     * @return
-     */
+    /** {@inheritDoc} */
     public Object substitute(Map<String, Object> tokensData, Language language, Map<String, Object> options) {
         this.tokensData = tokensData;
         this.options = options;
         return evaluate(this.expression).replaceAll("\\[/tml\\]", "");
     }
 
-    /**
-     *
-     * @param label
-     * @return
-     */
+    /** {@inheritDoc} */
     public static boolean isApplicable(String label) {
         return label.contains(TOKEN_BRACKET);
     }

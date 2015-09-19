@@ -40,6 +40,9 @@ import java.util.Observable;
 
 /**
  * Represents a TML application session or a web request
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 public class Session extends Observable {
 
@@ -77,8 +80,8 @@ public class Session extends Observable {
 
     /**
      * Initializes current application
-     * @param token
-     * @param options
+     *
+     * @param options a {@link java.util.Map} object.
      */
     @SuppressWarnings("unchecked")
 	public Session(Map <String, Object> options) {
@@ -115,10 +118,20 @@ public class Session extends Observable {
         Tml.getConfig().setDecorator("html");
     }
         
+    /**
+     * <p>Getter for the field <code>currentLanguage</code>.</p>
+     *
+     * @return a {@link com.translationexchange.core.Language} object.
+     */
     public Language getCurrentLanguage() {
         return currentLanguage;
     }
 
+    /**
+     * <p>switchLanguage.</p>
+     *
+     * @param language a {@link com.translationexchange.core.Language} object.
+     */
     public void switchLanguage(Language language) {
 //        if (getCurrentLanguage().equals(language))
 //            return;
@@ -135,24 +148,45 @@ public class Session extends Observable {
 
     /**
      * Sets current language in the singleton instance
-     * @param locale
+     *
+     * @param locale a {@link java.lang.String} object.
      */
     public void setCurrentLocale(String locale) {
         setCurrentLanguage(getApplication().getLanguage(locale));
     }
 
+    /**
+     * <p>Setter for the field <code>currentLanguage</code>.</p>
+     *
+     * @param language a {@link com.translationexchange.core.Language} object.
+     */
     public void setCurrentLanguage(Language language) {
         this.currentLanguage = language;
     }
 
+    /**
+     * <p>Getter for the field <code>currentSource</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getCurrentSource() {
         return currentSource;
     }
 
+    /**
+     * <p>Setter for the field <code>currentSource</code>.</p>
+     *
+     * @param currentSource a {@link java.lang.String} object.
+     */
     public void setCurrentSource(String currentSource) {
         this.currentSource = currentSource;
     }
 
+    /**
+     * <p>beginBlockWithOptions.</p>
+     *
+     * @param options a {@link java.util.Map} object.
+     */
     public void beginBlockWithOptions(Map<String, Object> options) {
         if (this.blockOptions == null) {
             this.blockOptions = new ArrayList<Map<String, Object>>();
@@ -161,6 +195,11 @@ public class Session extends Observable {
         this.blockOptions.add(0, options);
     }
 
+    /**
+     * <p>Getter for the field <code>blockOptions</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     public Map<String, Object> getBlockOptions() {
         if (this.blockOptions == null)
             this.blockOptions = new ArrayList<Map<String, Object>>();
@@ -171,6 +210,9 @@ public class Session extends Observable {
         return this.blockOptions.get(0);
     }
 
+    /**
+     * <p>endBlock.</p>
+     */
     public void endBlock() {
         if (this.blockOptions == null || this.blockOptions.size() == 0)
             return;
@@ -178,10 +220,21 @@ public class Session extends Observable {
         this.blockOptions.remove(0);
     }
 
+    /**
+     * <p>getBlockOption.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     * @return a {@link java.lang.Object} object.
+     */
     public Object getBlockOption(String key) {
         return getBlockOptions().get(key);
     }
 
+    /**
+     * <p>getSourcePath.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     @SuppressWarnings("rawtypes")
     public List<String> getSourcePath() {
     	List<String> path = new ArrayList<String>();
@@ -200,22 +253,47 @@ public class Session extends Observable {
     	return path;
     }
     
+    /**
+     * <p>Getter for the field <code>application</code>.</p>
+     *
+     * @return a {@link com.translationexchange.core.Application} object.
+     */
     public Application getApplication() {
         return application;
     }
 
+    /**
+     * <p>Setter for the field <code>application</code>.</p>
+     *
+     * @param application a {@link com.translationexchange.core.Application} object.
+     */
     public void setApplication(Application application) {
         this.application = application;
     }
 
+    /**
+     * <p>Getter for the field <code>currentTranslator</code>.</p>
+     *
+     * @return a {@link com.translationexchange.core.Translator} object.
+     */
     public Translator getCurrentTranslator() {
         return currentTranslator;
     }
 
+    /**
+     * <p>Setter for the field <code>currentTranslator</code>.</p>
+     *
+     * @param currentTranslator a {@link com.translationexchange.core.Translator} object.
+     */
     public void setCurrentTranslator(Translator currentTranslator) {
         this.currentTranslator = currentTranslator;
     }
 
+    /**
+     * <p>isInlineModeEnabled.</p>
+     *
+     * @return a boolean.
+     */
     public boolean isInlineModeEnabled() {
     	if (getCurrentTranslator() == null) return false;
     	return getCurrentTranslator().isInline();
@@ -225,57 +303,136 @@ public class Session extends Observable {
      * Translates a simple label
      *
      * @param label Label to be translated
-     * @return
+     * @return a {@link java.lang.String} object.
      */
     public String translate(String label) {
         return translate(label, "");
     }
 
+    /**
+     * <p>translate.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param description a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
     public String translate(String label, String description) {
         return translate(label, description, null);
     }
 
+    /**
+     * <p>translate.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param description a {@link java.lang.String} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @return a {@link java.lang.String} object.
+     */
     public String translate(String label, String description, Map<String, Object> tokens) {
         return translate(label, description, tokens, null);
     }
 
+    /**
+     * <p>translate.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @return a {@link java.lang.String} object.
+     */
     public String translate(String label, Map<String, Object> tokens) {
         return translate(label, "", tokens, null);
     }
 
+    /**
+     * <p>translate.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @param options a {@link java.util.Map} object.
+     * @return a {@link java.lang.String} object.
+     */
     public String translate(String label, Map<String, Object> tokens, Map<String, Object> options) {
         return translate(label, "", tokens, options);
     }
 
+    /**
+     * <p>translate.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param description a {@link java.lang.String} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @param options a {@link java.util.Map} object.
+     * @return a {@link java.lang.String} object.
+     */
     public String translate(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
         return (String) getCurrentLanguage().translate(label, description, tokens, options);
     }
 
     /**
+     * <p>translateStyledString.</p>
      *
-     * @param label
-     * @return
+     * @param label a {@link java.lang.String} object.
+     * @return a {@link java.lang.Object} object.
      */
     public Object translateStyledString(String label) {
         return translateStyledString(label, "");
     }
 
+    /**
+     * <p>translateStyledString.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param description a {@link java.lang.String} object.
+     * @return a {@link java.lang.Object} object.
+     */
     public Object translateStyledString(String label, String description) {
         return translateStyledString(label, description, null);
     }
 
+    /**
+     * <p>translateStyledString.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param description a {@link java.lang.String} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @return a {@link java.lang.Object} object.
+     */
     public Object translateStyledString(String label, String description, Map<String, Object> tokens) {
         return  translateStyledString(label, description, tokens, null);
     }
 
+    /**
+     * <p>translateStyledString.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @return a {@link java.lang.Object} object.
+     */
     public Object translateStyledString(String label, Map<String, Object> tokens) {
         return translateStyledString(label, "", tokens, null);
     }
 
+    /**
+     * <p>translateStyledString.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @param options a {@link java.util.Map} object.
+     * @return a {@link java.lang.Object} object.
+     */
     public Object translateStyledString(String label, Map<String, Object> tokens, Map<String, Object> options) {
         return translateStyledString(label, "", tokens, options);
     }
 
+    /**
+     * <p>translateStyledString.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param description a {@link java.lang.String} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @param options a {@link java.util.Map} object.
+     * @return a {@link java.lang.Object} object.
+     */
     public Object translateStyledString(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
         if (options == null)
             options = new HashMap<String, Object>();

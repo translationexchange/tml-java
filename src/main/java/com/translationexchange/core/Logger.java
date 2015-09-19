@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core;
@@ -42,6 +46,9 @@ import org.apache.log4j.PatternLayout;
 public class Logger {
     private org.apache.log4j.Logger theLogger;
 
+    /**
+     * <p>Constructor for Logger.</p>
+     */
     public Logger() {
         this.theLogger = LogManager.getLogger("Tml");
         theLogger.setLevel(Level.DEBUG);
@@ -65,31 +72,72 @@ public class Logger {
         }
     }
 
+    /**
+     * <p>logException.</p>
+     *
+     * @param message a {@link java.lang.String} object.
+     * @param ex a {@link java.lang.Exception} object.
+     */
     public void logException(String message, Exception ex) {
         if (message != null) error(message);
         error(ex);
         error(Utils.join(ex.getStackTrace(), "\n"));
     }
 
+    /**
+     * <p>logException.</p>
+     *
+     * @param ex a {@link java.lang.Exception} object.
+     */
     public void logException(Exception ex) {
         this.logException(null, ex);
     }
 
+    /**
+     * <p>trace.</p>
+     *
+     * @param message a {@link java.lang.Object} object.
+     */
     public void trace(Object message) {
         theLogger.trace(message);
     }
+    /**
+     * <p>debug.</p>
+     *
+     * @param message a {@link java.lang.Object} object.
+     */
     public void debug(Object message) {
         theLogger.debug(message);
     }
+    /**
+     * <p>info.</p>
+     *
+     * @param message a {@link java.lang.Object} object.
+     */
     public void info(Object message) {
         theLogger.info(message);
     }
+    /**
+     * <p>warn.</p>
+     *
+     * @param message a {@link java.lang.Object} object.
+     */
     public void warn(Object message) {
         theLogger.warn(message);
     }
+    /**
+     * <p>error.</p>
+     *
+     * @param message a {@link java.lang.Object} object.
+     */
     public void error(Object message) {
         theLogger.error(message);
     }
+    /**
+     * <p>fatal.</p>
+     *
+     * @param message a {@link java.lang.Object} object.
+     */
     public void fatal(Object message) {
         theLogger.fatal(message);
     }

@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,9 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * @author Michael Berkovich, michael@translationexchange.com
- * 
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.rulesengine;
@@ -46,7 +47,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.translationexchange.core.Utils;
-
 public class Evaluator {
 
     private Map<String, Expression> context;
@@ -65,7 +65,8 @@ public class Evaluator {
 
     /**
      * Constructs the evaluator with default variables
-     * @param defaultVariables
+     *
+     * @param defaultVariables a {@link java.util.Map} object.
      */
     public Evaluator(Map<String, Object> defaultVariables) {
         this();
@@ -75,8 +76,8 @@ public class Evaluator {
     /**
      * Constructs the evaluator with default variables and context extension expressions
      *
-     * @param defaultVariables
-     * @param contextExtensions
+     * @param defaultVariables a {@link java.util.Map} object.
+     * @param contextExtensions a {@link java.util.Map} object.
      */
     public Evaluator(Map<String, Object> defaultVariables, Map<String, Expression> contextExtensions) {
         this(defaultVariables);
@@ -85,8 +86,9 @@ public class Evaluator {
 
     /**
      * Gets variable by name
-     * @param name
-     * @return
+     *
+     * @param name a {@link java.lang.String} object.
+     * @return a {@link java.lang.Object} object.
      */
     public Object getVariable(String name) {
         return this.variables.get(name);
@@ -94,8 +96,9 @@ public class Evaluator {
 
     /**
      * Sets variable
-     * @param name
-     * @param value
+     *
+     * @param name a {@link java.lang.String} object.
+     * @param value a {@link java.lang.Object} object.
      */
     public void setVariable(String name, Object value) {
         this.variables.put(name, value);
@@ -103,7 +106,8 @@ public class Evaluator {
 
     /**
      * Returns list of functions that handle their own nesting
-     * @return
+     *
+     * @return a {@link java.util.List} object.
      */
     public static List<String> defaultContextNestedFunctions() {
         return Arrays.asList("quote", "car", "cdr", "cond", "if", "&&", "||",
@@ -599,14 +603,30 @@ public class Evaluator {
         return defaultContext;
     }
 
+    /**
+     * <p>addNestedFunction.</p>
+     *
+     * @param fn a {@link java.lang.String} object.
+     */
     public void addNestedFunction(String fn) {
         this.nestedFunctions.add(fn);
     }
 
+    /**
+     * <p>removeNestedFunction.</p>
+     *
+     * @param fn a {@link java.lang.String} object.
+     */
     public void removeNestedFunction(String fn) {
         this.nestedFunctions.remove(fn);
     }
 
+    /**
+     * <p>isNestedFunction.</p>
+     *
+     * @param fn a {@link java.lang.String} object.
+     * @return a boolean.
+     */
     public boolean isNestedFunction(String fn) {
         return (this.nestedFunctions.indexOf(fn) != -1);
     }
@@ -616,14 +636,29 @@ public class Evaluator {
         return expr.evaluate(this, args);
     }
 
+    /**
+     * <p>getExpression.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     * @return a {@link com.translationexchange.core.rulesengine.Expression} object.
+     */
     public Expression getExpression(String name) {
         return context.get(name);
     }
 
+    /**
+     * <p>reset.</p>
+     */
     public void reset() {
         this.variables = new HashMap<String, Object>();
     }
 
+    /**
+     * <p>evaluate.</p>
+     *
+     * @param expr a {@link java.lang.Object} object.
+     * @return a {@link java.lang.Object} object.
+     */
     @SuppressWarnings("unchecked")
     public Object evaluate(Object expr) {
         if (expr instanceof String) {

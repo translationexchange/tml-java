@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.cache;
@@ -35,18 +39,19 @@ import java.util.Map;
 
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.Utils;
-
 public abstract class CacheAdapter implements Cache {
 	private Map<String, Object> config;
+	/** Constant <code>VERSION_KEY="current_version"</code> */
 	protected static String VERSION_KEY = "current_version";
+	/** Constant <code>KEY_PREFIX="tml"</code> */
 	protected static String KEY_PREFIX  = "tml";
 	
 	private String version;
 	
 	/**
 	 * Initialized Cache Adapter
-	 * 
-	 * @param config
+	 *
+	 * @param config a {@link java.util.Map} object.
 	 */
 	public CacheAdapter(Map<String, Object> config) {
 		this.config = config;
@@ -54,8 +59,8 @@ public abstract class CacheAdapter implements Cache {
 
 	/**
 	 * Fetches current version from cache
-	 * 
-	 * @return
+	 *
+	 * @return a {@link java.lang.String} object.
 	 */
 	public String fetchVersion() {
 		String version = (String) fetch(VERSION_KEY, Utils.buildMap());
@@ -64,9 +69,9 @@ public abstract class CacheAdapter implements Cache {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Stores current version in the cache
-	 * 
-	 * @param version
 	 */
 	public void storeVersion(String version) {
 		setVersion(version);
@@ -75,17 +80,17 @@ public abstract class CacheAdapter implements Cache {
 	
 	/**
 	 * Returns current version
-	 * 
-	 * @return
+	 *
+	 * @return a {@link java.lang.String} object.
 	 */
 	public String getVersion() {
 		return version;
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Sets current version
-	 * 
-	 * @param version
 	 */
 	public void setVersion(String version) {
 		this.version = version; 
@@ -93,8 +98,8 @@ public abstract class CacheAdapter implements Cache {
 
 	/**
 	 * Returns cache timeout
-	 * 
-	 * @return
+	 *
+	 * @return a int.
 	 */
 	public int getTimeout() {
 		if (getConfig().get("timeout") == null) 
@@ -104,11 +109,11 @@ public abstract class CacheAdapter implements Cache {
 	
 	/**
 	 * Returns key wrapped in version
-	 * 
-	 * @param key
-	 * @return
+	 *
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
 	 */
-	
+
 	// TODO: move it out to HTTP Client - version is not thread safe!
 	protected String getVersionedKey(String key) {
 		String elements[] = {
@@ -123,8 +128,8 @@ public abstract class CacheAdapter implements Cache {
 	
 	/**
 	 * Return cache configuration
-	 * 
-	 * @return
+	 *
+	 * @return a {@link java.util.Map} object.
 	 */
 	public Map<String, Object> getConfig() {
 		return config;
@@ -132,8 +137,8 @@ public abstract class CacheAdapter implements Cache {
 
 	/**
 	 * Sets cache configuration
-	 * 
-	 * @param config
+	 *
+	 * @param config a {@link java.util.Map} object.
 	 */
 	public void setConfig(Map<String, Object> config) {
 		this.config = config;
@@ -141,8 +146,8 @@ public abstract class CacheAdapter implements Cache {
 
 	/**
 	 * Writes debug info
-	 * 
-	 * @param msg
+	 *
+	 * @param msg a {@link java.lang.String} object.
 	 */
 	protected void debug(String msg) {
 		Tml.getLogger().debug(this.getClass().getName() + " - " + msg);

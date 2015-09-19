@@ -48,13 +48,20 @@ import com.translationexchange.core.Utils;
 import com.translationexchange.core.decorators.Decorator;
 
 /**
+ * <p>PipedToken class.</p>
  *
+ * @author Berk
+ * @version $Id: $Id
  */
 public class PipedToken extends DataToken {
 
+    /** Constant <code>SEPARATOR_INCLUSIVE="||"</code> */
     public static final String SEPARATOR_INCLUSIVE = "||";
+    /** Constant <code>SEPARATOR_EXCLUSIVE="|"</code> */
     public static final String SEPARATOR_EXCLUSIVE = "|";
+    /** Constant <code>SEPARATOR_PARAMS=","</code> */
     public static final String SEPARATOR_PARAMS = ",";
+    /** Constant <code>SEPARATOR_PARAM_VALUES=":"</code> */
     public static final String SEPARATOR_PARAM_VALUES = ":";
     
     /**
@@ -73,25 +80,28 @@ public class PipedToken extends DataToken {
     String pipelessName;
     
     /**
+     * <p>getExpression.</p>
      *
-     * @return
+     * @return a {@link java.lang.String} object.
      */
     public static String getExpression() {
         return "(%?\\{{1,2}\\s*[\\w]*\\s*(:\\s*\\w+)*\\s*\\|\\|?[^\\{\\}\\|]+\\}{1,2})";
     }
 
     /**
+     * <p>Constructor for PipedToken.</p>
      *
-     * @param token
+     * @param token a {@link java.lang.String} object.
      */
     public PipedToken(String token) {
         super(token);
     }
 
     /**
+     * <p>Constructor for PipedToken.</p>
      *
-     * @param token
-     * @param label
+     * @param token a {@link java.lang.String} object.
+     * @param label a {@link java.lang.String} object.
      */
     public PipedToken(String token, String label) {
         super(token, label);
@@ -99,8 +109,9 @@ public class PipedToken extends DataToken {
 
 
     /**
+     * <p>Getter for the field <code>separator</code>.</p>
      *
-     * @return
+     * @return a {@link java.lang.String} object.
      */
     public String getSeparator() {
         if (this.separator == null) {
@@ -110,8 +121,9 @@ public class PipedToken extends DataToken {
     }
 
     /**
+     * <p>Getter for the field <code>parameters</code>.</p>
      *
-     * @return
+     * @return a {@link java.util.List} object.
      */
     public List<String> getParameters() {
         if (this.parameters == null) {
@@ -125,6 +137,11 @@ public class PipedToken extends DataToken {
     }
 
     
+    /**
+     * <p>Getter for the field <code>pipelessName</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getPipelessName() {
         if (this.pipelessName == null) {
             this.pipelessName = getParenslessName().split(Pattern.quote(SEPARATOR_EXCLUSIVE))[0];
@@ -134,7 +151,9 @@ public class PipedToken extends DataToken {
     }
     
     /**
-     * 
+     * <p>getName.</p>
+     *
+     * @return a {@link java.lang.String} object.
      */
     public String getName() {
         if (this.shortName == null) {
@@ -143,9 +162,10 @@ public class PipedToken extends DataToken {
         return this.shortName;
     }    
 
-    /**
+   /**
+    * <p>getLanguageContextKeys.</p>
     *
-    * @return
+    * @return a {@link java.util.List} object.
     */
    public List<String> getLanguageContextKeys() {
        if (this.languageContextKeys == null) {
@@ -158,8 +178,9 @@ public class PipedToken extends DataToken {
    }
 
    /**
+    * <p>getLanguageCaseKeys.</p>
     *
-    * @return
+    * @return a {@link java.util.List} object.
     */
    public List<String> getLanguageCaseKeys() {
        if (this.languageCaseKeys == null) {
@@ -171,36 +192,34 @@ public class PipedToken extends DataToken {
        return this.languageCaseKeys;
    }
     
-   
     /**
-	 * token:      {count|| one: message, many: messages}
-	 * results in: {"one": "message", "many": "messages"}
-	 *
-	 * token:      {count| one: a message, other: $count messages}
-	 * results in: {"one": "a message", "other": "$count messages"}
-	 * 
-	 * token:      {count|| message}
-	 * transform:  [{"one": "{$0}", "other": "{$0::plural}"}, {"one": "{$0}", "other": "{$1}"}]
-	 * results in: {"one": "message", "other": "messages"}
-	 *
-	 * token:      {count|| message, messages}
-	 * transform:  [{"one": "{$0}", "other": "{$0::plural}"}, {"one": "{$0}", "other": "{$1}"}]
-	 * results in: {"one": "message", "other": "messages"}
-	 *
-	 * token:      {user| Dorogoi, Dorogaya}
-	 * transform:  ["unsupported", {"male": "{$0}", "female": "{$1}", "other": "{$0}/{$1}"}]
-	 * results in: {"male": "Dorogoi", "female": "Dorogaya", "other": "Dorogoi/Dorogaya"}
-	 *
-	 * token:      {actors:|| likes, like}
-	 * transform:  ["unsupported", {"one": "{$0}", "other": "{$1}"}]
-	 * results in: {"one": "likes", "other": "like"}
-	 *
-	 *
-	 * @param tokenMappingOptions
-	 * @param language
-	 * @param options
-	 * @return
-	 */
+     * token:      {count|| one: message, many: messages}
+     * results in: {"one": "message", "many": "messages"}
+     *
+     * token:      {count| one: a message, other: $count messages}
+     * results in: {"one": "a message", "other": "$count messages"}
+     *
+     * token:      {count|| message}
+     * transform:  [{"one": "{$0}", "other": "{$0::plural}"}, {"one": "{$0}", "other": "{$1}"}]
+     * results in: {"one": "message", "other": "messages"}
+     *
+     * token:      {count|| message, messages}
+     * transform:  [{"one": "{$0}", "other": "{$0::plural}"}, {"one": "{$0}", "other": "{$1}"}]
+     * results in: {"one": "message", "other": "messages"}
+     *
+     * token:      {user| Dorogoi, Dorogaya}
+     * transform:  ["unsupported", {"male": "{$0}", "female": "{$1}", "other": "{$0}/{$1}"}]
+     * results in: {"male": "Dorogoi", "female": "Dorogaya", "other": "Dorogoi/Dorogaya"}
+     *
+     * token:      {actors:|| likes, like}
+     * transform:  ["unsupported", {"one": "{$0}", "other": "{$1}"}]
+     * results in: {"one": "likes", "other": "like"}
+     *
+     * @param tokenMappingOptions a {@link java.lang.Object} object.
+     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param options a {@link java.util.Map} object.
+     * @return a {@link java.util.Map} object.
+     */
     @SuppressWarnings("unchecked")
 	public Map<String, String> getParameterMap(Object tokenMappingOptions, Language language, Map<String, Object> options) {
         Map<String, String> values = new HashMap<String, String>();
@@ -214,12 +233,12 @@ public class PipedToken extends DataToken {
         }
 
         if (tokenMappingOptions == null) {
-            Tml.getLogger().error(getFullName() + " is not associated with any context");
+        	logError(getFullName() + " is not associated with any context");
             return null;
         }
 
         if (tokenMappingOptions instanceof String) {
-            Tml.getLogger().error(getFullName() + " context parameter sequence is not supported");
+        	logError(getFullName() + " context parameter sequence is not supported");
             return null;
         }
 
@@ -228,12 +247,12 @@ public class PipedToken extends DataToken {
         if (tokenMappingOptions instanceof List) {
             List<Object> tokenMappingArray = (List<Object>) tokenMappingOptions;
             if (this.getParameters().size() > tokenMappingArray.size()) {
-                Tml.getLogger().error(getFullName() + " context parameter sequence is not supported");
+            	logError(getFullName() + " context parameter sequence is not supported");
                 return null;
             }
 
             if (!(tokenMappingArray.get(this.getParameters().size()-1) instanceof Map)) {
-                Tml.getLogger().error(getFullName() + " context parameter sequence is not supported");
+            	logError(getFullName() + " context parameter sequence is not supported");
                 return null;
             }
 
@@ -257,7 +276,7 @@ public class PipedToken extends DataToken {
                     Integer index = Integer.parseInt(indexValue.trim().replaceAll("\\$", ""));
 
                     if (getParameters().size() < index) {
-                        Tml.getLogger().error(getFullName() + " invalid context parameter sequence mapping");
+                    	logError(getFullName() + " invalid context parameter sequence mapping");
                         return null;
                     }
 
@@ -277,55 +296,54 @@ public class PipedToken extends DataToken {
     }
 
     /**
+     * <p>getParameterMap.</p>
      *
-     * @param tokenMappingOptions
-     * @return
+     * @param tokenMappingOptions a {@link java.lang.Object} object.
+     * @return a {@link java.util.Map} object.
      */
     public Map<String, String> getParameterMap(Object tokenMappingOptions) {
        return getParameterMap(tokenMappingOptions, null, null);
     }
 
+    /**
+     * <p>getDecorationName.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getDecorationName() {
     	return "piped";
     }
     
-    /**
-     *
-     * @param translatedLabel   label in which the substitution happens
-     * @param tokensData        map of data tokens
-     * @param language          language in which the substitution happens
-     * @param options           options for substitutions
-     * @return
-     */
+    /** {@inheritDoc} */
     public String substitute(String translatedLabel, Map<String, Object> tokensData, Language language, Map<String, Object> options) {
         Object object = getContextObject(tokensData);
 
         if (object == null) {
-            Tml.getLogger().error("missing token value in " + getFullName() + " of " + getOriginalLabel());
+        	logError("missing token value in " + getFullName() + " of " + getOriginalLabel());
             return translatedLabel;
         }
 
         if (this.getParameters().size() == 0) {
-            Tml.getLogger().error("missing piped params in " + getFullName() + " of " + getOriginalLabel());
+        	logError("missing piped params in " + getFullName() + " of " + getOriginalLabel());
             return translatedLabel;
         }
 
         LanguageContext context = getLanguageContext(language);
         if (context == null) {
-            Tml.getLogger().error("unknown language context in " + getFullName() + " of " + getOriginalLabel());
+        	logError("unknown language context in " + getFullName() + " of " + getOriginalLabel());
             return translatedLabel;
         }
 
         Map<String, String> valueMap = getParameterMap(context.getTokenMapping(), language, options);
         if (valueMap == null) {
-            Tml.getLogger().error("invalid context or piped params in " + getFullName() + " of " + getOriginalLabel());
+        	logError("invalid context or piped params in " + getFullName() + " of " + getOriginalLabel());
             return translatedLabel;
         }
 
         LanguageContextRule matchedRule = context.findMatchingRule(object);
 
         if (matchedRule == null) {
-            Tml.getLogger().error("no context rule matched in " + getFullName() + " of " + getOriginalLabel());
+        	logError("no context rule matched in " + getFullName() + " of " + getOriginalLabel());
             return translatedLabel;
         }
 
@@ -338,7 +356,7 @@ public class PipedToken extends DataToken {
         }
 
         if (value == null) {
-            Tml.getLogger().error("no value matched in " + getFullName() + " of " + getOriginalLabel());
+        	logError("no value matched in " + getFullName() + " of " + getOriginalLabel());
             return translatedLabel;
         }
 

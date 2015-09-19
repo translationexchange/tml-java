@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core;
@@ -47,13 +51,13 @@ import java.util.regex.Pattern;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
 public class Utils {
 
     /**
      * Checks if the object is an integer or a real number
-     * @param obj
-     * @return
+     *
+     * @param obj a {@link java.lang.Object} object.
+     * @return a boolean.
      */
     public static boolean isNumeric(Object obj) {
         return obj.toString().matches("[+-]?\\d*(\\.\\d+)?");
@@ -61,8 +65,9 @@ public class Utils {
 
     /**
      * Checks if the object is an integer
-     * @param obj
-     * @return
+     *
+     * @param obj a {@link java.lang.Object} object.
+     * @return a boolean.
      */
     public static boolean isInteger(Object obj) {
         return obj.toString().matches("[+-]?\\d*?");
@@ -70,8 +75,9 @@ public class Utils {
 
     /**
      * Parses integer
-     * @param obj
-     * @return
+     *
+     * @param obj a {@link java.lang.Object} object.
+     * @return a {@link java.lang.Integer} object.
      */
     public static Integer parseInt(Object obj) {
         return Integer.parseInt("" + obj);
@@ -79,8 +85,9 @@ public class Utils {
 
     /**
      * Parses a double
-     * @param obj
-     * @return
+     *
+     * @param obj a {@link java.lang.Object} object.
+     * @return a {@link java.lang.Double} object.
      */
     public static Double parseDouble(Object obj) {
         return Double.parseDouble("" + obj);
@@ -88,8 +95,9 @@ public class Utils {
 
     /**
      * Creates a regular expression from a string pattern
-     * @param str
-     * @return
+     *
+     * @param str a {@link java.lang.String} object.
+     * @return a {@link java.util.regex.Pattern} object.
      */
     public static Pattern parsePattern(String str) {
         String regex = str;
@@ -105,8 +113,10 @@ public class Utils {
 
     /**
      * Creates a query string out of parameters map
-     * @param params
-     * @return
+     *
+     * @param params a {@link java.util.Map} object.
+     * @return a {@link java.lang.String} object.
+     * @throws java.lang.Exception if any.
      */
     public static String buildQueryString(Map<String, Object> params) throws Exception {
         StringBuilder sb = new StringBuilder();
@@ -123,10 +133,14 @@ public class Utils {
     }
 
     /**
+     * <p>buildURL.</p>
      *
-     * @param path
-     * @return
-     * @throws MalformedURLException
+     * @param path a {@link java.lang.String} object.
+     * @throws MalformedURLException if any.
+     * @param host a {@link java.lang.String} object.
+     * @param params a {@link java.util.Map} object.
+     * @return a {@link java.net.URL} object.
+     * @throws java.lang.Exception if any.
      */
     public static URL buildURL(String host, String path, Map<String, Object> params) throws Exception {
         StringBuilder url = new StringBuilder();
@@ -144,10 +158,12 @@ public class Utils {
    
     /**
      * Builds a URL
-     * @param host
-     * @param path
-     * @return
-     * @throws MalformedURLException
+     *
+     * @param host a {@link java.lang.String} object.
+     * @param path a {@link java.lang.String} object.
+     * @throws MalformedURLException if any.
+     * @return a {@link java.net.URL} object.
+     * @throws java.lang.Exception if any.
      */
     public static URL buildURL(String host, String path) throws Exception {
         return buildURL(host, path, null);
@@ -155,8 +171,9 @@ public class Utils {
 
     /**
      * Builds a map out of parameters
-     * @param data
-     * @return
+     *
+     * @param data a {@link java.lang.Object} object.
+     * @return a {@link java.util.Map} object.
      */
     public static Map<String, Object> buildMap(Object... data) {
         HashMap<String, Object> result = new HashMap<String, Object>();
@@ -186,10 +203,10 @@ public class Utils {
 
     /**
      * Extends a map
-     * 
-     * @param original
-     * @param data
-     * @return
+     *
+     * @param original a {@link java.util.Map} object.
+     * @param data a {@link java.lang.Object} object.
+     * @return a {@link java.util.Map} object.
      */
     public static Map<String, Object> extendMap(Map<String, Object> original, Object... data) {
     	Map<String, Object> map = new HashMap<String, Object>(original);
@@ -199,16 +216,16 @@ public class Utils {
     
     /**
      * Builds a map out of parameters
-     * 
+     *
      * For instance:
-     * 
+     *
      * buildStringMap(
      *     "name", "Peter",
      *     "age", "35"
      * )
-     * 
-     * @param data
-     * @return
+     *
+     * @param data a {@link java.lang.String} object.
+     * @return a {@link java.util.Map} object.
      */
     public static Map<String, String> buildStringMap(String... data) {
         HashMap<String, String> result = new HashMap<String, String>();
@@ -239,8 +256,9 @@ public class Utils {
 
     /**
      * Builds a list from parameters
-     * @param data
-     * @return
+     *
+     * @param data a {@link java.lang.Object} object.
+     * @return a {@link java.util.List} object.
      */
     public static List<Object> buildList(Object... data) {
         List<Object> result = new ArrayList<Object>();
@@ -254,8 +272,9 @@ public class Utils {
 
     /**
      * Builds a list of Strings
-     * @param data
-     * @return
+     *
+     * @param data a {@link java.lang.String} object.
+     * @return a {@link java.util.List} object.
      */
     public static List<String> buildStringList(String... data) {
         List<String> result = new ArrayList<String>();
@@ -269,8 +288,9 @@ public class Utils {
 
     /**
      * Parsing JSON from string
-     * @param jsonText
-     * @return
+     *
+     * @param jsonText a {@link java.lang.String} object.
+     * @return a {@link java.lang.Object} object.
      */
     public static Object parseJSON(String jsonText) {
         if (jsonText == null) return null;
@@ -280,7 +300,7 @@ public class Utils {
         try {
             obj = p.parse(jsonText);
         } catch(ParseException pe){
-            Tml.getLogger().logException(pe);
+//            Tml.getLogger().logException(pe);
             return null;
         }
 
@@ -290,8 +310,8 @@ public class Utils {
     /**
      * Builds json from an object
      *
-     * @param object
-     * @return
+     * @param object a {@link java.lang.Object} object.
+     * @return a {@link java.lang.String} object.
      */
     public static String buildJSON(Object object) {
         if (object == null) return null;
@@ -308,8 +328,9 @@ public class Utils {
 
     /**
      * Trims all values in a list of strings
-     * @param original
-     * @return
+     *
+     * @param original a {@link java.util.List} object.
+     * @return a {@link java.util.List} object.
      */
     public static List<String> trimListValues(List<String> original) {
         List<String> trimmedList = new ArrayList<String>();
@@ -321,10 +342,11 @@ public class Utils {
 
     /**
      * Returns a value from a nested map using a specific separator
-     * @param map
-     * @param key
-     * @param separator
-     * @return
+     *
+     * @param map a {@link java.util.Map} object.
+     * @param key a {@link java.lang.String} object.
+     * @param separator a {@link java.lang.String} object.
+     * @return a {@link java.lang.Object} object.
      */
     @SuppressWarnings("unchecked")
 	public static Object getNestedMapValue(Map<String, Object> map, String key, String separator) {
@@ -343,20 +365,22 @@ public class Utils {
 
     /**
      * Returns a value from a nested map using a dot separator
-     * @param map
-     * @param key
-     * @return
+     *
+     * @param map a {@link java.util.Map} object.
+     * @param key a {@link java.lang.String} object.
+     * @return a {@link java.lang.Object} object.
      */
     public static Object getNestedMapValue(Map<String, Object> map, String key) {
         return getNestedMapValue(map, key, "\\.");
     }
 
     /**
+     * <p>setNestedMapValue.</p>
      *
-     * @param map
-     * @param key
-     * @param value
-     * @param separator
+     * @param map a {@link java.util.Map} object.
+     * @param key a {@link java.lang.String} object.
+     * @param value a {@link java.lang.Object} object.
+     * @param separator a {@link java.lang.String} object.
      */
     @SuppressWarnings("unchecked")
 	public static void setNestedMapValue(Map<String, Object> map, String key, Object value, String separator) {
@@ -376,20 +400,22 @@ public class Utils {
     }
 
     /**
+     * <p>setNestedMapValue.</p>
      *
-     * @param map
-     * @param key
-     * @param value
+     * @param map a {@link java.util.Map} object.
+     * @param key a {@link java.lang.String} object.
+     * @param value a {@link java.lang.Object} object.
      */
     public static void setNestedMapValue(Map<String, Object> map, String key, Object value) {
         setNestedMapValue(map, key, value, "\\.");
     }
 
     /**
-     * 
-     * @param objects
-     * @param joiner
-     * @return
+     * <p>join.</p>
+     *
+     * @param objects a {@link java.util.List} object.
+     * @param joiner a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
      */
     @SuppressWarnings("rawtypes")
 	public static String join(List objects, String joiner) {
@@ -397,10 +423,11 @@ public class Utils {
     }
     
     /**
-     * 
-     * @param objects
-     * @param joiner
-     * @return
+     * <p>join.</p>
+     *
+     * @param objects an array of {@link java.lang.Object} objects.
+     * @param joiner a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
      */
     public static String join(Object[] objects, String joiner) {
     	if (objects.length == 1)

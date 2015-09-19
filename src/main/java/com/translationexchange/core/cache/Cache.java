@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,27 +28,72 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.cache;
 
 import java.util.Map;
-
 public interface Cache {
 
+    /**
+     * <p>fetch.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     * @param options a {@link java.util.Map} object.
+     * @return a {@link java.lang.Object} object.
+     */
     public Object fetch(String key, Map<String, Object> options);
     
+    /**
+     * <p>store.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     * @param data a {@link java.lang.Object} object.
+     * @param options a {@link java.util.Map} object.
+     */
     public void store(String key, Object data, Map<String, Object> options);
 
+    /**
+     * <p>delete.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     * @param options a {@link java.util.Map} object.
+     */
     public void delete(String key, Map<String, Object> options);
 
+    /**
+     * <p>getVersion.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getVersion();
 
+    /**
+     * <p>setVersion.</p>
+     *
+     * @param version a {@link java.lang.String} object.
+     */
     public void setVersion(String version);
 
+    /**
+     * <p>fetchVersion.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String fetchVersion();
 
+    /**
+     * <p>storeVersion.</p>
+     *
+     * @param version a {@link java.lang.String} object.
+     */
     public void storeVersion(String version);
     
+    /**
+     * <p>resetVersion.</p>
+     */
     public void resetVersion();
 }

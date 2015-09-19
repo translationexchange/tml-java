@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,14 +28,23 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.rulesengine;
 
 import com.translationexchange.core.LanguageContext;
-
 public interface Variable {
 
+    /**
+     * <p>getValue.</p>
+     *
+     * @param context a {@link com.translationexchange.core.LanguageContext} object.
+     * @param object a {@link java.lang.Object} object.
+     * @return a {@link java.lang.Object} object.
+     */
     public Object getValue(LanguageContext context, Object object);
 
 }

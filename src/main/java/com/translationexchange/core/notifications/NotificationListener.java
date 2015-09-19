@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,12 +28,19 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.notifications;
-
 public interface NotificationListener {
 
+	/**
+	 * <p>onNotification.</p>
+	 *
+	 * @param notification a {@link com.translationexchange.core.notifications.Notification} object.
+	 */
 	public void onNotification(Notification notification);
 	
 }

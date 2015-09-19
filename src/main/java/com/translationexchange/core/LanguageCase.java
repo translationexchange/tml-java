@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core;
@@ -38,9 +42,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.translationexchange.core.decorators.Decorator;
-
 public class LanguageCase extends Base {
 
+    /** Constant <code>TR8N_HTML_TAGS_REGEX</code> */
     public static final String TR8N_HTML_TAGS_REGEX = "/<\\/?[^>]*>/";
 
     /**
@@ -88,16 +92,14 @@ public class LanguageCase extends Base {
 
     /**
      * Constructor with attributes
-     * @param attributes
+     *
+     * @param attributes a {@link java.util.Map} object.
      */
     public LanguageCase(Map<String, Object> attributes) {
         super(attributes);
     }
 
-    /**
-     *
-     * @param attributes
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("language") != null)
@@ -120,8 +122,9 @@ public class LanguageCase extends Base {
 
     /**
      * Finds matching rule for value
-     * @param value
-     * @return
+     *
+     * @param value a {@link java.lang.String} object.
+     * @return a {@link com.translationexchange.core.LanguageCaseRule} object.
      */
     public LanguageCaseRule findMatchingRule(String value) {
         return findMatchingRule(value, null);
@@ -129,8 +132,9 @@ public class LanguageCase extends Base {
 
     /**
      * Finds matching rule for value and object
+     *
      * @param value		String value to be matched
-     * @param object	Associated object (optional)	
+     * @param object	Associated object (optional)
      * @return 			True/False if the rule was matched
      */
     public LanguageCaseRule findMatchingRule(String value, Object object) {
@@ -143,8 +147,9 @@ public class LanguageCase extends Base {
 
     /**
      * Applies rule for value
-     * @param value
-     * @return
+     *
+     * @param value a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
      */
     public String apply(String value) {
         return apply(value, null, null);
@@ -152,9 +157,11 @@ public class LanguageCase extends Base {
 
     /**
      * Applies rule for value based on object properties
-     * @param value
-     * @param object
-     * @return
+     *
+     * @param value a {@link java.lang.String} object.
+     * @param object a {@link java.lang.Object} object.
+     * @param options a {@link java.util.Map} object.
+     * @return a {@link java.lang.String} object.
      */
     public String apply(String value, Object object, Map<String, Object> options) {
     	List<String> elements = new ArrayList<String>();
@@ -181,74 +188,160 @@ public class LanguageCase extends Base {
         return transformedValue;
     }
 
+    /**
+     * <p>Getter for the field <code>language</code>.</p>
+     *
+     * @return a {@link com.translationexchange.core.Language} object.
+     */
     public Language getLanguage() {
         return language;
     }
 
+    /**
+     * <p>Setter for the field <code>language</code>.</p>
+     *
+     * @param language a {@link com.translationexchange.core.Language} object.
+     */
     public void setLanguage(Language language) {
         this.language = language;
     }
 
+    /**
+     * <p>addRule.</p>
+     *
+     * @param rule a {@link com.translationexchange.core.LanguageCaseRule} object.
+     */
     public void addRule(LanguageCaseRule rule) {
         if (rules == null)
             rules = new ArrayList<LanguageCaseRule>();
         rules.add(rule);
     }
 
+    /**
+     * <p>getRule.</p>
+     *
+     * @param index a {@link java.lang.Integer} object.
+     * @return a {@link com.translationexchange.core.LanguageCaseRule} object.
+     */
     public LanguageCaseRule getRule(Integer index) {
         if (rules == null)
             return null;
         return rules.get(index);
     }
 
+    /**
+     * <p>Getter for the field <code>type</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * <p>Setter for the field <code>type</code>.</p>
+     *
+     * @param type a {@link java.lang.String} object.
+     */
     public void setType(String type) {
         this.type = type;
     }
 
+    /**
+     * <p>Getter for the field <code>keyword</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getKeyword() {
         return keyword;
     }
 
+    /**
+     * <p>Setter for the field <code>keyword</code>.</p>
+     *
+     * @param keyword a {@link java.lang.String} object.
+     */
     public void setKeyword(String keyword) {
         this.keyword = keyword;
     }
 
+    /**
+     * <p>Getter for the field <code>latinName</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getLatinName() {
         return latinName;
     }
 
+    /**
+     * <p>Setter for the field <code>latinName</code>.</p>
+     *
+     * @param latinName a {@link java.lang.String} object.
+     */
     public void setLatinName(String latinName) {
         this.latinName = latinName;
     }
 
+    /**
+     * <p>Getter for the field <code>nativeName</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getNativeName() {
         return nativeName;
     }
 
+    /**
+     * <p>Setter for the field <code>nativeName</code>.</p>
+     *
+     * @param nativeName a {@link java.lang.String} object.
+     */
     public void setNativeName(String nativeName) {
         this.nativeName = nativeName;
     }
 
+    /**
+     * <p>Getter for the field <code>description</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * <p>Setter for the field <code>description</code>.</p>
+     *
+     * @param description a {@link java.lang.String} object.
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * <p>Getter for the field <code>rules</code>.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     public List<LanguageCaseRule> getRules() {
         return rules;
     }
 
+    /**
+     * <p>Setter for the field <code>rules</code>.</p>
+     *
+     * @param rules a {@link java.util.List} object.
+     */
     public void setRules(List<LanguageCaseRule> rules) {
         this.rules = rules;
     }
     
+    /**
+     * <p>toString.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String toString() {
         return getKeyword();
     }

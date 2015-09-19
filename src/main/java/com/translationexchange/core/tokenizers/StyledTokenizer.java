@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.tokenizers;
@@ -38,36 +42,40 @@ import java.util.Map;
 
 import com.translationexchange.core.Language;
 import com.translationexchange.core.Utils;
-
 public abstract class StyledTokenizer extends DecorationTokenizer {
 
+    /** Constant <code>ATTRIBUTE_RANGE_ORIGIN="origin"</code> */
     public static final String ATTRIBUTE_RANGE_ORIGIN = "origin";
+    /** Constant <code>ATTRIBUTE_RANGE_LENGTH="length"</code> */
     public static final String ATTRIBUTE_RANGE_LENGTH = "length";
 
     protected Map<String, List<Map<String, Object>>> attributes;
 
     /**
+     * <p>Constructor for StyledTokenizer.</p>
      *
-     * @param label
+     * @param label a {@link java.lang.String} object.
      */
     public StyledTokenizer(String label) {
         this(label, null);
     }
 
     /**
+     * <p>Constructor for StyledTokenizer.</p>
      *
-     * @param label
-     * @param allowedTokenNames
+     * @param label a {@link java.lang.String} object.
+     * @param allowedTokenNames a {@link java.util.List} object.
      */
     public StyledTokenizer(String label, List<String> allowedTokenNames) {
         super(label, allowedTokenNames);
     }
 
     /**
+     * <p>evaluate.</p>
      *
-     * @param expr
-     * @param location
-     * @return
+     * @param expr a {@link java.lang.Object} object.
+     * @param location a int.
+     * @return a {@link java.lang.String} object.
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	protected String evaluate(Object expr, int location) {
@@ -102,12 +110,7 @@ public abstract class StyledTokenizer extends DecorationTokenizer {
     }
 
 
-    /**
-     *
-     * @param tokensData
-     * @param options
-     * @return
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
 	public Object substitute(Map<String, Object> tokensData, Language language, Map<String, Object> options) {
         this.tokensData = tokensData;
@@ -138,19 +141,19 @@ public abstract class StyledTokenizer extends DecorationTokenizer {
     
     /**
      * Creates a styled string AtrributedString or SpannedString or whatever else...
-     * 
-     * @param label
-     * @return
+     *
+     * @param label a {@link java.lang.String} object.
+     * @return a {@link java.lang.Object} object.
      */
     protected abstract Object createStyledString(String label);
     
-    /**
-     * Applies styles to the styled string
-     * 
-     * @param styledString
-     * @param styles
-     * @param ranges
-     */
+	/**
+	 * Applies styles to the styled string
+	 *
+	 * @param styledString a {@link java.lang.Object} object.
+	 * @param styles a {@link java.util.Map} object.
+	 * @param ranges a {@link java.util.List} object.
+	 */
 	protected abstract void applyStyles(Object styledString, Map<String, Object> styles, List<Map<String, Object>> ranges);
     
 }

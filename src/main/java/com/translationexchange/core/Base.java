@@ -35,9 +35,9 @@ import java.util.Map;
 
 /**
  * Base class for all TML library objects
- * 
- * @author Michael Berkovich
  *
+ * @author Michael Berkovich
+ * @version $Id: $Id
  */
 public abstract class Base {
 
@@ -52,7 +52,8 @@ public abstract class Base {
 
     /**
      * Constructor from attributes
-     * @param attributes
+     *
+     * @param attributes a {@link java.util.Map} object.
      */
     public Base(Map<String, Object> attributes) {
         this();
@@ -61,21 +62,24 @@ public abstract class Base {
 
     /**
      * Updates object's attributes
-     * @param attributes
+     *
+     * @param attributes a {@link java.util.Map} object.
      */
     public abstract void updateAttributes(Map<String, Object> attributes);
 
-    /**
-     * Checks if the model has been loaded from the server
-     * @return
-     */
+	/**
+	 * Checks if the model has been loaded from the server
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
 	public Boolean isLoaded() {
 		return loaded;
 	}
 
 	/**
 	 * Indicates that the model has been loaded from Cache or API
-	 * @param loaded
+	 *
+	 * @param loaded a {@link java.lang.Boolean} object.
 	 */
 	public void setLoaded(Boolean loaded) {
 		this.loaded = loaded;

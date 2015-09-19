@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core;
@@ -50,10 +54,12 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Request.Builder;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
-
 public class HttpClient {
+    /** Constant <code>API_PATH="v1/"</code> */
     public static final String API_PATH = "v1/";
+    /** Constant <code>UNRELEASED_VERSION="0"</code> */
     public static final String UNRELEASED_VERSION = "0";
+	/** Constant <code>CDN_URL="https://cdn.translationexchange.com"</code> */
 	protected static String CDN_URL      = "https://cdn.translationexchange.com";
 //	protected static String CDN_URL      = "https://trex-snapshots.s3-us-west-1.amazonaws.com";
 
@@ -72,7 +78,7 @@ public class HttpClient {
     /**
      * Default constructor
      *
-     * @param application
+     * @param application a {@link com.translationexchange.core.Application} object.
      */
     public HttpClient(Application application) {
         this.application = application;
@@ -124,36 +130,37 @@ public class HttpClient {
         params.put("access_token", this.getAccessToken());
     }
 
-    /**
-     * Requests data from URL and returns JSON Map
-     * 
-     * @param path
-     * @param params
-     * @param options
-     * @return
-     * @throws Exception
-     */
+	/**
+	 * Requests data from URL and returns JSON Map
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 * @param params a {@link java.util.Map} object.
+	 * @param options a {@link java.util.Map} object.
+	 * @throws java.lang.Exception if any.
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<String, Object> getJSONMap(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
         return getJSON(path, params, options);
     }
 
-    /**
-     * Requests data from URL and returns JSON Map
-     * 
-     * @param path
-     * @param params
-     * @return
-     * @throws Exception
-     */
+	/**
+	 * Requests data from URL and returns JSON Map
+	 *
+	 * @param path a {@link java.lang.String} object.
+	 * @param params a {@link java.util.Map} object.
+	 * @throws java.lang.Exception if any.
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<String, Object> getJSONMap(String path, Map<String, Object> params) throws Exception {
         return getJSON(path, params);
     }
 
-	/**
-     * 
-     * @param path
-     * @return
-     * @throws Exception
+    /**
+     * <p>getJSON.</p>
+     *
+     * @param path a {@link java.lang.String} object.
+     * @throws java.lang.Exception if any.
+     * @return a {@link java.util.Map} object.
      */
     public Map<String, Object> getJSON(String path) throws Exception {
         return getJSON(path, Utils.buildMap());
@@ -161,11 +168,11 @@ public class HttpClient {
     
     /**
      * Requests data from URL and returns JSON Map
-     * 
-     * @param path
-     * @param params
-     * @return
-     * @throws Exception
+     *
+     * @param path a {@link java.lang.String} object.
+     * @param params a {@link java.util.Map} object.
+     * @throws java.lang.Exception if any.
+     * @return a {@link java.util.Map} object.
      */
     public Map<String, Object> getJSON(String path, Map<String, Object> params) throws Exception {
         return getJSON(path, params, Utils.buildMap());
@@ -173,9 +180,9 @@ public class HttpClient {
 
     /**
      * Checks if cache should be used
-     * 
-     * @param options
-     * @return
+     *
+     * @param options a {@link java.util.Map} object.
+     * @return a boolean.
      */
     public boolean isCacheEnabled(Map<String, Object> options) {
     	if (!Tml.getConfig().isCacheEnabled()) return false;
@@ -235,12 +242,13 @@ public class HttpClient {
     }
     
     /**
-     * 
-     * @param path
-     * @param params
-     * @param options
-     * @return
-     * @throws Exception
+     * <p>getJSON.</p>
+     *
+     * @param path a {@link java.lang.String} object.
+     * @param params a {@link java.util.Map} object.
+     * @param options a {@link java.util.Map} object.
+     * @throws java.lang.Exception if any.
+     * @return a {@link java.util.Map} object.
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> getJSON(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
@@ -311,24 +319,25 @@ public class HttpClient {
     
     /**
      * Gets data from an API path.
-     * 
-     * @param path
-     * @param params
-     * @param options
-     * @return
-     * @throws Exception
+     *
+     * @param path a {@link java.lang.String} object.
+     * @param params a {@link java.util.Map} object.
+     * @param options a {@link java.util.Map} object.
+     * @throws java.lang.Exception if any.
+     * @return a {@link java.lang.String} object.
      */
     public String get(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
         prepareParams(params, options);
         return get(Utils.buildURL(getApplication().getHost(), API_PATH + path, params), options);
     }
 
-    /** 
+    /**
      * Gets data from a URL
-     * 
-     * @param url
-     * @return
-     * @throws Exception
+     *
+     * @param url Where to load data from
+     * @param options  Request options
+     * @throws java.lang.Exception if any.
+     * @return a {@link java.lang.String} object.
      */
     public String get(URL url, Map<String, Object> options) throws Exception {
         Tml.getLogger().debug("Requesting: " + url.toString());
@@ -346,11 +355,11 @@ public class HttpClient {
 
     /**
      * Posts to a path
-     * 
-     * @param path
-     * @param params
-     * @return
-     * @throws Exception
+     *
+     * @param path a {@link java.lang.String} object.
+     * @param params a {@link java.util.Map} object.
+     * @throws java.lang.Exception if any.
+     * @return a {@link java.lang.Object} object.
      */
     public Object post(String path, Map<String, Object> params) throws Exception {
         return post(path, params, null);
@@ -362,12 +371,12 @@ public class HttpClient {
     
     /**
      * Posts data to an API URL. Posts are never cached.
-     * 
-     * @param path
-     * @param params
-     * @param options
-     * @return
-     * @throws Exception
+     *
+     * @param path a {@link java.lang.String} object.
+     * @param params a {@link java.util.Map} object.
+     * @param options a {@link java.util.Map} object.
+     * @throws java.lang.Exception if any.
+     * @return a {@link java.lang.Object} object.
      */
     @SuppressWarnings("rawtypes")
     public Object post(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
@@ -395,20 +404,30 @@ public class HttpClient {
         return response.body().string();
     }
 
+    /**
+     * <p>Getter for the field <code>application</code>.</p>
+     *
+     * @return a {@link com.translationexchange.core.Application} object.
+     */
     public Application getApplication() {
         return application;
     }
 
+    /**
+     * <p>Setter for the field <code>application</code>.</p>
+     *
+     * @param application a {@link com.translationexchange.core.Application} object.
+     */
     public void setApplication(Application application) {
         this.application = application;
     }
     
     /**
-     * Compress a string using GZIP 
-     * 
-     * @param str
-     * @return
-     * @throws IOException
+     * Compress a string using GZIP
+     *
+     * @param str a {@link java.lang.String} object.
+     * @throws java.io.IOException if any.
+     * @return a {@link java.lang.String} object.
      */
     public static String compress(String str) throws IOException {
         if (str == null || str.length() == 0) {
@@ -426,10 +445,10 @@ public class HttpClient {
     
     /**
      * Decompress a string using GZIP
-     * 
-     * @param str
-     * @return
-     * @throws IOException
+     *
+     * @throws java.io.IOException if any.
+     * @param bytes an array of byte.
+     * @return a {@link java.lang.String} object.
      */
     public static String decompress(byte[] bytes) throws IOException {
         GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(bytes));

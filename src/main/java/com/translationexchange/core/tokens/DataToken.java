@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.tokens;
@@ -43,10 +47,11 @@ import com.translationexchange.core.Tml;
 import com.translationexchange.core.Utils;
 import com.translationexchange.core.decorators.Decorator;
 import com.translationexchange.core.tokenizers.DataTokenValue;
-
 public class DataToken extends Token {
 	
+    /** Constant <code>SEPARATOR_CONTEXT=":"</code> */
     public static final String SEPARATOR_CONTEXT = ":";
+    /** Constant <code>SEPARATOR_CASE="::"</code> */
     public static final String SEPARATOR_CASE = "::";
 
     private static final String MAP_OBJECT_NAME = "object";
@@ -65,33 +70,37 @@ public class DataToken extends Token {
     protected List<String> languageContextKeys;
 
     /**
+     * <p>getExpression.</p>
      *
-     * @return
+     * @return a {@link java.lang.String} object.
      */
     public static String getExpression() {
     	return "(%?\\{{1,2}\\s*\\w*\\s*(:\\s*\\w+)*\\s*(::\\s*\\w+)*\\s*\\}{1,2})";
     }
 
     /**
+     * <p>Constructor for DataToken.</p>
      *
-     * @param token
+     * @param token a {@link java.lang.String} object.
      */
     public DataToken(String token) {
         super(token);
     }
 
     /**
+     * <p>Constructor for DataToken.</p>
      *
-     * @param token
-     * @param label
+     * @param token a {@link java.lang.String} object.
+     * @param label a {@link java.lang.String} object.
      */
     public DataToken(String token, String label) {
         super(token, label);
     }
 
     /**
+     * <p>Getter for the field <code>languageContextKeys</code>.</p>
      *
-     * @return
+     * @return a {@link java.util.List} object.
      */
     public List<String> getLanguageContextKeys() {
         if (this.languageContextKeys == null) {
@@ -104,8 +113,9 @@ public class DataToken extends Token {
     }
 
     /**
+     * <p>Getter for the field <code>languageCaseKeys</code>.</p>
      *
-     * @return
+     * @return a {@link java.util.List} object.
      */
     public List<String> getLanguageCaseKeys() {
         if (this.languageCaseKeys == null) {
@@ -117,11 +127,7 @@ public class DataToken extends Token {
         return this.languageCaseKeys;
     }
 
-    /**
-     *
-     * @param options
-     * @return
-     */
+    /** {@inheritDoc} */
     public String getName(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
@@ -195,13 +201,20 @@ public class DataToken extends Token {
      *                                        }
      *                                    }))
      *
-     * @param tokenMap
-     * @return
+     * @param tokenMap a {@link java.util.Map} object.
+     * @return a {@link java.lang.Object} object.
      */
     public Object getContextObject(Map<String, Object> tokenMap) {
         return getContextObject(tokenMap, this.getObjectName());
     }
 
+    /**
+     * <p>getContextObject.</p>
+     *
+     * @param tokenMap a {@link java.util.Map} object.
+     * @param name a {@link java.lang.String} object.
+     * @return a {@link java.lang.Object} object.
+     */
     @SuppressWarnings("unchecked")
 	public static Object getContextObject(Map<String, Object> tokenMap, String name) {
         if (tokenMap == null)
@@ -232,6 +245,7 @@ public class DataToken extends Token {
     }
 
     /**
+     * <p>getValue.</p>
      *
      * @param tokenMap map of token names to values
      * @return value of the token
@@ -254,7 +268,7 @@ public class DataToken extends Token {
         if (object instanceof List) {
             List<Object> list = (List<Object>) object;
             if (list.size() != 2) {
-                Tml.getLogger().error("{" + getName() + "} in " + getOriginalLabel() + " : list substitution value is not provided}");
+            	logError("{" + getName() + "} in " + getOriginalLabel() + " : list substitution value is not provided}");
                 return getFullName();
             }
             object = list.get(1);
@@ -268,12 +282,12 @@ public class DataToken extends Token {
             }
 
             if (map.get(MAP_OBJECT_NAME) == null) {
-                Tml.getLogger().error("{" + getName() + "} in " + getOriginalLabel() + " : substitution object is not provided}");
+            	logError("{" + getName() + "} in " + getOriginalLabel() + " : substitution object is not provided}");
                 return getFullName();
             }
 
             if (!(map.get(MAP_OBJECT_NAME) instanceof Map)) {
-                Tml.getLogger().error("{" + getName() + "} in " + getOriginalLabel() + " : substitution object is not a map}");
+            	logError("{" + getName() + "} in " + getOriginalLabel() + " : substitution object is not a map}");
                 return getFullName();
             }
 
@@ -287,7 +301,7 @@ public class DataToken extends Token {
                 return obj.get(map.get(MAP_PROPERTY_NAME)).toString();
             }
 
-            Tml.getLogger().error("{" + getName() + "} in " + getOriginalLabel() + " : substitution property/value is not provided}");
+            logError("{" + getName() + "} in " + getOriginalLabel() + " : substitution property/value is not provided}");
             return getFullName();
         }
 
@@ -295,12 +309,14 @@ public class DataToken extends Token {
     }
 
     /**
+     * <p>applyLanguageCases.</p>
      *
-     * @param tokenValue
-     * @param object
-     * @param language
-     * @param options
-     * @return
+     * @param tokenValue a {@link java.lang.String} object.
+     * @param object a {@link java.lang.Object} object.
+     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param options a {@link java.util.Map} object.
+     * @param languageCaseKeys a {@link java.util.List} object.
+     * @return a {@link java.lang.String} object.
      */
     public String applyLanguageCases(String tokenValue, Object object, Language language, List<String> languageCaseKeys, Map<String, Object> options) {
         if (languageCaseKeys.size() == 0)
@@ -316,12 +332,13 @@ public class DataToken extends Token {
     }
 
     /**
+     * <p>applyLanguageCases.</p>
      *
-     * @param tokenValue
-     * @param object
-     * @param language
-     * @param options
-     * @return
+     * @param tokenValue a {@link java.lang.String} object.
+     * @param object a {@link java.lang.Object} object.
+     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param options a {@link java.util.Map} object.
+     * @return a {@link java.lang.String} object.
      */
     public String applyLanguageCases(String tokenValue, Object object, Language language, Map<String, Object> options) {
        return applyLanguageCases(tokenValue, object, language, this.getLanguageCaseKeys(), options);
@@ -340,8 +357,8 @@ public class DataToken extends Token {
      *
      * {user:gender:value}   - just not with piped tokens
      *
-     * @param language
-     * @return
+     * @param language a {@link com.translationexchange.core.Language} object.
+     * @return a {@link com.translationexchange.core.LanguageContext} object.
      */
     public LanguageContext getLanguageContext(Language language) {
         if (this.getLanguageContextKeys().size() > 0)
@@ -350,14 +367,7 @@ public class DataToken extends Token {
         return language.getContextByTokenName(this.getName());
     }
 
-    /**
-     *
-     * @param translatedLabel   label in which the substitution happens
-     * @param tokensData        map of data tokens
-     * @param language          language in which the substitution happens
-     * @param options           options for substitutions
-     * @return                  label with substituted tokens
-     */
+    /** {@inheritDoc} */
     public String substitute(String translatedLabel, Map<String, Object> tokensData, Language language, Map<String, Object> options) {
         String value = getValue(tokensData);
         

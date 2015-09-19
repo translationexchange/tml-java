@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core;
@@ -41,7 +45,6 @@ import com.translationexchange.core.decorators.Decorator;
 import com.translationexchange.core.decorators.HtmlDecorator;
 import com.translationexchange.core.decorators.PlainDecorator;
 import com.translationexchange.core.rulesengine.Variable;
-
 public class Configuration {
 
 	/**
@@ -119,6 +122,9 @@ public class Configuration {
      */
     private Map<String, String> tokenizerClasses;
     
+    /**
+     * <p>Constructor for Configuration.</p>
+     */
     public Configuration() {
     	this.decorator = new PlainDecorator();
     	
@@ -373,137 +379,316 @@ public class Configuration {
         );
     }
 
+    /**
+     * <p>isEnabled.</p>
+     *
+     * @return a boolean.
+     */
     public boolean isEnabled() {
         return enabled;
     }
 
+    /**
+     * <p>Getter for the field <code>defaultLevel</code>.</p>
+     *
+     * @return a {@link java.lang.Integer} object.
+     */
     public Integer getDefaultLevel() {
         return defaultLevel;
     }
 
+    /**
+     * <p>Getter for the field <code>format</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getFormat() {
         return format;
     }
 
+    /**
+     * <p>Getter for the field <code>tokenClasses</code>.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     public List<String> getTokenClasses() {
         return tokenClasses;
     }
 
+    /**
+     * <p>Getter for the field <code>application</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     public Map<String, Object> getApplication() {
         return application;
     }
 
+    /**
+     * <p>addDefaultTokenValue.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     * @param type a {@link java.lang.String} object.
+     * @param format a {@link java.lang.String} object.
+     * @param value a {@link java.lang.String} object.
+     */
     public void addDefaultTokenValue(String name, String type, String format, String value) {
         if (this.defaultTokens == null) this.defaultTokens = new HashMap<String, Object>();
         Utils.setNestedMapValue(this.defaultTokens, format + "." + type + "." + name, value);
     }
 
+    /**
+     * <p>getDefaultTokenValue.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     * @param type a {@link java.lang.String} object.
+     * @param format a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
     public String getDefaultTokenValue(String name, String type, String format) {
         return (String) Utils.getNestedMapValue(this.defaultTokens, format + "." + type + "." + name);
     }
 
+    /**
+     * <p>getDefaultTokenValue.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     * @param type a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
     public String getDefaultTokenValue(String name, String type) {
         return getDefaultTokenValue(name, type, getFormat());
     }
 
+    /**
+     * <p>getDefaultTokenValue.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
     public String getDefaultTokenValue(String name) {
         return getDefaultTokenValue(name, "data");
     }
 
+    /**
+     * <p>getDefaultFormat.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
     public String getDefaultFormat(String name) {
         return (String) Utils.getNestedMapValue(localization, "custom_date_formats." + name);
     }
 
+    /**
+     * <p>getContextVariable.</p>
+     *
+     * @param contextKeyword a {@link java.lang.String} object.
+     * @param varName a {@link java.lang.String} object.
+     * @return a {@link com.translationexchange.core.rulesengine.Variable} object.
+     */
     public Variable getContextVariable(String contextKeyword, String varName) {
         return (Variable) Utils.getNestedMapValue(contextRules, contextKeyword + ".variables." + varName);
     }
 
+	/**
+	 * <p>setContextVariable.</p>
+	 *
+	 * @param contextKeyword a {@link java.lang.String} object.
+	 * @param varName a {@link java.lang.String} object.
+	 * @param var a {@link com.translationexchange.core.rulesengine.Variable} object.
+	 */
 	@SuppressWarnings("unchecked")
 	public void setContextVariable(String contextKeyword, String varName, Variable var) {
         Map<String, Object> vars = (Map<String, Object>) Utils.getNestedMapValue(contextRules, contextKeyword + ".variables");
         vars.put(varName, var);
     }
 
+    /**
+     * <p>Getter for the field <code>enabled</code>.</p>
+     *
+     * @return a {@link java.lang.Boolean} object.
+     */
     public Boolean getEnabled() {
         return enabled;
     }
 
+    /**
+     * <p>Setter for the field <code>enabled</code>.</p>
+     *
+     * @param enabled a {@link java.lang.Boolean} object.
+     */
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 
+    /**
+     * <p>Getter for the field <code>defaultLocale</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getDefaultLocale() {
         return defaultLocale;
     }
 
+    /**
+     * <p>Setter for the field <code>defaultLocale</code>.</p>
+     *
+     * @param defaultLocale a {@link java.lang.String} object.
+     */
     public void setDefaultLocale(String defaultLocale) {
         this.defaultLocale = defaultLocale;
     }
 
+    /**
+     * <p>Setter for the field <code>defaultLevel</code>.</p>
+     *
+     * @param defaultLevel a {@link java.lang.Integer} object.
+     */
     public void setDefaultLevel(Integer defaultLevel) {
         this.defaultLevel = defaultLevel;
     }
 
+    /**
+     * <p>Setter for the field <code>format</code>.</p>
+     *
+     * @param format a {@link java.lang.String} object.
+     */
     public void setFormat(String format) {
         this.format = format;
     }
 
+    /**
+     * <p>Getter for the field <code>submitMissingKeysRealTime</code>.</p>
+     *
+     * @return a {@link java.lang.Boolean} object.
+     */
     public Boolean getSubmitMissingKeysRealTime() {
         return submitMissingKeysRealTime;
     }
 
+    /**
+     * <p>Setter for the field <code>submitMissingKeysRealTime</code>.</p>
+     *
+     * @param submitMissingKeysRealTime a {@link java.lang.Boolean} object.
+     */
     public void setSubmitMissingKeysRealTime(Boolean submitMissingKeysRealTime) {
         this.submitMissingKeysRealTime = submitMissingKeysRealTime;
     }
 
+    /**
+     * <p>Setter for the field <code>tokenClasses</code>.</p>
+     *
+     * @param tokenClasses a {@link java.util.List} object.
+     */
     public void setTokenClasses(List<String> tokenClasses) {
         this.tokenClasses = tokenClasses;
     }
 
+    /**
+     * <p>Setter for the field <code>application</code>.</p>
+     *
+     * @param application a {@link java.util.Map} object.
+     */
     public void setApplication(Map<String, Object> application) {
         this.application = application;
     }
 
+    /**
+     * <p>Getter for the field <code>contextRules</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     public Map<String, Object> getContextRules() {
         return contextRules;
     }
 
+    /**
+     * <p>Setter for the field <code>contextRules</code>.</p>
+     *
+     * @param contextRules a {@link java.util.Map} object.
+     */
     public void setContextRules(Map<String, Object> contextRules) {
         this.contextRules = contextRules;
     }
 
+    /**
+     * <p>Getter for the field <code>logger</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     public Map<String, Object> getLogger() {
         return logger;
     }
 
+    /**
+     * <p>Setter for the field <code>logger</code>.</p>
+     *
+     * @param logger a {@link java.util.Map} object.
+     */
     public void setLogger(Map<String, Object> logger) {
         this.logger = logger;
     }
 
+    /**
+     * <p>Getter for the field <code>cache</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     public Map<String, Object> getCache() {
         return cache;
     }
 
+    /**
+     * <p>Setter for the field <code>cache</code>.</p>
+     *
+     * @param cache a {@link java.util.Map} object.
+     */
     public void setCache(Map<String, Object> cache) {
         this.cache = cache;
     }
 
+    /**
+     * <p>Getter for the field <code>defaultTokens</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     public Map<String, Object> getDefaultTokens() {
         return defaultTokens;
     }
 
+    /**
+     * <p>Setter for the field <code>defaultTokens</code>.</p>
+     *
+     * @param defaultTokens a {@link java.util.Map} object.
+     */
     public void setDefaultTokens(Map<String, Object> defaultTokens) {
         this.defaultTokens = defaultTokens;
     }
 
+    /**
+     * <p>Getter for the field <code>localization</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     public Map<String, Object> getLocalization() {
         return localization;
     }
 
+    /**
+     * <p>Setter for the field <code>localization</code>.</p>
+     *
+     * @param localization a {@link java.util.Map} object.
+     */
     public void setLocalization(Map<String, Object> localization) {
         this.localization = localization;
     }
 
+    /**
+     * <p>Setter for the field <code>decorator</code>.</p>
+     *
+     * @param type a {@link java.lang.String} object.
+     */
     public void setDecorator(String type) {
     	if (type.equals("html"))
     		decorator = new HtmlDecorator();
@@ -511,20 +696,40 @@ public class Configuration {
     		decorator = new PlainDecorator();
     }
     
+    /**
+     * <p>Setter for the field <code>decorator</code>.</p>
+     *
+     * @param decorator a {@link com.translationexchange.core.decorators.Decorator} object.
+     */
     public void setDecorator(Decorator decorator) {
     	this.decorator = decorator;
     }
     
+    /**
+     * <p>Getter for the field <code>decorator</code>.</p>
+     *
+     * @return a {@link com.translationexchange.core.decorators.Decorator} object.
+     */
     public Decorator getDecorator() {
     	return decorator;
     }
     
+    /**
+     * <p>isCacheEnabled.</p>
+     *
+     * @return a boolean.
+     */
     public boolean isCacheEnabled() {
     	if (this.cache == null) return false;
     	if (this.cache.get("enabled") == null) return true;
     	return (Boolean)this.cache.get("enabled");
     }
     
+    /**
+     * <p>getApplicationName.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getApplicationName() {
     	if (getApplication() == null || getApplication().get("name") == null)
     		return "Tml";
@@ -532,6 +737,12 @@ public class Configuration {
     	return (String) getApplication().get("name");
     }
     
+    /**
+     * <p>addTokenizerClass.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     * @param tokenizerClass a {@link java.lang.String} object.
+     */
     public void addTokenizerClass(String key, String tokenizerClass) {
     	if (this.tokenizerClasses == null)
     		this.tokenizerClasses = new HashMap<String, String>();
@@ -539,6 +750,12 @@ public class Configuration {
     	this.tokenizerClasses.put(key, tokenizerClass);
     }
     
+    /**
+     * <p>getTokenizerClass.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
     public String getTokenizerClass(String key) {
     	if (this.tokenizerClasses == null)
     		return null;

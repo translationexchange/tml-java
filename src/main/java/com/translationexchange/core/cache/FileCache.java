@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.cache;
@@ -44,15 +48,24 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.Utils;
-
 public class FileCache extends CacheAdapter implements Cache {
 	protected File applicationPath;
 	protected File cachePath;
 	
+	/**
+	 * <p>Constructor for FileCache.</p>
+	 *
+	 * @param config a {@link java.util.Map} object.
+	 */
 	public FileCache(Map<String, Object> config) {
 		super(config);
 	}
 
+	/**
+	 * <p>Getter for the field <code>applicationPath</code>.</p>
+	 *
+	 * @return a {@link java.io.File} object.
+	 */
 	protected File getApplicationPath() {
 		if (applicationPath == null) {
 			String path = null;
@@ -70,6 +83,11 @@ public class FileCache extends CacheAdapter implements Cache {
 		return applicationPath;
 	}
 
+	/**
+	 * <p>Getter for the field <code>cachePath</code>.</p>
+	 *
+	 * @return a {@link java.io.File} object.
+	 */
 	protected File getCachePath() {
 		if (cachePath == null) {
 			cachePath = new File(getApplicationPath(), "Cache");
@@ -79,6 +97,12 @@ public class FileCache extends CacheAdapter implements Cache {
 		return cachePath;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>cachePath</code>.</p>
+	 *
+	 * @param cacheKey a {@link java.lang.String} object.
+	 * @return a {@link java.io.File} object.
+	 */
 	protected File getCachePath(String cacheKey) {
 		List<String> parts = new ArrayList<String>(Arrays.asList(cacheKey.split(Pattern.quote("/"))));
 		String fileName = parts.remove(parts.size()-1);
@@ -91,6 +115,13 @@ public class FileCache extends CacheAdapter implements Cache {
 		return new File(fileCachePath, fileName + ".json");
 	}
 	
+	/**
+	 * <p>readFile.</p>
+	 *
+	 * @param file a {@link java.io.File} object.
+	 * @return a {@link java.lang.String} object.
+	 * @throws java.lang.Exception if any.
+	 */
 	protected String readFile(File file) throws Exception {
 		BufferedReader br = new BufferedReader(new FileReader(file));
 	    try {
@@ -110,6 +141,7 @@ public class FileCache extends CacheAdapter implements Cache {
 	    }		
 	}
 	
+    /** {@inheritDoc} */
     public Object fetch(String key, Map<String, Object> options) {
     	File cacheFile = getCachePath(key);
     	if (!cacheFile.exists()) { 
@@ -126,12 +158,20 @@ public class FileCache extends CacheAdapter implements Cache {
     	}
     }
     
+    /**
+     * <p>writeFile.</p>
+     *
+     * @param file a {@link java.io.File} object.
+     * @param data a {@link java.lang.Object} object.
+     * @throws java.lang.Exception if any.
+     */
     protected void writeFile(File file, Object data) throws Exception {
     	PrintWriter writer = new PrintWriter(file, "UTF-8");
     	writer.print(data.toString());
     	writer.close();    	
     }
     
+    /** {@inheritDoc} */
     public void store(String key, Object data, Map<String, Object> options) {
     	File cacheFile = getCachePath(key);
     	
@@ -143,6 +183,7 @@ public class FileCache extends CacheAdapter implements Cache {
     	}
     }
 
+    /** {@inheritDoc} */
     public void delete(String key, Map<String, Object> options) {
     	File cacheFile = getCachePath(key);
 
@@ -157,6 +198,12 @@ public class FileCache extends CacheAdapter implements Cache {
     	}
     }
 
+    /**
+     * <p>deleteDirectory.</p>
+     *
+     * @param directory a {@link java.io.File} object.
+     * @return a boolean.
+     */
     public static boolean deleteDirectory(File directory) {
         if (directory.exists()) {
             File[] files = directory.listFiles();
@@ -173,6 +220,9 @@ public class FileCache extends CacheAdapter implements Cache {
         return directory.delete();
     }
       
+    /**
+     * <p>resetVersion.</p>
+     */
     public void resetVersion() {
     	deleteDirectory(getCachePath());
     }

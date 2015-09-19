@@ -35,11 +35,16 @@ import java.util.List;
 import java.util.Map;
 
 import com.translationexchange.core.Language;
+import com.translationexchange.core.Tml;
 
 /**
  * Base abstract class for all tokens supported by TML
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 public abstract class Token {
+    /** Constant <code>OPTIONS_PARENS="parens"</code> */
     public static final String OPTIONS_PARENS = "parens";
 
     /**
@@ -59,7 +64,8 @@ public abstract class Token {
 
     /**
      * Returns token's regular expression
-     * @return
+     *
+     * @return a {@link java.lang.String} object.
      */
     public static String getExpression() {
         return null;
@@ -67,7 +73,8 @@ public abstract class Token {
 
     /**
      * Default constructor
-     * @param token
+     *
+     * @param token a {@link java.lang.String} object.
      */
     public Token(String token) {
         this(token, null);
@@ -75,8 +82,9 @@ public abstract class Token {
 
     /**
      * Constructor for token and label
-     * @param token
-     * @param label
+     *
+     * @param token a {@link java.lang.String} object.
+     * @param label a {@link java.lang.String} object.
      */
     public Token(String token, String label) {
         this.fullName = token;
@@ -85,13 +93,15 @@ public abstract class Token {
 
     /**
      * Returns full name of the token as it appeared in the label
-     * @return
+     *
+     * @return a {@link java.lang.String} object.
      */
     public String getFullName() {
         return this.fullName;
     }
 
     /**
+     * <p>Getter for the field <code>originalLabel</code>.</p>
      *
      * @return original label from where the token was created
      */
@@ -110,7 +120,8 @@ public abstract class Token {
 
     /**
      * Returns just the name of the token
-     * @return
+     *
+     * @return a {@link java.lang.String} object.
      */
     public String getName() {
         if (this.shortName == null) {
@@ -120,8 +131,9 @@ public abstract class Token {
     }
 
     /**
+     * <p>getObjectName.</p>
      *
-     * @return
+     * @return a {@link java.lang.String} object.
      */
     public String getObjectName() {
         return getName();
@@ -129,8 +141,9 @@ public abstract class Token {
 
     /**
      * Allows you to customize the returned token name
-     * @param options
-     * @return
+     *
+     * @param options a {@link java.util.Map} object.
+     * @return a {@link java.lang.String} object.
      */
     public String getName(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
@@ -144,7 +157,8 @@ public abstract class Token {
 
     /**
      * Utility for debugging tokens
-     * @return
+     *
+     * @return a {@link java.lang.String} object.
      */
     public String toString() {
         return getFullName();
@@ -152,8 +166,8 @@ public abstract class Token {
 
     /**
      * Returns the name of the decoration class
-     * 
-     * @return
+     *
+     * @return a {@link java.lang.String} object.
      */
     public String getDecorationName() {
     	return "data";
@@ -161,24 +175,35 @@ public abstract class Token {
     
     /**
      * Returns language context keys
-     * 
-     * @return
+     *
+     * @return a {@link java.util.List} object.
      */
     public abstract List<String> getLanguageContextKeys();
 
     /**
      * Returns language case keys
-     * 
-     * @return
+     *
+     * @return a {@link java.util.List} object.
      */
     public abstract List<String> getLanguageCaseKeys();
     
     /**
      * Substitution method that must be implemented by each token
-     * @param tokensData
-     * @param language
-     * @param options
-     * @return
+     *
+     * @param tokensData a {@link java.util.Map} object.
+     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param options a {@link java.util.Map} object.
+     * @param translatedLabel a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
      */
     public abstract String substitute(String translatedLabel, Map<String, Object> tokensData, Language language, Map<String, Object> options);
+    
+    /**
+     * Logs error message
+     * 
+     * @param msg a {@link java.lang.String} object
+     */
+    protected void logError(String msg) {
+//    	Tml.getLogger().error(msg);
+    }
 }

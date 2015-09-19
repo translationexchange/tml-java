@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,9 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * @author Michael Berkovich, michael@translationexchange.com
- * 
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.rulesengine;
@@ -40,7 +41,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.translationexchange.core.Utils;
-
 public class Parser {
 
     private static final String OPENING_PAREN = "(";
@@ -66,7 +66,8 @@ public class Parser {
 
     /**
      * Default constructor
-     * @param expression
+     *
+     * @param expression a {@link java.lang.String} object.
      */
     public Parser(String expression) {
         tokenize(expression);
@@ -75,8 +76,8 @@ public class Parser {
     /**
      * Tokenizes an expression
      * (+ 1 1) becomes ["(", "1", "1" + ")"]
-     *  
-     * @param expression
+     *
+     * @param expression a {@link java.lang.String} object.
      */
     public void tokenize(String expression) {
         String regex = Utils.join(new String[] {REGEX_PARENS, REGEX_CONSTANTS, REGEX_VARIABLES, REGEX_OPERATORS, REGEX_STRINGS}, REGEX_JOINER);
@@ -93,8 +94,8 @@ public class Parser {
 
     /**
      * Returns a list of expression tokens
-     * 
-     * @return
+     *
+     * @return a {@link java.util.ArrayList} object.
      */
     public ArrayList<String> getTokens() {
         return tokens;
@@ -136,9 +137,9 @@ public class Parser {
     /**
      * Parses the expression into prefix form
      * (+ 1 1) becomes ["+", 1, 1]
-     * 
-     * @param expression
-     * @return
+     *
+     * @param expression a {@link java.lang.String} object.
+     * @return a {@link java.lang.Object} object.
      */
     public Object parse(String expression) {
         tokenize(expression);
@@ -147,8 +148,8 @@ public class Parser {
 
     /**
      * Parses the expression
-     * 
-     * @return
+     *
+     * @return a {@link java.lang.Object} object.
      */
     public Object parse() {
         String token = nextToken();

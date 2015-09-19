@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,14 +28,23 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.rulesengine;
 
 import java.util.List;
-
 public interface Expression {
 
+    /**
+     * <p>evaluate.</p>
+     *
+     * @param evaluator a {@link com.translationexchange.core.rulesengine.Evaluator} object.
+     * @param params a {@link java.util.List} object.
+     * @return a {@link java.lang.Object} object.
+     */
     public Object evaluate(Evaluator evaluator, List<Object> params);
 
 }

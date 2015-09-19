@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core;
@@ -39,7 +43,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 public class Source extends Base {
 
     /**
@@ -80,57 +83,105 @@ public class Source extends Base {
     }
 
     /**
+     * <p>Constructor for Source.</p>
      *
-     * @param attributes
+     * @param attributes a {@link java.util.Map} object.
      */
     public Source(Map<String, Object> attributes) {
         super(attributes);
     }
 
+    /**
+     * <p>Getter for the field <code>key</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getKey() {
         return key;
     }
 
+    /**
+     * <p>Getter for the field <code>application</code>.</p>
+     *
+     * @return a {@link com.translationexchange.core.Application} object.
+     */
     public Application getApplication() {
         return application;
     }
 
+    /**
+     * <p>Getter for the field <code>locale</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getLocale() {
         return locale;
     }
 
+    /**
+     * <p>Getter for the field <code>name</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * <p>Getter for the field <code>description</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * <p>Setter for the field <code>application</code>.</p>
+     *
+     * @param application a {@link com.translationexchange.core.Application} object.
+     */
     public void setApplication(Application application) {
         this.application = application;
     }
 
+    /**
+     * <p>Setter for the field <code>locale</code>.</p>
+     *
+     * @param locale a {@link java.lang.String} object.
+     */
     public void setLocale(String locale) {
         this.locale = locale;
     }
 
+    /**
+     * <p>Setter for the field <code>key</code>.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     */
     public void setKey(String key) {
         this.key = key;
     }
 
+    /**
+     * <p>Setter for the field <code>name</code>.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * <p>Setter for the field <code>description</code>.</p>
+     *
+     * @param description a {@link java.lang.String} object.
+     */
     public void setDescription(String description) {
         this.description = description;
     }
     
-    /**
-     *
-     * @param attributes
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("application") != null)
@@ -150,8 +201,8 @@ public class Source extends Base {
 
     /**
      * Updates translation keys in the app and in the source
-     * 
-     * @param data
+     *
+     * @param data a {@link java.util.Map} object.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void updateTranslationKeys(Map<String, Object> data) {
@@ -193,10 +244,10 @@ public class Source extends Base {
     
     /**
      * Creates cache key for source
-     * 
-     * @param locale
-     * @param key
-     * @return
+     *
+     * @param locale a {@link java.lang.String} object.
+     * @param key a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
      */
     public static String getCacheKey(String locale, String key) {
     	return locale + File.separator + "sources" + (key.startsWith(File.separator) ? "" : File.separator) + key;
@@ -204,15 +255,17 @@ public class Source extends Base {
     
     /**
      * Creates cache key for the source
-     * @return
+     *
+     * @return a {@link java.lang.String} object.
      */
     public String getCacheKey() {
     	return getCacheKey(getLocale(), getKey());
     }
     
     /**
-     * Generates MD5 representation of the key - used for API calls 
-     * @return
+     * Generates MD5 representation of the key - used for API calls
+     *
+     * @return a {@link java.lang.String} object.
      */
     public String generateMD5Key() {
     	try {
@@ -228,6 +281,8 @@ public class Source extends Base {
     
     /**
      * Loading source from service
+     *
+     * @param options a {@link java.util.Map} object.
      */
     public void load(Map<String, Object> options) {
         try {
@@ -247,9 +302,9 @@ public class Source extends Base {
     }
 
     /**
-     * Returns a map of translation keys 
-     * 
-     * @return
+     * Returns a map of translation keys
+     *
+     * @return a {@link java.util.Map} object.
      */
     public Map<String, TranslationKey> getTranslationKeys() {
         if (translationKeys == null) {
@@ -261,7 +316,8 @@ public class Source extends Base {
     
     /**
      * Adds translation key to the source
-     * @param translationKey
+     *
+     * @param translationKey a {@link com.translationexchange.core.TranslationKey} object.
      */
     public void addTranslationKey(TranslationKey translationKey) {
         if (getApplication() != null)
@@ -272,8 +328,9 @@ public class Source extends Base {
 
     /**
      * Returns translation key from the source
-     * @param key
-     * @return
+     *
+     * @param key a {@link java.lang.String} object.
+     * @return a {@link com.translationexchange.core.TranslationKey} object.
      */
     public TranslationKey getTranslationKey(String key) {
         if (translationKeys == null)

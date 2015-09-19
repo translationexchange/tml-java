@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core;
@@ -38,9 +42,9 @@ import java.util.Map.Entry;
 
 import com.translationexchange.core.rulesengine.Evaluator;
 import com.translationexchange.core.rulesengine.Parser;
-
 public class LanguageContextRule extends Base {
 
+    /** Constant <code>TR8N_DEFAULT_RULE_KEYWORD="other"</code> */
     public static final String TR8N_DEFAULT_RULE_KEYWORD = "other";
 
     /**
@@ -82,16 +86,14 @@ public class LanguageContextRule extends Base {
 
     /**
      * Default constructor
-     * @param attributes
+     *
+     * @param attributes a {@link java.util.Map} object.
      */
     public LanguageContextRule(Map<String, Object> attributes) {
         super(attributes);
     }
 
-    /**
-     *
-     * @param attributes
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("language_context") != null)
@@ -108,6 +110,7 @@ public class LanguageContextRule extends Base {
     }
 
     /**
+     * <p>isFallback.</p>
      *
      * @return boolean
      */
@@ -116,6 +119,7 @@ public class LanguageContextRule extends Base {
     }
 
     /**
+     * <p>Getter for the field <code>conditionsExpression</code>.</p>
      *
      * @return List
      */
@@ -130,8 +134,9 @@ public class LanguageContextRule extends Base {
     }
 
     /**
+     * <p>evaluate.</p>
      *
-     * @param vars
+     * @param vars a {@link java.util.Map} object.
      * @return boolean
      */
     public boolean evaluate(Map<String, Object> vars) {
@@ -151,42 +156,92 @@ public class LanguageContextRule extends Base {
         return (Boolean) e.evaluate(this.getConditionsExpression());
     }
 
+    /**
+     * <p>Getter for the field <code>keyword</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getKeyword() {
         return this.keyword;
     }
 
+    /**
+     * <p>Getter for the field <code>languageContext</code>.</p>
+     *
+     * @return a {@link com.translationexchange.core.LanguageContext} object.
+     */
     public LanguageContext getLanguageContext() {
         return languageContext;
     }
 
+    /**
+     * <p>Setter for the field <code>languageContext</code>.</p>
+     *
+     * @param languageContext a {@link com.translationexchange.core.LanguageContext} object.
+     */
     public void setLanguageContext(LanguageContext languageContext) {
         this.languageContext = languageContext;
     }
 
+    /**
+     * <p>Getter for the field <code>description</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * <p>Getter for the field <code>examples</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getExamples() {
         return examples;
     }
 
+    /**
+     * <p>Getter for the field <code>conditions</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getConditions() {
         return conditions;
     }
 
+    /**
+     * <p>Setter for the field <code>keyword</code>.</p>
+     *
+     * @param keyword a {@link java.lang.String} object.
+     */
     public void setKeyword(String keyword) {
         this.keyword = keyword;
     }
 
+    /**
+     * <p>Setter for the field <code>description</code>.</p>
+     *
+     * @param description a {@link java.lang.String} object.
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * <p>Setter for the field <code>examples</code>.</p>
+     *
+     * @param examples a {@link java.lang.String} object.
+     */
     public void setExamples(String examples) {
         this.examples = examples;
     }
 
+    /**
+     * <p>Setter for the field <code>conditions</code>.</p>
+     *
+     * @param conditions a {@link java.lang.String} object.
+     */
     public void setConditions(String conditions) {
         this.conditions = conditions;
     }

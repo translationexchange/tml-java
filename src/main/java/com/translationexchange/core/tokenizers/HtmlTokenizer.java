@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.tokenizers;
@@ -37,39 +41,35 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.translationexchange.core.Tml;
-
 public class HtmlTokenizer extends DecorationTokenizer {
 
-	/**
-	 * Default constructor
-	 */
+    /**
+     * Default constructor
+     */
     public HtmlTokenizer() {
         super();
     }
 	
     /**
+     * <p>Constructor for HtmlTokenizer.</p>
      *
-     * @param label
+     * @param label a {@link java.lang.String} object.
      */
     public HtmlTokenizer(String label) {
         this(label, null);
     }
 
     /**
+     * <p>Constructor for HtmlTokenizer.</p>
      *
-     * @param label
-     * @param allowedTokenNames
+     * @param label a {@link java.lang.String} object.
+     * @param allowedTokenNames a {@link java.util.List} object.
      */
     public HtmlTokenizer(String label, List<String> allowedTokenNames) {
         super(label, allowedTokenNames);
     }
 
-    /**
-     *
-     * @param token
-     * @param value
-     * @return
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
 	protected String applyToken(String token, String value) {
         if (token.equals(RESERVED_TOKEN) || !isTokenAllowed(token))

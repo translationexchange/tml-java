@@ -35,10 +35,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.translationexchange.core.Language;
+import com.translationexchange.core.Tml;
 import com.translationexchange.core.tokens.Token;
 
 /**
  * Base class for all tokenizers
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 public abstract class Tokenizer {
 
@@ -84,26 +88,28 @@ public abstract class Tokenizer {
 
     /**
      * Constructs tokenizer with label and list of allowed token names
-     *   
-     * @param label
-     * @param allowedTokenNames
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param allowedTokenNames a {@link java.util.List} object.
      */
     public Tokenizer(String label, List<String> allowedTokenNames) {
         tokenize(label, allowedTokenNames);
     }
 
     /**
+     * <p>tokenize.</p>
      *
-     * @param label
+     * @param label a {@link java.lang.String} object.
      */
     public void tokenize(String label) {
         tokenize(label, null);
     }
 
     /**
+     * <p>tokenize.</p>
      *
-     * @param label
-     * @param allowedTokenNames
+     * @param label a {@link java.lang.String} object.
+     * @param allowedTokenNames a {@link java.util.List} object.
      */
     public void tokenize(String label, List<String> allowedTokenNames) {
         this.label = label;
@@ -117,22 +123,29 @@ public abstract class Tokenizer {
      */
     protected abstract void tokenize();
 
+    /**
+     * <p>Getter for the field <code>tokenNames</code>.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     public List<String> getTokenNames() {
         return this.tokenNames;
     }
 
     /**
+     * <p>Getter for the field <code>allowedTokenNames</code>.</p>
      *
-     * @return
+     * @return a {@link java.util.List} object.
      */
     public List<String> getAllowedTokenNames() {
         return this.allowedTokenNames;
     }
 
     /**
+     * <p>isTokenAllowed.</p>
      *
-     * @param token
-     * @return
+     * @param token a {@link com.translationexchange.core.tokens.Token} object.
+     * @return a boolean.
      */
     public boolean isTokenAllowed(Token token) {
         if (this.getAllowedTokenNames() == null)
@@ -142,42 +155,63 @@ public abstract class Tokenizer {
     }
 
     /**
+     * <p>substitute.</p>
      *
-     * @param tokensData
-     * @return
+     * @param tokensData a {@link java.util.Map} object.
+     * @return a {@link java.lang.Object} object.
      */
     public Object substitute(Map<String, Object> tokensData) {
         return substitute(tokensData, null);
     }
 
     /**
+     * <p>substitute.</p>
      *
-     * @param tokensData
-     * @param language
-     * @return
+     * @param tokensData a {@link java.util.Map} object.
+     * @param language a {@link com.translationexchange.core.Language} object.
+     * @return a {@link java.lang.Object} object.
      */
     public Object substitute(Map<String, Object> tokensData, Language language) {
         return substitute(tokensData, language, null);
     }
 
     /**
+     * <p>substitute.</p>
      *
-     * @param tokensData
-     * @param language
-     * @param options
-     * @return
+     * @param tokensData a {@link java.util.Map} object.
+     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param options a {@link java.util.Map} object.
+     * @return a {@link java.lang.Object} object.
      */
     public abstract Object substitute(Map<String, Object> tokensData, Language language, Map<String, Object> options);
 
     /**
      * Returns true/false whether the tokenizer is applicable to the label
-     * 
-     * @param label
-     * @return
+     *
+     * @param label a {@link java.lang.String} object.
+     * @return a boolean.
      */
     public static boolean isApplicable(String label) {
         return false;
     }
     
+    /**
+     * Logs error message
+     * 
+     * @param msg a {@link java.lang.String} object
+     * @param ex a {@link java.lang.Exception} object.
+     */
+    protected void logException(String msg, Exception ex) {
+//    	Tml.getLogger().logException(msg, ex);
+    }
+    
+    /**
+     * Logs error message
+     * 
+     * @param msg a {@link java.lang.String} object
+     */
+    protected void logException(String msg) {
+//    	Tml.getLogger().logError(msg);
+    }
 }
 

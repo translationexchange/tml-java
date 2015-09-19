@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core;
@@ -38,10 +42,11 @@ import java.util.Map.Entry;
 
 import com.translationexchange.core.rulesengine.Evaluator;
 import com.translationexchange.core.rulesengine.Parser;
-
 public class LanguageCaseRule extends Base {
 
+	/** Constant <code>VARIABLE_NAME_VALUE="@value"</code> */
 	public static final String VARIABLE_NAME_VALUE = "@value";
+	/** Constant <code>VARIABLE_NAME_GENDER="@gender"</code> */
 	public static final String VARIABLE_NAME_GENDER = "@gender";
 	
     /**
@@ -88,16 +93,18 @@ public class LanguageCaseRule extends Base {
 
     /**
      * Creates rule with attributes
-     * @param attributes
+     *
+     * @param attributes a {@link java.util.Map} object.
      */
     public LanguageCaseRule(Map<String, Object> attributes) {
         super(attributes);
     }
 
-    /**
-     * Updates rule attributes
-     * @param attributes
-     */
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Updates rule attributes
+	 */
 	@SuppressWarnings("unchecked")
 	public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("language_case") != null)
@@ -117,6 +124,11 @@ public class LanguageCaseRule extends Base {
         }
     }
 
+    /**
+     * <p>Getter for the field <code>operationsExpression</code>.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getOperationsExpression() {
         if (this.operationsExpression == null && this.getOperations() != null) {
@@ -127,6 +139,11 @@ public class LanguageCaseRule extends Base {
         return this.operationsExpression;
     }
 
+    /**
+     * <p>Getter for the field <code>conditionsExpression</code>.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getConditionsExpression() {
         if (this.conditionsExpression == null && this.getConditions() != null) {
@@ -139,8 +156,9 @@ public class LanguageCaseRule extends Base {
 
     /**
      * Always returns true or false for the result of the rule evaluation
-     * @param value
-     * @return
+     *
+     * @param value a {@link java.lang.String} object.
+     * @return a boolean.
      */
     public boolean evaluate(String value) {
         return evaluate(value, null);
@@ -148,9 +166,10 @@ public class LanguageCaseRule extends Base {
 
     /**
      * Always returns true or false for the result of the rule evaluation
-     * @param value
-     * @param object
-     * @return
+     *
+     * @param value a {@link java.lang.String} object.
+     * @param object a {@link java.lang.Object} object.
+     * @return a boolean.
      */
     public boolean evaluate(String value, Object object) {
     	if (getConditionsExpression() == null)
@@ -195,8 +214,9 @@ public class LanguageCaseRule extends Base {
     
     /**
      * Applies operations and returns the modified value
-     * @param value
-     * @return
+     *
+     * @param value a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
      */
     public String apply(String value) {
     	if (getOperationsExpression() == null)
@@ -208,46 +228,101 @@ public class LanguageCaseRule extends Base {
     }
 
 
+    /**
+     * <p>Getter for the field <code>languageCase</code>.</p>
+     *
+     * @return a {@link com.translationexchange.core.LanguageCase} object.
+     */
     public LanguageCase getLanguageCase() {
         return languageCase;
     }
 
+    /**
+     * <p>Setter for the field <code>languageCase</code>.</p>
+     *
+     * @param languageCase a {@link com.translationexchange.core.LanguageCase} object.
+     */
     public void setLanguageCase(LanguageCase languageCase) {
         this.languageCase = languageCase;
     }
 
+    /**
+     * <p>Getter for the field <code>description</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * <p>Setter for the field <code>description</code>.</p>
+     *
+     * @param description a {@link java.lang.String} object.
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * <p>Getter for the field <code>examples</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getExamples() {
         return examples;
     }
 
+    /**
+     * <p>Setter for the field <code>examples</code>.</p>
+     *
+     * @param examples a {@link java.lang.String} object.
+     */
     public void setExamples(String examples) {
         this.examples = examples;
     }
 
+    /**
+     * <p>Getter for the field <code>conditions</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getConditions() {
         return conditions;
     }
 
+    /**
+     * <p>Setter for the field <code>conditions</code>.</p>
+     *
+     * @param conditions a {@link java.lang.String} object.
+     */
     public void setConditions(String conditions) {
         this.conditions = conditions;
     }
 
+    /**
+     * <p>Getter for the field <code>operations</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getOperations() {
         return operations;
     }
 
+    /**
+     * <p>Setter for the field <code>operations</code>.</p>
+     *
+     * @param operations a {@link java.lang.String} object.
+     */
     public void setOperations(String operations) {
         this.operations = operations;
     }
     
+    /**
+     * <p>toString.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String toString() {
     	return getConditions();
     }

@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core;
@@ -40,7 +44,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.translationexchange.core.rulesengine.Variable;
-
 public class LanguageContext extends Base {
 
     /**
@@ -97,17 +100,15 @@ public class LanguageContext extends Base {
     }
 
     /**
+     * <p>Constructor for LanguageContext.</p>
      *
-     * @param attributes
+     * @param attributes a {@link java.util.Map} object.
      */
     public LanguageContext(Map<String, Object> attributes) {
         super(attributes);
     }
 
-    /**
-     *
-     * @param attributes
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("language") != null)
@@ -138,9 +139,10 @@ public class LanguageContext extends Base {
     }
 
     /**
+     * <p>isApplicableToTokenName.</p>
      *
-     * @param tokenName
-     * @return
+     * @param tokenName a {@link java.lang.String} object.
+     * @return a boolean.
      */
     public boolean isApplicableToTokenName(String tokenName) {
         if (getTokenExpression() == null)
@@ -151,9 +153,10 @@ public class LanguageContext extends Base {
     }
 
     /**
+     * <p>getVariables.</p>
      *
-     * @param object
-     * @return
+     * @param object a {@link java.lang.Object} object.
+     * @return a {@link java.util.Map} object.
      */
     public Map<String, Object> getVariables(Object object) {
         Map<String, Object> vars = new HashMap<String, Object>();
@@ -165,9 +168,10 @@ public class LanguageContext extends Base {
     }
 
     /**
+     * <p>findMatchingRule.</p>
      *
-     * @param object
-     * @return
+     * @param object a {@link java.lang.Object} object.
+     * @return a {@link com.translationexchange.core.LanguageContextRule} object.
      */
     public LanguageContextRule findMatchingRule(Object object) {
         Map<String, Object> tokenVars = getVariables(object);
@@ -182,8 +186,9 @@ public class LanguageContext extends Base {
     }
 
     /**
+     * <p>Getter for the field <code>tokenMapping</code>.</p>
      *
-     * @return
+     * @return a {@link java.lang.Object} object.
      */
     public Object getTokenMapping() {
         return this.tokenMapping;
@@ -191,22 +196,25 @@ public class LanguageContext extends Base {
 
 
     /**
+     * <p>toString.</p>
      *
-     * @return
+     * @return a {@link java.lang.String} object.
      */
     public String toString() {
         return  this.keyword + "(" + this.language.getLocale() + ")";
     }
 
     /**
+     * <p>Getter for the field <code>fallbackRule</code>.</p>
      *
-     * @return
+     * @return a {@link com.translationexchange.core.LanguageContextRule} object.
      */
     public LanguageContextRule getFallbackRule() {
         return this.fallbackRule;
     }
 
     /**
+     * <p>Getter for the field <code>language</code>.</p>
      *
      * @return Language of the context
      */
@@ -214,74 +222,160 @@ public class LanguageContext extends Base {
         return this.language;
     }
 
+    /**
+     * <p>Setter for the field <code>language</code>.</p>
+     *
+     * @param language a {@link com.translationexchange.core.Language} object.
+     */
     public void setLanguage(Language language) {
         this.language = language;
     }
 
+    /**
+     * <p>addRule.</p>
+     *
+     * @param rule a {@link com.translationexchange.core.LanguageContextRule} object.
+     */
     public void addRule(LanguageContextRule rule) {
         if (rules == null)
             rules = new HashMap<String, LanguageContextRule>();
         rules.put(rule.getKeyword(), rule);
     }
 
+    /**
+     * <p>getRule.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     * @return a {@link com.translationexchange.core.LanguageContextRule} object.
+     */
     public LanguageContextRule getRule(String key) {
         if (rules == null)
             return null;
         return rules.get(key);
     }
 
+    /**
+     * <p>Getter for the field <code>keyword</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getKeyword() {
         return keyword;
     }
 
+    /**
+     * <p>Setter for the field <code>keyword</code>.</p>
+     *
+     * @param keyword a {@link java.lang.String} object.
+     */
     public void setKeyword(String keyword) {
         this.keyword = keyword;
     }
 
+    /**
+     * <p>Getter for the field <code>description</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * <p>Setter for the field <code>description</code>.</p>
+     *
+     * @param description a {@link java.lang.String} object.
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * <p>Getter for the field <code>keys</code>.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     public List<String> getKeys() {
         return keys;
     }
 
+    /**
+     * <p>Setter for the field <code>keys</code>.</p>
+     *
+     * @param keys a {@link java.util.List} object.
+     */
     public void setKeys(List<String> keys) {
         this.keys = keys;
     }
 
+    /**
+     * <p>Getter for the field <code>tokenExpression</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getTokenExpression() {
         return tokenExpression;
     }
 
+    /**
+     * <p>Setter for the field <code>tokenExpression</code>.</p>
+     *
+     * @param tokenExpression a {@link java.lang.String} object.
+     */
     public void setTokenExpression(String tokenExpression) {
         this.tokenExpression = tokenExpression;
     }
 
+    /**
+     * <p>Getter for the field <code>variableNames</code>.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     public List<String> getVariableNames() {
         return variableNames;
     }
 
+    /**
+     * <p>Setter for the field <code>variableNames</code>.</p>
+     *
+     * @param variableNames a {@link java.util.List} object.
+     */
     public void setVariableNames(List<String> variableNames) {
         this.variableNames = variableNames;
     }
 
+    /**
+     * <p>Setter for the field <code>tokenMapping</code>.</p>
+     *
+     * @param tokenMapping a {@link java.lang.Object} object.
+     */
     public void setTokenMapping(Object tokenMapping) {
         this.tokenMapping = tokenMapping;
     }
 
+    /**
+     * <p>Getter for the field <code>rules</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     public Map<String, LanguageContextRule> getRules() {
         return rules;
     }
 
+    /**
+     * <p>Setter for the field <code>rules</code>.</p>
+     *
+     * @param rules a {@link java.util.Map} object.
+     */
     public void setRules(Map<String, LanguageContextRule> rules) {
         this.rules = rules;
     }
 
+    /**
+     * <p>Setter for the field <code>fallbackRule</code>.</p>
+     *
+     * @param fallbackRule a {@link com.translationexchange.core.LanguageContextRule} object.
+     */
     public void setFallbackRule(LanguageContextRule fallbackRule) {
         this.fallbackRule = fallbackRule;
     }

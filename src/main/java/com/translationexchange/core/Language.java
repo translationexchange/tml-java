@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core;
@@ -35,7 +39,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 public class Language extends Base {
 
     /**
@@ -87,60 +90,126 @@ public class Language extends Base {
 
     /**
      * Default language constructor
-     * @param attributes
+     *
+     * @param attributes a {@link java.util.Map} object.
      */
     public Language(Map<String, Object> attributes) {
         super(attributes);
     }
     
+    /**
+     * <p>Getter for the field <code>application</code>.</p>
+     *
+     * @return a {@link com.translationexchange.core.Application} object.
+     */
     public Application getApplication() {
         return application;
     }
 
+    /**
+     * <p>Setter for the field <code>application</code>.</p>
+     *
+     * @param application a {@link com.translationexchange.core.Application} object.
+     */
     public void setApplication(Application application) {
         this.application = application;
     }
 
+    /**
+     * <p>Getter for the field <code>locale</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getLocale() {
         return locale;
     }
 
+    /**
+     * <p>Setter for the field <code>locale</code>.</p>
+     *
+     * @param locale a {@link java.lang.String} object.
+     */
     public void setLocale(String locale) {
         this.locale = locale;
     }
 
+    /**
+     * <p>Getter for the field <code>englishName</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getEnglishName() {
         return englishName;
     }
 
+    /**
+     * <p>Setter for the field <code>englishName</code>.</p>
+     *
+     * @param englishName a {@link java.lang.String} object.
+     */
     public void setEnglishName(String englishName) {
         this.englishName = englishName;
     }
 
+    /**
+     * <p>Getter for the field <code>nativeName</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getNativeName() {
         return nativeName;
     }
 
+    /**
+     * <p>Setter for the field <code>nativeName</code>.</p>
+     *
+     * @param nativeName a {@link java.lang.String} object.
+     */
     public void setNativeName(String nativeName) {
         this.nativeName = nativeName;
     }
 
+    /**
+     * <p>isRightToLeft.</p>
+     *
+     * @return a {@link java.lang.Boolean} object.
+     */
     public Boolean isRightToLeft() {
         return rightToLeft;
     }
 
+    /**
+     * <p>Setter for the field <code>rightToLeft</code>.</p>
+     *
+     * @param rightToLeft a {@link java.lang.Boolean} object.
+     */
     public void setRightToLeft(Boolean rightToLeft) {
         this.rightToLeft = rightToLeft;
     }
 
+    /**
+     * <p>Getter for the field <code>flagUrl</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getFlagUrl() {
         return flagUrl;
     }
 
+    /**
+     * <p>Setter for the field <code>flagUrl</code>.</p>
+     *
+     * @param flagUrl a {@link java.lang.String} object.
+     */
     public void setFlagUrl(String flagUrl) {
         this.flagUrl = flagUrl;
     }
 
+    /**
+     * <p>Getter for the field <code>contexts</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     public Map<String, LanguageContext> getContexts() {
     	if (contexts == null)
     		contexts = new HashMap<String, LanguageContext>();
@@ -148,6 +217,11 @@ public class Language extends Base {
         return contexts;
     }
 
+    /**
+     * <p>Getter for the field <code>cases</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     public Map<String, LanguageCase> getCases() {
     	if (cases == null)
     		cases = new HashMap<String, LanguageCase>();
@@ -155,10 +229,7 @@ public class Language extends Base {
         return cases;
     }
     
-    /**
-     *
-     * @param attributes
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("application") != null)
@@ -193,7 +264,8 @@ public class Language extends Base {
 
     /**
      * Returns cache key of the language
-     * @return
+     *
+     * @return a {@link java.lang.String} object.
      */
     public String getCacheKey() {
     	return getLocale() + File.separator + "language";
@@ -211,14 +283,15 @@ public class Language extends Base {
             setLoaded(true);
         } catch (Exception ex) {
         	setLoaded(false);
-            Tml.getLogger().logException(ex);
+//             Tml.getLogger().logException(ex);
         }
     }
 
 
     /**
      * Adds a context for the language
-     * @param languageContext
+     *
+     * @param languageContext a {@link com.translationexchange.core.LanguageContext} object.
      */
     public void addContext(LanguageContext languageContext) {
         if (contexts == null)
@@ -232,8 +305,9 @@ public class Language extends Base {
 
     /**
      * Returns language context based on the keyword
-     * @param keyword
-     * @return
+     *
+     * @param keyword a {@link java.lang.String} object.
+     * @return a {@link com.translationexchange.core.LanguageContext} object.
      */
     public LanguageContext getContextByKeyword(String keyword) {
         if (contexts == null)
@@ -243,8 +317,9 @@ public class Language extends Base {
 
     /**
      * Returns language context based on the token name
-     * @param tokenName
-     * @return
+     *
+     * @param tokenName a {@link java.lang.String} object.
+     * @return a {@link com.translationexchange.core.LanguageContext} object.
      */
     public LanguageContext getContextByTokenName(String tokenName) {
         for (LanguageContext context : getContexts().values()) {
@@ -256,8 +331,9 @@ public class Language extends Base {
 
     /**
      * Returns language case based on the keyword
-     * @param keyword
-     * @return
+     *
+     * @param keyword a {@link java.lang.String} object.
+     * @return a {@link com.translationexchange.core.LanguageCase} object.
      */
     public LanguageCase getLanguageCaseByKeyword(String keyword) {
         if (cases == null)
@@ -267,7 +343,8 @@ public class Language extends Base {
 
     /**
      * Adds a language case for the language
-     * @param languageCase
+     *
+     * @param languageCase a {@link com.translationexchange.core.LanguageCase} object.
      */
     public void addLanguageCase(LanguageCase languageCase) {
         if (cases == null)
@@ -280,7 +357,8 @@ public class Language extends Base {
 
     /**
      * Languages are loaded without definition by default, this will tell if the language has definition or it needs to be loaded
-     * @return
+     *
+     * @return a boolean.
      */
     public boolean hasDefinition() {
         return !getContexts().isEmpty();
@@ -330,41 +408,45 @@ public class Language extends Base {
     }
 
     /**
+     * <p>translate.</p>
      *
-     * @param label
-     * @return
+     * @param label a {@link java.lang.String} object.
+     * @return a {@link java.lang.Object} object.
      */
     public Object translate(String label) {
        return translate(label, "");
     }
     
     /**
+     * <p>translate.</p>
      *
-     * @param label
-     * @param description
-     * @return
+     * @param label a {@link java.lang.String} object.
+     * @param description a {@link java.lang.String} object.
+     * @return a {@link java.lang.Object} object.
      */
     public Object translate(String label, String description) {
        return translate(label, description, null, null);
     }
 
-	/**
-	 *
-	 * @param label
-	 * @param tokens
-	 * @return
-	 */
+    /**
+     * <p>translate.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @return a {@link java.lang.Object} object.
+     */
     public Object translate(String label, Map<String, Object> tokens) {
        return translate(label, "", tokens, null);
     }    
     
     /**
      * Translation method
-     * @param label
-     * @param description
-     * @param tokens
-     * @param options
-     * @return
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param description a {@link java.lang.String} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @param options a {@link java.util.Map} object.
+     * @return a {@link java.lang.Object} object.
      */
     public Object translate(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
         String keyHash = TranslationKey.generateKey(label, description);
@@ -408,15 +490,31 @@ public class Language extends Base {
         return tempKey.translate(this, tokens, options);
     }
 
+    /**
+     * <p>getAlignment.</p>
+     *
+     * @param target a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
     public String getAlignment(String target) {
     	if (isRightToLeft()) return target;
     	return target == "left" ? "right" : "left"; 
     }
 
+    /**
+     * <p>getDirection.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getDirection() {
     	return isRightToLeft() ? "rtl" : "ltr";
     }
     
+    /**
+     * <p>toString.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String toString() {
         return this.getEnglishName() + " (" + getLocale() + ")";
     }

@@ -5,7 +5,7 @@
 	<groupId>com.translationexchange</groupId>
 	<artifactId>tml</artifactId>
 	<packaging>jar</packaging>
-	<version>0.2.1</version>
+	<version>0.2.1-SNAPSHOT</version>
 
 	<name>tml</name>
 	<description>Core library for Translation Exchange Java Extensions</description>
@@ -31,12 +31,6 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-
-	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>7</version>
-	</parent>
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -171,11 +165,9 @@
 						</goals>
 						<configuration>
 							<rules>
-								<!-- implmentation is needed only for Maven 2 -->
 								<rule implementation="org.jacoco.maven.RuleConfiguration">
 									<element>BUNDLE</element>
 									<limits>
-										<!-- implmentation is needed only for Maven 2 -->
 										<limit implementation="org.jacoco.report.check.Limit">
 											<counter>COMPLEXITY</counter>
 											<value>COVEREDRATIO</value>

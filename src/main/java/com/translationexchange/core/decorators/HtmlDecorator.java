@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.decorators;
@@ -45,7 +49,6 @@ import com.translationexchange.core.Session;
 import com.translationexchange.core.TranslationKey;
 import com.translationexchange.core.Utils;
 import com.translationexchange.core.tokens.Token;
-
 public class HtmlDecorator implements Decorator {
 
 	private boolean isEnabled(Map<String, Object> options) {
@@ -66,6 +69,7 @@ public class HtmlDecorator implements Decorator {
         return defaultName;
     }
 	
+	/** {@inheritDoc} */
 	public String decorate(String translatedLabel, Language translationLanguage, Language targetLanguage, TranslationKey translationKey, Map<String, Object> options) {
 		// Tml.getLogger().debug(label + " : " + translationLanguage.getLocale() + " :: " + translationKey.getLocale() + " => " + targetLanguage.getLocale());
 		
@@ -110,6 +114,7 @@ public class HtmlDecorator implements Decorator {
 		return sb.toString();
 	}
 
+	/** {@inheritDoc} */
 	public String decorateLanguageCase(LanguageCase languageCase, LanguageCaseRule rule, String original, String transformed, Map<String, Object> options) {
 		if (!isEnabled(options))
 			return transformed;
@@ -149,6 +154,7 @@ public class HtmlDecorator implements Decorator {
 		return html.toString();		
 	}
 	
+	/** {@inheritDoc} */
 	public String decorateToken(Token token, String value, Map<String, Object> options) {
 		if (!isEnabled(options))
 			return value;
@@ -173,6 +179,7 @@ public class HtmlDecorator implements Decorator {
 		return html.toString();
 	}
 
+	/** {@inheritDoc} */
 	public String decorateElement(Token token, String value, Map<String, Object> options) {
 		if (!isEnabled(options))
 			return value;

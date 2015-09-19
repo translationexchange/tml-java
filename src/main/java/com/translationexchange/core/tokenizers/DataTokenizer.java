@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.tokenizers;
@@ -42,9 +46,10 @@ import java.util.regex.Pattern;
 import com.translationexchange.core.Language;
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.tokens.Token;
-
 public class DataTokenizer extends Tokenizer {
+    /** Constant <code>TOKEN_BRACKET="{"</code> */
     public static final String TOKEN_BRACKET = "{";
+    /** Constant <code>EXPRESSION_METHOD="getExpression"</code> */
     public static final String EXPRESSION_METHOD = "getExpression";
     
     /**
@@ -69,6 +74,7 @@ public class DataTokenizer extends Tokenizer {
     }
 
     /**
+     * <p>Constructor for DataTokenizer.</p>
      *
      * @param label label to be tokenized
      * @param allowedTokenNames list of allowed token names
@@ -77,9 +83,9 @@ public class DataTokenizer extends Tokenizer {
         super(label, allowedTokenNames);
     }
 
-    /**
-     * Extract tokens from a string
-     */
+	/**
+	 * Extract tokens from a string
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
     protected void tokenize() {
         try {
@@ -105,13 +111,14 @@ public class DataTokenizer extends Tokenizer {
                 }
             }
         } catch (Exception ex) {
-            Tml.getLogger().logException("Failed to tokenize a label: " + label, ex);
+           logException("Failed to tokenize a label: " + label, ex);
         }
     }
 
 	/**
 	 * Returns list of tokens found in the label
-	 * @return
+	 *
+	 * @return a {@link java.util.List} object.
 	 */
 	public List<Token> getTokens() {
 		if (this.tokens == null)
@@ -128,6 +135,7 @@ public class DataTokenizer extends Tokenizer {
 	}
 	
     /**
+     * <p>getTokenNames.</p>
      *
      * @return List of token names derived from the label
      */
@@ -141,13 +149,7 @@ public class DataTokenizer extends Tokenizer {
         return this.tokenNames;
     }
 
-    /**
-     *
-     * @param tokensData
-     * @param language
-     * @param options
-     * @return
-     */
+    /** {@inheritDoc} */
     public Object substitute(Map<String, Object> tokensData, Language language, Map<String, Object> options) {
         this.tokensData = tokensData;
         this.options = options;
@@ -159,11 +161,7 @@ public class DataTokenizer extends Tokenizer {
         return translatedLabel;
     }
 
-    /**
-     *
-     * @param label
-     * @return
-     */
+    /** {@inheritDoc} */
     public static boolean isApplicable(String label) {
         return label.contains(TOKEN_BRACKET);
     }

@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.tokens;
@@ -38,7 +42,6 @@ import java.util.regex.Pattern;
 import com.translationexchange.core.Language;
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.decorators.Decorator;
-
 public class MethodToken extends DataToken {
 
     /**
@@ -52,33 +55,37 @@ public class MethodToken extends DataToken {
     String methodName;
 
     /**
+     * <p>getExpression.</p>
      *
-     * @return
+     * @return a {@link java.lang.String} object.
      */
     public static String getExpression() {
         return "(%?\\{{1,2}\\s*[\\w]*\\.\\w*\\s*(:\\s*\\w+)*\\s*(::\\s*\\w+)*\\s*\\}{1,2})";
     }
 
     /**
+     * <p>Constructor for MethodToken.</p>
      *
-     * @param token
+     * @param token a {@link java.lang.String} object.
      */
     public MethodToken(String token) {
         super(token);
     }
 
     /**
+     * <p>Constructor for MethodToken.</p>
      *
-     * @param token
-     * @param label
+     * @param token a {@link java.lang.String} object.
+     * @param label a {@link java.lang.String} object.
      */
     public MethodToken(String token, String label) {
         super(token, label);
     }
 
     /**
+     * <p>Getter for the field <code>objectName</code>.</p>
      *
-     * @return
+     * @return a {@link java.lang.String} object.
      */
     public String getObjectName() {
         if (this.objectName == null) {
@@ -88,8 +95,9 @@ public class MethodToken extends DataToken {
     }
 
     /**
+     * <p>Getter for the field <code>methodName</code>.</p>
      *
-     * @return
+     * @return a {@link java.lang.String} object.
      */
     public String getMethodName() {
         if (this.methodName == null) {
@@ -100,22 +108,23 @@ public class MethodToken extends DataToken {
     }
 
     /**
+     * <p>getObjectValue.</p>
      *
-     * @param object
-     * @param method
-     * @return
+     * @param object a {@link java.lang.Object} object.
+     * @param method a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
      */
     @SuppressWarnings("unchecked")
 	public String getObjectValue(Object object, String method) {
         if (object == null) {
-            Tml.getLogger().error("{" + getName() + "} in " + getOriginalLabel() + " : object is not provided}");
+        	logError("{" + getName() + "} in " + getOriginalLabel() + " : object is not provided}");
             return getFullName();
         }
 
         if (object instanceof Map) {
             Map<String, Object> obj = (Map<String, Object>) object;
             if (obj.get(method) == null) {
-                Tml.getLogger().error("{" + getName() + "} in " + getOriginalLabel() + " : map attribute is missing}");
+            	logError("{" + getName() + "} in " + getOriginalLabel() + " : map attribute is missing}");
                 return getFullName();
             }
 
@@ -125,31 +134,26 @@ public class MethodToken extends DataToken {
         try {
             Method m = object.getClass().getMethod(method);
             if (m == null) {
-                Tml.getLogger().error("{" + getName() + "} in " + getOriginalLabel() + " : object does not provide a method}");
+            	logError("{" + getName() + "} in " + getOriginalLabel() + " : object does not provide a method}");
                 return getFullName();
             }
             return (String) m.invoke(object);
         } catch (Exception ex) {
-            Tml.getLogger().error("{" + getName() + "} in " + getOriginalLabel() + " : failed to execute object method}");
+        	logError("{" + getName() + "} in " + getOriginalLabel() + " : failed to execute object method}");
             return getFullName();
         }
     }
     
     /**
      * Returns decoration name
+     *
+     * @return a {@link java.lang.String} object.
      */
     public String getDecorationName() {
     	return "method";
     }
     
-    /**
-     *
-     * @param translatedLabel   label in which the substitution happens
-     * @param tokensData        map of data tokens
-     * @param language          language in which the substitution happens
-     * @param options           options for substitutions
-     * @return
-     */
+    /** {@inheritDoc} */
     public String substitute(String translatedLabel, Map<String, Object> tokensData, Language language, Map<String, Object> options) {
         Object object = getContextObject(tokensData);
         String value = getObjectValue(object, getMethodName());

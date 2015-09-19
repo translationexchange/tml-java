@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.decorators;
@@ -38,15 +42,50 @@ import com.translationexchange.core.LanguageCase;
 import com.translationexchange.core.LanguageCaseRule;
 import com.translationexchange.core.TranslationKey;
 import com.translationexchange.core.tokens.Token;
-
 public interface Decorator {
 
+	/**
+	 * <p>decorate.</p>
+	 *
+	 * @param translatedLabel a {@link java.lang.String} object.
+	 * @param translationLanguage a {@link com.translationexchange.core.Language} object.
+	 * @param targetLanguage a {@link com.translationexchange.core.Language} object.
+	 * @param translationKey a {@link com.translationexchange.core.TranslationKey} object.
+	 * @param options a {@link java.util.Map} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String decorate(String translatedLabel, Language translationLanguage, Language targetLanguage, TranslationKey translationKey, Map<String, Object> options);
 
+	/**
+	 * <p>decorateLanguageCase.</p>
+	 *
+	 * @param languageCase a {@link com.translationexchange.core.LanguageCase} object.
+	 * @param rule a {@link com.translationexchange.core.LanguageCaseRule} object.
+	 * @param original a {@link java.lang.String} object.
+	 * @param transformed a {@link java.lang.String} object.
+	 * @param options a {@link java.util.Map} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String decorateLanguageCase(LanguageCase languageCase, LanguageCaseRule rule, String original, String transformed, Map<String, Object> options);
 	
+	/**
+	 * <p>decorateToken.</p>
+	 *
+	 * @param token a {@link com.translationexchange.core.tokens.Token} object.
+	 * @param value a {@link java.lang.String} object.
+	 * @param options a {@link java.util.Map} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String decorateToken(Token token, String value, Map<String, Object> options);
 
+	/**
+	 * <p>decorateElement.</p>
+	 *
+	 * @param token a {@link com.translationexchange.core.tokens.Token} object.
+	 * @param value a {@link java.lang.String} object.
+	 * @param options a {@link java.util.Map} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String decorateElement(Token token, String value, Map<String, Object> options);
 	
 }

@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
  *
@@ -27,6 +28,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.decorators;
@@ -38,21 +42,24 @@ import com.translationexchange.core.LanguageCase;
 import com.translationexchange.core.LanguageCaseRule;
 import com.translationexchange.core.TranslationKey;
 import com.translationexchange.core.tokens.Token;
-
 public class PlainDecorator implements Decorator {
 
+	/** {@inheritDoc} */
 	public String decorate(String translatedLabel, Language translationLanguage, Language targetLanguage, TranslationKey translationKey, Map<String, Object> options) {
 		return translatedLabel;
 	}
 
+	/** {@inheritDoc} */
 	public String decorateLanguageCase(LanguageCase languageCase, LanguageCaseRule rule, String original, String transformed, Map<String, Object> options) {
 		return transformed;
 	}
 	
+	/** {@inheritDoc} */
 	public String decorateToken(Token token, String value, Map<String, Object> options) {
 		return value;
 	}
 
+	/** {@inheritDoc} */
 	public String decorateElement(Token token, String value, Map<String, Object> options) {
 		return value;
 	}

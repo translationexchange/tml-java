@@ -45,8 +45,12 @@ import com.translationexchange.core.cache.CacheAdapter;
 
 /**
  * A static utility session wrapper class for using by Mobile and Desktop application.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 public class Tml {
+    /** Constant <code>VERSION="0.2.1"</code> */
     public static final String VERSION = "0.2.1";
 
     /**
@@ -91,31 +95,48 @@ public class Tml {
     }
 
     
-    /** 
+    /**
      * Set the current session
-     * 
-     * @param newSession
+     *
+     * @param newSession a {@link com.translationexchange.core.Session} object.
      */
     public static void setSession(Session newSession) {
     	session = newSession;
     }
     /**
      * Sets current language in the singleton instance
-     * @param locale
+     *
+     * @param locale a {@link java.lang.String} object.
      */
     public static void setCurrentLocale(String locale) {
         getSession().setCurrentLanguage(getSession().getApplication().getLanguage(locale));
     }
 
+    /**
+     * <p>init.</p>
+     */
     public static void init() {
     	Map <String, Object> options = getConfig().getApplication();
         init((String) options.get("key"), (String) options.get("token"), options);
     }
     
+    /**
+     * <p>init.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     * @param token a {@link java.lang.String} object.
+     */
     public static void init(String key, String token) {
         init(key, token, null);
     }
 
+    /**
+     * <p>init.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     * @param token a {@link java.lang.String} object.
+     * @param options a {@link java.util.Map} object.
+     */
     public static void init(String key, String token, Map<String, Object> options) {
     	if (options == null) {
     		options = new HashMap<String, Object>();
@@ -126,10 +147,18 @@ public class Tml {
         if (!isSchedulerRunning()) startScheduledTasks();
     }
     
+    /**
+     * <p>isSchedulerRunning.</p>
+     *
+     * @return a boolean.
+     */
     public static boolean isSchedulerRunning() {
         return applicationScheduleHandler != null;
     }
     
+    /**
+     * <p>startScheduledTasks.</p>
+     */
     public static void startScheduledTasks() {
         if (applicationScheduleHandler != null)
             return;
@@ -142,6 +171,9 @@ public class Tml {
         }, 5, 5, TimeUnit.SECONDS);
     }
 
+    /**
+     * <p>stopScheduledTasks.</p>
+     */
     public static void stopScheduledTasks() {
         if (applicationScheduleHandler == null)
             return;
@@ -152,8 +184,8 @@ public class Tml {
     
     /**
      * Get an instance of the configuration object
-     * 
-     * @return
+     *
+     * @return a {@link com.translationexchange.core.Configuration} object.
      */
     public static Configuration getConfig() {
         if (config == null)
@@ -164,8 +196,8 @@ public class Tml {
 
     /**
      * Get an instance of the Cache object
-     * 
-     * @return
+     *
+     * @return a {@link com.translationexchange.core.cache.Cache} object.
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Cache getCache() {
@@ -188,8 +220,8 @@ public class Tml {
 
     /**
      * Get an instance of the logger object
-     * 
-     * @return
+     *
+     * @return a {@link com.translationexchange.core.Logger} object.
      */
     public static Logger getLogger() {
         if (logger == null)
@@ -199,7 +231,8 @@ public class Tml {
     }
 
 
-    /****************************************************************************************************
+    /**
+     **************************************************************************************************
      *
      * Instance Definition
      *
@@ -207,17 +240,29 @@ public class Tml {
      * be created and propagated with the request context. In those scenarios, a shared cache, like Memcached
      * or Redis should be used to ensure that all instances of application servers can reuse translations.
      *
-     ****************************************************************************************************/
-
-
+     ***************************************************************************************************
+     *
+     * @return a {@link com.translationexchange.core.Language} object.
+     */
     public static Language getCurrentLanguage() {
         return getSession().getCurrentLanguage();
     }
 
+    /**
+     * <p>switchLanguage.</p>
+     *
+     * @param language a {@link com.translationexchange.core.Language} object.
+     */
     public static void switchLanguage(Language language) {
     	switchLanguage(language, null);
     }
     
+    /**
+     * <p>switchLanguage.</p>
+     *
+     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param options a {@link java.util.Map} object.
+     */
     public static void switchLanguage(Language language, Map<String, Object> options) {
     	// TODO: if the connection is not present, do it offline, if possible
     	// delete language cache
@@ -227,62 +272,137 @@ public class Tml {
     	getSession().switchLanguage(language);
     }
 
+    /**
+     * <p>setCurrentLanguage.</p>
+     *
+     * @param language a {@link com.translationexchange.core.Language} object.
+     */
     public void setCurrentLanguage(Language language) {
         getSession().setCurrentLanguage(language);
     }
 
+    /**
+     * <p>getCurrentSource.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getCurrentSource() {
         return getSession().getCurrentSource();
     }
 
+    /**
+     * <p>setCurrentSource.</p>
+     *
+     * @param currentSource a {@link java.lang.String} object.
+     */
     public void setCurrentSource(String currentSource) {
         getSession().setCurrentSource(currentSource);
     }
 
+    /**
+     * <p>beginBlockWithOptions.</p>
+     *
+     * @param options a {@link java.util.Map} object.
+     */
     public static void beginBlockWithOptions(Map<String, Object> options) {
         getSession().beginBlockWithOptions(options);
     }
 
+    /**
+     * <p>getBlockOptions.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     public static Map<String, Object> getBlockOptions() {
         return getSession().getBlockOptions();
     }
 
+    /**
+     * <p>endBlock.</p>
+     */
     public static void endBlock() {
         getSession().endBlock();
     }
 
+    /**
+     * <p>getBlockOption.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     * @return a {@link java.lang.Object} object.
+     */
     public static Object getBlockOption(String key) {
         return getSession().getBlockOptions().get(key);
     }
 
+    /**
+     * <p>getApplication.</p>
+     *
+     * @return a {@link com.translationexchange.core.Application} object.
+     */
     public static Application getApplication() {
         return getSession().getApplication();
     }
 
+    /**
+     * <p>setApplication.</p>
+     *
+     * @param application a {@link com.translationexchange.core.Application} object.
+     */
     public static void setApplication(Application application) {
         getSession().setApplication(application);
     }
 
+    /**
+     * <p>getCurrentTranslator.</p>
+     *
+     * @return a {@link com.translationexchange.core.Translator} object.
+     */
     public static Translator getCurrentTranslator() {
         return getSession().getCurrentTranslator();
     }
 
+    /**
+     * <p>setCurrentTranslator.</p>
+     *
+     * @param currentTranslator a {@link com.translationexchange.core.Translator} object.
+     */
     public static void setCurrentTranslator(Translator currentTranslator) {
         getSession().setCurrentTranslator(currentTranslator);
     }
 
+    /**
+     * <p>initSource.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     */
     public static void initSource(String key) {
     	initSource(key, getCurrentLanguage().getLocale());
     }
 
+    /**
+     * <p>initSource.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     * @param locale a {@link java.lang.String} object.
+     */
     public static void initSource(String key, String locale) {
     	getApplication().getSource(key, locale, null);
     }
     
+    /**
+     * <p>initLanguage.</p>
+     *
+     * @param locale a {@link java.lang.String} object.
+     */
     public static void initLanguage(String locale) {
     	getApplication().getLanguage(locale);
     }
     
+    /**
+     * <p>addObserver.</p>
+     *
+     * @param observer a {@link java.util.Observer} object.
+     */
     public static void addObserver(Observer observer) {
     	getSession().addObserver(observer);
     }
@@ -294,6 +414,7 @@ public class Tml {
      *******************************************************************************************************/
 
     /**
+     * <p>translate.</p>
      *
      * @param label Label to be translated
      * @return translated label
@@ -302,18 +423,48 @@ public class Tml {
         return getSession().translate(label);
     }
 
+    /**
+     * <p>translate.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param description a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
     public static String translate(String label, String description) {
         return getSession().translate(label, description);
     }
 
+    /**
+     * <p>translate.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param description a {@link java.lang.String} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @return a {@link java.lang.String} object.
+     */
     public static String translate(String label, String description, Map<String, Object> tokens) {
         return getSession().translate(label, description, tokens);
     }
 
+    /**
+     * <p>translate.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @return a {@link java.lang.String} object.
+     */
     public static String translate(String label, Map<String, Object> tokens) {
         return getSession().translate(label, tokens);
     }
 
+    /**
+     * <p>translate.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @param options a {@link java.util.Map} object.
+     * @return a {@link java.lang.String} object.
+     */
     public static String translate(String label, Map<String, Object> tokens, Map<String, Object> options) {
         return getSession().translate(label, tokens, options);
     }
