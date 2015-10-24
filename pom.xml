@@ -43,9 +43,9 @@
 	</distributionManagement>
 
 	<scm>
-		<connection>scm:git:git://github.com/translationexchange/tml-java.git</connection>
-		<developerConnection>scm:git:git://github.com/translationexchange/tml-java.git</developerConnection>
-		<url>git@github.com:translationexchange/tml-java.git</url>
+		<connection>scm:git:https://github.com/translationexchange/tml-java.git</connection>
+		<developerConnection>scm:git:https://github.com/translationexchange/tml-java.git</developerConnection>
+		<url>https://github.com/translationexchange/tml-java.git</url>
 		<tag>tml-0.2.1</tag>
 	</scm>
 
