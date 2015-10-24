@@ -4,7 +4,7 @@
 	<groupId>com.translationexchange</groupId>
 	<artifactId>tml</artifactId>
 	<packaging>jar</packaging>
-	<version>0.2.3</version>
+	<version>0.2.4-SNAPSHOT</version>
 
 	<name>tml</name>
 	<description>Core library for Translation Exchange Java Extensions</description>
@@ -46,7 +46,7 @@
 		<connection>scm:git:https://github.com/translationexchange/tml-java.git</connection>
 		<developerConnection>scm:git:https://github.com/translationexchange/tml-java.git</developerConnection>
 		<url>https://github.com/translationexchange/tml-java.git</url>
-		<tag>tml-0.2.3</tag>
+		<tag>tml-0.2.1</tag>
 	</scm>
 
 	<properties>
