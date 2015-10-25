@@ -9,3 +9,4 @@ log
 .classpath
 .idea
 /bin/
+release.properties
