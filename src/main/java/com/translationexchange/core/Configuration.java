@@ -123,12 +123,17 @@ public class Configuration {
     private Map<String, String> tokenizerClasses;
     
     /**
+     * Stores agent related configuration
+     */
+    private Map<String, Object> agent;
+    
+    /**
      * <p>Constructor for Configuration.</p>
      */
     public Configuration() {
     	this.decorator = new PlainDecorator();
-    	
-        this.tokenizerClasses = Utils.buildStringMap(
+
+    	this.tokenizerClasses = Utils.buildStringMap(
 			"data", "com.translationexchange.core.tokenizers.DataTokenizer",
 			"html", "com.translationexchange.core.tokenizers.HtmlTokenizer"
         );
@@ -149,11 +154,14 @@ public class Configuration {
             "enabled", true,
         	"class", "com.translationexchange.core.cache.FileCache",
             "host", "localhost:11211",
-            "adapter", "memcache",
-            "version", 1,
-            "timeout", 3600
+            "adapter", "memcache"
         );
 
+        this.agent = Utils.buildMap(
+			"host", "https://tools.translationexchange.com/agent/stable/agent.min.js",
+			"cache", 3600
+        );
+        
         buildDefaultContextRulesConfiguration();
         buildDefaultLocalizationConfiguration();
         buildDefaultTokensConfiguration();
@@ -761,6 +769,25 @@ public class Configuration {
     		return null;
     	
     	return this.tokenizerClasses.get(key);
+    }
+    
+    
+    /**
+     * <p>Getter for the field <code>agent</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
+    public Map<String, Object> getAgent() {
+        return agent;
+    }
+
+    /**
+     * <p>Setter for the field <code>agent</code>.</p>
+     *
+     * @param localization a {@link java.util.Map} object.
+     */
+    public void setAgent(Map<String, Object> agent) {
+        this.agent = agent;
     }
     
 }
