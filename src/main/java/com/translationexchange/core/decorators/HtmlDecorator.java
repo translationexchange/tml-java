@@ -108,6 +108,7 @@ public class HtmlDecorator implements Decorator {
 		sb.append("<" + element);
 		sb.append(" class='" + Utils.join(classes.toArray(), " ") + "'");
 		sb.append(" data-translation_key='" + translationKey.getKey() + "'");
+		sb.append(" data-target_locale='" + targetLanguage.getLocale() + "'");
 		sb.append(">");
 		sb.append(translatedLabel);
 		sb.append("</" + element + ">");
