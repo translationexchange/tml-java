@@ -95,6 +95,14 @@ public class Tml {
         return session;
     }
 
+    /**
+     * Returns library version
+     * 
+     * @return
+     */
+    public static String getFullVersion() {
+    	return "tml-java v" + Tml.VERSION + " (OkHttp v2.4.0)";
+    }
     
     /**
      * Set the current session

@@ -396,7 +396,7 @@ public class HttpClient {
         
         long t0 = new Date().getTime();
         
-        Builder builder = new Request.Builder().url(url.toString()).header("User-Agent", getUserAgent());
+        Builder builder = new Request.Builder().url(url.toString()).header("User-Agent", Tml.getFullVersion());
         
         builder = builder.addHeader("Accept", "application/json");
         builder = builder.addHeader("Accept-Encoding", "gzip, deflate");
@@ -425,10 +425,6 @@ public class HttpClient {
      */
     public Object post(String path, Map<String, Object> params) throws Exception {
         return post(path, params, null);
-    }
-
-    private String getUserAgent() {
-    	return "tml-java v" + Tml.VERSION + " (OkHttp v2.4.0)";	
     }
     
     /**
@@ -459,7 +455,7 @@ public class HttpClient {
         }
         RequestBody formBody = formBuilder.build();
                 
-        Builder builder = new Request.Builder().url(url.toString()).header("User-Agent", getUserAgent());
+        Builder builder = new Request.Builder().url(url.toString()).header("User-Agent", Tml.getFullVersion());
         builder = builder.post(formBody);
         Request request = builder.build();
         
