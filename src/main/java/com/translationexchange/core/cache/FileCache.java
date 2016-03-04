@@ -1,6 +1,5 @@
-
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -221,10 +220,10 @@ public class FileCache extends CacheAdapter implements Cache {
     }
       
     /**
-     * <p>resetVersion.</p>
+     * <p>reset.</p>
      */
-    public void resetVersion() {
-    	deleteDirectory(getCachePath());
+    public void reset() {
+    	// Do nothing
     }
-    
+
 }

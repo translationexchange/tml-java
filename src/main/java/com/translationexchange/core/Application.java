@@ -1,6 +1,5 @@
-
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -29,7 +28,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @author Berk
+ * @author Michael Berkovich
  * @version $Id: $Id
  */
 
@@ -39,10 +38,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import com.translationexchange.core.languages.Language;
 public class Application extends Base {
     /** Constant <code>TREX_API_HOST="https://api.translationexchange.com"</code> */
     public static final String TREX_API_HOST = "https://api.translationexchange.com";
 
+    /** Constant <code>TREX_CDN_HOST="https://cdn.translationexchange.com"</code> */
+    public static final String TREX_CDN_HOST = "https://cdn.translationexchange.com";
+    
     /**
      * Current TrEx session
      */
@@ -53,6 +57,11 @@ public class Application extends Base {
      */
     private String host;
 
+    /**
+     * CDN host 
+     */
+    private String cdnHost;
+    
     /**
      * Application key - must always be specified
      */
@@ -84,11 +93,6 @@ public class Application extends Base {
     private Map<String, Object> tokens;
 
     /**
-     * Default key level
-     */
-    private Long translatorLevel;
-
-    /**
      * Application threshold
      */
     private Long threshold;
@@ -97,16 +101,6 @@ public class Application extends Base {
      * CSS classes for decorator
      */
     private String css;
-    
-    /**
-     * Application shortcuts
-     */
-    private Map<String, String> shortcuts;
-
-    /**
-     * Application tools
-     */
-    private Map<String, String> tools;
 
 	/**
      * Application features
@@ -222,15 +216,6 @@ public class Application extends Base {
     }
 
     /**
-     * <p>Getter for the field <code>shortcuts</code>.</p>
-     *
-     * @return a {@link java.util.Map} object.
-     */
-    public Map<String, String> getShortcuts() {
-        return shortcuts;
-    }
-
-    /**
      * <p>Getter for the field <code>features</code>.</p>
      *
      * @return a {@link java.util.Map} object.
@@ -275,6 +260,15 @@ public class Application extends Base {
         this.host = host;
     }
 
+    /**
+     * <p>Setter for the field <code>host</code>.</p>
+     *
+     * @param host a {@link java.lang.String} object.
+     */
+    public void setCdnHost(String cdnHost) {
+        this.cdnHost = cdnHost;
+    }
+    
     /**
      * <p>Setter for the field <code>key</code>.</p>
      *
@@ -330,15 +324,6 @@ public class Application extends Base {
     }
 
     /**
-     * <p>Setter for the field <code>translatorLevel</code>.</p>
-     *
-     * @param translatorLevel a {@link java.lang.Long} object.
-     */
-    public void setTranslatorLevel(Long translatorLevel) {
-        this.translatorLevel = translatorLevel;
-    }
-
-    /**
      * <p>Setter for the field <code>threshold</code>.</p>
      *
      * @param threshold a {@link java.lang.Long} object.
@@ -354,15 +339,6 @@ public class Application extends Base {
      */
     public void setCss(String css) {
         this.css = css;
-    }
-
-    /**
-     * <p>Setter for the field <code>shortcuts</code>.</p>
-     *
-     * @param shortcuts a {@link java.util.Map} object.
-     */
-    public void setShortcuts(Map<String, String> shortcuts) {
-        this.shortcuts = shortcuts;
     }
 
     /**
@@ -401,33 +377,7 @@ public class Application extends Base {
         return defaultLocale;
     }
 
-    /**
-     * <p>Getter for the field <code>translatorLevel</code>.</p>
-     *
-     * @return a {@link java.lang.Long} object.
-     */
-    public Long getTranslatorLevel() {
-        return translatorLevel;
-    }
-    
-    /**
-     * <p>Getter for the field <code>tools</code>.</p>
-     *
-     * @return a {@link java.util.Map} object.
-     */
-    protected Map<String, String> getTools() {
-		return tools;
-	}
-
-	/**
-	 * <p>Setter for the field <code>tools</code>.</p>
-	 *
-	 * @param tools a {@link java.util.Map} object.
-	 */
-	protected void setTools(Map<String, String> tools) {
-		this.tools = tools;
-	}
-    
+ 
     /** {@inheritDoc} */
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
@@ -444,34 +394,24 @@ public class Application extends Base {
         if (attributes.get("host") != null)
             setHost((String) attributes.get("host"));
 
+        if (attributes.get("cdn_host") != null)
+            setCdnHost((String) attributes.get("cdn_host"));
+
         setName((String) attributes.get("name"));
         setDescription((String) attributes.get("description"));
         setThreshold((Long) attributes.get("threshold"));
         setDefaultLocale((String) attributes.get("default_locale"));
-        setTranslatorLevel((Long) attributes.get("translator_level"));
         setCss((String) attributes.get("css"));
 
         if (attributes.get("tokens") != null)
             setTokens(new HashMap<String, Object>((Map) attributes.get("tokens")));
 
-        if (attributes.get("shortcuts") != null)
-            setShortcuts(new HashMap<String, String>((Map) attributes.get("shortcuts")));
-
         if (attributes.get("features") != null)
             setFeatures(new HashMap<String, Boolean>((Map) attributes.get("features")));
-
-        if (attributes.get("tools") != null)
-            setTools(new HashMap<String, String>((Map) attributes.get("tools")));
         
         if (attributes.get("languages") != null) {
             for (Object data : ((List) attributes.get("languages"))) {
                 addLanguage(new Language((Map) data));
-            }
-        }
-
-        if (attributes.get("featured_locales") != null) {
-            for (Object data : ((List) attributes.get("featured_locales"))) {
-                addFeaturedLanguage((String) data);
             }
         }
 
@@ -497,14 +437,23 @@ public class Application extends Base {
         	
         	// params = Utils.buildMap();
         	
-            this.updateAttributes(getHttpClient().getJSONMap("projects/current/definition", 
-            	params,
-	    		Utils.buildMap("cache_key", "application")
-            ));
-            
-            setLoaded(true);
+        	Map<String, Object> data = getHttpClient().getJSONMap("projects/" + getKey() + "/definition", 
+                	params,
+    	    		Utils.buildMap("cache_key", "application")
+            );
+        	
+        	if (data == null) {
+        		setDefaultLocale(Tml.getConfig().getDefaultLocale());
+            	addLanguage(Tml.getConfig().getDefaultLanguage());
+                Tml.getLogger().debug("No release has been published or no cache has been provided");
+            	setLoaded(false);
+        	} else {
+        		this.updateAttributes(data);
+                setLoaded(true);
+        	}
         } catch (Exception ex) {
         	setLoaded(false);
+        	addLanguage(Tml.getConfig().getDefaultLanguage());
             Tml.getLogger().logException("Failed to load application", ex);
         }
     }
@@ -516,6 +465,11 @@ public class Application extends Base {
     	load(Utils.buildMap());	
     }
     
+    /**
+     * Only happens during API calls, 
+     * 
+     * @param extensions
+     */
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	private void loadExtensions(Map<String, Object> extensions) {
     	String sourceLocale = null;
@@ -531,7 +485,6 @@ public class Application extends Base {
                 	sourceLocale = locale;
                 
                 Map<String, Object> data = (Map<String, Object>) entry.getValue();
-                // TODO: cache language if caching is enabled
                 
                 Language language = getLanguagesByLocale().get(locale);
                 if (language == null) {
@@ -549,8 +502,8 @@ public class Application extends Base {
             while (entries.hasNext()) {
 				Map.Entry entry = (Map.Entry) entries.next();
                 String key = (String) entry.getKey();
+
                 Map<String, Object> data = (Map<String, Object>) entry.getValue();
-                // TODO: cache source if caching is enabled
                 
                 Source source = getSourcesByKeys().get(key);
                 if (source == null) {
@@ -615,7 +568,7 @@ public class Application extends Base {
     /**
      * <p>updateTranslationKeys.</p>
      *
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      * @param data a {@link java.util.Map} object.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -654,12 +607,12 @@ public class Application extends Base {
     /**
      * Loads translations from the service for a given language and caches them in the application
      *
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      */
     public void loadTranslations(Language language) {
         try {
         	this.updateTranslationKeys(language, getHttpClient().getJSONMap("projects/current/translations",
-            	Utils.buildMap("original", "true", "per_page", "10000", "locale", language.getLocale()),
+            	Utils.buildMap("all", "true", "locale", language.getLocale()),
         		Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()))
             ));
         } catch (Exception ex) {
@@ -739,7 +692,7 @@ public class Application extends Base {
             params.add(Utils.buildMap("source", source, "keys", keys));
         }
 
-        registerKeys(Utils.buildMap("source_keys", Utils.buildJSON(params)));
+        registerKeys(Utils.buildMap("source_keys", Utils.buildJSON(params), "app_id", getKey()));
         
         this.missingTranslationKeysBySources.clear();
 
@@ -784,7 +737,7 @@ public class Application extends Base {
     /**
      * <p>getLanguage.</p>
      *
-     * @return a {@link com.translationexchange.core.Language} object.
+     * @return a {@link com.translationexchange.core.languages.Language} object.
      */
     public Language getLanguage() {
         return getLanguage(defaultLocale);
@@ -805,7 +758,7 @@ public class Application extends Base {
      * <p>getLanguage.</p>
      *
      * @param locale a {@link java.lang.String} object.
-     * @return a {@link com.translationexchange.core.Language} object.
+     * @return a {@link com.translationexchange.core.languages.Language} object.
      */
     public Language getLanguage(String locale) {
         if (getLanguagesByLocale().get(locale) == null) {
@@ -853,7 +806,7 @@ public class Application extends Base {
      * Adds a language to the list of application languages.
      * The language may contain basic information or entire definition.
      *
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      */
     public void addLanguage(Language language) {
         if (languages == null)
@@ -962,17 +915,6 @@ public class Application extends Base {
     }
     
     /**
-     * Returns tools hash
-     *
-     * @param type a {@link java.lang.String} object.
-     * @return a {@link java.lang.String} object.
-     */
-    public String getTools(String type) {
-    	if (getTools() == null) return "";
-    	return getTools().get(type);
-    }
-    
-    /**
      * Returns API host
      *
      * @return a {@link java.lang.String} object.
@@ -983,6 +925,16 @@ public class Application extends Base {
         return host;
     }
 
+    /**
+     * 
+     * @return
+     */
+    public String getCdnHost() {
+        if (cdnHost == null)
+            return TREX_CDN_HOST;
+        return cdnHost;
+    }
+    
     /**
      * Returns HTTP client
      *

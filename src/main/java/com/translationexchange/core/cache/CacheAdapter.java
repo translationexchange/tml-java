@@ -1,6 +1,5 @@
-
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -38,16 +37,9 @@ package com.translationexchange.core.cache;
 import java.util.Map;
 
 import com.translationexchange.core.Tml;
-import com.translationexchange.core.Utils;
 public abstract class CacheAdapter implements Cache {
 	private Map<String, Object> config;
-	/** Constant <code>VERSION_KEY="current_version"</code> */
-	protected static String VERSION_KEY = "current_version";
-	/** Constant <code>KEY_PREFIX="tml"</code> */
-	protected static String KEY_PREFIX  = "tml";
-	
-	private String version;
-	
+		
 	/**
 	 * Initialized Cache Adapter
 	 *
@@ -55,75 +47,6 @@ public abstract class CacheAdapter implements Cache {
 	 */
 	public CacheAdapter(Map<String, Object> config) {
 		this.config = config;
-	}
-
-	/**
-	 * Fetches current version from cache
-	 *
-	 * @return a {@link java.lang.String} object.
-	 */
-	public String fetchVersion() {
-		String version = (String) fetch(VERSION_KEY, Utils.buildMap());
-		Tml.getLogger().debug("Fetched cache version: " + version);
-		return version;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 *
-	 * Stores current version in the cache
-	 */
-	public void storeVersion(String version) {
-		setVersion(version);
-		store(VERSION_KEY, version, null);
-	}
-	
-	/**
-	 * Returns current version
-	 *
-	 * @return a {@link java.lang.String} object.
-	 */
-	public String getVersion() {
-		return version;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 *
-	 * Sets current version
-	 */
-	public void setVersion(String version) {
-		this.version = version; 
-	}
-
-	/**
-	 * Returns cache timeout
-	 *
-	 * @return a int.
-	 */
-	public int getTimeout() {
-		if (getConfig().get("timeout") == null) 
-			return 0;
-		return (Integer) getConfig().get("timeout");
-	}
-	
-	/**
-	 * Returns key wrapped in version
-	 *
-	 * @param key a {@link java.lang.String} object.
-	 * @return a {@link java.lang.String} object.
-	 */
-
-	// TODO: move it out to HTTP Client - version is not thread safe!
-	protected String getVersionedKey(String key) {
-		String elements[] = {
-	         KEY_PREFIX,
-	         (getConfig().get("namespace") == null ? "" : (String) getConfig().get("namespace")),
-	         (key == VERSION_KEY) ? "v" : "v" + (getVersion() == null ? "0" : getVersion().toString()),
-	         key
-		};
-		
-		return Utils.join(elements, "_");
 	}
 	
 	/**
@@ -152,11 +75,12 @@ public abstract class CacheAdapter implements Cache {
 	protected void debug(String msg) {
 		Tml.getLogger().debug(this.getClass().getName() + " - " + msg);
 	}
+	
+	/**
+	 * Returns cache name space
+	 */
+	public String getNamespace() {
+		return (String) getConfig().get("namespace");
+	}
 
-    /**
-     * Resets version
-     */
-    public void resetVersion() {
-    	delete(VERSION_KEY, null);
-    }
 }

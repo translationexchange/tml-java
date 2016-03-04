@@ -1,6 +1,6 @@
 
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -33,12 +33,19 @@
  * @version $Id: $Id
  */
 
-package com.translationexchange.core;
+package com.translationexchange.core.languages;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import com.translationexchange.core.Application;
+import com.translationexchange.core.Base;
+import com.translationexchange.core.Configuration;
+import com.translationexchange.core.Source;
+import com.translationexchange.core.TranslationKey;
+import com.translationexchange.core.Utils;
 public class Language extends Base {
 
     /**
@@ -174,8 +181,10 @@ public class Language extends Base {
      *
      * @return a {@link java.lang.Boolean} object.
      */
-    public Boolean isRightToLeft() {
-        return rightToLeft;
+    public boolean isRightToLeft() {
+    	if (rightToLeft == null)
+    		return false;
+        return rightToLeft.booleanValue();
     }
 
     /**
@@ -291,7 +300,7 @@ public class Language extends Base {
     /**
      * Adds a context for the language
      *
-     * @param languageContext a {@link com.translationexchange.core.LanguageContext} object.
+     * @param languageContext a {@link com.translationexchange.core.languages.LanguageContext} object.
      */
     public void addContext(LanguageContext languageContext) {
         if (contexts == null)
@@ -307,7 +316,7 @@ public class Language extends Base {
      * Returns language context based on the keyword
      *
      * @param keyword a {@link java.lang.String} object.
-     * @return a {@link com.translationexchange.core.LanguageContext} object.
+     * @return a {@link com.translationexchange.core.languages.LanguageContext} object.
      */
     public LanguageContext getContextByKeyword(String keyword) {
         if (contexts == null)
@@ -319,7 +328,7 @@ public class Language extends Base {
      * Returns language context based on the token name
      *
      * @param tokenName a {@link java.lang.String} object.
-     * @return a {@link com.translationexchange.core.LanguageContext} object.
+     * @return a {@link com.translationexchange.core.languages.LanguageContext} object.
      */
     public LanguageContext getContextByTokenName(String tokenName) {
         for (LanguageContext context : getContexts().values()) {
@@ -333,7 +342,7 @@ public class Language extends Base {
      * Returns language case based on the keyword
      *
      * @param keyword a {@link java.lang.String} object.
-     * @return a {@link com.translationexchange.core.LanguageCase} object.
+     * @return a {@link com.translationexchange.core.languages.LanguageCase} object.
      */
     public LanguageCase getLanguageCaseByKeyword(String keyword) {
         if (cases == null)
@@ -344,7 +353,7 @@ public class Language extends Base {
     /**
      * Adds a language case for the language
      *
-     * @param languageCase a {@link com.translationexchange.core.LanguageCase} object.
+     * @param languageCase a {@link com.translationexchange.core.languages.LanguageCase} object.
      */
     public void addLanguageCase(LanguageCase languageCase) {
         if (cases == null)
@@ -400,8 +409,7 @@ public class Language extends Base {
                 "key", keyHash,
                 "label", label,
                 "description", description,
-                "locale", getOptionsValue("locale", options, getApplication().getDefaultLocale()),
-                "level", getOptionsValue("level", options, getApplication().getTranslatorLevel())
+                "locale", getOptionsValue("locale", options, getApplication().getDefaultLocale())
         );
 
         return new TranslationKey(attributes);
@@ -456,8 +464,12 @@ public class Language extends Base {
         // Application keys without a source belong directly to the application, the source does not need to be loaded
         if (sourceKey == null) {
             TranslationKey matchedKey = getApplication().getTranslationKey(keyHash);
-            if (matchedKey != null) return matchedKey.translate(this, tokens, options);
-
+            if (matchedKey != null) { 
+            	matchedKey.setLabel(label);
+            	matchedKey.setDescription(description);
+            	return matchedKey.translate(this, tokens, options);
+            }
+            
             TranslationKey tempKey = createTranslationKey(keyHash, label, description, options);
             getApplication().registerMissingTranslationKey(tempKey);
             getApplication().cacheTranslationKey(tempKey);
@@ -472,9 +484,12 @@ public class Language extends Base {
         if (source != null) {
             TranslationKey matchedKey = source.getTranslationKey(keyHash);
             
-            if (matchedKey != null)  
+            if (matchedKey != null) {  
+            	matchedKey.setLabel(label);
+            	matchedKey.setDescription(description);
             	return matchedKey.translate(this, tokens, options);
-
+            }
+            
             HashMap<String, Object> opts = new HashMap<String, Object>(options);
             opts.put("pending", "true");
             
@@ -484,7 +499,11 @@ public class Language extends Base {
         }
 
         TranslationKey matchedKey = getApplication().getTranslationKey(keyHash);
-        if (matchedKey != null) return matchedKey.translate(this, tokens, options);
+        if (matchedKey != null) {
+        	matchedKey.setLabel(label);
+        	matchedKey.setDescription(description);
+        	return matchedKey.translate(this, tokens, options);
+        }
 
         TranslationKey tempKey = createTranslationKey(keyHash, label, description, options);
         return tempKey.translate(this, tokens, options);

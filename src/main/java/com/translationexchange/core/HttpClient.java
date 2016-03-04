@@ -1,6 +1,6 @@
 
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -54,18 +55,17 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Request.Builder;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+import com.translationexchange.core.cache.CacheVersion;
 public class HttpClient {
     /** Constant <code>API_PATH="v1/"</code> */
-    public static final String API_PATH = "v1/";
-    /** Constant <code>UNRELEASED_VERSION="0"</code> */
-    public static final String UNRELEASED_VERSION = "0";
-	/** Constant <code>CDN_URL="https://cdn.translationexchange.com"</code> */
-	protected static String CDN_URL      = "https://cdn.translationexchange.com";
-//	protected static String CDN_URL      = "https://trex-snapshots.s3-us-west-1.amazonaws.com";
-
-	private String cacheVersion = null;
+	public static final String API_PATH = "v1/";
 	
     /**
+     * Current cache version
+     */
+	private CacheVersion cacheVersion = null;
+
+	/**
      * Application that uses the HttpClient
      */
     private Application application;
@@ -110,8 +110,11 @@ public class HttpClient {
      * @return Application Key
      * @throws Exception
      */
-    private String getCdnPath(String version) throws Exception {
-        return getApplication().getKey() + "/" + version;
+    private String getCdnPath(String path) throws Exception {
+		if (!path.startsWith(File.separator))
+			path = File.separator + path;
+		
+        return getApplication().getKey() + path;
     }
     
     /**
@@ -184,6 +187,22 @@ public class HttpClient {
      * @param options a {@link java.util.Map} object.
      * @return a boolean.
      */
+    public boolean isLiveApi() {
+    	if (getApplication().getAccessToken() == null)
+    		return false;
+    	
+		Session session = getApplication().getSession();
+    	
+		if (session == null) return false;
+		return session.isInlineModeEnabled();
+    }
+    
+    /**
+     * Checks if cache is enabled 
+     * 
+     * @param options
+     * @return
+     */
     public boolean isCacheEnabled(Map<String, Object> options) {
     	if (!Tml.getConfig().isCacheEnabled()) return false;
     	if (options == null) return false;
@@ -191,31 +210,48 @@ public class HttpClient {
     	if (options.get("cache_key") == null) 
 			return false;
     	
-		Session session = getApplication().getSession();
-		
-		if (session == null) return false;
-		return !session.isInlineModeEnabled();
-    }
+    	return true;
+    }    
+    
+    /**
+     * Returns cache version
+     * 
+     * @return
+     */
+    public CacheVersion getCacheVersion() {
+		return cacheVersion;
+	}
+
+    /**
+     * Sets cache version
+     * 
+     * @param cacheVersion
+     */
+	public void setCacheVersion(CacheVersion cacheVersion) {
+		this.cacheVersion = cacheVersion;
+	}
     
     /**
      * Verify that the current cache version is correct
      * Check it against the API 
      */
     private void verifyCacheVersion() throws Exception {
-    	if (cacheVersion != null)
+    	// If version has already been fetched in the current request, use it
+    	if (getCacheVersion() != null)
     		return;
     	
-    	// Fetch version from cache itself
-    	cacheVersion = Tml.getCache().fetchVersion();
+    	setCacheVersion(new CacheVersion());
+
+    	// Fetch from local cache
+    	getCacheVersion().fetchFromCache();
     	
-    	// If no version in cache, fetch it from the API
-    	if (cacheVersion == null) {
-    		cacheVersion = get("projects/current/version", Utils.buildMap(), Utils.buildMap());
-    		Tml.getCache().storeVersion(cacheVersion);
+    	// If no version in cache or it is expired, fetch it from the CDN
+    	if (getCacheVersion().isExpired()) {
+    		Tml.getLogger().debug("Fetching version from CDN...");
+    		getCacheVersion().updateFromCDN(getFromCDN("version", Utils.buildMap("uncompressed", true)));
     	}
 
-    	Tml.getCache().setVersion(cacheVersion);
-    	Tml.getLogger().debug("Cache Version: " + Tml.getCache().getVersion());
+		Tml.getLogger().debug("Cache version: " + cacheVersion.getVersion() + " " + cacheVersion.getExpirationMessage());
     }
     
     /**
@@ -225,17 +261,21 @@ public class HttpClient {
      * @return
      */
     private String getFromCDN(String cacheKey, Map<String, Object> options) throws Exception {
-    	String version = Tml.getCache().getVersion(); 
-    	if (version == null || version.equals(UNRELEASED_VERSION))
+    	if (getCacheVersion().isUnreleased() && !cacheKey.equals("version"))
     		return null;
     	
     	try {
-    		if (!cacheKey.startsWith(File.separator))
-    			cacheKey = File.separator + cacheKey;
+    		String cachePath = cacheKey;
     		
-    		String responseText = get(Utils.buildURL(CDN_URL, getCdnPath(version) + cacheKey + ".json.gz"), options);
-
-    		return responseText; 
+    		if (!cacheKey.startsWith(File.separator))
+    			cachePath = File.separator + cachePath;
+    		
+    		if (cacheKey.equals("version")) {
+    			cachePath = getCdnPath(cachePath) + ".json";
+    		} else
+    			cachePath = getCdnPath(getCacheVersion().getVersion() + cachePath) + ".json.gz";
+    		
+    		return get(Utils.buildURL(getApplication().getCdnHost(), cachePath), options); 
     	} catch (Exception ex) {
     		return null;
     	}
@@ -256,36 +296,48 @@ public class HttpClient {
     	String cacheKey = (String) options.get("cache_key");
     	Map<String, Object> result = null;
     	
-    	if (isCacheEnabled(options)) {
-    		verifyCacheVersion();
-    		
-    		responseText = (String) Tml.getCache().fetch(cacheKey, options);
-    		if (responseText == null) {
-    			responseText = getFromCDN(cacheKey, options);
+    	// for live requests, process them immediately
+    	if (isLiveApi()) 
+        	return processJSONResponse(get(path, params, options), options);
+    	
+    	// if cache is not enabled, return null
+    	if (!isCacheEnabled(options)) 
+    		return null;
+    	
+    	// verify that cache version is up to date
+		verifyCacheVersion();
+		
+		if (getCacheVersion().isUnreleased())
+			return null;
+		
+		// get key with version prefix
+		String versionedKey = getCacheVersion().getVersionedKey(cacheKey);
+		
+		responseText = (String) Tml.getCache().fetch(versionedKey, options);
+		
+		if (responseText != null)
+			return processJSONResponse(responseText, options);
+		
+		// if no data in the local cache
+		responseText = getFromCDN(cacheKey, options);
 
-    			if (responseText == null) {
-    				responseText = get(path, params, options);
-    			}
+		if (responseText == null)
+			return null;
 
-    			result = processJSONResponse(responseText, options);
+		result = processJSONResponse(responseText, options);
 
-    			Map<String, Object> extensions = (Map<String, Object>) result.get("extensions");
-    			// never store extension in cache
-    			if (extensions != null) {
-    				result.remove("extensions");
-    				responseText = Utils.buildJSON(result);
-    				result.put("extensions", extensions);
-    			}
-    			Tml.getCache().store(cacheKey, responseText, options);
-    		} else {
-    			result = processJSONResponse(responseText, options);
-    		}
+		Map<String, Object> extensions = (Map<String, Object>) result.get("extensions");
 
-    		return result;
-    	} 
-    		
-    	responseText = get(path, params, options);
-    	return processJSONResponse(responseText, options);
+		// never store extension in cache
+		if (extensions != null) {
+			result.remove("extensions");
+			responseText = Utils.buildJSON(result);
+			result.put("extensions", extensions);
+		}
+		
+		Tml.getCache().store(versionedKey, responseText, options);
+
+		return result;
     }
     
     /**
@@ -340,7 +392,9 @@ public class HttpClient {
      * @return a {@link java.lang.String} object.
      */
     public String get(URL url, Map<String, Object> options) throws Exception {
-        Tml.getLogger().debug("Requesting: " + url.toString());
+        Tml.getLogger().debug("HTTP Get: " + url.toString());
+        
+        long t0 = new Date().getTime();
         
         Builder builder = new Request.Builder().url(url.toString()).header("User-Agent", getUserAgent());
         
@@ -349,6 +403,14 @@ public class HttpClient {
         
         Request request = builder.build();        
         Response response = getOkHttpClient().newCall(request).execute();
+        
+        long t1 = new Date().getTime();
+
+        Tml.getLogger().debug("HTTP Get took: " + (t1-t0) + " mls");
+        
+        Boolean uncompressed = (Boolean) options.get("uncompressed");
+        if (uncompressed != null && uncompressed.booleanValue())
+        	return new String(response.body().bytes());
         
         return decompress(response.body().bytes());
     }
@@ -382,6 +444,10 @@ public class HttpClient {
     public Object post(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
         URL url = Utils.buildURL(getApplication().getHost(), API_PATH + path, Utils.buildMap("access_token", this.getAccessToken()));
 
+        Tml.getLogger().debug("HTTP Post: " + url.toString());
+        
+        long t0 = new Date().getTime();
+
 //        Tml.getLogger().debug(Utils.buildJSON(params));
 
         FormEncodingBuilder formBuilder = new FormEncodingBuilder();
@@ -401,6 +467,11 @@ public class HttpClient {
         if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 //        String responseStr = response.body().string(); 
 //        Tml.getLogger().debug(responseStr);
+        
+        long t1 = new Date().getTime();
+        
+        Tml.getLogger().debug("HTTP Post took: " + (t1-t0) + " mls");
+        
         return response.body().string();
     }
 

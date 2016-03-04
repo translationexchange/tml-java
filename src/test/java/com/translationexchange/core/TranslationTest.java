@@ -34,10 +34,10 @@ package com.translationexchange.core;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.translationexchange.core.Language;
 import com.translationexchange.core.Translation;
 import com.translationexchange.core.TranslationKey;
 import com.translationexchange.core.Utils;
+import com.translationexchange.core.languages.Language;
 
 /**
  * Created by michael on 3/15/14.

@@ -1,6 +1,6 @@
 
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -33,7 +33,7 @@
  * @version $Id: $Id
  */
 
-package com.translationexchange.core;
+package com.translationexchange.core.languages;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +43,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.translationexchange.core.Base;
+import com.translationexchange.core.Tml;
+import com.translationexchange.core.Utils;
 import com.translationexchange.core.rulesengine.Variable;
 public class LanguageContext extends Base {
 
@@ -171,7 +174,7 @@ public class LanguageContext extends Base {
      * <p>findMatchingRule.</p>
      *
      * @param object a {@link java.lang.Object} object.
-     * @return a {@link com.translationexchange.core.LanguageContextRule} object.
+     * @return a {@link com.translationexchange.core.languages.LanguageContextRule} object.
      */
     public LanguageContextRule findMatchingRule(Object object) {
         Map<String, Object> tokenVars = getVariables(object);
@@ -207,7 +210,7 @@ public class LanguageContext extends Base {
     /**
      * <p>Getter for the field <code>fallbackRule</code>.</p>
      *
-     * @return a {@link com.translationexchange.core.LanguageContextRule} object.
+     * @return a {@link com.translationexchange.core.languages.LanguageContextRule} object.
      */
     public LanguageContextRule getFallbackRule() {
         return this.fallbackRule;
@@ -225,7 +228,7 @@ public class LanguageContext extends Base {
     /**
      * <p>Setter for the field <code>language</code>.</p>
      *
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      */
     public void setLanguage(Language language) {
         this.language = language;
@@ -234,7 +237,7 @@ public class LanguageContext extends Base {
     /**
      * <p>addRule.</p>
      *
-     * @param rule a {@link com.translationexchange.core.LanguageContextRule} object.
+     * @param rule a {@link com.translationexchange.core.languages.LanguageContextRule} object.
      */
     public void addRule(LanguageContextRule rule) {
         if (rules == null)
@@ -246,7 +249,7 @@ public class LanguageContext extends Base {
      * <p>getRule.</p>
      *
      * @param key a {@link java.lang.String} object.
-     * @return a {@link com.translationexchange.core.LanguageContextRule} object.
+     * @return a {@link com.translationexchange.core.languages.LanguageContextRule} object.
      */
     public LanguageContextRule getRule(String key) {
         if (rules == null)
@@ -374,7 +377,7 @@ public class LanguageContext extends Base {
     /**
      * <p>Setter for the field <code>fallbackRule</code>.</p>
      *
-     * @param fallbackRule a {@link com.translationexchange.core.LanguageContextRule} object.
+     * @param fallbackRule a {@link com.translationexchange.core.languages.LanguageContextRule} object.
      */
     public void setFallbackRule(LanguageContextRule fallbackRule) {
         this.fallbackRule = fallbackRule;

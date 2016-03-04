@@ -1,6 +1,6 @@
 
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -43,8 +43,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.translationexchange.core.Language;
 import com.translationexchange.core.Tml;
+import com.translationexchange.core.languages.Language;
 import com.translationexchange.core.tokens.Token;
 public class DataTokenizer extends Tokenizer {
     /** Constant <code>TOKEN_BRACKET="{"</code> */

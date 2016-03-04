@@ -1,6 +1,6 @@
 
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -29,7 +29,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @author Berk
+ * @author Michael Berkovich
  * @version $Id: $Id
  */
 
@@ -44,6 +44,8 @@ import java.util.Map;
 import com.translationexchange.core.decorators.Decorator;
 import com.translationexchange.core.decorators.HtmlDecorator;
 import com.translationexchange.core.decorators.PlainDecorator;
+import com.translationexchange.core.languages.Language;
+import com.translationexchange.core.languages.LanguageContext;
 import com.translationexchange.core.rulesengine.Variable;
 public class Configuration {
 
@@ -126,6 +128,11 @@ public class Configuration {
      * Stores agent related configuration
      */
     private Map<String, Object> agent;
+    
+    /**
+     * Default system language
+     */
+    private Language defaultLanguage;
     
     /**
      * <p>Constructor for Configuration.</p>
@@ -387,6 +394,26 @@ public class Configuration {
         );
     }
 
+    /**
+     * Get default language, for when the application is not available
+     *  
+     * @return
+     */
+    public Language getDefaultLanguage() {
+    	if (defaultLanguage == null) {
+    		try {
+    			String data = Utils.readFromInputStream(this.getClass().getClassLoader().getResourceAsStream("en.json"));
+	    		@SuppressWarnings("unchecked")
+				Map <String, Object> lang = (Map <String, Object>) Utils.parseJSON(data);
+	    		defaultLanguage = new Language(lang);
+    		} catch (Exception ex) {
+    			Tml.getLogger().debug("Failed to load the default language: " + ex.getMessage());
+    		}
+    	}
+    		
+    	return defaultLanguage;
+    }
+    
     /**
      * <p>isEnabled.</p>
      *

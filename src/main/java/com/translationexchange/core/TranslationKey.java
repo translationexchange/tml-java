@@ -1,6 +1,6 @@
 
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.translationexchange.core.decorators.Decorator;
+import com.translationexchange.core.languages.Language;
 import com.translationexchange.core.tokenizers.DataTokenizer;
 import com.translationexchange.core.tokenizers.DecorationTokenizer;
 import com.translationexchange.core.tokenizers.Tokenizer;
@@ -120,6 +121,14 @@ public class TranslationKey extends Base {
      */
     public TranslationKey() {
         super();
+    }
+    
+    /**
+     * 
+     * @param key
+     */
+    public TranslationKey(String key) {
+        this.key = key;
     }
     
     /**
@@ -501,7 +510,7 @@ public class TranslationKey extends Base {
     /**
      * <p>translate.</p>
      *
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      * @return a {@link java.lang.Object} object.
      */
     public Object translate(Language language) {
@@ -511,7 +520,7 @@ public class TranslationKey extends Base {
     /**
      * <p>translate.</p>
      *
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      * @param tokens a {@link java.util.Map} object.
      * @return a {@link java.lang.Object} object.
      */
@@ -522,7 +531,7 @@ public class TranslationKey extends Base {
     /**
      * <p>translate.</p>
      *
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      * @param tokens a {@link java.util.Map} object.
      * @param options a {@link java.util.Map} object.
      * @return a {@link java.lang.Object} object.
@@ -545,7 +554,7 @@ public class TranslationKey extends Base {
      *
      * @param key a {@link java.lang.String} object.
      * @param translatedLabel a {@link java.lang.String} object.
-     * @param translationLanguage a {@link com.translationexchange.core.Language} object.
+     * @param translationLanguage a {@link com.translationexchange.core.languages.Language} object.
      * @param tokens a {@link java.util.Map} object.
      * @param options a {@link java.util.Map} object.
      * @param allowedTokenNames a {@link java.util.List} object.
@@ -575,8 +584,8 @@ public class TranslationKey extends Base {
 	 * @param translatedLabel a {@link java.lang.String} object.
 	 * @param tokens a {@link java.util.Map} object.
 	 * @param options a {@link java.util.Map} object.
-	 * @param translationLanguage a {@link com.translationexchange.core.Language} object.
-	 * @param targetLanguage a {@link com.translationexchange.core.Language} object.
+	 * @param translationLanguage a {@link com.translationexchange.core.languages.Language} object.
+	 * @param targetLanguage a {@link com.translationexchange.core.languages.Language} object.
 	 * @return a {@link java.lang.Object} object.
 	 */
 	public Object substitute(String translatedLabel, Map<String, Object> tokens, Language translationLanguage, Language targetLanguage, Map<String, Object> options) {

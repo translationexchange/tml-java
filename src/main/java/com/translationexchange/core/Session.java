@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -37,6 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
+
+import com.translationexchange.core.languages.Language;
 
 /**
  * Represents a TML application session or a web request
@@ -89,12 +91,19 @@ public class Session extends Observable {
     		options = new HashMap<String, Object>();
     	}
 
-    	String[] keys = {"key", "token", "host"};
+    	String[] keys = {"key", "host", "cdn_host"};
     	for (String key :  keys) {
         	if (options.get(key) == null)
         		options.put(key, Tml.getConfig().getApplication().get(key));
     	}
 
+    	// translator token takes precedence
+    	if (options.get("oauth") != null) {
+    		Map<String, String> oauth = (Map<String, String>) options.get("oauth");
+    		options.put("token", oauth.get("token"));
+    	}
+    	
+    	// create translator object
     	if (options.get("translator") != null) {
     		setCurrentTranslator(new Translator((Map<String, Object>) options.get("translator")));
     	}
@@ -121,7 +130,7 @@ public class Session extends Observable {
     /**
      * <p>Getter for the field <code>currentLanguage</code>.</p>
      *
-     * @return a {@link com.translationexchange.core.Language} object.
+     * @return a {@link com.translationexchange.core.languages.Language} object.
      */
     public Language getCurrentLanguage() {
         return currentLanguage;
@@ -130,7 +139,7 @@ public class Session extends Observable {
     /**
      * <p>switchLanguage.</p>
      *
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      */
     public void switchLanguage(Language language) {
 //        if (getCurrentLanguage().equals(language))
@@ -158,7 +167,7 @@ public class Session extends Observable {
     /**
      * <p>Setter for the field <code>currentLanguage</code>.</p>
      *
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      */
     public void setCurrentLanguage(Language language) {
         this.currentLanguage = language;

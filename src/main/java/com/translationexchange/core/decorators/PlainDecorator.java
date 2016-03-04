@@ -1,6 +1,6 @@
 
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -37,10 +37,10 @@ package com.translationexchange.core.decorators;
 
 import java.util.Map;
 
-import com.translationexchange.core.Language;
-import com.translationexchange.core.LanguageCase;
-import com.translationexchange.core.LanguageCaseRule;
 import com.translationexchange.core.TranslationKey;
+import com.translationexchange.core.languages.Language;
+import com.translationexchange.core.languages.LanguageCase;
+import com.translationexchange.core.languages.LanguageCaseRule;
 import com.translationexchange.core.tokens.Token;
 public class PlainDecorator implements Decorator {
 

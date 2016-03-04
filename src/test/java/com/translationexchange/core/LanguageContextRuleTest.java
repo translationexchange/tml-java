@@ -34,8 +34,8 @@ package com.translationexchange.core;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.translationexchange.core.LanguageContextRule;
 import com.translationexchange.core.Utils;
+import com.translationexchange.core.languages.LanguageContextRule;
 
 /**
  * Created by michael on 3/10/14.

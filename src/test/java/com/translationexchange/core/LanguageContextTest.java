@@ -33,8 +33,8 @@ package com.translationexchange.core;
 
 import org.junit.Test;
 
-import com.translationexchange.core.Language;
-import com.translationexchange.core.LanguageContext;
+import com.translationexchange.core.languages.Language;
+import com.translationexchange.core.languages.LanguageContext;
 
 /**
  * Created by michael on 3/15/14.

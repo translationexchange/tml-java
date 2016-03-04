@@ -1,6 +1,6 @@
 
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -38,6 +38,9 @@ package com.translationexchange.core;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.translationexchange.core.languages.Language;
+import com.translationexchange.core.languages.LanguageContext;
+import com.translationexchange.core.languages.LanguageContextRule;
 import com.translationexchange.core.tokens.DataToken;
 public class Translation extends Base {
 
@@ -122,7 +125,7 @@ public class Translation extends Base {
     /**
      * <p>Getter for the field <code>language</code>.</p>
      *
-     * @return a {@link com.translationexchange.core.Language} object.
+     * @return a {@link com.translationexchange.core.languages.Language} object.
      */
     public Language getLanguage() {
         return language;
@@ -131,7 +134,7 @@ public class Translation extends Base {
     /**
      * <p>Setter for the field <code>language</code>.</p>
      *
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      */
     public void setLanguage(Language language) {
         this.language = language;

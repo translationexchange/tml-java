@@ -1,6 +1,5 @@
-
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -210,21 +209,22 @@ public class Source extends Base {
         while (entries.hasNext()) {
             Map.Entry entry = (Map.Entry) entries.next();
             String key = (String) entry.getKey();
-            Map<String, Object> keyData = (Map<String, Object>) entry.getValue();
+            List<Map<String, Object>> translationsData = (List<Map<String, Object>>) entry.getValue();
             
             TranslationKey tkey = null;
             if (getApplication() != null)
             	tkey = getApplication().getTranslationKey(key);
             
             if (tkey == null) {
-            	tkey = new TranslationKey((Map<String, Object>) keyData.get("original"));
+            	tkey = new TranslationKey(key);
+            	tkey.setLocale(getApplication().getDefaultLocale());
             	
             	if (getApplication() != null)
             		getApplication().addTranslationKey(tkey);
             }
             
             List<Translation> translations = new ArrayList<Translation>();
-            for (Map<String, Object> translationData : (List<Map<String, Object>>) keyData.get("translations")) {
+            for (Map<String, Object> translationData : translationsData) {
                 Translation translation = new Translation(translationData);
                 String locale = (String) translationData.get("locale");
                 
@@ -290,7 +290,7 @@ public class Source extends Base {
         	options.put("cache_key", getCacheKey());
 
         	this.updateTranslationKeys(getApplication().getHttpClient().getJSONMap("sources/" + this.generateMD5Key() + "/translations", 
-	    		Utils.buildMap("original", "true", "per_page", "10000", "locale", getLocale()),
+	    		Utils.buildMap("app_id", getApplication().getKey(), "all", "true", "locale", getLocale()),
 	    		options
             ));
             

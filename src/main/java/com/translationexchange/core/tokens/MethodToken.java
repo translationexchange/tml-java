@@ -1,6 +1,6 @@
 
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -39,9 +39,9 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.translationexchange.core.Language;
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.decorators.Decorator;
+import com.translationexchange.core.languages.Language;
 public class MethodToken extends DataToken {
 
     /**
@@ -60,7 +60,7 @@ public class MethodToken extends DataToken {
      * @return a {@link java.lang.String} object.
      */
     public static String getExpression() {
-        return "(%?\\{{1,2}\\s*[\\w]*\\.\\w*\\s*(:\\s*\\w+)*\\s*(::\\s*\\w+)*\\s*\\}{1,2})";
+        return "(%?\\{{1,2}\\s*[\\w]+\\.\\w*\\s*(:\\s*\\w+)*\\s*(::\\s*\\w+)*\\s*\\}{1,2})";
     }
 
     /**

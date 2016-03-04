@@ -1,6 +1,6 @@
 
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -37,10 +37,10 @@ package com.translationexchange.core.decorators;
 
 import java.util.Map;
 
-import com.translationexchange.core.Language;
-import com.translationexchange.core.LanguageCase;
-import com.translationexchange.core.LanguageCaseRule;
 import com.translationexchange.core.TranslationKey;
+import com.translationexchange.core.languages.Language;
+import com.translationexchange.core.languages.LanguageCase;
+import com.translationexchange.core.languages.LanguageCaseRule;
 import com.translationexchange.core.tokens.Token;
 public interface Decorator {
 
@@ -48,8 +48,8 @@ public interface Decorator {
 	 * <p>decorate.</p>
 	 *
 	 * @param translatedLabel a {@link java.lang.String} object.
-	 * @param translationLanguage a {@link com.translationexchange.core.Language} object.
-	 * @param targetLanguage a {@link com.translationexchange.core.Language} object.
+	 * @param translationLanguage a {@link com.translationexchange.core.languages.Language} object.
+	 * @param targetLanguage a {@link com.translationexchange.core.languages.Language} object.
 	 * @param translationKey a {@link com.translationexchange.core.TranslationKey} object.
 	 * @param options a {@link java.util.Map} object.
 	 * @return a {@link java.lang.String} object.
@@ -59,8 +59,8 @@ public interface Decorator {
 	/**
 	 * <p>decorateLanguageCase.</p>
 	 *
-	 * @param languageCase a {@link com.translationexchange.core.LanguageCase} object.
-	 * @param rule a {@link com.translationexchange.core.LanguageCaseRule} object.
+	 * @param languageCase a {@link com.translationexchange.core.languages.LanguageCase} object.
+	 * @param rule a {@link com.translationexchange.core.languages.LanguageCaseRule} object.
 	 * @param original a {@link java.lang.String} object.
 	 * @param transformed a {@link java.lang.String} object.
 	 * @param options a {@link java.util.Map} object.

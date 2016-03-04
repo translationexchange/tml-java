@@ -1,6 +1,6 @@
 
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -63,37 +63,10 @@ public interface Cache {
      * @param options a {@link java.util.Map} object.
      */
     public void delete(String key, Map<String, Object> options);
-
+        
     /**
-     * <p>getVersion.</p>
-     *
-     * @return a {@link java.lang.String} object.
+     * Returns cache name space
+     * @return
      */
-    public String getVersion();
-
-    /**
-     * <p>setVersion.</p>
-     *
-     * @param version a {@link java.lang.String} object.
-     */
-    public void setVersion(String version);
-
-    /**
-     * <p>fetchVersion.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String fetchVersion();
-
-    /**
-     * <p>storeVersion.</p>
-     *
-     * @param version a {@link java.lang.String} object.
-     */
-    public void storeVersion(String version);
-    
-    /**
-     * <p>resetVersion.</p>
-     */
-    public void resetVersion();
+    public String getNamespace();
 }

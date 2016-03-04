@@ -1,6 +1,6 @@
 
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -33,7 +33,7 @@
  * @version $Id: $Id
  */
 
-package com.translationexchange.core;
+package com.translationexchange.core.languages;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.translationexchange.core.Base;
+import com.translationexchange.core.Tml;
 import com.translationexchange.core.decorators.Decorator;
 public class LanguageCase extends Base {
 
@@ -124,7 +126,7 @@ public class LanguageCase extends Base {
      * Finds matching rule for value
      *
      * @param value a {@link java.lang.String} object.
-     * @return a {@link com.translationexchange.core.LanguageCaseRule} object.
+     * @return a {@link com.translationexchange.core.languages.LanguageCaseRule} object.
      */
     public LanguageCaseRule findMatchingRule(String value) {
         return findMatchingRule(value, null);
@@ -191,7 +193,7 @@ public class LanguageCase extends Base {
     /**
      * <p>Getter for the field <code>language</code>.</p>
      *
-     * @return a {@link com.translationexchange.core.Language} object.
+     * @return a {@link com.translationexchange.core.languages.Language} object.
      */
     public Language getLanguage() {
         return language;
@@ -200,7 +202,7 @@ public class LanguageCase extends Base {
     /**
      * <p>Setter for the field <code>language</code>.</p>
      *
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      */
     public void setLanguage(Language language) {
         this.language = language;
@@ -209,7 +211,7 @@ public class LanguageCase extends Base {
     /**
      * <p>addRule.</p>
      *
-     * @param rule a {@link com.translationexchange.core.LanguageCaseRule} object.
+     * @param rule a {@link com.translationexchange.core.languages.LanguageCaseRule} object.
      */
     public void addRule(LanguageCaseRule rule) {
         if (rules == null)
@@ -221,7 +223,7 @@ public class LanguageCase extends Base {
      * <p>getRule.</p>
      *
      * @param index a {@link java.lang.Integer} object.
-     * @return a {@link com.translationexchange.core.LanguageCaseRule} object.
+     * @return a {@link com.translationexchange.core.languages.LanguageCaseRule} object.
      */
     public LanguageCaseRule getRule(Integer index) {
         if (rules == null)

@@ -1,6 +1,6 @@
 
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -35,7 +35,9 @@
 
 package com.translationexchange.core;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -294,13 +296,13 @@ public class Utils {
      */
     public static Object parseJSON(String jsonText) {
         if (jsonText == null) return null;
-
+        
         JSONParser p = new JSONParser();
         Object obj = null;
         try {
             obj = p.parse(jsonText);
         } catch(ParseException pe){
-//            Tml.getLogger().logException(pe);
+            Tml.getLogger().logException(pe);
             return null;
         }
 
@@ -410,6 +412,22 @@ public class Utils {
         setNestedMapValue(map, key, value, "\\.");
     }
 
+    /**
+     * Reads data from an input stream
+     * 
+     * @param inputStream
+     * @return
+     */
+    public static String readFromInputStream(InputStream inputStream) throws IOException {
+    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int length = 0;
+        while ((length = inputStream.read(buffer)) != -1) {
+            baos.write(buffer, 0, length);
+        }
+        return baos.toString("UTF-8");
+    }
+    
     /**
      * <p>join.</p>
      *

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -40,12 +40,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.translationexchange.core.Language;
-import com.translationexchange.core.LanguageContext;
-import com.translationexchange.core.LanguageContextRule;
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.Utils;
 import com.translationexchange.core.decorators.Decorator;
+import com.translationexchange.core.languages.Language;
+import com.translationexchange.core.languages.LanguageContext;
+import com.translationexchange.core.languages.LanguageContextRule;
 
 /**
  * <p>PipedToken class.</p>
@@ -85,7 +85,7 @@ public class PipedToken extends DataToken {
      * @return a {@link java.lang.String} object.
      */
     public static String getExpression() {
-        return "(%?\\{{1,2}\\s*[\\w]*\\s*(:\\s*\\w+)*\\s*\\|\\|?[^\\{\\}\\|]+\\}{1,2})";
+        return "(%?\\{{1,2}\\s*[\\w]+\\s*(:\\s*\\w+)*\\s*\\|\\|?[^\\{\\}\\|]+\\}{1,2})";
     }
 
     /**
@@ -216,7 +216,7 @@ public class PipedToken extends DataToken {
      * results in: {"one": "likes", "other": "like"}
      *
      * @param tokenMappingOptions a {@link java.lang.Object} object.
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      * @param options a {@link java.util.Map} object.
      * @return a {@link java.util.Map} object.
      */

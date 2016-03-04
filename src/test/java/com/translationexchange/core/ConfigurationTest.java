@@ -33,6 +33,7 @@ package com.translationexchange.core;
 
 import com.translationexchange.core.Configuration;
 import com.translationexchange.core.Utils;
+import com.translationexchange.core.languages.Language;
 import com.translationexchange.core.rulesengine.Variable;
 
 import org.junit.Assert;
@@ -132,4 +133,14 @@ public class ConfigurationTest {
         );
 
     }
+    
+    @Test
+    public void testGetDefaultLanguage() {
+        Configuration config = new Configuration();
+    	Language defaultLanguage = config.getDefaultLanguage();
+    	Assert.assertEquals("en", defaultLanguage.getLocale());
+    	Assert.assertEquals("English", defaultLanguage.getEnglishName());
+    	Assert.assertNotNull(defaultLanguage.getLanguageCaseByKeyword("ord"));
+    }
+    
 }

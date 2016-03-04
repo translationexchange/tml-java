@@ -33,12 +33,6 @@ package com.translationexchange.core;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
-
-import com.translationexchange.core.Application;
-import com.translationexchange.core.Translation;
-import com.translationexchange.core.TranslationKey;
-import com.translationexchange.core.Utils;
 
 public class ApplicationTest extends BaseTest {
 
@@ -101,11 +95,6 @@ public class ApplicationTest extends BaseTest {
         );
 
         Assert.assertEquals(
-                new Long(1),
-                app.getTranslatorLevel()
-        );
-
-        Assert.assertEquals(
                 "en-US",
                 app.getDefaultLocale()
         );
@@ -113,11 +102,6 @@ public class ApplicationTest extends BaseTest {
         Assert.assertEquals(
                 null,
                 app.getCss()
-        );
-
-        Assert.assertEquals(
-                null,
-                app.getShortcuts()
         );
 
         Assert.assertEquals(

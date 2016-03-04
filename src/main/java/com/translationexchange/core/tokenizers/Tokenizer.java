@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -34,8 +34,8 @@ package com.translationexchange.core.tokenizers;
 import java.util.List;
 import java.util.Map;
 
-import com.translationexchange.core.Language;
 import com.translationexchange.core.Tml;
+import com.translationexchange.core.languages.Language;
 import com.translationexchange.core.tokens.Token;
 
 /**
@@ -168,7 +168,7 @@ public abstract class Tokenizer {
      * <p>substitute.</p>
      *
      * @param tokensData a {@link java.util.Map} object.
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      * @return a {@link java.lang.Object} object.
      */
     public Object substitute(Map<String, Object> tokensData, Language language) {
@@ -179,7 +179,7 @@ public abstract class Tokenizer {
      * <p>substitute.</p>
      *
      * @param tokensData a {@link java.util.Map} object.
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      * @param options a {@link java.util.Map} object.
      * @return a {@link java.lang.Object} object.
      */

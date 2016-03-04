@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -34,8 +34,8 @@ package com.translationexchange.core.tokens;
 import java.util.List;
 import java.util.Map;
 
-import com.translationexchange.core.Language;
 import com.translationexchange.core.Tml;
+import com.translationexchange.core.languages.Language;
 
 /**
  * Base abstract class for all tokens supported by TML
@@ -191,7 +191,7 @@ public abstract class Token {
      * Substitution method that must be implemented by each token
      *
      * @param tokensData a {@link java.util.Map} object.
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      * @param options a {@link java.util.Map} object.
      * @param translatedLabel a {@link java.lang.String} object.
      * @return a {@link java.lang.String} object.

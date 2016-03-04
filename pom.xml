@@ -7,7 +7,7 @@
 	<version>0.2.9-SNAPSHOT</version>
 
 	<name>tml</name>
-	<description>Core library for Translation Exchange Java Extensions</description>
+	<description>Core SDK library for Translation Exchange platform</description>
 	<url>https://github.com/translationexchange/tml-java</url>
 	<inceptionYear>2014</inceptionYear>
 
@@ -114,6 +114,15 @@
 	</dependencies>
 
 	<build>
+		<resources>
+	      <resource>
+	        <directory>src/main/resources</directory>
+	        <includes>
+	          <include>en.json</include>
+	          <include>logo.png</include>
+	        </includes>
+	      </resource>
+	    </resources>
 		<plugins>
 			<plugin>
 				<groupId>org.jacoco</groupId>

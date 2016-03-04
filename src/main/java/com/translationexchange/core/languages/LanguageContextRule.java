@@ -1,6 +1,5 @@
-
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -33,13 +32,14 @@
  * @version $Id: $Id
  */
 
-package com.translationexchange.core;
+package com.translationexchange.core.languages;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.translationexchange.core.Base;
 import com.translationexchange.core.rulesengine.Evaluator;
 import com.translationexchange.core.rulesengine.Parser;
 public class LanguageContextRule extends Base {
@@ -168,7 +168,7 @@ public class LanguageContextRule extends Base {
     /**
      * <p>Getter for the field <code>languageContext</code>.</p>
      *
-     * @return a {@link com.translationexchange.core.LanguageContext} object.
+     * @return a {@link com.translationexchange.core.languages.LanguageContext} object.
      */
     public LanguageContext getLanguageContext() {
         return languageContext;
@@ -177,7 +177,7 @@ public class LanguageContextRule extends Base {
     /**
      * <p>Setter for the field <code>languageContext</code>.</p>
      *
-     * @param languageContext a {@link com.translationexchange.core.LanguageContext} object.
+     * @param languageContext a {@link com.translationexchange.core.languages.LanguageContext} object.
      */
     public void setLanguageContext(LanguageContext languageContext) {
         this.languageContext = languageContext;

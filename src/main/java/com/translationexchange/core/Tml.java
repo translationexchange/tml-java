@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -42,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.translationexchange.core.cache.Cache;
 import com.translationexchange.core.cache.CacheAdapter;
+import com.translationexchange.core.languages.Language;
 
 /**
  * A static utility session wrapper class for using by Mobile and Desktop application.
@@ -242,7 +243,7 @@ public class Tml {
      *
      ***************************************************************************************************
      *
-     * @return a {@link com.translationexchange.core.Language} object.
+     * @return a {@link com.translationexchange.core.languages.Language} object.
      */
     public static Language getCurrentLanguage() {
         return getSession().getCurrentLanguage();
@@ -251,7 +252,7 @@ public class Tml {
     /**
      * <p>switchLanguage.</p>
      *
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      */
     public static void switchLanguage(Language language) {
     	switchLanguage(language, null);
@@ -260,7 +261,7 @@ public class Tml {
     /**
      * <p>switchLanguage.</p>
      *
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      * @param options a {@link java.util.Map} object.
      */
     public static void switchLanguage(Language language, Map<String, Object> options) {
@@ -275,7 +276,7 @@ public class Tml {
     /**
      * <p>setCurrentLanguage.</p>
      *
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      */
     public void setCurrentLanguage(Language language) {
         getSession().setCurrentLanguage(language);

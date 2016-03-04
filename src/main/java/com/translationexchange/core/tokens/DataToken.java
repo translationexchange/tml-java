@@ -1,6 +1,6 @@
 
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -40,12 +40,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.translationexchange.core.Language;
-import com.translationexchange.core.LanguageCase;
-import com.translationexchange.core.LanguageContext;
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.Utils;
 import com.translationexchange.core.decorators.Decorator;
+import com.translationexchange.core.languages.Language;
+import com.translationexchange.core.languages.LanguageCase;
+import com.translationexchange.core.languages.LanguageContext;
 import com.translationexchange.core.tokenizers.DataTokenValue;
 public class DataToken extends Token {
 	
@@ -75,7 +75,7 @@ public class DataToken extends Token {
      * @return a {@link java.lang.String} object.
      */
     public static String getExpression() {
-    	return "(%?\\{{1,2}\\s*\\w*\\s*(:\\s*\\w+)*\\s*(::\\s*\\w+)*\\s*\\}{1,2})";
+    	return "(%?\\{{1,2}\\s*\\w+\\s*(:\\s*\\w+)*\\s*(::\\s*\\w+)*\\s*\\}{1,2})";
     }
 
     /**
@@ -313,7 +313,7 @@ public class DataToken extends Token {
      *
      * @param tokenValue a {@link java.lang.String} object.
      * @param object a {@link java.lang.Object} object.
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      * @param options a {@link java.util.Map} object.
      * @param languageCaseKeys a {@link java.util.List} object.
      * @return a {@link java.lang.String} object.
@@ -336,7 +336,7 @@ public class DataToken extends Token {
      *
      * @param tokenValue a {@link java.lang.String} object.
      * @param object a {@link java.lang.Object} object.
-     * @param language a {@link com.translationexchange.core.Language} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
      * @param options a {@link java.util.Map} object.
      * @return a {@link java.lang.String} object.
      */
@@ -357,8 +357,8 @@ public class DataToken extends Token {
      *
      * {user:gender:value}   - just not with piped tokens
      *
-     * @param language a {@link com.translationexchange.core.Language} object.
-     * @return a {@link com.translationexchange.core.LanguageContext} object.
+     * @param language a {@link com.translationexchange.core.languages.Language} object.
+     * @return a {@link com.translationexchange.core.languages.LanguageContext} object.
      */
     public LanguageContext getLanguageContext(Language language) {
         if (this.getLanguageContextKeys().size() > 0)

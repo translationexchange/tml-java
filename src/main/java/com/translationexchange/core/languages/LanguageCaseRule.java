@@ -1,6 +1,5 @@
-
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -33,13 +32,15 @@
  * @version $Id: $Id
  */
 
-package com.translationexchange.core;
+package com.translationexchange.core.languages;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.translationexchange.core.Base;
+import com.translationexchange.core.Utils;
 import com.translationexchange.core.rulesengine.Evaluator;
 import com.translationexchange.core.rulesengine.Parser;
 public class LanguageCaseRule extends Base {
@@ -231,7 +232,7 @@ public class LanguageCaseRule extends Base {
     /**
      * <p>Getter for the field <code>languageCase</code>.</p>
      *
-     * @return a {@link com.translationexchange.core.LanguageCase} object.
+     * @return a {@link com.translationexchange.core.languages.LanguageCase} object.
      */
     public LanguageCase getLanguageCase() {
         return languageCase;
@@ -240,7 +241,7 @@ public class LanguageCaseRule extends Base {
     /**
      * <p>Setter for the field <code>languageCase</code>.</p>
      *
-     * @param languageCase a {@link com.translationexchange.core.LanguageCase} object.
+     * @param languageCase a {@link com.translationexchange.core.languages.LanguageCase} object.
      */
     public void setLanguageCase(LanguageCase languageCase) {
         this.languageCase = languageCase;

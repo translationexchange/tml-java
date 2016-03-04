@@ -1,6 +1,6 @@
 
 /**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+ * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -35,13 +35,13 @@
 
 package com.translationexchange.core.rulesengine;
 
-import com.translationexchange.core.LanguageContext;
+import com.translationexchange.core.languages.LanguageContext;
 public interface Variable {
 
     /**
      * <p>getValue.</p>
      *
-     * @param context a {@link com.translationexchange.core.LanguageContext} object.
+     * @param context a {@link com.translationexchange.core.languages.LanguageContext} object.
      * @param object a {@link java.lang.Object} object.
      * @return a {@link java.lang.Object} object.
      */
