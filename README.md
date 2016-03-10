@@ -21,7 +21,7 @@ Add the following dependency to your pom.xml:
 <dependency>
   <groupId>com.translationexchange</groupId>
   <artifactId>tml</artifactId>
-  <version>0.2.9</version>
+  <version>0.2.10</version>
 </dependency>
 ```
 
