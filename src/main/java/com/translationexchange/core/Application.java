@@ -542,7 +542,11 @@ public class Application extends Base {
      * @return true/false based on whether the app is in translation mode
      */
     public boolean isKeyRegistrationEnabled() {
-    	if (getSession() == null) return false;
+    	if (Tml.getConfig().isKeyRegistrationModeEnabled())
+    		return true;
+    	
+    	if (getSession() == null) 
+    		return false;
     	
         return getSession().isInlineModeEnabled();
     }
@@ -695,13 +699,6 @@ public class Application extends Base {
         registerKeys(Utils.buildMap("source_keys", Utils.buildJSON(params), "app_id", getKey()));
         
         this.missingTranslationKeysBySources.clear();
-
-        // All source caches must be reset for all languages, since the keys have changed
-        for (Language language : getLanguages()) {
-            for (String sourceKey : sourceKeys) {
-            	Tml.getCache().delete(Source.getCacheKey(language.getLocale(), sourceKey), null);
-            }
-        }            
     }
 
     /**

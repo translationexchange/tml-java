@@ -55,9 +55,9 @@ public class HtmlDecorator implements Decorator {
 		if (options.get("skip_decorations") != null)
             return false;
 
-		Session session = (Session) options.get("session");
+		Session session = (Session) options.get(Session.SESSION_KEY);
 		
-		if (!session.getApplication().isLoaded())
+		if (session == null || !session.getApplication().isLoaded())
 			return false;
 		
 		return (session != null && session.getCurrentTranslator() != null && session.getCurrentTranslator().isInline());

@@ -35,41 +35,17 @@
 
 package com.translationexchange.core;
 
-import java.io.IOException;
-
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.PatternLayout;
+import org.slf4j.LoggerFactory;
 
 public class Logger {
-    private org.apache.log4j.Logger theLogger;
+    private org.slf4j.Logger theLogger;
 
     /**
      * <p>Constructor for Logger.</p>
      */
     public Logger() {
-        this.theLogger = LogManager.getLogger("Tml");
-        theLogger.setLevel(Level.DEBUG);
-        PatternLayout layout = new PatternLayout("%d{ISO8601} [%t] %-5p %c %x - %m%n");
-        
-        // TODO: disable console writer
-        theLogger.addAppender(new ConsoleAppender(layout));
-        
-        if (Tml.getConfig().getLogger().get("enabled").equals(Boolean.TRUE)) {
-	        try {
-	            FileAppender fileAppender = new FileAppender(layout, "log/tml.log");
-	            fileAppender.setName("FileLogger");
-	            fileAppender.setImmediateFlush(true);
-	            fileAppender.setThreshold(Level.DEBUG);
-	            fileAppender.setAppend(true);
-	            fileAppender.activateOptions();
-	            theLogger.addAppender(fileAppender);
-	        } catch (IOException e) {
-	            System.out.println("Failed to add file appender !!");
-	        }
-        }
+    	this.theLogger = LoggerFactory.getLogger(Logger.class);
+    	System.out.println(theLogger.getClass().getName());
     }
 
     /**
@@ -94,20 +70,12 @@ public class Logger {
     }
 
     /**
-     * <p>trace.</p>
-     *
-     * @param message a {@link java.lang.Object} object.
-     */
-    public void trace(Object message) {
-        theLogger.trace(message);
-    }
-    /**
      * <p>debug.</p>
      *
      * @param message a {@link java.lang.Object} object.
      */
     public void debug(Object message) {
-        theLogger.debug(message);
+        theLogger.debug(message.toString());
     }
     /**
      * <p>info.</p>
@@ -115,7 +83,7 @@ public class Logger {
      * @param message a {@link java.lang.Object} object.
      */
     public void info(Object message) {
-        theLogger.info(message);
+        theLogger.info(message.toString());
     }
     /**
      * <p>warn.</p>
@@ -123,7 +91,7 @@ public class Logger {
      * @param message a {@link java.lang.Object} object.
      */
     public void warn(Object message) {
-        theLogger.warn(message);
+        theLogger.warn(message.toString());
     }
     /**
      * <p>error.</p>
@@ -131,14 +99,6 @@ public class Logger {
      * @param message a {@link java.lang.Object} object.
      */
     public void error(Object message) {
-        theLogger.error(message);
-    }
-    /**
-     * <p>fatal.</p>
-     *
-     * @param message a {@link java.lang.Object} object.
-     */
-    public void fatal(Object message) {
-        theLogger.fatal(message);
+        theLogger.error(message.toString());
     }
 }

@@ -459,23 +459,16 @@ public class Language extends Base {
     public Object translate(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
         String keyHash = TranslationKey.generateKey(label, description);
 
-        String sourceKey = (String) getOptionsValue("source", options, getApplication().getSession().getCurrentSource());
-
-        // Application keys without a source belong directly to the application, the source does not need to be loaded
-        if (sourceKey == null) {
-            TranslationKey matchedKey = getApplication().getTranslationKey(keyHash);
-            if (matchedKey != null) { 
-            	matchedKey.setLabel(label);
-            	matchedKey.setDescription(description);
-            	return matchedKey.translate(this, tokens, options);
-            }
-            
-            TranslationKey tempKey = createTranslationKey(keyHash, label, description, options);
-            getApplication().registerMissingTranslationKey(tempKey);
-            getApplication().cacheTranslationKey(tempKey);
-            return tempKey.translate(this, tokens, options);
-        } 
+        if (options == null) {
+        	options = new HashMap<String, Object>();
+        }
         
+        String sourceKey = (String) getOptionsValue("source", options, getApplication().getSession().getCurrentSource());
+        
+        // source key can never be empty
+        if (sourceKey == null || sourceKey.equals("") || sourceKey.equals("/")) 
+        	sourceKey = "index";
+
         String sourcePath = Utils.join(getApplication().getSession().getSourcePath(), Configuration.SOURCE_SEPARATOR);
 //        Tml.getLogger().debug("Source path: " + sourcePath + " Key: " + label);
         
@@ -490,7 +483,7 @@ public class Language extends Base {
             	return matchedKey.translate(this, tokens, options);
             }
             
-            HashMap<String, Object> opts = new HashMap<String, Object>(options);
+            Map<String, Object> opts = new HashMap<String, Object>(options);
             opts.put("pending", "true");
             
             TranslationKey tempKey = createTranslationKey(keyHash, label, description, opts);

@@ -191,8 +191,10 @@ public class HttpClient {
     	if (getApplication().getAccessToken() == null)
     		return false;
     	
-		Session session = getApplication().getSession();
+    	if (Tml.getConfig().isKeyRegistrationModeEnabled())
+    		return true;
     	
+		Session session = getApplication().getSession();
 		if (session == null) return false;
 		return session.isInlineModeEnabled();
     }
@@ -275,7 +277,14 @@ public class HttpClient {
     		} else
     			cachePath = getCdnPath(getCacheVersion().getVersion() + cachePath) + ".json.gz";
     		
-    		return get(Utils.buildURL(getApplication().getCdnHost(), cachePath), options); 
+    		String response = get(Utils.buildURL(getApplication().getCdnHost(), cachePath), options); 
+    		
+    		// check if CDN responded with an error
+    		if (response.indexOf("<?xml") != -1) {
+    			return null;
+    		}
+    		
+    		return response; 
     	} catch (Exception ex) {
     		return null;
     	}

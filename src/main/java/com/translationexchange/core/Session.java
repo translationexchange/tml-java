@@ -48,7 +48,9 @@ import com.translationexchange.core.languages.Language;
  */
 public class Session extends Observable {
 
-    /**
+	public static final String SESSION_KEY = "session";
+
+	/**
      * Current application
      */
     private Application application;
@@ -91,7 +93,7 @@ public class Session extends Observable {
     		options = new HashMap<String, Object>();
     	}
 
-    	String[] keys = {"key", "host", "cdn_host"};
+    	String[] keys = {"key", "token", "host", "cdn_host"};
     	for (String key :  keys) {
         	if (options.get(key) == null)
         		options.put(key, Tml.getConfig().getApplication().get(key));
@@ -374,6 +376,9 @@ public class Session extends Observable {
      * @return a {@link java.lang.String} object.
      */
     public String translate(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
+        if (options == null)
+        	options = new HashMap<String, Object>();
+    	options.put(Session.SESSION_KEY, this);
         return (String) getCurrentLanguage().translate(label, description, tokens, options);
     }
 
@@ -446,6 +451,7 @@ public class Session extends Observable {
         if (options == null)
             options = new HashMap<String, Object>();
 
+    	options.put(Session.SESSION_KEY, this);
         options.put(TranslationKey.TOKENIZER_KEY, TranslationKey.DEFAULT_TOKENIZERS_STYLED);
         return getCurrentLanguage().translate(label, description, tokens, options);
     }

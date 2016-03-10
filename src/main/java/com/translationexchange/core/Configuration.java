@@ -95,11 +95,6 @@ public class Configuration {
     private Map<String, Object> contextRules;
 
     /**
-     * Logger configuration
-     */
-    private Map<String, Object> logger;
-
-    /**
      * Cache configuration
      */
     private Map<String, Object> cache;
@@ -133,8 +128,15 @@ public class Configuration {
      * Default system language
      */
     private Language defaultLanguage;
-    
+
     /**
+     * Allows to force inline mode for key submission/verification
+     * This is only used for applications with a User Interface
+     * This mode must never be used in production
+     */
+    private boolean keyRegistrationMode;
+
+	/**
      * <p>Constructor for Configuration.</p>
      */
     public Configuration() {
@@ -149,12 +151,6 @@ public class Configuration {
 		    "com.translationexchange.core.tokens.DataToken",
 		    "com.translationexchange.core.tokens.MethodToken",
 		    "com.translationexchange.core.tokens.PipedToken"
-        );
-
-        this.logger = Utils.buildMap(
-            "enabled", false,
-            "path", "./log/tml.log",
-            "level", "debug"
         );
 
         this.cache = Utils.buildMap(
@@ -648,24 +644,6 @@ public class Configuration {
     }
 
     /**
-     * <p>Getter for the field <code>logger</code>.</p>
-     *
-     * @return a {@link java.util.Map} object.
-     */
-    public Map<String, Object> getLogger() {
-        return logger;
-    }
-
-    /**
-     * <p>Setter for the field <code>logger</code>.</p>
-     *
-     * @param logger a {@link java.util.Map} object.
-     */
-    public void setLogger(Map<String, Object> logger) {
-        this.logger = logger;
-    }
-
-    /**
      * <p>Getter for the field <code>cache</code>.</p>
      *
      * @return a {@link java.util.Map} object.
@@ -816,5 +794,17 @@ public class Configuration {
     public void setAgent(Map<String, Object> agent) {
         this.agent = agent;
     }
+    
+    public boolean isKeyRegistrationModeEnabled() {
+		return keyRegistrationMode;
+	}
+
+	public void enableKeyRegistrationMode() {
+		this.keyRegistrationMode = true;
+	}
+
+	public void disableKeyRegistrationMode() {
+		this.keyRegistrationMode = false;
+	}
     
 }
