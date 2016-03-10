@@ -22,6 +22,13 @@ def version
   @version = version_file.at_css('version').text.split('-')[0]
 end
 
+def readme_version(new_version)
+  file_name = "README.md"
+  readme = File.read(file_name)
+  new_version = readme.gsub(/<version>.*<\/version>/, "<version>#{new_version}</version>")
+  File.open(file_name, "w") {|file| file.puts new_version }
+end
+
 def increment_version
   parts = version.split('.')
   parts[2] = (parts[2].to_i + 1).to_s
@@ -34,6 +41,9 @@ def increment_version
   File.open(version_file_path, 'w') do |file|
     file.write(@doc.root)
   end
+
+  readme_version(new_version)
+
   @version_file = nil
   @version = nil
 end
