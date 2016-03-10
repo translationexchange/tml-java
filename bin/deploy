@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+require 'nokogiri'
+
+#################
+
+
+def execute(cmd)
+  puts "\n***************************************************************************\n"
+  puts "$ #{cmd}"
+  system(cmd)
+end
+
+def version_file_path
+  './pom.xml'
+end
+
+def version_file
+  @doc = File.open(version_file_path) { |f| Nokogiri::XML(f) }
+end
+
+def version
+  @version = version_file.at_css('version').text.split('-')[0]
+end
+
+def increment_version
+  parts = version.split('.')
+  parts[2] = (parts[2].to_i + 1).to_s
+  puts new_version = parts.join('.')
+
+  @doc = version_file
+
+  puts @doc.at_css('version').content = new_version + '-SNAPSHOT'
+
+  File.open(version_file_path, 'w') do |file|
+    file.write(@doc.root)
+  end
+  @version_file = nil
+  @version = nil
+end
+
+puts "\nBuilding tml-java-#{version}"
+
+if ARGV.include?('release')
+  execute('git checkout master')
+  execute('git merge develop')
+  execute('git push')
+end
+
+execute('mvn release:clean release:prepare release:perform')
+
+if ARGV.include?('release')
+  execute("git tag #{version}")
+  execute('git push')
+
+  execute('git checkout develop')
+
+  increment_version
+
+  execute("git commit -m 'Updated version to #{version}'")
+  execute('git push')
+end
+
