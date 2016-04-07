@@ -241,7 +241,9 @@ public class Language extends Base {
     /** {@inheritDoc} */
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public void updateAttributes(Map<String, Object> attributes) {
-        if (attributes.get("application") != null)
+    	if(attributes.isEmpty())
+    		return;
+    	if (attributes.get("application") != null)
             setApplication((Application) attributes.get("application"));
 
         setLocale((String) attributes.get("locale"));
@@ -285,10 +287,11 @@ public class Language extends Base {
      */
     public void load() {
         try {
-            this.updateAttributes(getApplication().getHttpClient().getJSONMap("languages/" + getLocale() + "/definition", 
-        		Utils.buildMap(),
-        		Utils.buildMap("cache_key", getCacheKey())
-            ));
+        	Map<String, Object> attributes = getApplication().getHttpClient().getJSONMap("languages/" + getLocale() + "/definition", 
+            		Utils.buildMap(),
+            		Utils.buildMap("cache_key", getCacheKey())
+                );
+        	this.updateAttributes(attributes);
             setLoaded(true);
         } catch (Exception ex) {
         	setLoaded(false);

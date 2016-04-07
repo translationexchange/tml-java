@@ -44,6 +44,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -214,6 +215,10 @@ public class Utils {
     	Map<String, Object> map = new HashMap<String, Object>(original);
     	map.putAll(buildMap(data));
     	return map;
+    }
+    
+    public static HashSet<String> getMapKeys(Map<String, ?> map) {
+    	return new HashSet<String>(map.keySet());
     }
     
     /**

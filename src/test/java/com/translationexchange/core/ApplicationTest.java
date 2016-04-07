@@ -31,11 +31,34 @@
 
 package com.translationexchange.core;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Matchers;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
+import com.translationexchange.core.languages.Language;
+
+import static org.mockito.Mockito.*;
 
 public class ApplicationTest extends BaseTest {
-
+	
+	private HttpClient mockedHttpClient = mock(HttpClient.class);
+	
+	private Map<String, Object> buildTranslationsObject(String jsonFile) {
+		List<Object> translationList = loadJSONList(jsonFile);
+		Map<String, Object> translations = new HashMap<String, Object>();
+		translations.put("results", translationList);
+		return translations;
+	}
+	
     @Test
     public void testCreatingApplication() {
     	Application app = new Application();
@@ -121,21 +144,93 @@ public class ApplicationTest extends BaseTest {
     }
     
     @Test
-    public void testSubmittingMissingTranslationKeys() {
-//    	Application app = new Application(loadJSONMap("/application.json"));
-//
-//    	app.submitMissingTranslationKeys();
-//    	
-//    	app.registerMissingTranslationKey(new TranslationKey(Utils.buildMap("label", "Hello World", "Description", "Greeting")));
-//
-//    	app.submitMissingTranslationKeys();
-//    	
-//    	app.registerMissingTranslationKey(new TranslationKey(Utils.buildMap("label", "Hello World", "Description", "Greeting")));
-//    	
-//    	Application appSpy = Mockito.spy(app);
-//		Mockito.when(appSpy.registerKeys(Utils.buildMap())).thenReturn(true);
-//    	
-//		appSpy.submitMissingTranslationKeys();
+    public void testCreatingCompleteApplication() {
+    	Application app = new Application(loadJSONMap("/foody.json"));
+    	String[] sourceKeys = new String[]{"foody.views.IndexView", "base", "header"};
+    	HashMap<String, Object> options = new HashMap<String, Object>();
+        options.put("dry", true);
+    	Assert.assertEquals(
+        	new HashSet<String>(Arrays.asList(sourceKeys)),
+        	Utils.getMapKeys(app.getSourcesByKeys()));
+        Assert.assertEquals(
+        	new HashSet<String>(Arrays.asList(new String[]{"zh-Hans-CN", "fb-LT", "ru", "ko", "pt-BR", "en", "ga", "kk-Cyrl-KZ", "ro", "zh-Hant-HK", "zh"})),
+        	Utils.getMapKeys(app.getLanguagesByLocale()));
+        
+        Assert.assertEquals(
+        	app.getSource("base", "en", options).getKey(),
+        	"base");
+        
+        Assert.assertEquals(
+        		"unknown",
+            	app.getSource("unknown", "en", options).getKey());
+    }
+    
+    @Test
+    public void testLanguageGetters() throws Exception {
+    	Application app = spy(new Application(loadJSONMap("/foody.json")));
+    	Language language = spy(app.getLanguagesByLocale().get("fb-LT"));
+        when(language.hasDefinition()).thenReturn(true);
+        app.getLanguagesByLocale().put(language.getLocale(), language);
+        Assert.assertEquals(
+        		"en",
+        		app.getLanguage().getLocale());
+        Assert.assertEquals(
+        		"fb-LT",
+        		app.getLanguage("fb-LT").getLocale());
+        
+        when(app.getHttpClient()).thenReturn(mockedHttpClient);
+        Assert.assertEquals(
+        		"hmm-HM",
+        		app.getLanguage("hmm-HM").getLocale());
+    }
+    
+    @Test
+    public void testTranslationKeysFunctionality() { 
+    	Application app = spy(new Application(loadJSONMap("/application.json")));
+    	Language ru = app.getLanguage("ru");
+    	app.updateTranslationKeys(ru, loadJSONMap("/translations/ru/snippet.json"));
+    	
+    	Assert.assertEquals(
+    			"c59e947093a020f150715057c38759fd",
+    			app.getTranslationKey("c59e947093a020f150715057c38759fd").getKey());
+    }
+    
+    @Test
+    public void testLoadTranslations() throws Exception {
+    	Application app = spy(new Application(loadJSONMap("/application.json")));
+    	when(app.getHttpClient()).thenReturn(mockedHttpClient);
+    	when(mockedHttpClient.getJSONMap(eq("projects/current/translations"), anyMap(), anyMap())).thenReturn(
+    			loadJSONMap("/translations/ru/snippet.json"));
+    	app.loadTranslations(app.getLanguage("ru"));
+    	Assert.assertEquals(
+    			"c59e947093a020f150715057c38759fd",
+    			app.getTranslationKey("c59e947093a020f150715057c38759fd").getKey());
+    }
+    
+    @Test
+    public void testApplicationLoad() throws Exception {
+    	Application app = spy(new Application());
+    	app.setKey("6c377447a542718bfd9fe0f5d8f11fae2827377bc4295db76667469db67bd8ed");
+    	when(app.getHttpClient()).thenReturn(mockedHttpClient);
+    	Assert.assertNull(app.getName());
+    	when(mockedHttpClient.getJSONMap(eq("projects/" + app.getKey() + "/definition"), anyMap(), anyMap())).thenReturn(loadJSONMap("/foody.json"));
+    	app.load();
+    	Assert.assertEquals("Foody", app.getName());
+    }
+    
+    @Test
+    public void testSubmittingMissingTranslationKeys() throws Exception {
+    	Application app = spy(new Application(loadJSONMap("/application.json")));
+    	when(app.isKeyRegistrationEnabled()).thenReturn(true);
+    	TranslationKey dummyKey = new TranslationKey(Utils.buildMap("label", "Hello", "description", "Greeting"));
+    	app.registerMissingTranslationKey(dummyKey);
+    	Map<String, TranslationKey> registeredKeys = app.getMissingTranslationKeysBySources().get(Application.UNDEFINED_SOURCE);
+    	Assert.assertTrue(registeredKeys.containsKey(dummyKey.getKey()));
+    	
+    	when(app.getHttpClient()).thenReturn(mockedHttpClient);
+    	app.submitMissingTranslationKeys();
+    	verify(app, times(1)).registerKeys(anyMap());
+    	Assert.assertTrue(app.getMissingTranslationKeysBySources().isEmpty());
     }
     
     
@@ -175,6 +270,21 @@ public class ApplicationTest extends BaseTest {
     			1,
         		app.getFeaturedLanguages().size()
         );
+    	
+    	Assert.assertEquals(
+    			app.getDefaultLocale(),
+    			app.getFirstAcceptedLocale("xyz,xyz2,xxx"));
+    	Assert.assertEquals(
+    			"no",
+    			app.getFirstAcceptedLocale("xyz,xyz2,xxx,no"));
+    	
+    	Assert.assertEquals(
+    			app.TREX_CDN_HOST,
+    			app.getCdnHost());
+    	app.setCdnHost("http://google.com");
+    	Assert.assertEquals(
+    			"http://google.com",
+    			app.getCdnHost());
     	
     	TranslationKey tkey = new TranslationKey(Utils.buildMap("label", "Hello World", "Description", "Greeting"));
     	tkey.addTranslation(new Translation(Utils.buildMap("label", "Privet Mir", "locale", "ru")));

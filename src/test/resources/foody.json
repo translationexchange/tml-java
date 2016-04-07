@@ -1,0 +1,1577 @@
+{
+  "id": 1767,
+  "key": "6c377447a542718bfd9fe0f5d8f11fae2827377bc4295db76667469db67bd8ed",
+  "name": "Foody",
+  "threshold": 1,
+  "languages": [
+    {
+      "id": 64,
+      "locale": "en",
+      "english_name": "English",
+      "native_name": "English",
+      "right_to_left": false,
+      "flag_url": "https://s3-us-west-1.amazonaws.com/trex-snapshots/flags/default/languages/16/en.png",
+      "link": "https://staging-api.translationexchange.com/v1/languages/64?access_token=3fa80009fce8a0bd68dd5b7d45ab5d7e1887b84344e51c12bf3426244c178b55"
+    },
+    {
+      "id": 346,
+      "locale": "zh-Hans-CN",
+      "english_name": "Chinese (China)",
+      "right_to_left": false,
+      "flag_url": "https://s3-us-west-1.amazonaws.com/trex-snapshots/flags/default/languages/16/zh-Hans-CN.png",
+      "link": "https://staging-api.translationexchange.com/v1/languages/346?access_token=3fa80009fce8a0bd68dd5b7d45ab5d7e1887b84344e51c12bf3426244c178b55"
+    },
+    {
+      "id": 722,
+      "locale": "pt-BR",
+      "english_name": "Portuguese (Brazil)",
+      "right_to_left": false,
+      "flag_url": "https://s3-us-west-1.amazonaws.com/trex-snapshots/flags/default/languages/16/pt-BR.png",
+      "link": "https://staging-api.translationexchange.com/v1/languages/722?access_token=3fa80009fce8a0bd68dd5b7d45ab5d7e1887b84344e51c12bf3426244c178b55"
+    },
+    {
+      "id": 118,
+      "locale": "ga",
+      "english_name": "Irish",
+      "native_name": "Gaeilge",
+      "right_to_left": false,
+      "flag_url": "https://s3-us-west-1.amazonaws.com/trex-snapshots/flags/default/languages/16/ga.png",
+      "link": "https://staging-api.translationexchange.com/v1/languages/118?access_token=3fa80009fce8a0bd68dd5b7d45ab5d7e1887b84344e51c12bf3426244c178b55"
+    },
+    {
+      "id": 356,
+      "locale": "zh-Hant-HK",
+      "english_name": "Chinese (Hong Kong)",
+      "right_to_left": false,
+      "flag_url": "https://s3-us-west-1.amazonaws.com/trex-snapshots/flags/default/languages/16/zh-Hant-HK.png",
+      "link": "https://staging-api.translationexchange.com/v1/languages/356?access_token=3fa80009fce8a0bd68dd5b7d45ab5d7e1887b84344e51c12bf3426244c178b55"
+    },
+    {
+      "id": 228,
+      "locale": "ro",
+      "english_name": "Romanian",
+      "native_name": "Română",
+      "right_to_left": false,
+      "flag_url": "https://s3-us-west-1.amazonaws.com/trex-snapshots/flags/default/languages/16/ro.png",
+      "link": "https://staging-api.translationexchange.com/v1/languages/228?access_token=3fa80009fce8a0bd68dd5b7d45ab5d7e1887b84344e51c12bf3426244c178b55"
+    },
+    {
+      "id": 601,
+      "locale": "kk-Cyrl-KZ",
+      "english_name": "Kazakh (Kazakhstan)",
+      "right_to_left": false,
+      "flag_url": "https://s3-us-west-1.amazonaws.com/trex-snapshots/flags/default/languages/16/kk-Cyrl-KZ.png",
+      "link": "https://staging-api.translationexchange.com/v1/languages/601?access_token=3fa80009fce8a0bd68dd5b7d45ab5d7e1887b84344e51c12bf3426244c178b55"
+    },
+    {
+      "id": 103,
+      "locale": "fb-LT",
+      "english_name": "Leet Speak",
+      "native_name": "1337",
+      "right_to_left": false,
+      "flag_url": "https://s3-us-west-1.amazonaws.com/trex-snapshots/flags/default/languages/16/fb-LT.png",
+      "link": "https://staging-api.translationexchange.com/v1/languages/103?access_token=3fa80009fce8a0bd68dd5b7d45ab5d7e1887b84344e51c12bf3426244c178b55"
+    },
+    {
+      "id": 159,
+      "locale": "ko",
+      "english_name": "Korean",
+      "native_name": "한국어",
+      "right_to_left": false,
+      "flag_url": "https://s3-us-west-1.amazonaws.com/trex-snapshots/flags/default/languages/16/ko.png",
+      "link": "https://staging-api.translationexchange.com/v1/languages/159?access_token=3fa80009fce8a0bd68dd5b7d45ab5d7e1887b84344e51c12bf3426244c178b55"
+    },
+    {
+      "id": 302,
+      "locale": "zh",
+      "english_name": "Chinese",
+      "native_name": "中文(香港)",
+      "right_to_left": false,
+      "flag_url": "https://s3-us-west-1.amazonaws.com/trex-snapshots/flags/default/languages/16/zh.png",
+      "link": "https://staging-api.translationexchange.com/v1/languages/302?access_token=3fa80009fce8a0bd68dd5b7d45ab5d7e1887b84344e51c12bf3426244c178b55"
+    },
+    {
+      "id": 233,
+      "locale": "ru",
+      "english_name": "Russian",
+      "native_name": "Русский",
+      "right_to_left": false,
+      "flag_url": "https://s3-us-west-1.amazonaws.com/trex-snapshots/flags/default/languages/16/ru.png",
+      "link": "https://staging-api.translationexchange.com/v1/languages/233?access_token=3fa80009fce8a0bd68dd5b7d45ab5d7e1887b84344e51c12bf3426244c178b55"
+    }
+  ],
+  "default_locale": "en",
+  "features": {
+    "inline_translations": true,
+    "machine_translations": false,
+    "translation_suggestions": true,
+    "lock_original_content": true,
+    "decorations": true,
+    "shortcuts": true,
+    "context_rules": true,
+    "language_cases": true,
+    "javascript_sdk": false,
+    "glossary": true,
+    "forum": true,
+    "awards": true,
+    "auto_submit_orders": false,
+    "invalidation_callback": true,
+    "lsp_translation_lock": true,
+    "private_project": true,
+    "shared_translations": true,
+    "utm_suggestions": true,
+    "machine_suggestions": true,
+    "language_flags": true,
+    "releases": true
+  },
+  "tokens": {},
+  "css": ".tml_translatable.tml_not_translated { border-bottom: 2px solid red; } .tml_translatable.tml_translated { border-bottom: 2px solid green; } .tml_translatable.tml_fallback { border-bottom: 2px solid #e90; } .tml_translatable.tml_pending { border-bottom: 2px solid #e90; } .tml_translatable.tml_locked { border-bottom: 2px solid blue; } .tml_translatable.tml_language_case { padding:3px; border: 1px dotted blue; }",
+  "shortcuts": {
+    "Ctrl+Shift+S": "Tml.Utils.openShortcuts();",
+    "Ctrl+Shift+G": "Tml.Utils.login();",
+    "Ctrl+Shift+I": "Tml.Utils.toggleInlineTranslations();",
+    "Ctrl+Shift+L": "Tml.UI.LanguageSelector.show(true);",
+    "Ctrl+Shift+M": "Tml.Utils.openMetrics();",
+    "Ctrl+Shift+R": "Tml.Utils.reloadSettings();",
+    "Ctrl+Shift+W": "Tml.UI.Widget.toggle();",
+    "Ctrl+Shift+O": "Tml.Utils.logout();"
+  },
+  "tools": {
+    "postoffice": "https://postoffice.translationexchange.com",
+    "host": "https://staging-translation-center.translationexchange.com",
+    "assets": "https://trex-translation-center-staging.s3-us-west-1.amazonaws.com/assets",
+    "javascript": "https://trex-translation-center-staging.s3-us-west-1.amazonaws.com/assets/tools-d5d5a4db11ebe945ff484826324e17e5.js",
+    "stylesheet": "https://trex-translation-center-staging.s3-us-west-1.amazonaws.com/assets/tools-14c3e80f690e1fb14d43c89353945419.css"
+  },
+  "extensions": {
+    "languages": {
+      "en": {
+        "id": 64,
+        "locale": "en",
+        "english_name": "English",
+        "native_name": "English",
+        "right_to_left": false,
+        "flag_url": "https://s3.amazonaws.com/media.translationexchange.com/7/55/1/27/c9262c9538cda82c6.png",
+        "contexts": {
+          "list": {
+            "rules": {
+              "one": {
+                "description": "{token} contains 1 element",
+                "conditions": "(= 1 @count)",
+                "conditions_expression": [
+                  "=",
+                  1,
+                  "@count"
+                ]
+              },
+              "other": {
+                "description": "{token} contains at least 2 elements"
+              }
+            },
+            "keys": [
+              "one",
+              "other"
+            ],
+            "default_key": "other",
+            "token_expression": "/.*(items|list)(\\d)*$/",
+            "variables": [
+              "@count"
+            ],
+            "token_mapping": [
+              "unsupported",
+              {
+                "one": "{$0}",
+                "other": "{$1}"
+              }
+            ]
+          },
+          "date": {
+            "rules": {
+              "future": {
+                "description": "{token} is in the past",
+                "conditions": "(< @date (today))",
+                "conditions_expression": [
+                  "<",
+                  "@date",
+                  [
+                    "today"
+                  ]
+                ]
+              },
+              "present": {
+                "description": "{token} is in the present",
+                "conditions": "(= @date (today))",
+                "conditions_expression": [
+                  "=",
+                  "@date",
+                  [
+                    "today"
+                  ]
+                ]
+              },
+              "past": {
+                "description": "{token} is in the future",
+                "conditions": "(> @date (today))",
+                "conditions_expression": [
+                  ">",
+                  "@date",
+                  [
+                    "today"
+                  ]
+                ]
+              }
+            },
+            "keys": [
+              "past",
+              "present",
+              "future"
+            ],
+            "default_key": "present",
+            "token_expression": "/.*(date|time)(\\d)*$/",
+            "variables": [
+              "@date"
+            ],
+            "token_mapping": [
+              "unsupported",
+              "unsupported",
+              {
+                "past": "{$0}",
+                "present": "{$1}",
+                "future": "{$2}"
+              }
+            ]
+          },
+          "number": {
+            "rules": {
+              "one": {
+                "description": "{token} is 1",
+                "examples": "1",
+                "conditions": "(= @n 1)",
+                "conditions_expression": [
+                  "=",
+                  "@n",
+                  1
+                ]
+              },
+              "other": {
+                "description": "{token} is not 1",
+                "examples": "0, 2-999; 1.2, 2.07..."
+              }
+            },
+            "keys": [
+              "one",
+              "other"
+            ],
+            "default_key": "other",
+            "token_expression": "/.*(count|num|minutes|seconds|hours|sum|total)(\\d)*$/",
+            "variables": [
+              "@n"
+            ],
+            "token_mapping": [
+              {
+                "one": "{$0}",
+                "other": "{$0::plural}"
+              },
+              {
+                "one": "{$0}",
+                "other": "{$1}"
+              }
+            ]
+          },
+          "gender": {
+            "rules": {
+              "female": {
+                "description": "{token} is a female",
+                "conditions": "(= 'female' @gender)",
+                "conditions_expression": [
+                  "=",
+                  "female",
+                  "@gender"
+                ]
+              },
+              "male": {
+                "description": "{token} is a male",
+                "conditions": "(= 'male' @gender)",
+                "conditions_expression": [
+                  "=",
+                  "male",
+                  "@gender"
+                ]
+              },
+              "other": {
+                "description": "{token}'s gender is unknown"
+              }
+            },
+            "keys": [
+              "male",
+              "female",
+              "other"
+            ],
+            "default_key": "other",
+            "token_expression": "/.*(user|translator|profile|actor|target)(\\d)*$/",
+            "variables": [
+              "@gender"
+            ],
+            "token_mapping": [
+              {
+                "other": "{$0}"
+              },
+              {
+                "male": "{$0}",
+                "female": "{$1}",
+                "other": "{$0}/{$1}"
+              },
+              {
+                "male": "{$0}",
+                "female": "{$1}",
+                "other": "{$2}"
+              }
+            ]
+          },
+          "genders": {
+            "rules": {
+              "female": {
+                "description": "{token} contains 1 female",
+                "conditions": "(&& (= 1 (count @genders)) (all @genders 'female'))",
+                "conditions_expression": [
+                  "&&",
+                  [
+                    "=",
+                    1,
+                    [
+                      "count",
+                      "@genders"
+                    ]
+                  ],
+                  [
+                    "all",
+                    "@genders",
+                    "female"
+                  ]
+                ]
+              },
+              "male": {
+                "description": "{token} contains 1 male",
+                "conditions": "(&& (= 1 (count @genders)) (all @genders 'male'))",
+                "conditions_expression": [
+                  "&&",
+                  [
+                    "=",
+                    1,
+                    [
+                      "count",
+                      "@genders"
+                    ]
+                  ],
+                  [
+                    "all",
+                    "@genders",
+                    "male"
+                  ]
+                ]
+              },
+              "other": {
+                "description": "{token} contains at least 2 people"
+              },
+              "unknown": {
+                "description": "{token} contains 1 person with unknown gender",
+                "conditions": "(&& (= 1 (count @genders)) (all @genders 'unknown'))",
+                "conditions_expression": [
+                  "&&",
+                  [
+                    "=",
+                    1,
+                    [
+                      "count",
+                      "@genders"
+                    ]
+                  ],
+                  [
+                    "all",
+                    "@genders",
+                    "unknown"
+                  ]
+                ]
+              }
+            },
+            "keys": [
+              "male",
+              "female",
+              "unknown",
+              "other"
+            ],
+            "default_key": "other",
+            "token_expression": "/.*(users|profiles|actors|targets)(\\d)*$/",
+            "variables": [
+              "@genders"
+            ],
+            "token_mapping": [
+              {
+                "male": "{$0}",
+                "female": "{$0}",
+                "unknown": "{$0}",
+                "other": "{$0}"
+              },
+              {
+                "male": "{$0}",
+                "female": "{$0}",
+                "unknown": "{$0}",
+                "other": "{$1}"
+              },
+              {
+                "male": "{$0}",
+                "female": "{$1}",
+                "unknown": "{$0}/{$1}",
+                "other": "{$2}"
+              },
+              {
+                "male": "{$0}",
+                "female": "{$1}",
+                "unknown": "{$2}",
+                "other": "{$3}"
+              }
+            ]
+          }
+        },
+        "cases": {
+          "times": {
+            "rules": [
+              {
+                "description": "replace '1' with 'once'",
+                "conditions": "(= 1 @value)",
+                "conditions_expression": [
+                  "=",
+                  1,
+                  "@value"
+                ],
+                "operations": "(replace '1' 'once' @value)",
+                "operations_expression": [
+                  "replace",
+                  "1",
+                  "once",
+                  "@value"
+                ]
+              },
+              {
+                "description": "replace '2' with 'twice'",
+                "conditions": "(= 2 @value)",
+                "conditions_expression": [
+                  "=",
+                  2,
+                  "@value"
+                ],
+                "operations": "(replace '2' 'twice' @value)",
+                "operations_expression": [
+                  "replace",
+                  "2",
+                  "twice",
+                  "@value"
+                ]
+              },
+              {
+                "description": "in all other cases, append x times",
+                "conditions": "(true)",
+                "conditions_expression": [
+                  "true"
+                ],
+                "operations": "(append ' times' @value)",
+                "operations_expression": [
+                  "append",
+                  " times",
+                  "@value"
+                ]
+              }
+            ],
+            "latin_name": "Iteration",
+            "description": "The iteration form of the cardinal numbers",
+            "application": "phrase"
+          },
+          "plural": {
+            "rules": [
+              {
+                "description": "Uncountable word",
+                "conditions": "(in 'sheep,fish,series,species,money,rice,information,equipment' @value)",
+                "conditions_expression": [
+                  "in",
+                  "sheep,fish,series,species,money,rice,information,equipment",
+                  "@value"
+                ],
+                "operations": "@value",
+                "operations_expression": "@value"
+              },
+              {
+                "description": "Irregular word",
+                "conditions": "(= 'move' @value)",
+                "conditions_expression": [
+                  "=",
+                  "move",
+                  "@value"
+                ],
+                "operations": "(quote 'moves')",
+                "operations_expression": [
+                  "quote",
+                  "moves"
+                ]
+              },
+              {
+                "description": "Irregular word",
+                "conditions": "(= 'sex' @value)",
+                "conditions_expression": [
+                  "=",
+                  "sex",
+                  "@value"
+                ],
+                "operations": "(quote 'sexes')",
+                "operations_expression": [
+                  "quote",
+                  "sexes"
+                ]
+              },
+              {
+                "description": "Irregular word",
+                "conditions": "(= 'child' @value)",
+                "conditions_expression": [
+                  "=",
+                  "child",
+                  "@value"
+                ],
+                "operations": "(quote 'children')",
+                "operations_expression": [
+                  "quote",
+                  "children"
+                ]
+              },
+              {
+                "description": "Irregular word",
+                "conditions": "(= 'person' @value)",
+                "conditions_expression": [
+                  "=",
+                  "person",
+                  "@value"
+                ],
+                "operations": "(quote 'people')",
+                "operations_expression": [
+                  "quote",
+                  "people"
+                ]
+              },
+              {
+                "conditions": "(match '/(quiz)$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(quiz)$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(quiz)$/i' '$1zes' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(quiz)$/i",
+                  "$1zes",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/^(ox)$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/^(ox)$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/^(ox)$/i' '$1en' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/^(ox)$/i",
+                  "$1en",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/([m|l])ouse$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/([m|l])ouse$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/([m|l])ouse$/i' '$1ice' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/([m|l])ouse$/i",
+                  "$1ice",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(matr|vert|ind)ix|ex$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(matr|vert|ind)ix|ex$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(matr|vert|ind)ix|ex$/i' '$1ices' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(matr|vert|ind)ix|ex$/i",
+                  "$1ices",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(x|ch|ss|sh)$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(x|ch|ss|sh)$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(x|ch|ss|sh)$/i' '$1es' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(x|ch|ss|sh)$/i",
+                  "$1es",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/([^aeiouy]|qu)y$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/([^aeiouy]|qu)y$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/([^aeiouy]|qu)y$/i' '$1ies' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/([^aeiouy]|qu)y$/i",
+                  "$1ies",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/([^aeiouy]|qu)ies$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/([^aeiouy]|qu)ies$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/([^aeiouy]|qu)ies$/i' '$1y' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/([^aeiouy]|qu)ies$/i",
+                  "$1y",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(hive)$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(hive)$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(hive)$/i' '$1s' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(hive)$/i",
+                  "$1s",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(?:([^f])fe|([lr])f)$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(?:([^f])fe|([lr])f)$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(?:([^f])fe|([lr])f)$/i' '$1$2ves' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(?:([^f])fe|([lr])f)$/i",
+                  "$1$2ves",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/sis$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/sis$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/sis$/i' 'ses' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/sis$/i",
+                  "ses",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/([ti])um$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/([ti])um$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/([ti])um$/i' '$1a' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/([ti])um$/i",
+                  "$1a",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(buffal|tomat|potat)o$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(buffal|tomat|potat)o$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(buffal|tomat|potat)o$/i' '$1oes' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(buffal|tomat|potat)o$/i",
+                  "$1oes",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(bu)s$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(bu)s$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(bu)s$/i' '$1ses' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(bu)s$/i",
+                  "$1ses",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(alias|status)$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(alias|status)$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(alias|status)$/i' '$1es' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(alias|status)$/i",
+                  "$1es",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(octop)us$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(octop)us$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(octop)us$/i' '$1i' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(octop)us$/i",
+                  "$1i",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(ax|test)is$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(ax|test)is$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(ax|test)is$/i' '$1es' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(ax|test)is$/i",
+                  "$1es",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/us$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/us$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/us$/i' '$1es' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/us$/i",
+                  "$1es",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/s$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/s$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/s$/i' 's' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/s$/i",
+                  "s",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/$/' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/$/",
+                  "@value"
+                ],
+                "operations": "(replace '/$/' 's' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/$/",
+                  "s",
+                  "@value"
+                ]
+              }
+            ],
+            "latin_name": "Plural",
+            "description": "Converts singular form to plural",
+            "application": "phrase"
+          },
+          "ordinal": {
+            "rules": [
+              {
+                "description": "replace 1 with 'first'",
+                "conditions": "(= 1 @value)",
+                "conditions_expression": [
+                  "=",
+                  1,
+                  "@value"
+                ],
+                "operations": "(replace 1 'first' @value)",
+                "operations_expression": [
+                  "replace",
+                  1,
+                  "first",
+                  "@value"
+                ]
+              },
+              {
+                "description": "replace 2 with 'second'",
+                "conditions": "(= 2 @value)",
+                "conditions_expression": [
+                  "=",
+                  2,
+                  "@value"
+                ],
+                "operations": "(replace 2 'first' @value)",
+                "operations_expression": [
+                  "replace",
+                  2,
+                  "first",
+                  "@value"
+                ]
+              },
+              {
+                "description": "replace 3 with 'third'",
+                "conditions": "(= 3 @value)",
+                "conditions_expression": [
+                  "=",
+                  3,
+                  "@value"
+                ],
+                "operations": "(replace 3 'third' @value)",
+                "operations_expression": [
+                  "replace",
+                  3,
+                  "third",
+                  "@value"
+                ]
+              }
+            ],
+            "latin_name": "Ordinal",
+            "description": "The adjective form of the cardinal numbers",
+            "application": "phrase"
+          },
+          "ord": {
+            "rules": [
+              {
+                "description": "append 'st' if value ends in 1, but not in 11",
+                "examples": "1, 21, 31, 41, 101, 121...",
+                "conditions": "(&& (match '/1$/' @value) (! (match '/11$/' @value)))",
+                "conditions_expression": [
+                  "&&",
+                  [
+                    "match",
+                    "/1$/",
+                    "@value"
+                  ],
+                  [
+                    "!",
+                    [
+                      "match",
+                      "/11$/",
+                      "@value"
+                    ]
+                  ]
+                ],
+                "operations": "(append 'st' @value)",
+                "operations_expression": [
+                  "append",
+                  "st",
+                  "@value"
+                ]
+              },
+              {
+                "description": "append 'nd' if value ends in 2, but not in 12",
+                "examples": "2, 22, 32, 42, 102, 122...",
+                "conditions": "(&& (match '/2$/' @value) (! (match '/12$/' @value)))",
+                "conditions_expression": [
+                  "&&",
+                  [
+                    "match",
+                    "/2$/",
+                    "@value"
+                  ],
+                  [
+                    "!",
+                    [
+                      "match",
+                      "/12$/",
+                      "@value"
+                    ]
+                  ]
+                ],
+                "operations": "(append 'nd' @value)",
+                "operations_expression": [
+                  "append",
+                  "nd",
+                  "@value"
+                ]
+              },
+              {
+                "description": "append 'nd' if value ends in 3, but not in 13",
+                "examples": "3, 23, 33, 43, 103, 123...",
+                "conditions": "(&& (match '/3$/' @value) (! (match '/13$/' @value)))",
+                "conditions_expression": [
+                  "&&",
+                  [
+                    "match",
+                    "/3$/",
+                    "@value"
+                  ],
+                  [
+                    "!",
+                    [
+                      "match",
+                      "/13$/",
+                      "@value"
+                    ]
+                  ]
+                ],
+                "operations": "(append 'rd' @value)",
+                "operations_expression": [
+                  "append",
+                  "rd",
+                  "@value"
+                ]
+              },
+              {
+                "description": "append 'th' in all other cases",
+                "examples": "0, 4, 5, 6, 7, 8, 9, 11, 12, 13, 111, 113...",
+                "conditions": "(true)",
+                "conditions_expression": [
+                  "true"
+                ],
+                "operations": "(append 'th' @value)",
+                "operations_expression": [
+                  "append",
+                  "th",
+                  "@value"
+                ]
+              }
+            ],
+            "latin_name": "Ordinal",
+            "description": "The adjective form of the cardinal numbers",
+            "application": "phrase"
+          },
+          "singular": {
+            "rules": [
+              {
+                "description": "Uncountable word",
+                "conditions": "(in 'sheep,fish,series,species,money,rice,information,equipment' @value)",
+                "conditions_expression": [
+                  "in",
+                  "sheep,fish,series,species,money,rice,information,equipment",
+                  "@value"
+                ],
+                "operations": "@value",
+                "operations_expression": "@value"
+              },
+              {
+                "description": "Irregular word",
+                "conditions": "(= 'moves' @value)",
+                "conditions_expression": [
+                  "=",
+                  "moves",
+                  "@value"
+                ],
+                "operations": "(quote 'move')",
+                "operations_expression": [
+                  "quote",
+                  "move"
+                ]
+              },
+              {
+                "description": "Irregular word",
+                "conditions": "(= 'sexes' @value)",
+                "conditions_expression": [
+                  "=",
+                  "sexes",
+                  "@value"
+                ],
+                "operations": "(quote 'sex')",
+                "operations_expression": [
+                  "quote",
+                  "sex"
+                ]
+              },
+              {
+                "description": "Irregular word",
+                "conditions": "(= 'children' @value)",
+                "conditions_expression": [
+                  "=",
+                  "children",
+                  "@value"
+                ],
+                "operations": "(quote 'child')",
+                "operations_expression": [
+                  "quote",
+                  "child"
+                ]
+              },
+              {
+                "description": "Irregular word",
+                "conditions": "(= 'people' @value)",
+                "conditions_expression": [
+                  "=",
+                  "people",
+                  "@value"
+                ],
+                "operations": "(quote 'person')",
+                "operations_expression": [
+                  "quote",
+                  "person"
+                ]
+              },
+              {
+                "conditions": "(match '/(n)ews$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(n)ews$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(n)ews$/i' '$1ews' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(n)ews$/i",
+                  "$1ews",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/([ti])a$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/([ti])a$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/([ti])a$/i' '$1um' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/([ti])a$/i",
+                  "$1um",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i' '$1$2sis' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i",
+                  "$1$2sis",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(^analy)ses$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(^analy)ses$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(^analy)ses$/i' '$1sis' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(^analy)ses$/i",
+                  "$1sis",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/([^f])ves$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/([^f])ves$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/([^f])ves$/i' '$1fe' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/([^f])ves$/i",
+                  "$1fe",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(hive)s$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(hive)s$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(hive)s$/i' '$1' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(hive)s$/i",
+                  "$1",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(tive)s$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(tive)s$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(tive)s$/i' '$1' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(tive)s$/i",
+                  "$1",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/([lr])ves$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/([lr])ves$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/([lr])ves$/i' '$1f' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/([lr])ves$/i",
+                  "$1f",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/([^aeiouy]|qu)ies$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/([^aeiouy]|qu)ies$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/([^aeiouy]|qu)ies$/i' '$1y' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/([^aeiouy]|qu)ies$/i",
+                  "$1y",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(s)eries$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(s)eries$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(s)eries$/i' '$1eries' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(s)eries$/i",
+                  "$1eries",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(m)ovies$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(m)ovies$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(m)ovies$/i' '$1ovie' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(m)ovies$/i",
+                  "$1ovie",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(x|ch|ss|sh)es$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(x|ch|ss|sh)es$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(x|ch|ss|sh)es$/i' '$1' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(x|ch|ss|sh)es$/i",
+                  "$1",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/([m|l])ice$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/([m|l])ice$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/([m|l])ice$/i' '$1ouse' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/([m|l])ice$/i",
+                  "$1ouse",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(bus)es$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(bus)es$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(bus)es$/i' '$1' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(bus)es$/i",
+                  "$1",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(o)es$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(o)es$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(o)es$/i' '$1' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(o)es$/i",
+                  "$1",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(shoe)s$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(shoe)s$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(shoe)s$/i' '$1' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(shoe)s$/i",
+                  "$1",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(cris|ax|test)es$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(cris|ax|test)es$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(cris|ax|test)es$/i' '$1is' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(cris|ax|test)es$/i",
+                  "$1is",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(octop|vir)i$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(octop|vir)i$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(octop|vir)i$/i' '$1us' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(octop|vir)i$/i",
+                  "$1us",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(alias|status)es$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(alias|status)es$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(alias|status)es$/i' '$1' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(alias|status)es$/i",
+                  "$1",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/^(ox)en$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/^(ox)en$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/^(ox)en$/i' '$1' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/^(ox)en$/i",
+                  "$1",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(vert|ind)ices$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(vert|ind)ices$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(vert|ind)ices$/i' '$1ex' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(vert|ind)ices$/i",
+                  "$1ex",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(matr)ices$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(matr)ices$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(matr)ices$/i' '$1ix' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(matr)ices$/i",
+                  "$1ix",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(quiz)zes$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(quiz)zes$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(quiz)zes$/i' '$1' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(quiz)zes$/i",
+                  "$1",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/(us)es$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/(us)es$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/(us)es$/i' '$1' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/(us)es$/i",
+                  "$1",
+                  "@value"
+                ]
+              },
+              {
+                "conditions": "(match '/s$/i' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/s$/i",
+                  "@value"
+                ],
+                "operations": "(replace '/s$/i' '' @value)",
+                "operations_expression": [
+                  "replace",
+                  "/s$/i",
+                  "",
+                  "@value"
+                ]
+              }
+            ],
+            "latin_name": "Singular",
+            "description": "Converts plural form to singular",
+            "application": "phrase"
+          },
+          "pos": {
+            "rules": [
+              {
+                "description": "if value ends in s, append '",
+                "conditions": "(match '/s$/' @value)",
+                "conditions_expression": [
+                  "match",
+                  "/s$/",
+                  "@value"
+                ],
+                "operations": "(append \"'\" @value)",
+                "operations_expression": [
+                  "append",
+                  "'",
+                  "@value"
+                ]
+              },
+              {
+                "description": "in all other cases, append 's",
+                "conditions": "(true)",
+                "conditions_expression": [
+                  "true"
+                ],
+                "operations": "(append \"'s\" @value)",
+                "operations_expression": [
+                  "append",
+                  "'s",
+                  "@value"
+                ]
+              }
+            ],
+            "latin_name": "Possessive",
+            "description": "Used to indicate possession (i.e., ownership). It is usually created by adding 's to the word",
+            "application": "phrase"
+          }
+        }
+      }
+    },
+    "sources": {
+      "foody.views.IndexView": {
+        "results": {
+          "db1ee469a66bc26037aca5afb62b2cf3": [],
+          "fd7625011b81c88b167fac3c9952e71f": [],
+          "ac8cee1a5d3795cdac96565dad5f6af8": [],
+          "5acf97653dc4aaecbca0b894ca9efa48": [],
+          "e9f2f307865a42c50b81e74cbddaaf74": [],
+          "2c8b8af576eb5dbd0a8f40d37c190400": [],
+          "98672fc5b6ab1b49e2a31aa8df01e212": [],
+          "fa5e24d0f32db8d64f2378c17b7de1ba": [],
+          "91b4d396cdd832534ee25936b828182d": [],
+          "8f58a36fb59891ca6e240196768e992f": [],
+          "3c006fe7de799be4abb7d6d9fa520bac": [],
+          "c2f4a739055428d1c8ff83c38e362e98": [],
+          "16a6256ea4fce7ac53f4a8a29fc31e48": [],
+          "d2d8a1d1ea5bed0835c153ff168b37e5": [],
+          "1862c0f26d342a7b260efc218a3f203d": [],
+          "39da2bc5bae6c126c7b0941f229ee366": [],
+          "572445ef5951f900f8595c905fa1a7a3": [],
+          "88c0e0056e7623033271f475ade1dee4": [],
+          "dd3018bb35f1a8af3d47fa0de13b6912": [],
+          "0a1ac3522c09a34fb51568f8928d1cc4": [],
+          "8c8e92744eed4e63219157ca6973ab35": [],
+          "50aa018d681e4cebea92284a83d45c08": [],
+          "768b4b1918dbf3bf09e4299b1ed6a11b": [],
+          "6faa40b00f6e50a129ae54ba55a1a9d8": [],
+          "a344a95bb698deef70dcf940f3a3ee76": [],
+          "95c987f299d2f0cf408ef7a67771ca5d": [],
+          "0bc024bc1c48e9f890dba2da0eda18eb": [],
+          "29ad8968b6710d2a70907fba96523bc5": [],
+          "40a9df2defbaacc43d52a969bdb0f322": [],
+          "a65850cb590cd1f153af7da79f1fb2f8": [],
+          "8cdfdd23885c878fb610e460d2a3401d": [],
+          "c7cac37a2540d4e64537df3aba415d4b": [],
+          "361f7246e5a17d3cdf1573e56865be26": [],
+          "1add7e6553bdb6ecd03c8d22c6203097": [],
+          "fc95e442e132438fc3e8c91bf3019e44": [],
+          "ae98a00a9698206a88c51ba0ee3e51ab": [],
+          "1504aaaada826f513233a159ae2bdfe4": [],
+          "77f1c6bf916a1ad5fd05bd236f015989": [],
+          "8644db11df0d10558d6a6ed526d5ef1e": [],
+          "ae581e697865c9e670a7974410f70f2e": [],
+          "647c2a438671db7f8f813f3872a9195b": [],
+          "b63696622979a07cd42e2ea0f1b90fae": [],
+          "bdec53924ee280f725f871ced5abaf93": [],
+          "e42c12fa018c4e0a6986eb8aab0af2b0": [],
+          "5e6b6fd969857bea466d02d008929b71": [],
+          "831eca09482c69e542b24f7cd91db5b6": [],
+          "f5aa8937e386c70b35c9f8e66c5370b7": []
+        },
+        "sources": [
+          "layout/footer",
+          "navigation",
+          "header"
+        ]
+      },
+      "base": {
+        "results": {
+          "5917a965facfde490f36060b39e6f889": [],
+          "7693365e48219a203372ec6856deea89": []
+        },
+        "sources": []
+      },
+      "header": {
+        "results": {
+          "dd9170be52014d67ab7327ce3f280428": [],
+          "bc321ad0fde65c176082942b0a11ccaa": [],
+          "61f3104c21b47e1152b39cb94d6b955a": [],
+          "3e0efe448fab3ad76efd2ada1c1a6d73": [],
+          "a8a18af897f7a1e9132537c60685c20c": [],
+          "644deb1bccb08e0f140214d393687394": [],
+          "d3d1cd9593abeeec00296e39c967c223": [],
+          "a4058b5ad2e31472ba9d9bcd07829f38": [],
+          "33349e0aae37d19b450674a3f6232bd5": [],
+          "75e30cd1e900f68471b7d6c0c7c122ce": [],
+          "910ad459e3d2591af8446f353118f680": [],
+          "ae581e697865c9e670a7974410f70f2e": [],
+          "20f0135fd519a83179fc5a67b9c36ede": [],
+          "e42c12fa018c4e0a6986eb8aab0af2b0": []
+        },
+        "sources": []
+      }
+    }
+  }
+}

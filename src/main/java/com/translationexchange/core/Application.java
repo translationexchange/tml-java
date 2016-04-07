@@ -47,6 +47,9 @@ public class Application extends Base {
     /** Constant <code>TREX_CDN_HOST="https://cdn.translationexchange.com"</code> */
     public static final String TREX_CDN_HOST = "https://cdn.translationexchange.com";
     
+    /** Constant <code>UNDEFINED_SOURCE="undefined"</code> */
+    public static final String UNDEFINED_SOURCE = "undefined";
+    
     /**
      * Current TrEx session
      */
@@ -472,16 +475,15 @@ public class Application extends Base {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	private void loadExtensions(Map<String, Object> extensions) {
-    	String sourceLocale = null;
-    	
+    	String sourceLocale = getDefaultLocale();
+    
     	if (extensions.get("languages") != null) {
     		Map<String, Object> languages = (Map<String, Object>) extensions.get("languages");
 			Iterator entries = languages.entrySet().iterator();
             while (entries.hasNext()) {
 				Map.Entry entry = (Map.Entry) entries.next();
                 String locale = (String) entry.getKey();
-                
-                if (!locale.equals(getDefaultLocale()))
+                if (!locale.equals(sourceLocale))
                 	sourceLocale = locale;
                 
                 Map<String, Object> data = (Map<String, Object>) entry.getValue();
@@ -496,15 +498,13 @@ public class Application extends Base {
             }
     	}
     	
-    	if (extensions.get("sources") != null && sourceLocale != null) {
+    	if (extensions.get("sources") != null) {
     		Map<String, Object> sources = (Map<String, Object>) extensions.get("sources");
 			Iterator entries = sources.entrySet().iterator();
             while (entries.hasNext()) {
 				Map.Entry entry = (Map.Entry) entries.next();
                 String key = (String) entry.getKey();
-
                 Map<String, Object> data = (Map<String, Object>) entry.getValue();
-                
                 Source source = getSourcesByKeys().get(key);
                 if (source == null) {
                 	source = new Source(Utils.buildMap("application", this, "key", key, "locale", sourceLocale));
@@ -576,22 +576,22 @@ public class Application extends Base {
      * @param data a {@link java.util.Map} object.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void updateTranslationKeys(Language language, Map<String, Object> data) {
+	public void updateTranslationKeys(Language language, Map<String, Object> data) {
     	Iterator entries = ((Map) data.get("results")).entrySet().iterator();
         while (entries.hasNext()) {
             Map.Entry entry = (Map.Entry) entries.next();
             String key = (String) entry.getKey();
-            Map<String, Object> keyData = (Map<String, Object>) entry.getValue();
+            List<Map<String, Object>> keyTranslations = (List<Map<String, Object>>) entry.getValue();
             
             TranslationKey tkey = getTranslationKey(key);
             
             if (tkey == null) {
-            	tkey = new TranslationKey((Map<String, Object>) keyData.get("original"));
+            	tkey = new TranslationKey(key);
         		addTranslationKey(tkey);
             }
             
             List<Translation> translations = new ArrayList<Translation>();
-            for (Map<String, Object> translationData : (List<Map<String, Object>>) keyData.get("translations")) {
+            for (Map<String, Object> translationData : (List<Map<String, Object>>) keyTranslations) {
                 Translation translation = new Translation(translationData);
                 String locale = (String) translationData.get("locale");
                 
@@ -601,7 +601,6 @@ public class Application extends Base {
                 translation.setLanguage(getLanguage(locale));
                 translations.add(translation);
             }
-            
             tkey.setTranslations(language.getLocale(), translations);
             addTranslationKey(tkey);
         }
@@ -615,11 +614,16 @@ public class Application extends Base {
      */
     public void loadTranslations(Language language) {
         try {
+        	System.out.println(getHttpClient().getJSONMap("projects/current/translations",
+            	Utils.buildMap("all", "true", "locale", language.getLocale()),
+        		Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()))
+            ));
         	this.updateTranslationKeys(language, getHttpClient().getJSONMap("projects/current/translations",
             	Utils.buildMap("all", "true", "locale", language.getLocale()),
         		Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()))
             ));
         } catch (Exception ex) {
+        	System.out.println("hi");
             Tml.getLogger().logException(ex);
         }
     }
@@ -628,7 +632,7 @@ public class Application extends Base {
      *
      * @return
      */
-    private Map<String, Map<String, TranslationKey>> getMissingTranslationKeysBySources() {
+    public Map<String, Map<String, TranslationKey>> getMissingTranslationKeysBySources() {
         if (missingTranslationKeysBySources == null)
             missingTranslationKeysBySources = new HashMap<String, Map<String, TranslationKey>>();
         return missingTranslationKeysBySources;
@@ -764,7 +768,6 @@ public class Application extends Base {
 
         Language language = getLanguagesByLocale().get(locale);
         if (!language.hasDefinition()) language.load();
-
         return language;
     }
 
@@ -882,7 +885,7 @@ public class Application extends Base {
      * @return a {@link com.translationexchange.core.TranslationKey} object.
      */
     public TranslationKey getTranslationKey(String key) {
-        return getTranslationKeys().get(key);
+    	return getTranslationKeys().get(key);
     }
 
     /**

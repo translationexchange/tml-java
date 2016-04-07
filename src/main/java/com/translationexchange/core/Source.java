@@ -287,13 +287,13 @@ public class Source extends Base {
     public void load(Map<String, Object> options) {
         try {
         	if (options==null) options = new HashMap<String, Object>();
-        	options.put("cache_key", getCacheKey());
-
-        	this.updateTranslationKeys(getApplication().getHttpClient().getJSONMap("sources/" + this.generateMD5Key() + "/translations", 
-	    		Utils.buildMap("app_id", getApplication().getKey(), "all", "true", "locale", getLocale()),
-	    		options
-            ));
-            
+        	if(!options.containsKey("dry") || !Boolean.valueOf((String) options.get("dry"))) {
+        		options.put("cache_key", getCacheKey());
+            	this.updateTranslationKeys(getApplication().getHttpClient().getJSONMap("sources/" + this.generateMD5Key() + "/translations", 
+    	    		Utils.buildMap("app_id", getApplication().getKey(), "all", "true", "locale", getLocale()),
+    	    		options
+                ));
+        	}
             setLoaded(true);
         } catch (Exception ex) {
             setLoaded(false);
