@@ -232,7 +232,6 @@ public class Translation extends Base {
 
                 if (ruleEntry.getValue().equals(LanguageContextRule.TR8N_DEFAULT_RULE_KEYWORD))
                     continue;
-
                 LanguageContext context = getLanguage().getContextByKeyword(ruleEntry.getKey());
                 if (context == null)
                     return false;

@@ -389,7 +389,6 @@ public class TranslationKey extends Base {
         setLevel((Long) attributes.get("level"));
 
         setLocked((Boolean) attributes.get("locked"));
-
         if (attributes.get("translations") != null && getApplication() != null) {
             Iterator<Map.Entry<String, List<Map<String, Object>>>> entries = ((Map) attributes.get("translations")).entrySet().iterator();
             while (entries.hasNext()) {
