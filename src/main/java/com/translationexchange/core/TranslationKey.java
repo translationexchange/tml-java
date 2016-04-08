@@ -552,7 +552,7 @@ public class TranslationKey extends Base {
     /**
      * <p>applyTokenizer.</p>
      *
-     * @param key a {@link java.lang.String} object.
+     * @param key a {@link java.lang.String} object. It defines tokenizer class by key e.g. `data`, `html`
      * @param translatedLabel a {@link java.lang.String} object.
      * @param translationLanguage a {@link com.translationexchange.core.languages.Language} object.
      * @param tokens a {@link java.util.Map} object.
@@ -561,18 +561,18 @@ public class TranslationKey extends Base {
      * @return a {@link java.lang.Object} object.
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected Object applyTokenizer(String key, String translatedLabel, Language translationLanguage, List<String> allowedTokenNames, Map<String, Object> tokens, Map<String, Object> options) {
+    protected Object applyTokenizer(String key, String translatedLabel, Language translationLanguage,
+                                    List<String> allowedTokenNames, Map<String, Object> tokens, Map<String, Object> options) {
     	try {
-			Class tokenizerClass = Class.forName(Tml.getConfig().getTokenizerClass(key));
+    	    Class tokenizerClass = getTokenizerByKey(key);
 			if (tokenizerClass == null) return translatedLabel;
-			
 			Method method = tokenizerClass.getMethod("isApplicable", String.class);
 	        if ((Boolean) method.invoke(null, translatedLabel)) {
 				Constructor<Tokenizer> constructor = tokenizerClass.getConstructor(String.class, List.class);            
 	        	Tokenizer tokenizer = (Tokenizer) constructor.newInstance(translatedLabel, allowedTokenNames);
 	        	return tokenizer.substitute(tokens, translationLanguage, options);
 	        }
-    	} catch (Exception ex) {
+	    } catch (Exception ex) {
     		Tml.getLogger().logException("Failed to tokenize \"" + translatedLabel + "\" using " + key, ex);
     	}
 		return translatedLabel;
@@ -637,6 +637,10 @@ public class TranslationKey extends Base {
      */
     public String toString() {
         return label + " (" + locale + ")";
+    }
+    
+    private Class getTokenizerByKey(String key) throws ClassNotFoundException {
+        return Class.forName(Tml.getConfig().getTokenizerClass(key));
     }
 }
 
