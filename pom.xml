@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.4</version>
+			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -83,6 +83,12 @@
 	      <version>${powermock.version}</version>
 	      <scope>test</scope>
 	   </dependency>
+	   <dependency>
+		  <groupId>org.powermock</groupId>
+		  <artifactId>powermock-module-junit4-rule-agent</artifactId>
+		  <version>${powermock.version}</version>
+		  <scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.squareup.okhttp</groupId>
 			<artifactId>okhttp</artifactId>
@@ -157,7 +163,7 @@
 							<goal>prepare-agent</goal>
 						</goals>
 					</execution>
-					<execution>
+					<!-- <execution>
 	                    <id>default-instrument</id>
 	                    <goals>
 	                        <goal>instrument</goal>
@@ -168,7 +174,7 @@
 	                    <goals>
 	                        <goal>restore-instrumented-classes</goal>
 	                    </goals>
-	                </execution>
+	                </execution> -->
 					<execution>
 						<id>default-report</id>
 						<phase>prepare-package</phase>
