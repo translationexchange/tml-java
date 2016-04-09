@@ -16,12 +16,10 @@ public class SessionTest extends BaseTest {
     
     @Test
     public void testCreation() {
-        Map<String, Object> applicationData = new HashMap<String, Object>(Tml.getConfig().getApplication());
-        applicationData.put("applicationClass", "com.translationexchange.core.dummy.DummyApplication");
-        Session s = new Session(applicationData);
+        Map<String, Object> options = new HashMap<String, Object>(Tml.getConfig().getApplication());
+        options.put("applicationClass", "com.translationexchange.core.dummy.DummyApplication");
+        Session s = new Session(options);
         Assert.assertTrue(s instanceof Session);
         Assert.assertTrue(Observable.class.isAssignableFrom(s.getClass()));
     }
-
-    
 }
