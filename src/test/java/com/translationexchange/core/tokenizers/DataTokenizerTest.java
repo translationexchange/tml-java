@@ -103,7 +103,6 @@ public class DataTokenizerTest {
     @Test
     public void testSubstitution() {
         DataTokenizer dt = new DataTokenizer("Hello {user}");
-
         Assert.assertEquals(
                 "Hello Michael",
                 dt.substitute(Utils.buildMap("user", "Michael"))

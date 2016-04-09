@@ -2,31 +2,26 @@ package com.translationexchange.core;
 
 import static org.mockito.Mockito.mock;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.BeforeClass;
-import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.After;
 
 
 public class SessionTest extends BaseTest {
     
-    @BeforeClass
-    public static void configureTml() {
-        Tml.getConfig().setApplicationClass("com.translationexchange.core.dummy.DummyApplication");
-    }
-    
     @Test
     public void testCreation() {
-        Session s = new Session();
+        Map<String, Object> applicationData = new HashMap<String, Object>(Tml.getConfig().getApplication());
+        applicationData.put("applicationClass", "com.translationexchange.core.dummy.DummyApplication");
+        Session s = new Session(applicationData);
         Assert.assertTrue(s instanceof Session);
         Assert.assertTrue(Observable.class.isAssignableFrom(s.getClass()));
     }
-    
-    @AfterClass
-    public static void deconfigureTml() {
-        Tml.getConfig().setApplicationClass("com.translationexchange.core.Application");
-    }
+
     
 }

@@ -135,7 +135,13 @@ public class Session extends Observable {
     }
     
     public static Application initializeApplication(Map<String, Object> options) throws Exception {
-        Class appClass = Utils.loadClassByName(Tml.getConfig().getApplicationClass());
+        String applicationClass = "";
+        if(options.get("applicationClass") != null) {
+            applicationClass = (String) options.get("applicationClass");
+        } else {
+            applicationClass = Tml.getConfig().getApplicationClass();
+        }
+        Class appClass = Utils.loadClassByName(applicationClass);
         Constructor<Application> constructor = appClass.getConstructor(Map.class);            
         Application application = (Application) constructor.newInstance(options);
         return application;

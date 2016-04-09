@@ -268,10 +268,10 @@ public class TranslationKeyTest extends BaseTest {
         );
         
         TranslationKey tkey2 = new TranslationKey(Utils.buildMap(
-                "label", "[link]you have {count} messages[/link]",
+                "label", "[link]you have messages[/link]",
                 "description", ""));
         Assert.assertEquals(
-                "<a href='www.google.com'>you have {count} messages</a>",
+                "<a href=\"www.google.com\">you have messages</a>",
                 tkey2.substitute(tkey2.getLabel(),
                                 Utils.buildMap("link", Utils.buildMap("href", "www.google.com")),
                                 ru, en, Utils.buildMap("tokenizer", "html"))
