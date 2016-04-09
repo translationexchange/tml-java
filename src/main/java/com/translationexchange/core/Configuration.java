@@ -83,6 +83,11 @@ public class Configuration {
      * Supported token classes
      */
     private List<String> tokenClasses;
+    
+    /**
+     * Application class
+     */
+    private String applicationClass;
 
     /**
      * Application configuration
@@ -152,6 +157,8 @@ public class Configuration {
 		    "com.translationexchange.core.tokens.MethodToken",
 		    "com.translationexchange.core.tokens.PipedToken"
         );
+        
+        this.applicationClass = "com.translationexchange.core.Application";
 
         this.cache = Utils.buildMap(
             "enabled", true,
@@ -445,6 +452,15 @@ public class Configuration {
     public List<String> getTokenClasses() {
         return tokenClasses;
     }
+    
+    /**
+     * <p>Getter for the field <code>applicationClass</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
+    public String getApplicationClass() {
+        return applicationClass;
+    }
 
     /**
      * <p>Getter for the field <code>application</code>.</p>
@@ -452,6 +468,9 @@ public class Configuration {
      * @return a {@link java.util.Map} object.
      */
     public Map<String, Object> getApplication() {
+        if(application == null) {
+            return Utils.buildMap();
+        }
         return application;
     }
 
@@ -623,6 +642,15 @@ public class Configuration {
      */
     public void setApplication(Map<String, Object> application) {
         this.application = application;
+    }
+    
+    /**
+     * <p>Setter for the field <code>applicationClass</code>.</p>
+     *
+     * @param applicationClass a {@link java.lang.String} object.
+     */
+    public void setApplicationClass(String applicationClass) {
+        this.applicationClass = applicationClass;
     }
 
     /**

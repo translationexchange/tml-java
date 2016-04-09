@@ -42,10 +42,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.Mockito.*;
+
 import com.translationexchange.core.Utils;
 
 public class BaseTest {
-
+    
+    public static Application mockedApplication(String resourceFile) {
+        HttpClient mockedHttpClient = mock(HttpClient.class);
+        Application app = spy(new Application(loadJSONMap("/" + resourceFile)));
+        when(app.getHttpClient()).thenReturn(mockedHttpClient);
+        return app;
+    }
+    
     public static String readFile(String filename) {
         String content = null;
         File file = new File(filename); //for ex foo.txt

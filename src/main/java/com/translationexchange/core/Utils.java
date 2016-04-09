@@ -463,4 +463,8 @@ public class Utils {
     	}
     	return sb.toString();
     }
+    
+    public static Class loadClassByName(String name) throws ClassNotFoundException {
+        return Class.forName(name);
+    }
 }

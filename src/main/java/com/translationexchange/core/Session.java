@@ -31,6 +31,7 @@
 
 package com.translationexchange.core;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import java.util.Map;
 import java.util.Observable;
 
 import com.translationexchange.core.languages.Language;
+import com.translationexchange.core.tokenizers.Tokenizer;
 
 /**
  * Represents a TML application session or a web request
@@ -46,6 +48,7 @@ import com.translationexchange.core.languages.Language;
  * @author Berk
  * @version $Id: $Id
  */
+
 public class Session extends Observable {
 
 	public static final String SESSION_KEY = "session";
@@ -119,16 +122,25 @@ public class Session extends Observable {
     		applicationParams.put("source", options.get("source"));
     		setCurrentSource((String)options.get("source"));
     	}
-    		
-        setApplication(new Application(options));
-        getApplication().setSession(this);
-        getApplication().load(applicationParams);
-
-		setCurrentLocale(getApplication().getFirstAcceptedLocale((String) options.get("locale")));
-
-        Tml.getConfig().setDecorator("html");
+    	try {
+    	    setApplication(initializeApplication(options));
+    	    getApplication().setSession(this);
+            getApplication().load(applicationParams);
+            setCurrentLocale(getApplication().getFirstAcceptedLocale((String) options.get("locale")));
+    	} catch(Exception ex) {
+    	    Tml.getLogger().logException("Failed to load application. Therefore session could not be loaded", ex);
+    	    // todo: might be a good way to re-raise custom exception SessionLoadException()
+    	}
+    	Tml.getConfig().setDecorator("html");
     }
-        
+    
+    public static Application initializeApplication(Map<String, Object> options) throws Exception {
+        Class appClass = Utils.loadClassByName(Tml.getConfig().getApplicationClass());
+        Constructor<Application> constructor = appClass.getConstructor(Map.class);            
+        Application application = (Application) constructor.newInstance(options);
+        return application;
+    }
+    
     /**
      * <p>Getter for the field <code>currentLanguage</code>.</p>
      *
