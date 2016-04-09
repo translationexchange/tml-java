@@ -335,7 +335,7 @@ public class Translator extends Base {
      * @return a boolean.
      */
     public boolean isFeatureEnabled(String feature) {
-    	if (getFeatures() == null)
+        if (getFeatures() == null || getFeatures().isEmpty())
     		return false;
     	return getFeatures().get(feature);
     }
