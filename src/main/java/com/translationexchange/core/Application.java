@@ -437,14 +437,10 @@ public class Application extends Base {
     public void load(Map<String, Object> params) {
         try {
         	Tml.getLogger().debug("Loading application...");
-        	
-        	// params = Utils.buildMap();
-        	
         	Map<String, Object> data = getHttpClient().getJSONMap("projects/" + getKey() + "/definition", 
                 	params,
     	    		Utils.buildMap("cache_key", "application")
             );
-        	
         	if (data == null) {
         		setDefaultLocale(Tml.getConfig().getDefaultLocale());
             	addLanguage(Tml.getConfig().getDefaultLanguage());
@@ -529,7 +525,7 @@ public class Application extends Base {
     	String[] locales = locale.split(",");
     	 
     	for(String loc : locales) {
-    		if (getLanguagesByLocale().get(loc) != null) 
+    	    if (getLanguagesByLocale().get(loc) != null) 
     			return loc;
     	}
     	
@@ -614,17 +610,12 @@ public class Application extends Base {
      */
     public void loadTranslations(Language language) {
         try {
-        	System.out.println(getHttpClient().getJSONMap("projects/current/translations",
-            	Utils.buildMap("all", "true", "locale", language.getLocale()),
-        		Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()))
-            ));
         	this.updateTranslationKeys(language, getHttpClient().getJSONMap("projects/current/translations",
             	Utils.buildMap("all", "true", "locale", language.getLocale()),
         		Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()))
             ));
         } catch (Exception ex) {
-        	System.out.println("hi");
-            Tml.getLogger().logException(ex);
+        	Tml.getLogger().logException(ex);
         }
     }
 

@@ -83,7 +83,7 @@ public class BaseTest {
             content = sb.toString();
         } catch (Exception e) {
         	System.out.println("Failed to load a resource: " + resourceName);
-//            e.printStackTrace();
+//        	e.printStackTrace();
             return null;
         }
         return content;
