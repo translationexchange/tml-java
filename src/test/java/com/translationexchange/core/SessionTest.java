@@ -8,18 +8,26 @@ import java.util.Observable;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.Before;
-import org.junit.After;
+import org.junit.BeforeClass;
+import org.junit.AfterClass;
 
 
 public class SessionTest extends BaseTest {
     
+    @BeforeClass
+    public static void configureTml() {
+        Tml.getConfig().setApplicationClass("com.translationexchange.core.dummy.DummyApplication");
+    }
+    
     @Test
     public void testCreation() {
-        Map<String, Object> options = new HashMap<String, Object>(Tml.getConfig().getApplication());
-        options.put("applicationClass", "com.translationexchange.core.dummy.DummyApplication");
-        Session s = new Session(options);
+        Session s = new Session();
         Assert.assertTrue(s instanceof Session);
         Assert.assertTrue(Observable.class.isAssignableFrom(s.getClass()));
+    }
+    
+    @AfterClass
+    public static void deconfigureTml() {
+        Tml.getConfig().setApplicationClass("com.translationexchange.core.Application");
     }
 }
