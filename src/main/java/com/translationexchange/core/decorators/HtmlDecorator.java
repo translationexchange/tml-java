@@ -52,7 +52,7 @@ import com.translationexchange.core.tokens.Token;
 public class HtmlDecorator implements Decorator {
 
 	private boolean isEnabled(Map<String, Object> options) {
-		if (options.get("skip_decorations") != null)
+	    if (options == null || options.isEmpty() || options.get("skip_decorations") != null)
             return false;
 
 		Session session = (Session) options.get(Session.SESSION_KEY);
