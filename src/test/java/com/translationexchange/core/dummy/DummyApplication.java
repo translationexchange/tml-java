@@ -12,6 +12,7 @@ import com.translationexchange.core.Application;
 import com.translationexchange.core.BaseTest;
 import com.translationexchange.core.HttpClient;
 import com.translationexchange.core.Tml;
+import com.translationexchange.core.Utils;
 
 public class DummyApplication extends Application {
     
@@ -48,4 +49,24 @@ public class DummyApplication extends Application {
         
         return this.httpClient;
     }
+    
+//    public void load(Map<String, Object> params) {
+//        try {
+//            Tml.getLogger().debug("Loading application...");
+//            Map<String, Object> data = BaseTest.loadJSONMap("/" + getKey());
+//            if (data == null) {
+//                setDefaultLocale(Tml.getConfig().getDefaultLocale());
+//                addLanguage(Tml.getConfig().getDefaultLanguage());
+//                Tml.getLogger().debug("No release has been published or no cache has been provided");
+//                setLoaded(false);
+//            } else {
+//                this.updateAttributes(data);
+//                setLoaded(true);
+//            }
+//        } catch (Exception ex) {
+//            setLoaded(false);
+//            addLanguage(Tml.getConfig().getDefaultLanguage());
+//            Tml.getLogger().logException("Failed to load application", ex);
+//        }
+//    }
 }

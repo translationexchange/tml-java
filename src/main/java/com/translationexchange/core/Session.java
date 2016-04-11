@@ -199,6 +199,9 @@ public class Session extends Observable {
      * @return a {@link java.lang.String} object.
      */
     public String getCurrentSource() {
+        if(currentSource == null) {
+            return "";
+        }
         return currentSource;
     }
 

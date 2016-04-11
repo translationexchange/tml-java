@@ -54,6 +54,7 @@ public class TmlTest extends BaseTest {
 
     @Test
     public void testCreation() {
+        Tml.init();
         Tml.init("application.json", "37f812fac93a71088");
         Assert.assertTrue(Tml.getSession() instanceof Session);
         Assert.assertTrue(Tml.getApplication() instanceof Application);
@@ -64,6 +65,8 @@ public class TmlTest extends BaseTest {
         Assert.assertTrue(Tml.isSchedulerRunning());
         Assert.assertEquals("en-US", Tml.getCurrentLanguage().getLocale());
         Assert.assertEquals(null, Tml.getCurrentTranslator());
+        Assert.assertEquals("tml-java v0.2.1 (OkHttp v2.4.0)", Tml.getFullVersion());
+        Tml.setApplication(Tml.getApplication());
     }
 
     @Test
@@ -81,10 +84,17 @@ public class TmlTest extends BaseTest {
     @Test
     public void testSwitchSource() {
         Tml.init("application.json", "37f812fac93a71088");
-        Assert.assertEquals(null, Tml.getCurrentSource());
+        Assert.assertEquals("", Tml.getCurrentSource());
 
         Tml.setCurrentSource("index");
         Assert.assertEquals("index", Tml.getCurrentSource());
+    }
+    
+    @Test
+    public void testScheduler() {
+        Tml.init("application.json", "37f812fac93a71088");
+        Tml.stopScheduledTasks();
+        Tml.stopScheduledTasks();  // to go to first branch
     }
 
     @Test
@@ -125,38 +135,44 @@ public class TmlTest extends BaseTest {
 
     @Test
     public void testIntegrationWithSampleApp() {
-        Tml.init("application.json", "37f812fac93a71088");
-//        Assert.assertEquals("Hello World", Tml.translate("Hello World"));
-//
-//        Tml.beginBlockWithOptions(Utils.buildMap("source", "sample"));
-//
-//        Assert.assertEquals("Hello World", Tml.translate("Hello World"));
-//
-//        Tml.endBlock();
-//
-//        Assert.assertEquals("You have 5 messages",
-//                Tml.translate("You have {count||message}", Utils.buildMap("count", 5)));
-//
-//        Assert.assertEquals("You have 1 message",
-//                Tml.translate("You have {count|| one: message, other: messages}", Utils.buildMap("count", 1)));
-//
-//        Assert.assertEquals("You have 5 messages",
-//                Tml.translate("You have {count|| one: message, other: messages}", Utils.buildMap("count", 5)));
-//
-//        Assert.assertEquals(
-//                "You have <strong>5 messages</strong>",
-//                Tml.translate("You have [indent: {count||message}]",
-//                        Utils.buildMap("count", 5, "indent", "<strong>{$0}</strong>")));
-//
-//        Assert.assertEquals(
-//                "<strong>You</strong> have <strong>5 messages</strong>",
-//                Tml.translate("[indent: You] have [indent: {count||message}]",
-//                        Utils.buildMap("count", 5, "indent", "<strong>{$0}</strong>")));
-//
-//        Assert.assertEquals(
-//                "<strong>You have <i>5 messages</i></strong> in your mailbox",
-//                Tml.translate("[bold: You have [italic: {count||message}]] in your mailbox",
-//                        Utils.buildMap("count", 5, "bold", "<strong>{$0}</strong>", "italic", "<i>{$0}</i>")));
+        Tml.getConfig().setDefaultLocale("en");
+        Tml.init("foody.json", "37f812fac93a71088");
+        Assert.assertEquals("Hello World", Tml.translate("Hello World"));
+
+        Tml.beginBlockWithOptions(Utils.buildMap("source", "sample"));
+
+        Assert.assertEquals("Hello World", Tml.translate("Hello World"));
+        
+        Assert.assertEquals("Hello World", Tml.translate("Hello World", "Greeting"));
+
+        Tml.endBlock();
+        
+        Assert.assertEquals("You have 5 messages",
+                Tml.translate("You have {count||message}", Utils.buildMap("count", 5)));
+        Assert.assertEquals("You have 5 messages",
+                Tml.translate("You have {count||message}", "test descr", Utils.buildMap("count", 5)));
+        
+        Assert.assertEquals("You have 1 message",
+                Tml.translate("You have {count|| one: message, other: messages}", Utils.buildMap("count", 1), Utils.buildMap()));
+        
+        Assert.assertEquals("You have 5 messages",
+                Tml.translate("You have {count|| one: message, other: messages}", Utils.buildMap("count", 5)));
+
+        Assert.assertEquals(
+                "You have <strong>5 messages</strong>",
+                Tml.translate("You have [indent: {count||message}]",
+                        Utils.buildMap("count", 5, "indent", "<strong>{$0}</strong>")));
+
+        Assert.assertEquals(
+                "<strong>You</strong> have <strong>5 messages</strong>",
+                Tml.translate("[indent: You] have [indent: {count||message}]",
+                        Utils.buildMap("count", 5, "indent", "<strong>{$0}</strong>")));
+
+        Assert.assertEquals(
+                "<strong>You have <i>5 messages</i></strong> in your mailbox",
+                Tml.translate("[bold: You have [italic: {count||message}]] in your mailbox",
+                        Utils.buildMap("count", 5, "bold", "<strong>{$0}</strong>", "italic", "<i>{$0}</i>")));
+        Tml.getConfig().setDefaultLocale("en-US");
     }
 
     // }
