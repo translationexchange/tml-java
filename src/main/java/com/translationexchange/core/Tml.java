@@ -281,21 +281,21 @@ public class Tml {
     	getSession().switchLanguage(language);
     }
 
-    /**
-     * <p>setCurrentLanguage.</p>
-     *
-     * @param language a {@link com.translationexchange.core.languages.Language} object.
-     */
-    public void setCurrentLanguage(Language language) {
-        getSession().setCurrentLanguage(language);
-    }
+//    /**
+//     * <p>setCurrentLanguage.</p>
+//     *
+//     * @param language a {@link com.translationexchange.core.languages.Language} object.
+//     */
+//    public static void setCurrentLanguage(Language language) {
+//        getSession().setCurrentLanguage(language);
+//    }
 
     /**
      * <p>getCurrentSource.</p>
      *
      * @return a {@link java.lang.String} object.
      */
-    public String getCurrentSource() {
+    public static String getCurrentSource() {
         return getSession().getCurrentSource();
     }
 
@@ -304,7 +304,7 @@ public class Tml {
      *
      * @param currentSource a {@link java.lang.String} object.
      */
-    public void setCurrentSource(String currentSource) {
+    public static void setCurrentSource(String currentSource) {
         getSession().setCurrentSource(currentSource);
     }
 
