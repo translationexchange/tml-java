@@ -38,15 +38,18 @@ public class DomTokenizerTest {
     @Test
     public void testJSoupSpec() throws Exception {
         DomTokenizer dt = new DomTokenizer(Utils.buildMap(), Tml.getConfig().getTranslatorOptions());
-        String htmlString = "<html><body><h1 id=\"test\">Mr. Belvedere Fan Club</h1><i></i><b class=\"mapped-tag\">dasd</b><p class=\"empty\"></p><p><br class=\"self-closing\"/><span id=\"test-span\">Hmm</span></p><div><i class=\"only-child\"></i></div></body></html>";
+        String htmlString = "<html><head><script id=\"script\" type=\"src\"></script></head><body><h1 id=\"test\">Mr. Belvedere Fan Club</h1><i></i><div id=\"no-translate-1\" notranslate></div><div tmltype=\"notranslate\" id=\"no-translate-2\"></div><b class=\"mapped-tag\">dasd</b><p class=\"empty\"></p><p><br class=\"self-closing\"/><span id=\"test-span\">Hmm</span></p><div><i class=\"only-child\"></i></div></body></html>";
         Document doc = Jsoup.parse(htmlString);
         Element root = doc.select("html").first();
         Element h1 = doc.getElementById("test");
-        Element p = doc.select("p.empty").first();
+        Element p = doc.getElementsByClass("empty").first();
         Element span = doc.select("span#test-span").first();
         Element ic = doc.select("i.only-child").first();
         Element br = doc.select("br.self-closing").first();
         Element b = doc.select("b.mapped-tag").first();
+        Element notransNode1 = doc.getElementById("no-translate-1");
+        Element notransNode2 = doc.getElementById("no-translate-2");
+        Element script = doc.getElementById("script");
         
         Method isValidText = Utils.getPrivateMethod(dt, "isValidText", Element.class);
         Assert.assertTrue((Boolean) isValidText.invoke(dt, h1));
@@ -86,5 +89,15 @@ public class DomTokenizerTest {
         Method isOnlyChild = Utils.getPrivateMethod(dt, "isOnlyChild", Element.class);
         Assert.assertFalse((Boolean) isOnlyChild.invoke(dt, p));
         Assert.assertTrue((Boolean) isOnlyChild.invoke(dt, ic));
+        
+        Method isContainInProperty = Utils.getPrivateMethod(dt, "isContainInProperty", Element.class, String.class);
+        Assert.assertFalse((Boolean) isContainInProperty.invoke(dt, p, "notranslate"));
+        Assert.assertTrue((Boolean) isContainInProperty.invoke(dt, notransNode1, "notranslate"));
+        Assert.assertTrue((Boolean) isContainInProperty.invoke(dt, notransNode2, "notranslate"));
+        
+        Method isNonTranslatableNode = Utils.getPrivateMethod(dt, "isNonTranslatableNode", Element.class);
+        Assert.assertTrue((Boolean) isNonTranslatableNode.invoke(dt, notransNode2));
+        Assert.assertTrue((Boolean) isNonTranslatableNode.invoke(dt, script));
+        Assert.assertTrue((Boolean) isNonTranslatableNode.invoke(dt, p));
     }
 }

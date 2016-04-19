@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Element;
 
 import com.translationexchange.core.Utils;
@@ -58,6 +59,32 @@ public class DomTokenizer {
         Map<String, Object> map = Utils.buildMap();
         map.putAll(this.context);
         this.tokensData = map;
+    }
+    
+    private boolean isNonTranslatableNode(Element node) {
+        List<String> scripts = (List) option("nodes.scripts");
+        if(scripts.indexOf(node.tagName().toLowerCase()) > -1) {
+            return true;
+        }
+        if(node.childNodeSize() == 0 && node.ownText().equals("")) {
+            return true;
+        }
+        if(isContainInProperty(node, "notranslate")) {
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean isContainInProperty(Element node, String word) {
+        for(Attribute attr : node.attributes()) {
+            if(attr.getKey().equals(word)) {
+                return true;
+            }
+            if(attr.getValue().contains(word)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     private boolean isEmptyString(String tmlString) {
