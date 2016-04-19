@@ -114,6 +114,24 @@ public class DomTokenizer {
         return inlineNodes.indexOf(node.tagName().toLowerCase()) > -1 && !this.isOnlyChild(node);
     }
     
+    private boolean isContainerNode(Element node) {
+        return !isInlineNode(node);
+    }
+    
+    private boolean isSelfClosingNode(Element node) {
+        return node.childNodeSize() == 0;
+    }
+    
+    private boolean isIgnoredNode(Element node) {
+        List<String> lst = (List) option("nodes.ignored");
+        return lst.indexOf(node.tagName().toLowerCase()) > -1;
+    }
+    
+    private boolean isSeparatorNode(Element node) {
+        List<String> lst = (List) option("nodes.splitters");
+        return lst.indexOf(node.tagName().toLowerCase()) > -1;
+    }
+    
     private boolean isValidText(Element node) {
         String text = node.ownText();
         if(text.equals("")) {
@@ -121,4 +139,16 @@ public class DomTokenizer {
         }
         return !this.isEmptyString(text);
     }
+    
+    private String sanitizeValue(String value) {
+        Pattern p = Pattern.compile("^\\s+");
+        return p.matcher(value).replaceAll("");
+    }
+    
+    private String adjustName(Element node) {
+        String name = node.tagName().toLowerCase();
+        Map<String, String> map = (Map) option("name_mapping");
+        return map.getOrDefault(name, name);
+    }
+    
 }
