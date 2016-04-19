@@ -98,7 +98,12 @@ public class Configuration {
      * Context rules configuration and variable mapping
      */
     private Map<String, Object> contextRules;
-
+    
+    /**
+     * Translator options configuration
+     */
+    private Map<String, Object> translatorOptions;
+    
     /**
      * Cache configuration
      */
@@ -173,6 +178,7 @@ public class Configuration {
         );
         
         buildDefaultContextRulesConfiguration();
+        buildDefaultTranslatorOptionsConfiguration();
         buildDefaultLocalizationConfiguration();
         buildDefaultTokensConfiguration();
     }
@@ -270,6 +276,42 @@ public class Configuration {
                     }
                 )
             )
+        );
+    }
+    
+    private void buildDefaultTranslatorOptionsConfiguration() {
+        this.translatorOptions = Utils.buildMap(
+            "debug", false,
+            "debug_format_html", "<span style='font-size:20px;color:red;'>{</span> {$0} <span style='font-size:20px;color:red;'>}</span>",
+            "debug_format", "{{{{$0}}}}",
+            "split_sentences", false,
+            "nodes", Utils.buildMap(
+                 "ignored", Utils.buildList(),
+                 "scripts", Utils.buildList("style", "script", "code", "pre"),
+                 "inline", Utils.buildList("a", "span", "i", "b", "img", "strong", "s", "em", "u", "sub", "sup"),
+                 "short", Utils.buildList("i", "b"),
+                 "splitters", Utils.buildList("br", "hr")),
+            "attributes", Utils.buildMap(
+                  "labels", Utils.buildList("title", "alt")),
+            "name_mapping", Utils.buildMap(
+                  "b", "bold",
+                  "i", "italic",
+                  "a", "link",
+                  "img", "picture"),
+            "data_tokens", Utils.buildMap(
+                  "special", Utils.buildMap(
+                       "enabled", true,
+                       "regex", "(&[^;]*;)"),
+                  "date", Utils.buildMap(
+                        "enabled", true,
+                        "formats", Utils.buildList(
+                             Utils.buildList("((Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s+\\d+,\\s+\\d+)", "{month} {day}, {year}"),
+                             Utils.buildList("((January|February|March|April|May|June|July|August|September|October|November|December)\\s+\\d+,\\s+\\d+)", "{month} {day}, {year}"),
+                             Utils.buildList("(\\d+\\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec),\\s+\\d+)", "{day} {month}, {year}"),
+                             Utils.buildList("(\\d+\\s+(January|February|March|April|May|June|July|August|September|October|November|December),\\s+\\d+)", "{day} {month}, {year}")),
+                         "name", "date"),
+                   "rules", Utils.buildMap(
+                           ))
         );
     }
 
@@ -530,6 +572,8 @@ public class Configuration {
         return (String) Utils.getNestedMapValue(localization, "custom_date_formats." + name);
     }
 
+    
+    
     /**
      * <p>getContextVariable.</p>
      *
@@ -652,7 +696,25 @@ public class Configuration {
     public void setApplicationClass(String applicationClass) {
         this.applicationClass = applicationClass;
     }
+    
+    /**
+     * <p>Getter for the field <code>contextRules</code>.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
+    public Map<String, Object> getTranslatorOptions() {
+        return translatorOptions;
+    }
 
+    /**
+     * <p>Setter for the field <code>contextRules</code>.</p>
+     *
+     * @param contextRules a {@link java.util.Map} object.
+     */
+    public void setTranslatorOptions(Map<String, Object> translatorOptions) {
+        this.translatorOptions = translatorOptions;
+    }
+    
     /**
      * <p>Getter for the field <code>contextRules</code>.</p>
      *

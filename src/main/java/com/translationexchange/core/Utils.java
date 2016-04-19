@@ -39,6 +39,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -466,5 +467,11 @@ public class Utils {
     
     public static Class loadClassByName(String name) throws ClassNotFoundException {
         return Class.forName(name);
+    }
+    
+    public static Method getPrivateMethod(Object instance, String methodName, Class<?>... argClasses) throws NoSuchMethodException, SecurityException {
+        Method m = instance.getClass().getDeclaredMethod(methodName, argClasses);
+        m.setAccessible(true);
+        return m;
     }
 }
