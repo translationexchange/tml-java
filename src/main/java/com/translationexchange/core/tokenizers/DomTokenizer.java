@@ -8,7 +8,9 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
@@ -65,6 +67,11 @@ public class DomTokenizer {
         Map<String, Object> map = Utils.buildMap();
         map.putAll(this.context);
         this.tokensData = map;
+    }
+    
+    public String translate(String htmlString) {
+        Document doc = Jsoup.parse(htmlString);
+        return translateTree(doc.body());
     }
     
     public String translateTree(Node node) {

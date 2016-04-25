@@ -129,4 +129,9 @@ public class DomTokenizerTest {
         div.child(0).text("hello");
         Assert.assertEquals("[div: [italic1: hello]]", generateTmlTags.invoke(dt, div));
     }
+    
+    @Test
+    public void testIntegration() {
+        
+    }
 }
