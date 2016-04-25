@@ -33,6 +33,22 @@ public class DomTokenizerTest {
         Assert.assertTrue((Boolean) isShortToken.invoke(dt, "i", "hello"));
         Assert.assertTrue((Boolean) isShortToken.invoke(dt, "b", "hi"));
         Assert.assertFalse((Boolean) isShortToken.invoke(dt, "unknown", "abracadabraabracadabra"));
+        
+        Method contextualize = Utils.getPrivateMethod(dt, "contextualize", String.class, String.class);
+        Assert.assertEquals("key", contextualize.invoke(dt, "key", "value1"));
+        Assert.assertEquals("key1", contextualize.invoke(dt, "key", "value2"));
+        Assert.assertEquals("key1", contextualize.invoke(dt, "key1", "value2"));
+        Assert.assertEquals("key2", contextualize.invoke(dt, "key1", "value3"));
+        
+        Method generateDataTokens = Utils.getPrivateMethod(dt, "generateDataTokens", String.class);
+        Assert.assertEquals("{a} {ab}{abcd}", generateDataTokens.invoke(dt, "&a; &ab;&abcd;"));
+        
+        Assert.assertEquals("{date}", generateDataTokens.invoke(dt, "January 15, 2017"));
+        Assert.assertEquals("{date1}  {date2}", generateDataTokens.invoke(dt, "Jan 15, 2017  18 Oct, 2019"));
+        Assert.assertEquals("{date3}", generateDataTokens.invoke(dt, "Jan 12, 2017"));
+        
+        Assert.assertEquals("{time} {phone} {email}", generateDataTokens.invoke(dt, "14:05 am 777-295-2190 r.kamun@toptal.com"));
+        
     }
     
     @Test

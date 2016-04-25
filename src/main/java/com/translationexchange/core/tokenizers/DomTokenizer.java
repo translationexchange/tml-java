@@ -3,6 +3,7 @@ package com.translationexchange.core.tokenizers;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.nodes.Attribute;
@@ -85,6 +86,70 @@ public class DomTokenizer {
             }
         }
         return false;
+    }
+    
+    private String generateDataTokens(String text) {
+        if((Boolean) option("data_tokens.special.enabled")) {
+            Matcher specialMatcher = Pattern.compile((String) option("data_tokens.special.regex")).matcher(text);
+            while(specialMatcher.find()) {   // &dasd;
+                String matched = specialMatcher.group();
+                String token = matched.substring(1, matched.length() - 1);
+                context.put(token, matched);
+                text = text.replaceAll(matched, String.format("{%s}", token));
+            }
+        }
+        
+        if((Boolean) option("data_tokens.date.enabled")) {
+            String tokenName = (String) option("data_tokens.date.name");
+            List<List<String>> formats = (List) option("data_tokens.date.formats");
+            for(List<String> fmt : formats) {
+                Matcher dateMatcher = Pattern.compile(fmt.get(0)).matcher(text);
+                while(dateMatcher.find()) {
+                    String matched = dateMatcher.group();
+                    if(matched.equals(""))
+                        continue;
+                    String date = dateMatcher.group(0);
+                    String token = contextualize(tokenName, date);
+                    text = text.replaceAll(date, String.format("{%s}", token));
+                }
+            }
+        }
+        List<Map<String, Object>> rules = (List) option("data_tokens.rules");
+        if(rules != null && rules.size() > 0) {
+            for(Map<String, Object> rule : rules) {
+                if(!((Boolean)rule.get("enabled"))) {
+                    continue;
+                }
+                Matcher ruleMatcher = Pattern.compile((String) rule.get("regex")).matcher(text);
+                while(ruleMatcher.find()) {
+                    String matched = ruleMatcher.group();
+                    if(matched.equals(""))
+                        continue;
+                     String value = ruleMatcher.group(0);
+                     if(value.equals(""))
+                         continue;
+                     String token = contextualize((String) rule.get("name"), sanitizeValue(value));
+                     text = text.replaceAll(value, value.replace(value, String.format("{%s}", token)));
+                }
+            }
+        }
+        return text;
+    }
+    
+    private String contextualize(String name, String context) {
+        if(this.tokensData.containsKey(name) && !this.tokensData.get(name).equals(context)) {
+            int index = 0;
+            Matcher matches = Pattern.compile("\\d+$").matcher(name);
+            if(matches.find()) {
+                index = Integer.parseInt(matches.group());
+                name = name.replace(index + "", "");
+            }
+            name += (index + 1) + "";
+            
+            return contextualize(name, context);
+        }
+        this.tokensData.put(name, context);
+        return name;
     }
     
     private boolean isEmptyString(String tmlString) {

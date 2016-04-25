@@ -310,7 +310,13 @@ public class Configuration {
                              Utils.buildList("(\\d+\\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec),\\s+\\d+)", "{day} {month}, {year}"),
                              Utils.buildList("(\\d+\\s+(January|February|March|April|May|June|July|August|September|October|November|December),\\s+\\d+)", "{day} {month}, {year}")),
                          "name", "date"),
-                   "rules", Utils.buildMap(
+                   "rules", Utils.buildList(
+                           Utils.buildMap("enabled", true, "name", "time", "regex", "(\\d{1,2}:\\d{1,2}\\s+([A-Z]{2,3}|am|pm|AM|PM)?)"),
+                           Utils.buildMap("enabled", true, "name", "phone", "regex", "((\\d{1}-)?\\d{3}-\\d{3}-\\d{4}|\\d?\\(\\d{3}\\)\\s*\\d{3}-\\d{4}|(\\d.)?\\d{3}.\\d{3}.\\d{4})"),
+                           Utils.buildMap("enabled", true, "name", "email", "regex", "([-a-z0-9~!$%^&*_=+}{\\'?]+(\\.[-a-z0-9~!$%^&*_=+}{\\'?]+)*@([a-z0-9_][-a-z0-9_]*(\\.[-a-z0-9_]+)*\\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|io|mobi|[a-z][a-z])|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,5})?)"),
+                           Utils.buildMap("enabled", true, "name", "price", "regex", "(\\$\\d*(,\\d*)*(\\.\\d*)?)"),
+                           Utils.buildMap("enabled", true, "name", "fraction", "regex", "(\\d+\\/\\d+)"),
+                           Utils.buildMap("enabled", true, "name", "num", "regex", "(\\b\\d*(,\\d*)*(\\.\\d*)?%?\\b)")
                            ))
         );
     }
