@@ -3,12 +3,17 @@ package com.translationexchange.core.tokenizers;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
 
+import com.translationexchange.core.Tml;
 import com.translationexchange.core.Utils;
 
 public class DomTokenizer {
@@ -62,6 +67,64 @@ public class DomTokenizer {
         this.tokensData = map;
     }
     
+    public String translateTree(Node node) {
+        if(node instanceof Element) {
+            Element _node = (Element) node;
+            if(isNonTranslatableNode(_node)) {
+                return (_node).html();
+            }
+        }
+        if(node instanceof TextNode) {
+            TextNode _node = (TextNode) node;
+            return translateTml(_node.text());
+        } else {
+            String html = "";
+            String buffer = "";
+            for(Node child : node.childNodes()) {
+                if(child instanceof TextNode) {
+                    buffer += ((TextNode) child).text();
+                } else if(child instanceof Element) {
+                    Element _child = (Element) child;
+                    if(isInlineNode(_child) && hasInlineOrTextSublings(_child) && !isBetweenSeparators(_child)) {
+                        buffer += generateTmlTags(_child);
+                    } else if(isSeparatorNode(_child)) {
+                        if(!buffer.equals("")) {
+                            html += translateTml(buffer);
+                        }
+                        html += generateHtmlToken(_child, null);
+                        buffer = "";
+                    } else {
+                        if(!buffer.equals("")) {
+                            html += translateTml(buffer);
+                        }
+                        String containerValue = translateTree(child);
+                        if(isIgnoredNode(_child)) {
+                            html += containerValue;
+                        } else {
+                            html += generateHtmlToken(_child, containerValue);
+                        }
+                        buffer = "";
+                    }
+                }
+            }
+            if(!buffer.equals(""))
+                html += translateTml(buffer);
+            return html;
+        }
+    }
+    
+    private boolean isBetweenSeparators(Node node) {
+        Node prev = node.previousSibling();
+        Node next = node.nextSibling();
+        if(prev instanceof Element && isSeparatorNode((Element) prev) && !isValidText(next)) {
+            return true;
+        }
+        if(next instanceof Element && isSeparatorNode((Element) next) && !isValidText(prev)) {
+            return true;
+        }
+        return false;
+    }
+    
     private boolean isNonTranslatableNode(Element node) {
         List<String> scripts = (List) option("nodes.scripts");
         if(scripts.indexOf(node.tagName().toLowerCase()) > -1) {
@@ -86,6 +149,101 @@ public class DomTokenizer {
             }
         }
         return false;
+    }
+    
+    public String translateTml(String tml) {
+        if(isEmptyString(tml)) {
+            return tml;
+        }
+        tml = generateDataTokens(tml);
+        if((Boolean) option("split_sentences")) {
+            List<String> sentences = Utils.splitSentences(tml);
+            String translation = tml;
+            for(String sent : sentences) {
+                String sentTrans = "";
+                if((Boolean) option("debug")) {
+                    sentTrans = debugTranslation(tml);
+                } else {
+                    sentTrans = (String) Tml.getCurrentLanguage().translate(sent, tokensData);
+                }
+                translation = translation.replaceAll(sent, sentTrans);
+            }
+            resetContext();
+            return translation;
+        }
+        String translation = "";
+        final Map<String, String> sanitizers = Utils.buildStringMap(
+                "[\n]", "",
+                "[\\s\\s+]", " ");
+        for(Map.Entry<String, String> entry : sanitizers.entrySet()) {
+            tml = Pattern.compile(entry.getKey()).matcher(tml).replaceAll(entry.getValue());
+        }
+        if((Boolean) option("debug")) {
+            translation = debugTranslation(tml);
+        } else {
+            translation = (String) Tml.getCurrentLanguage().translate(tml, tokensData);
+        }
+        resetContext();
+        return translation;
+    }
+    
+    private String generateTmlTags(Element node) {
+        String buf = "";
+        for(Node childNode : node.childNodes()) {
+            if(childNode instanceof TextNode) {
+                buf += ((TextNode) childNode).text();
+            } else if(childNode instanceof Element) {
+                buf += generateTmlTags((Element) childNode);
+            }
+        }
+        String tokenContext = generateHtmlToken(node, null);
+        String token = contextualize(adjustName(node), tokenContext);
+        String value = sanitizeValue(buf);
+        if(isSelfClosingNode(node)) {
+            return String.format("{%s}", token);
+        }
+        if(isShortToken(token, value)) {
+            return String.format("[%s: %s]", token, value);
+        }
+        return String.format("[%s]%s[/%s]", token, value, token);
+    }
+    
+    private String generateHtmlToken(Element node, String nodeValue) {
+        String nodeName = node.tagName().toLowerCase();
+        Map<String, String> attributeMap = Utils.buildStringMap();
+        nodeValue = (nodeValue == null || nodeValue.equals("")) ? "{$0}" : nodeValue;
+        if(node.attributes().size() == 0) {
+            if(isSelfClosingNode(node)) {
+                if(isSeparatorNode(node)) {
+                    return String.format("<%s/>", nodeName);
+                }else {
+                    return String.format("<%s></%s>", nodeName, nodeName);
+                }
+            }
+            return String.format("<%s>%s</%s>", nodeName, nodeValue, nodeName);
+        }
+        for(Attribute attr : node.attributes()) {
+            attributeMap.put(attr.getKey(), attr.getValue());
+        }
+        SortedSet<String> attrKeys = new TreeSet<String>(attributeMap.keySet());
+        StringBuilder attrBuilder = new StringBuilder();
+        String sep = "";
+        for(String key : attrKeys) {
+            String quote = attributeMap.get(key).indexOf("\'") > -1 ? "\"" : "\'";
+            attrBuilder
+            .append(sep)
+            .append(String.format("%s=%s", key, (quote + attributeMap.get(key) + quote)));
+            sep = " ";
+        }
+        String attrString = attrBuilder.toString();
+        if(isSelfClosingNode(node)) {
+            if(isSeparatorNode(node)) {
+                return String.format("<%s %s/>", nodeName, attrString);
+            } else {
+                return String.format("<%s %s></%s>", nodeName, attrString, nodeName);
+            }
+        }
+        return String.format("<%s %s>%s</%s>", nodeName, attrString, nodeValue, nodeName);
     }
     
     private String generateDataTokens(String text) {
@@ -185,18 +343,16 @@ public class DomTokenizer {
         if(node.parent() == null) {
             return false;
         }
-        Iterator<Element> elements = node.parent().children().iterator();
-        while(elements.hasNext()) {
-            Element childEl = elements.next();
-            if(childEl == node) {
+        for(Node child : node.parentNode().childNodes()) {
+            if(child == node) {
                 continue;
             }
-            if(this.isInlineNode(childEl)) {
+            if(child instanceof Element && isInlineNode((Element) child)) {
                 return true;
             }
-        }
-        if(this.isValidText(node.parent())) {
-            return true;
+            if(isValidText(child)) {
+                return true;
+            }
         }
         return false;
     }
@@ -224,12 +380,10 @@ public class DomTokenizer {
         return lst.indexOf(node.tagName().toLowerCase()) > -1;
     }
     
-    private boolean isValidText(Element node) {
-        String text = node.ownText();
-        if(text.equals("")) {
+    private boolean isValidText(Node node) {
+        if(node == null)
             return false;
-        }
-        return !this.isEmptyString(text);
+        return node instanceof TextNode && !isEmptyString(((TextNode) node).text());
     }
     
     private String sanitizeValue(String value) {

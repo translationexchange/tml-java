@@ -446,6 +446,14 @@ public class Utils {
     	return join(objects.toArray(), joiner);
     }
     
+    public static List<String> splitSentences(String text) {
+        List<String> sents = (List) Utils.buildList(); 
+        for(String s : text.split("[^.!?\\s][^.!?]*(?:[.!?](?![\\'\"]?\\s|$)[^.!?]*)*[.!?]?[\\'\"]?(?=\\s|$)")) {
+            sents.add(s);
+        }
+        return sents;
+    }
+    
     /**
      * <p>join.</p>
      *
@@ -474,4 +482,5 @@ public class Utils {
         m.setAccessible(true);
         return m;
     }
+   
 }

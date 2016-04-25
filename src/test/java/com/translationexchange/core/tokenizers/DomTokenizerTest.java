@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -54,10 +55,11 @@ public class DomTokenizerTest {
     @Test
     public void testJSoupSpec() throws Exception {
         DomTokenizer dt = new DomTokenizer(Utils.buildMap(), Tml.getConfig().getTranslatorOptions());
-        String htmlString = "<html><head><script id=\"script\" type=\"src\"></script></head><body><h1 id=\"test\">Mr. Belvedere Fan Club</h1><i></i><div id=\"no-translate-1\" notranslate></div><div tmltype=\"notranslate\" id=\"no-translate-2\"></div><b class=\"mapped-tag\">dasd</b><p class=\"empty\"></p><p><br class=\"self-closing\"/><span id=\"test-span\">Hmm</span></p><div><i class=\"only-child\"></i></div></body></html>";
+        String htmlString = "<html><head><script id=\"script\" type=\"src\"></script></head><body><h1 id=\"test\">Mr. Belvedere Fan Club</h1><i></i><div id=\"no-translate-1\" notranslate></div><div tmltype=\"notranslate\" id=\"no-translate-2\"></div><b class=\"mapped-tag\">dasd</b><p class=\"empty\"></p><p><br class=\"self-closing\"/><span id=\"test-span\">Hmm</span></p><div id=\"with-child\"><i class=\"only-child\"></i></div></body></html>";
         Document doc = Jsoup.parse(htmlString);
         Element root = doc.select("html").first();
         Element h1 = doc.getElementById("test");
+        Element div = doc.getElementById("with-child");
         Element p = doc.getElementsByClass("empty").first();
         Element span = doc.select("span#test-span").first();
         Element ic = doc.select("i.only-child").first();
@@ -67,9 +69,9 @@ public class DomTokenizerTest {
         Element notransNode2 = doc.getElementById("no-translate-2");
         Element script = doc.getElementById("script");
         
-        Method isValidText = Utils.getPrivateMethod(dt, "isValidText", Element.class);
-        Assert.assertTrue((Boolean) isValidText.invoke(dt, h1));
-        Assert.assertFalse((Boolean) isValidText.invoke(dt, p));
+        Method isValidText = Utils.getPrivateMethod(dt, "isValidText", Node.class);
+        Assert.assertTrue((Boolean) isValidText.invoke(dt, h1.textNodes().get(0)));
+//        Assert.assertFalse((Boolean) isValidText.invoke(dt, h1.));
         
         Method isInlineNode = Utils.getPrivateMethod(dt, "isInlineNode", Element.class);
         Assert.assertTrue((Boolean) isInlineNode.invoke(dt, span));
@@ -115,5 +117,16 @@ public class DomTokenizerTest {
         Assert.assertTrue((Boolean) isNonTranslatableNode.invoke(dt, notransNode2));
         Assert.assertTrue((Boolean) isNonTranslatableNode.invoke(dt, script));
         Assert.assertTrue((Boolean) isNonTranslatableNode.invoke(dt, p));
+        
+        Method generateHtmlToken = Utils.getPrivateMethod(dt, "generateHtmlToken", Element.class, String.class);
+        Assert.assertEquals("<h1 id='test'>{$0}</h1>", generateHtmlToken.invoke(dt, h1, null));
+        Assert.assertEquals("<h1 id='test'>hi</h1>", generateHtmlToken.invoke(dt, h1, "hi"));
+        Assert.assertEquals("<br class=\'self-closing\'/>", generateHtmlToken.invoke(dt, br, null));
+        
+        Method generateTmlTags = Utils.getPrivateMethod(dt, "generateTmlTags", Element.class);
+        Assert.assertEquals("[h1]Mr. Belvedere Fan Club[/h1]", generateTmlTags.invoke(dt, h1));
+        Assert.assertEquals("[div: {italic}]", generateTmlTags.invoke(dt, div));
+        div.child(0).text("hello");
+        Assert.assertEquals("[div: [italic1: hello]]", generateTmlTags.invoke(dt, div));
     }
 }
