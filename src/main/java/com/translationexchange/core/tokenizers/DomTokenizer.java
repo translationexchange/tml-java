@@ -104,7 +104,8 @@ public class DomTokenizer {
                         if(!buffer.equals("")) {
                             html += translateTml(buffer);
                         }
-                        String containerValue = translateTree(child);
+                        
+                        String containerValue = translateTree(_child);
                         if(isIgnoredNode(_child)) {
                             html += containerValue;
                         } else {
@@ -114,8 +115,9 @@ public class DomTokenizer {
                     }
                 }
             }
-            if(!buffer.equals(""))
+            if(!buffer.equals("")) {
                 html += translateTml(buffer);
+            }
             return html;
         }
     }
@@ -185,6 +187,7 @@ public class DomTokenizer {
         for(Map.Entry<String, String> entry : sanitizers.entrySet()) {
             tml = Pattern.compile(entry.getKey()).matcher(tml).replaceAll(entry.getValue());
         }
+        tml = tml.trim();
         if((Boolean) option("debug")) {
             translation = debugTranslation(tml);
         } else {
@@ -236,7 +239,7 @@ public class DomTokenizer {
         StringBuilder attrBuilder = new StringBuilder();
         String sep = "";
         for(String key : attrKeys) {
-            String quote = attributeMap.get(key).indexOf("\'") > -1 ? "\"" : "\'";
+            String quote = attributeMap.get(key).indexOf("\'") > -1 ? "\'" : "\"";
             attrBuilder
             .append(sep)
             .append(String.format("%s=%s", key, (quote + attributeMap.get(key) + quote)));
@@ -343,7 +346,7 @@ public class DomTokenizer {
         if(node.parent() == null) {
             return false;
         }
-        return node.parent().children().size() == 1;
+        return node.parent().childNodeSize() == 1;
     }
     
     private boolean hasInlineOrTextSublings(Element node) {

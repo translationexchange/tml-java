@@ -2,7 +2,9 @@ package com.translationexchange.core.tokenizers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
+import org.apache.tools.ant.DirectoryScanner;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,11 +12,12 @@ import org.jsoup.nodes.Node;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.translationexchange.core.BaseTest;
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.Utils;
 import com.translationexchange.core.tokenizers.DomTokenizer;
 
-public class DomTokenizerTest {
+public class DomTokenizerTest extends BaseTest {
     
     @Test
     public void testSpec() throws Exception {
@@ -132,6 +135,32 @@ public class DomTokenizerTest {
     
     @Test
     public void testIntegration() {
-        
+        Map<String, Object> transOptions = Utils.extendMap(Tml.getConfig().getTranslatorOptions(),
+                        "debug", true,
+                        "debug_format", "{{{{$0}}}}");
+        DomTokenizer dt = new DomTokenizer(Utils.buildMap(), transOptions);
+        Assert.assertEquals(
+                "<h1>{{{Mr. Belvedere Fan Club}}}</h1>",
+                dt.translate("<html><body><h1>Mr. Belvedere Fan Club</h1></body></html>"));
+        Assert.assertEquals(
+                "{{{Mr. Belvedere Fan Club}}}",
+                dt.translate("Mr. Belvedere Fan Club"));
+        Assert.assertEquals(
+                "<h1>{{{Mr. Belvedere Fan Club}}}</h1>",
+                dt.translate("<h1>Mr. Belvedere Fan Club</h1>"));
+//        Assert.assertEquals(
+//                "<p><a class='the-link' href='https://github.com/tmpvar/jsdom'>{{{jsdom's Homepage}}}</a></p>",
+//                dt.translate("<p><a class='the-link' href='https://github.com/tmpvar/jsdom'>jsdom's Homepage</a></p>"));
+//        
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setIncludes(new String[]{"dom/**/*.html"});
+        scanner.setBasedir("src/test/resources");
+        scanner.scan();
+        String[] files = scanner.getIncludedFiles();
+        for(String file : files) {
+            String actual = loadResource("/" + file);
+            String expected = loadResource("/" + file.replace("html", "tml"));
+            Assert.assertEquals(expected, dt.translate(actual));
+        }
     }
 }
