@@ -122,9 +122,9 @@ public class DomTokenizerTest extends BaseTest {
         Assert.assertTrue((Boolean) isNonTranslatableNode.invoke(dt, p));
         
         Method generateHtmlToken = Utils.getPrivateMethod(dt, "generateHtmlToken", Element.class, String.class);
-        Assert.assertEquals("<h1 id='test'>{$0}</h1>", generateHtmlToken.invoke(dt, h1, null));
-        Assert.assertEquals("<h1 id='test'>hi</h1>", generateHtmlToken.invoke(dt, h1, "hi"));
-        Assert.assertEquals("<br class=\'self-closing\'/>", generateHtmlToken.invoke(dt, br, null));
+        Assert.assertEquals("<h1 id=\"test\">{$0}</h1>", generateHtmlToken.invoke(dt, h1, null));
+        Assert.assertEquals("<h1 id=\"test\">hi</h1>", generateHtmlToken.invoke(dt, h1, "hi"));
+        Assert.assertEquals("<br class=\"self-closing\"/>", generateHtmlToken.invoke(dt, br, null));
         
         Method generateTmlTags = Utils.getPrivateMethod(dt, "generateTmlTags", Element.class);
         Assert.assertEquals("[h1]Mr. Belvedere Fan Club[/h1]", generateTmlTags.invoke(dt, h1));
