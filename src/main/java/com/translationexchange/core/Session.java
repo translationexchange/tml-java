@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Observable;
 
 import com.translationexchange.core.languages.Language;
+import com.translationexchange.core.tokenizers.DomTokenizer;
 import com.translationexchange.core.tokenizers.Tokenizer;
 
 /**
@@ -402,7 +403,23 @@ public class Session extends Observable {
     	options.put(Session.SESSION_KEY, this);
         return (String) getCurrentLanguage().translate(label, description, tokens, options);
     }
-
+    
+    /**
+     * <p>trh.</p>
+     *
+     * @param html a {@link java.lang.String} object.
+     * @param tokens a {@link java.util.Map} object.
+     * @param options a {@link java.util.Map} object.
+     * @return a {@link java.lang.String} object.
+     */
+    public String trh(String html, Map<String, Object> tokens, Map<String, Object> options) {
+        if(options == null) {
+            options = new HashMap<String, Object>();
+        }
+        options.put(Session.SESSION_KEY, this);
+        return new DomTokenizer(tokens, options).translate(html);
+    }
+    
     /**
      * <p>translateStyledString.</p>
      *
