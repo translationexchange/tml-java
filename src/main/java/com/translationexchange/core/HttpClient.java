@@ -59,6 +59,7 @@ import com.translationexchange.core.cache.CacheVersion;
 public class HttpClient {
     /** Constant <code>API_PATH="v1/"</code> */
 	public static final String API_PATH = "v1/";
+	public static final String EXTENSIONS_KEY = "extensions";
 	
     /**
      * Current cache version
@@ -279,14 +280,15 @@ public class HttpClient {
     		
     		String response = get(Utils.buildURL(getApplication().getCdnHost(), cachePath), options); 
     		
-    		// check if CDN responded with an error
+    		// check if CDN responded with an error, and return an empty JSON result
     		if (response.indexOf("<?xml") != -1) {
-    			return null;
+				response = cacheKey.equals("version") ? null : "{}";
     		}
     		
     		return response; 
     	} catch (Exception ex) {
-    		return null;
+    		Tml.getLogger().debug("Failed to get from CDN " + cacheKey + " with error: " + ex.getMessage());
+    		return cacheKey.equals("version") ? null : "{}";
     	}
     }
     
@@ -335,13 +337,13 @@ public class HttpClient {
 
 		result = processJSONResponse(responseText, options);
 
-		Map<String, Object> extensions = (Map<String, Object>) result.get("extensions");
+		Map<String, Object> extensions = (Map<String, Object>) result.get(EXTENSIONS_KEY);
 
 		// never store extension in cache
 		if (extensions != null) {
-			result.remove("extensions");
+			result.remove(EXTENSIONS_KEY);
 			responseText = Utils.buildJSON(result);
-			result.put("extensions", extensions);
+			result.put(EXTENSIONS_KEY, extensions);
 		}
 		
 		Tml.getCache().store(versionedKey, responseText, options);
