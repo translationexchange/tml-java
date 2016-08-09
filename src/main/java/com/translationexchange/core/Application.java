@@ -479,7 +479,7 @@ public class Application extends Base {
             while (entries.hasNext()) {
 				Map.Entry entry = (Map.Entry) entries.next();
                 String locale = (String) entry.getKey();
-                if (!locale.equals(sourceLocale))
+                if (!locale.equals(getDefaultLocale()))
                 	sourceLocale = locale;
                 
                 Map<String, Object> data = (Map<String, Object>) entry.getValue();
