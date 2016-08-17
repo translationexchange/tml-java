@@ -10,3 +10,4 @@ log
 .idea
 /bin/
 release.properties
+build

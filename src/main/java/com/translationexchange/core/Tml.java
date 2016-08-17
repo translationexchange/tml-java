@@ -43,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 import com.translationexchange.core.cache.Cache;
 import com.translationexchange.core.cache.CacheAdapter;
 import com.translationexchange.core.languages.Language;
+import com.translationexchange.core.logger.LoggerInterface;
 
 /**
  * A static utility session wrapper class for using by Mobile and Desktop application.
@@ -73,7 +74,7 @@ public class Tml {
     /**
      * Tml logger
      */
-    private static Logger logger;
+    private static LoggerInterface logger;
     
     /**
      * Periodically send missing keys to the server, should only be used in a single user mode (desktop, mobile)
@@ -232,10 +233,23 @@ public class Tml {
      *
      * @return a {@link com.translationexchange.core.Logger} object.
      */
-    public static Logger getLogger() {
-        if (logger == null)
-            logger = new Logger();
-
+    public static LoggerInterface getLogger() {
+        if (logger == null) {
+            try {
+                if (getConfig().getLogger() != null && getConfig().getLogger().containsKey("class")) {
+                    Map<String, Object> cacheData = getConfig().getLogger();
+                    String className = (String) cacheData.get("class");
+                    Class cacheClass = Class.forName(className);
+                    Constructor<LoggerInterface> constructor = cacheClass.getConstructor();
+                    logger = constructor.newInstance();
+                } else {
+                    logger = new Logger();
+                }
+            } catch (Exception ex) {
+                logger = new Logger();
+                getLogger().logException(ex);
+            }
+        }
         return logger;
     }
 
