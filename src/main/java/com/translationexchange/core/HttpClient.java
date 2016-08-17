@@ -321,10 +321,10 @@ public class HttpClient {
 		if (getCacheVersion().isUnreleased())
 			return null;
 		
-		// get key with version prefix
-		String versionedKey = getCacheVersion().getVersionedKey(cacheKey);
+		// put the current version into options
+		options.put(CacheVersion.VERSION_KEY, getCacheVersion().getVersion());
 		
-		responseText = (String) Tml.getCache().fetch(versionedKey, options);
+		responseText = (String) Tml.getCache().fetch(cacheKey, options);
 		
 		if (responseText != null)
 			return processJSONResponse(responseText, options);
@@ -346,7 +346,7 @@ public class HttpClient {
 			result.put(EXTENSIONS_KEY, extensions);
 		}
 		
-		Tml.getCache().store(versionedKey, responseText, options);
+		Tml.getCache().store(cacheKey, responseText, options);
 
 		return result;
     }

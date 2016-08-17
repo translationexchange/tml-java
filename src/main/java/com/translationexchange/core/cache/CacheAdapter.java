@@ -37,7 +37,9 @@ package com.translationexchange.core.cache;
 import java.util.Map;
 
 import com.translationexchange.core.Tml;
+import com.translationexchange.core.Utils;
 public abstract class CacheAdapter implements Cache {
+
 	private Map<String, Object> config;
 		
 	/**
@@ -83,4 +85,24 @@ public abstract class CacheAdapter implements Cache {
 		return (String) getConfig().get("namespace");
 	}
 
+	
+	/**
+	 * 
+	 * @param key
+	 * @param options
+	 * @return
+	 */
+	protected String getVersionedKey(String key, Map<String, Object> options) {
+		
+		String version = (String) options.get(CacheVersion.VERSION_KEY);
+		
+		String elements[] = {
+				CacheVersion.KEY_PREFIX,
+	         (Tml.getCache().getNamespace() == null ? "" : Tml.getCache().getNamespace()),
+	         (key == CacheVersion.VERSION_KEY) ? "v" : "v" + (version == null ? "0" : version),
+	         key
+		};
+		
+		return Utils.join(elements, "_");
+	}
 }

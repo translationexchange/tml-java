@@ -62,6 +62,19 @@ public class FileCache extends CacheAdapter implements Cache {
 		super(config);
 	}
 
+	protected String getSystemPath() {
+		String path = null;
+		 String osName = System.getProperty("os.name").toLowerCase();
+	        if (osName.indexOf("windows")>-1) {
+	            path = System.getenv("APPDATA");
+	//        } else if (osName.indexOf("mac")>-1) {
+	//            path = System.getProperty("user.home");
+	        } else { //anything else
+	            path = System.getProperty("user.home");
+	        }
+	     return path;
+	}
+	
 	/**
 	 * <p>Getter for the field <code>applicationPath</code>.</p>
 	 *
@@ -70,14 +83,10 @@ public class FileCache extends CacheAdapter implements Cache {
 	protected File getApplicationPath() {
 		if (applicationPath == null) {
 			String path = null;
-	        String osName = System.getProperty("os.name").toLowerCase();
-	        if (osName.indexOf("windows")>-1) {
-	            path = System.getenv("APPDATA");
-	//        } else if (osName.indexOf("mac")>-1) {
-	//            path = System.getProperty("user.home");
-	        } else { //anything else
-	            path = System.getProperty("user.home");
-	        }
+			
+			// todo: get it the path from configuration, if available
+			
+			path = getSystemPath();
 	        applicationPath = new File(path, Tml.getConfig().getApplicationName());
 	        applicationPath.mkdirs();
 		}
@@ -104,10 +113,18 @@ public class FileCache extends CacheAdapter implements Cache {
 	 * @param cacheKey a {@link java.lang.String} object.
 	 * @return a {@link java.io.File} object.
 	 */
-	protected File getCachePath(String cacheKey) {
-		List<String> parts = new ArrayList<String>(Arrays.asList(cacheKey.split(Pattern.quote("/"))));
+	protected File getCachePath(String cacheKey, Map<String, Object> options) {
+		ArrayList<String> parts = new ArrayList<String>(Arrays.asList(cacheKey.split(Pattern.quote("/"))));
 		String fileName = parts.remove(parts.size()-1);
-
+		
+		if (cacheKey.equals("tml_current_version"))
+			cacheKey = "version";
+		
+		String version = (String) options.get(CacheVersion.VERSION_KEY);
+		if (version != null) {
+			parts.add(0, version);
+		}
+		
 		File fileCachePath = getCachePath();
 		if (parts.size() > 0)
 			fileCachePath = new File(getCachePath(), Utils.join(parts.toArray(), File.separator));
@@ -144,7 +161,7 @@ public class FileCache extends CacheAdapter implements Cache {
 	
     /** {@inheritDoc} */
     public Object fetch(String key, Map<String, Object> options) {
-    	File cacheFile = getCachePath(key);
+    	File cacheFile = getCachePath(key, options);
     	if (!cacheFile.exists()) { 
     		Tml.getLogger().debug("Cache miss: " + key);
     		return null;
@@ -174,7 +191,7 @@ public class FileCache extends CacheAdapter implements Cache {
     
     /** {@inheritDoc} */
     public void store(String key, Object data, Map<String, Object> options) {
-    	File cacheFile = getCachePath(key);
+    	File cacheFile = getCachePath(key, options);
     	
     	try {
     		Tml.getLogger().debug("Writing cache to :" + cacheFile);
@@ -186,7 +203,7 @@ public class FileCache extends CacheAdapter implements Cache {
 
     /** {@inheritDoc} */
     public void delete(String key, Map<String, Object> options) {
-    	File cacheFile = getCachePath(key);
+    	File cacheFile = getCachePath(key, options);
 
     	if (options!=null && options.get("directory") != null && options.get("directory").equals(Boolean.TRUE)) {
     		cacheFile = new File(cacheFile.getAbsolutePath().replaceAll(Pattern.quote(".json"), ""));

@@ -34,24 +34,26 @@
 
 package com.translationexchange.core.cache;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.Utils;
 
 public class CacheVersion {
-	
+
 	/** Constant <code>VERSION_KEY="current_version"</code> */
 	public static String VERSION_KEY = "current_version";
-	
-    /** Constant <code>UNRELEASED_VERSION="0"</code> */
+
+	/** Constant <code>UNRELEASED_VERSION="0"</code> */
 	public static final String UNRELEASED_VERSION = "0";
-	
+
 	/** Constant <code>KEY_PREFIX="tml"</code> */
-	protected static String KEY_PREFIX  = "tml";
-	
+	protected static String KEY_PREFIX = "tml";
+
 	/**
 	 * Cache version
 	 */
@@ -61,7 +63,7 @@ public class CacheVersion {
 	 * Last time the cache was updated
 	 */
 	private Long timestamp;
-	
+
 	/**
 	 * Get timestamp
 	 * 
@@ -115,8 +117,8 @@ public class CacheVersion {
 	public CacheVersion() {
 		setVersion(UNRELEASED_VERSION);
 	}
-	
-	/** 
+
+	/**
 	 * Checks if the version has expired and needs a refresh from CDN
 	 * 
 	 * @return
@@ -125,50 +127,45 @@ public class CacheVersion {
 		if (getTimestamp() == null)
 			return true;
 
-		long validWindow = getTimestamp().longValue() + getVerificationInterval();   
+		long validWindow = getTimestamp().longValue() + getVerificationInterval();
 		long now = new Date().getTime();
 		return validWindow < now;
 	}
-	
-	/** 
+
+	/**
 	 * Returns the key under which the current version is stored
 	 * 
 	 * @return
 	 */
 	public String getVersionKey() {
-		return getVersionedKey(VERSION_KEY);
+		List<String> fragments = new ArrayList<String>();
+		fragments.add(KEY_PREFIX);
+
+		if (Tml.getCache().getNamespace() != null)
+			fragments.add(Tml.getCache().getNamespace());
+		fragments.add(VERSION_KEY);
+
+		return Utils.join(fragments, "_");
 	}
-	
-	public String getVersionedKey(String key) {
-		String elements[] = {
-	         KEY_PREFIX,
-	         (Tml.getCache().getNamespace() == null ? "" : Tml.getCache().getNamespace()),
-	         (key == VERSION_KEY) ? "v" : "v" + (getVersion() == null ? "0" : getVersion().toString()),
-	         key
-		};
-		
-		return Utils.join(elements, "_");
-	}
-	
+
 	/**
 	 * Marks the version as updated
 	 */
 	public void markAsUpdated() {
 		setTimestamp(new Date().getTime());
 	}
-	
+
 	/**
 	 * Convert the version object to JSON
 	 * 
 	 * @return
 	 */
 	public String toJSON() {
-		Map <String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("version", getVersion());
 		data.put("t", getTimestamp());
 		return Utils.buildJSON(data);
 	}
-	
 
 	/**
 	 * Fetches current version from cache
@@ -176,15 +173,15 @@ public class CacheVersion {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public void fetchFromCache() {
-		String data = (String) Tml.getCache().fetch(getVersionedKey(VERSION_KEY), Utils.buildMap());
+		String data = (String) Tml.getCache().fetch(getVersionKey(), Utils.buildMap("cache_key", VERSION_KEY));
 
 		// No version has ever been stored in the local cache
 		if (data == null)
 			setVersion(UNRELEASED_VERSION);
-		else	
+		else
 			updateFromJSON(data);
 	}
-	
+
 	/**
 	 * Update version from CDN
 	 * 
@@ -197,12 +194,12 @@ public class CacheVersion {
 		} else {
 			updateFromJSON(data);
 		}
-		
+
 		markAsUpdated();
-		
-		Tml.getCache().store(getVersionedKey(VERSION_KEY), toJSON(), null);
+
+		Tml.getCache().store(getVersionKey(), toJSON(), Utils.buildMap());
 	}
-	
+
 	/**
 	 * Update version from JSON
 	 * 
@@ -211,30 +208,30 @@ public class CacheVersion {
 	private void updateFromJSON(String data) {
 		if (data.indexOf("{") != -1) {
 			@SuppressWarnings("unchecked")
-			Map <String, Object> jsonData = (Map <String, Object>) Utils.parseJSON(data);
-			setVersion((String) jsonData.get("version")); 
-			setTimestamp((Long) jsonData.get("t")); 
+			Map<String, Object> jsonData = (Map<String, Object>) Utils.parseJSON(data);
+			setVersion((String) jsonData.get("version"));
+			setTimestamp((Long) jsonData.get("t"));
 		} else {
-			setVersion(data); 
+			setVersion(data);
 		}
 	}
-	
+
 	/**
 	 * Checks if version has not been released
 	 * 
 	 * @return
 	 */
 	public boolean isUnreleased() {
-		return UNRELEASED_VERSION.equals(getVersion()); 
+		return UNRELEASED_VERSION.equals(getVersion());
 	}
-	
+
 	/**
 	 * Resets the version
 	 */
 	public void reset() {
-    	Tml.getCache().delete(getVersionedKey(VERSION_KEY), null);
-    }
-	
+		Tml.getCache().delete(getVersionKey(), null);
+	}
+
 	/**
 	 * Returns verification interval
 	 * 
@@ -242,13 +239,13 @@ public class CacheVersion {
 	 */
 	public long getVerificationInterval() {
 		Integer seconds = (Integer) Tml.getConfig().getCache().get("version_check_interval");
-		
+
 		if (seconds == null)
-			seconds = new Integer(60 * 60); 
-		
+			seconds = new Integer(60 * 60);
+
 		return seconds.intValue() * 1000;
 	}
-	
+
 	/**
 	 * Gets expiration message
 	 * 
@@ -257,14 +254,14 @@ public class CacheVersion {
 	public String getExpirationMessage() {
 		if (getTimestamp() == null)
 			return "expired";
-		
-		long validWindow = getTimestamp().longValue() + getVerificationInterval();   
+
+		long validWindow = getTimestamp().longValue() + getVerificationInterval();
 		long now = new Date().getTime();
-		
+
 		if (now > validWindow)
 			return "expired " + ((now - validWindow) / 1000) + " s ago";
-		
-		return "expires in " + ((validWindow - now) / 1000) + "s"; 
+
+		return "expires in " + ((validWindow - now) / 1000) + "s";
 	}
 
 }
