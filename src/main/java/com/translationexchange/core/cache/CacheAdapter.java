@@ -82,9 +82,32 @@ public abstract class CacheAdapter implements Cache {
 	 * Returns cache name space
 	 */
 	public String getNamespace() {
-		return (String) getConfig().get("namespace");
+		return getConfigProperty("namespace");
 	}
 
+	/**
+	 * Returns configuration property
+	 * 
+	 * @param key
+	 * @return
+	 */
+	protected String getConfigProperty(String key) {
+		return getConfigProperty(key, null);
+	}
+
+	/**
+	 * Returns configuration property with default value
+	 * 
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
+	protected String getConfigProperty(String key, String defaultValue) {
+		if (getConfig() == null || getConfig().get(key) == null)
+			return defaultValue;
+		
+		return (String) getConfig().get(key);
+	}
 	
 	/**
 	 * 
