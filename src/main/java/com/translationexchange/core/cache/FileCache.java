@@ -112,12 +112,12 @@ public class FileCache extends CacheAdapter implements Cache {
 	 * @return a {@link java.io.File} object.
 	 */
 	protected File getCachePath(String cacheKey, Map<String, Object> options) {
-		ArrayList<String> parts = new ArrayList<String>(Arrays.asList(cacheKey.split(Pattern.quote("/"))));
-		String fileName = parts.remove(parts.size()-1);
-		
 		if (cacheKey.equals("tml_current_version"))
 			cacheKey = "version";
-		
+
+		ArrayList<String> parts = new ArrayList<String>(Arrays.asList(cacheKey.split(Pattern.quote("/"))));
+		String fileName = parts.remove(parts.size()-1);
+
 		String version = (String) options.get(CacheVersion.VERSION_KEY);
 		if (version != null) {
 			parts.add(0, version);
