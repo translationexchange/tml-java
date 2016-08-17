@@ -1,6 +1,5 @@
 package com.translationexchange.core.tokenizers;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -134,8 +133,9 @@ public class DomTokenizer {
         return false;
     }
     
-    private boolean isNonTranslatableNode(Element node) {
-        List<String> scripts = (List) option("nodes.scripts");
+    @SuppressWarnings("unchecked")
+	private boolean isNonTranslatableNode(Element node) {
+        List<String> scripts = (List<String>) option("nodes.scripts");
         if(scripts.indexOf(node.tagName().toLowerCase()) > -1) {
             return true;
         }
@@ -256,7 +256,8 @@ public class DomTokenizer {
         return String.format("<%s %s>%s</%s>", nodeName, attrString, nodeValue, nodeName);
     }
     
-    private String generateDataTokens(String text) {
+    @SuppressWarnings("unchecked")
+	private String generateDataTokens(String text) {
         if((Boolean) option("data_tokens.special.enabled")) {
             Matcher specialMatcher = Pattern.compile((String) option("data_tokens.special.regex")).matcher(text);
             while(specialMatcher.find()) {   // &dasd;
@@ -269,7 +270,7 @@ public class DomTokenizer {
         
         if((Boolean) option("data_tokens.date.enabled")) {
             String tokenName = (String) option("data_tokens.date.name");
-            List<List<String>> formats = (List) option("data_tokens.date.formats");
+            List<List<String>> formats = (List<List<String>>) option("data_tokens.date.formats");
             for(List<String> fmt : formats) {
                 Matcher dateMatcher = Pattern.compile(fmt.get(0)).matcher(text);
                 while(dateMatcher.find()) {
@@ -282,7 +283,7 @@ public class DomTokenizer {
                 }
             }
         }
-        List<Map<String, Object>> rules = (List) option("data_tokens.rules");
+        List<Map<String, Object>> rules = (List<Map<String, Object>>) option("data_tokens.rules");
         if(rules != null && rules.size() > 0) {
             for(Map<String, Object> rule : rules) {
                 if(!((Boolean)rule.get("enabled"))) {
@@ -334,8 +335,9 @@ public class DomTokenizer {
         return format.replace("{$0}", tmlString);
     }
     
-    private boolean isShortToken(String token, String value) {
-        List<String> l = (List) this.option("nodes.short");
+    @SuppressWarnings("unchecked")
+	private boolean isShortToken(String token, String value) {
+        List<String> l = (List<String>) this.option("nodes.short");
         if(l.indexOf(token) > -1) {
             return true;
         }
@@ -367,26 +369,29 @@ public class DomTokenizer {
         return false;
     }
     
-    private boolean isInlineNode(Element node) {
-        List<String> inlineNodes = (List) this.option("nodes.inline");
+    @SuppressWarnings("unchecked")
+	private boolean isInlineNode(Element node) {
+        List<String> inlineNodes = (List<String>) this.option("nodes.inline");
         return inlineNodes.indexOf(node.tagName().toLowerCase()) > -1 && !this.isOnlyChild(node);
     }
     
-    private boolean isContainerNode(Element node) {
-        return !isInlineNode(node);
-    }
+//    private boolean isContainerNode(Element node) {
+//        return !isInlineNode(node);
+//    }
     
     private boolean isSelfClosingNode(Element node) {
         return node.childNodeSize() == 0;
     }
     
-    private boolean isIgnoredNode(Element node) {
-        List<String> lst = (List) option("nodes.ignored");
+    @SuppressWarnings("unchecked")
+	private boolean isIgnoredNode(Element node) {
+        List<String> lst = (List<String>) option("nodes.ignored");
         return lst.indexOf(node.tagName().toLowerCase()) > -1;
     }
     
-    private boolean isSeparatorNode(Element node) {
-        List<String> lst = (List) option("nodes.splitters");
+    @SuppressWarnings("unchecked")
+	private boolean isSeparatorNode(Element node) {
+        List<String> lst = (List<String>) option("nodes.splitters");
         return lst.indexOf(node.tagName().toLowerCase()) > -1;
     }
     
@@ -401,9 +406,10 @@ public class DomTokenizer {
         return p.matcher(value).replaceAll("");
     }
     
-    private String adjustName(Element node) {
+    @SuppressWarnings("unchecked")
+	private String adjustName(Element node) {
         String name = node.tagName().toLowerCase();
-        Map<String, String> map = (Map) option("name_mapping");
+        Map<String, String> map = (Map<String, String>) option("name_mapping");
         return map.getOrDefault(name, name);
     }
     

@@ -41,7 +41,6 @@ import java.util.Observable;
 
 import com.translationexchange.core.languages.Language;
 import com.translationexchange.core.tokenizers.DomTokenizer;
-import com.translationexchange.core.tokenizers.Tokenizer;
 
 /**
  * Represents a TML application session or a web request
@@ -135,7 +134,8 @@ public class Session extends Observable {
     	Tml.getConfig().setDecorator("html");
     }
     
-    public static Application initializeApplication(Map<String, Object> options) throws Exception {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Application initializeApplication(Map<String, Object> options) throws Exception {
         String applicationClass = "";
         if(options.get("applicationClass") != null) {
             applicationClass = (String) options.get("applicationClass");

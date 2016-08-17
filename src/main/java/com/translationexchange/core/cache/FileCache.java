@@ -42,12 +42,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.Utils;
-
 
 public class FileCache extends CacheAdapter implements Cache {
 	protected File applicationPath;
@@ -163,12 +161,12 @@ public class FileCache extends CacheAdapter implements Cache {
     public Object fetch(String key, Map<String, Object> options) {
     	File cacheFile = getCachePath(key, options);
     	if (!cacheFile.exists()) { 
-    		Tml.getLogger().debug("Cache miss: " + key);
+    		Tml.getLogger().debug("File cache miss: " + key);
     		return null;
     	}
 
     	try {
-    		Tml.getLogger().debug("Cache hit: " + key);
+    		Tml.getLogger().debug("File cache hit: " + key);
     		return readFile(cacheFile);	
     	} catch (Exception ex) {
     		Tml.getLogger().logException(ex);

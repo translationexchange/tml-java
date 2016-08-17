@@ -640,7 +640,8 @@ public class TranslationKey extends Base {
         return label + " (" + locale + ")";
     }
 
-    private Class getTokenizerByKey(String key) throws ClassNotFoundException {
+    @SuppressWarnings("rawtypes")
+	private Class getTokenizerByKey(String key) throws ClassNotFoundException {
         return Class.forName(Tml.getConfig().getTokenizerClass(key));
     }
 }

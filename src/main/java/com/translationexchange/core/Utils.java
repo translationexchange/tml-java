@@ -446,12 +446,18 @@ public class Utils {
     	return join(objects.toArray(), joiner);
     }
     
+    /**
+     * Splits text into sentences
+     * 
+     * @param text
+     * @return
+     */
     public static List<String> splitSentences(String text) {
-        List<String> sents = (List) Utils.buildList(); 
+        List<String> sentenses = new ArrayList<String>(); 
         for(String s : text.split("[^.!?\\s][^.!?]*(?:[.!?](?![\\'\"]?\\s|$)[^.!?]*)*[.!?]?[\\'\"]?(?=\\s|$)")) {
-            sents.add(s);
+        	sentenses.add(s);
         }
-        return sents;
+        return sentenses;
     }
     
     /**
@@ -473,7 +479,8 @@ public class Utils {
     	return sb.toString();
     }
     
-    public static Class loadClassByName(String name) throws ClassNotFoundException {
+    @SuppressWarnings("rawtypes")
+	public static Class loadClassByName(String name) throws ClassNotFoundException {
         return Class.forName(name);
     }
     

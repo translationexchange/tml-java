@@ -34,7 +34,6 @@ package com.translationexchange.core.tokenizers;
 import java.util.List;
 import java.util.Map;
 
-import com.translationexchange.core.Tml;
 import com.translationexchange.core.languages.Language;
 import com.translationexchange.core.tokens.Token;
 

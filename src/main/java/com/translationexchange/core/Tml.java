@@ -233,7 +233,8 @@ public class Tml {
      *
      * @return a {@link com.translationexchange.core.Logger} object.
      */
-    public static LoggerInterface getLogger() {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static LoggerInterface getLogger() {
         if (logger == null) {
             try {
                 if (getConfig().getLogger() != null && getConfig().getLogger().containsKey("class")) {

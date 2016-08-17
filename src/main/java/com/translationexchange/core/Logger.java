@@ -107,27 +107,22 @@ public class Logger implements LoggerInterface {
         theLogger.error(message.toString());
     }
 
-    @Override
     public void error(String tag, String message) {
 
     }
 
-    @Override
     public void error(String tag, String message, Throwable e) {
 
     }
 
-    @Override
     public void debug(String tag, String message) {
 
     }
 
-    @Override
     public void info(String tag, String message) {
 
     }
 
-    @Override
     public void warn(String tag, String message) {
 
     }
