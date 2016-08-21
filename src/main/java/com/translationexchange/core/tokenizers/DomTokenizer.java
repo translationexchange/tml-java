@@ -375,9 +375,9 @@ public class DomTokenizer {
         return inlineNodes.indexOf(node.tagName().toLowerCase()) > -1 && !this.isOnlyChild(node);
     }
     
-//    private boolean isContainerNode(Element node) {
-//        return !isInlineNode(node);
-//    }
+    private boolean isContainerNode(Element node) {
+        return !isInlineNode(node);
+    }
     
     private boolean isSelfClosingNode(Element node) {
         return node.childNodeSize() == 0;
