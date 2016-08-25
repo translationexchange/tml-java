@@ -111,8 +111,7 @@ public class TmlTest extends BaseTest {
     @Test
     public void testTranslator() {
         Tml.init("application.json", "37f812fac93a71088");
-        Tml.setCurrentTranslator(new Translator(Utils.buildMap("name", "xepa4ep", "email", "r.kamun@gmail.com",
-                "inline", true)));
+        Tml.setCurrentTranslator(new Translator(Utils.buildMap("name", "xepa4ep", "email", "r.kamun@gmail.com", "inline", true)));
         Assert.assertEquals("xepa4ep", Tml.getCurrentTranslator().getName());
     }
 

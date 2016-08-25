@@ -1,15 +1,15 @@
 
 /**
  * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
- *
- *  _______                  _       _   _             ______          _
+ * <p/>
+ * _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
- *    | |_ __ __ _ _ __  ___| | __ _| |_ _  ___  _ __ | |__  __  _____| |__   __ _ _ __   __ _  ___
- *    | | '__/ _` | '_ \/ __| |/ _` | __| |/ _ \| '_ \|  __| \ \/ / __| '_ \ / _` | '_ \ / _` |/ _ \
- *    | | | | (_| | | | \__ \ | (_| | |_| | (_) | | | | |____ >  < (__| | | | (_| | | | | (_| |  __/
- *    |_|_|  \__,_|_| |_|___/_|\__,_|\__|_|\___/|_| |_|______/_/\_\___|_| |_|\__,_|_| |_|\__, |\___|
- *                                                                                        __/ |
- *                                                                                       |___/
+ * | |_ __ __ _ _ __  ___| | __ _| |_ _  ___  _ __ | |__  __  _____| |__   __ _ _ __   __ _  ___
+ * | | '__/ _` | '_ \/ __| |/ _` | __| |/ _ \| '_ \|  __| \ \/ / __| '_ \ / _` | '_ \ / _` |/ _ \
+ * | | | | (_| | | | \__ \ | (_| | |_| | (_) | | | | |____ >  < (__| | | | (_| | | | | (_| |  __/
+ * |_|_|  \__,_|_| |_|___/_|\__,_|\__|_|\___/|_| |_|______/_/\_\___|_| |_|\__,_|_| |_|\__, |\___|
+ * __/ |
+ * |___/
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -17,10 +17,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- *
+ * <p/>
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -55,6 +55,7 @@ import java.util.regex.Pattern;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
 public class Utils {
 
     /**
@@ -124,14 +125,16 @@ public class Utils {
      */
     public static String buildQueryString(Map<String, Object> params) throws Exception {
         StringBuilder sb = new StringBuilder();
-        
+
         SortedSet<String> keys = new TreeSet<String>(params.keySet());
-        for (String key : keys) { 
-           String value = (String) params.get(key);
-           if(sb.length() > 0) {
-               sb.append('&');
-           }
-           sb.append(URLEncoder.encode(key, "UTF-8")).append('=').append(URLEncoder.encode(value, "UTF-8"));
+        for (String key : keys) {
+            String value = (String) params.get(key);
+            if (value != null) {
+                if (sb.length() > 0) {
+                    sb.append('&');
+                }
+                sb.append(URLEncoder.encode(key, "UTF-8")).append('=').append(URLEncoder.encode(value, "UTF-8"));
+            }
         }
         return sb.toString();
     }
@@ -159,7 +162,7 @@ public class Utils {
         }
         return new URL(url.toString());
     }
-   
+
     /**
      * Builds a URL
      *
@@ -182,17 +185,17 @@ public class Utils {
     public static Map<String, Object> buildMap(Object... data) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
-        if(data.length % 2 != 0)
+        if (data.length % 2 != 0)
             throw new IllegalArgumentException("Odd number of arguments");
 
         String key = null;
         Integer step = -1;
 
-        for(Object value : data){
+        for (Object value : data) {
             step++;
-            switch(step % 2){
+            switch (step % 2) {
                 case 0:
-                    if(value == null)
+                    if (value == null)
                         throw new IllegalArgumentException("Null key value");
                     key = (String) value;
                     continue;
@@ -213,15 +216,15 @@ public class Utils {
      * @return a {@link java.util.Map} object.
      */
     public static Map<String, Object> extendMap(Map<String, Object> original, Object... data) {
-    	Map<String, Object> map = new HashMap<String, Object>(original);
-    	map.putAll(buildMap(data));
-    	return map;
+        Map<String, Object> map = new HashMap<String, Object>(original);
+        map.putAll(buildMap(data));
+        return map;
     }
-    
+
     public static HashSet<String> getMapKeys(Map<String, ?> map) {
-    	return new HashSet<String>(map.keySet());
+        return new HashSet<String>(map.keySet());
     }
-    
+
     /**
      * Builds a map out of parameters
      *
@@ -238,17 +241,17 @@ public class Utils {
     public static Map<String, String> buildStringMap(String... data) {
         HashMap<String, String> result = new HashMap<String, String>();
 
-        if(data.length % 2 != 0)
+        if (data.length % 2 != 0)
             throw new IllegalArgumentException("Odd number of arguments");
 
         String key = null;
         Integer step = -1;
 
-        for(String value : data){
+        for (String value : data) {
             step++;
-            switch(step % 2){
+            switch (step % 2) {
                 case 0:
-                    if(value == null)
+                    if (value == null)
                         throw new IllegalArgumentException("Null key value");
                     key = (String) value;
                     continue;
@@ -260,7 +263,7 @@ public class Utils {
 
         return result;
     }
-    
+
 
     /**
      * Builds a list from parameters
@@ -271,7 +274,7 @@ public class Utils {
     public static List<Object> buildList(Object... data) {
         List<Object> result = new ArrayList<Object>();
 
-        for(Object value : data) {
+        for (Object value : data) {
             result.add(value);
         }
 
@@ -287,7 +290,7 @@ public class Utils {
     public static List<String> buildStringList(String... data) {
         List<String> result = new ArrayList<String>();
 
-        for(String value : data) {
+        for (String value : data) {
             result.add(value);
         }
 
@@ -302,12 +305,12 @@ public class Utils {
      */
     public static Object parseJSON(String jsonText) {
         if (jsonText == null) return null;
-        
+
         JSONParser p = new JSONParser();
         Object obj = null;
         try {
             obj = p.parse(jsonText);
-        } catch(ParseException pe){
+        } catch (ParseException pe) {
             Tml.getLogger().logException(pe);
             return null;
         }
@@ -327,7 +330,7 @@ public class Utils {
         StringWriter out = new StringWriter();
         try {
             JSONValue.writeJSONString(object, out);
-        } catch(IOException ex){
+        } catch (IOException ex) {
             Tml.getLogger().logException(ex);
             return null;
         }
@@ -357,17 +360,17 @@ public class Utils {
      * @return a {@link java.lang.Object} object.
      */
     @SuppressWarnings("unchecked")
-	public static Object getNestedMapValue(Map<String, Object> map, String key, String separator) {
+    public static Object getNestedMapValue(Map<String, Object> map, String key, String separator) {
         String[] parts = key.split(separator);
 
-        for (int i=0; i<parts.length-1; i++) {
+        for (int i = 0; i < parts.length - 1; i++) {
             String part = parts[i];
             Object obj = map.get(part);
             if (!(obj instanceof Map)) return null;
             map = (Map<String, Object>) obj;
         }
 
-        return map.get(parts[parts.length-1]);
+        return map.get(parts[parts.length - 1]);
     }
 
 
@@ -391,10 +394,10 @@ public class Utils {
      * @param separator a {@link java.lang.String} object.
      */
     @SuppressWarnings("unchecked")
-	public static void setNestedMapValue(Map<String, Object> map, String key, Object value, String separator) {
+    public static void setNestedMapValue(Map<String, Object> map, String key, Object value, String separator) {
         String[] parts = key.split(separator);
 
-        for (int i=0; i<parts.length-1; i++) {
+        for (int i = 0; i < parts.length - 1; i++) {
             String part = parts[i];
             Map<String, Object> child = (Map<String, Object>) map.get(part);
             if (child == null) {
@@ -404,7 +407,7 @@ public class Utils {
             map = child;
         }
 
-        map.put(parts[parts.length-1], value);
+        map.put(parts[parts.length - 1], value);
     }
 
     /**
@@ -420,12 +423,12 @@ public class Utils {
 
     /**
      * Reads data from an input stream
-     * 
+     *
      * @param inputStream
      * @return
      */
     public static String readFromInputStream(InputStream inputStream) throws IOException {
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int length = 0;
         while ((length = inputStream.read(buffer)) != -1) {
@@ -433,7 +436,7 @@ public class Utils {
         }
         return baos.toString("UTF-8");
     }
-    
+
     /**
      * <p>join.</p>
      *
@@ -442,24 +445,24 @@ public class Utils {
      * @return a {@link java.lang.String} object.
      */
     @SuppressWarnings("rawtypes")
-	public static String join(List objects, String joiner) {
-    	return join(objects.toArray(), joiner);
+    public static String join(List objects, String joiner) {
+        return join(objects.toArray(), joiner);
     }
-    
+
     /**
      * Splits text into sentences
-     * 
+     *
      * @param text
      * @return
      */
     public static List<String> splitSentences(String text) {
-        List<String> sentenses = new ArrayList<String>(); 
-        for(String s : text.split("[^.!?\\s][^.!?]*(?:[.!?](?![\\'\"]?\\s|$)[^.!?]*)*[.!?]?[\\'\"]?(?=\\s|$)")) {
-        	sentenses.add(s);
+        List<String> sentenses = new ArrayList<String>();
+        for (String s : text.split("[^.!?\\s][^.!?]*(?:[.!?](?![\\'\"]?\\s|$)[^.!?]*)*[.!?]?[\\'\"]?(?=\\s|$)")) {
+            sentenses.add(s);
         }
         return sentenses;
     }
-    
+
     /**
      * <p>join.</p>
      *
@@ -468,26 +471,26 @@ public class Utils {
      * @return a {@link java.lang.String} object.
      */
     public static String join(Object[] objects, String joiner) {
-    	if (objects.length == 1)
-    		return objects[0].toString();
-    	
-    	StringBuilder sb = new StringBuilder();
-    	for (int i=0; i<objects.length; i++) {
-    		sb.append(objects[i].toString());
-    		if (i<objects.length-1) sb.append(joiner);
-    	}
-    	return sb.toString();
+        if (objects.length == 1)
+            return objects[0].toString();
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < objects.length; i++) {
+            sb.append(objects[i].toString());
+            if (i < objects.length - 1) sb.append(joiner);
+        }
+        return sb.toString();
     }
-    
+
     @SuppressWarnings("rawtypes")
-	public static Class loadClassByName(String name) throws ClassNotFoundException {
+    public static Class loadClassByName(String name) throws ClassNotFoundException {
         return Class.forName(name);
     }
-    
+
     public static Method getPrivateMethod(Object instance, String methodName, Class<?>... argClasses) throws NoSuchMethodException, SecurityException {
         Method m = instance.getClass().getDeclaredMethod(methodName, argClasses);
         m.setAccessible(true);
         return m;
     }
-   
+
 }

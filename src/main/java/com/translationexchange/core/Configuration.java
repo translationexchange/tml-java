@@ -908,7 +908,7 @@ public class Configuration {
     /**
      * <p>Setter for the field <code>agent</code>.</p>
      *
-     * @param localization a {@link Map} object.
+     * @param agent a {@link Map} object.
      */
     public void setAgent(Map<String, Object> agent) {
         this.agent = agent;

@@ -266,7 +266,7 @@ public class Application extends Base {
     /**
      * <p>Setter for the field <code>host</code>.</p>
      *
-     * @param host a {@link java.lang.String} object.
+     * @param cdnHost a {@link java.lang.String} object.
      */
     public void setCdnHost(String cdnHost) {
         this.cdnHost = cdnHost;
@@ -409,8 +409,16 @@ public class Application extends Base {
         if (attributes.get("tokens") != null)
             setTokens(new HashMap<String, Object>((Map) attributes.get("tokens")));
 
-        if (attributes.get("features") != null)
-            setFeatures(new HashMap<String, Boolean>((Map) attributes.get("features")));
+        if (attributes.get("features") != null) {
+            Map map = new HashMap<String, Boolean>((Map) attributes.get("features"));
+            setFeatures(map);
+//            if(map.containsKey("inline_translations") && getSession()!=null){
+//                Translator translation = new Translator();
+//                translation.setInline((boolean) map.get("inline_translations"));
+//                getSession().setCurrentTranslator(translation);
+//            }
+
+        }
         
         if (attributes.get("languages") != null) {
             for (Object data : ((List) attributes.get("languages"))) {
@@ -670,12 +678,12 @@ public class Application extends Base {
 
         List<Map<String, Object>> params = new ArrayList<Map<String, Object>>();
 
-        List<String> sourceKeys = new ArrayList<String>(); 
+        List<String> sourceKeys = new ArrayList<String>();
         
         Iterator<Map.Entry<String, Map<String, TranslationKey>>> entries = missingTranslationKeysBySources.entrySet().iterator();
         while (entries.hasNext()) {
             Map.Entry<String, Map<String, TranslationKey>> entry = entries.next();
-            String source = (String) entry.getKey();
+            String source = entry.getKey();
             
             if (!sourceKeys.contains(source))
             	sourceKeys.add(source);
