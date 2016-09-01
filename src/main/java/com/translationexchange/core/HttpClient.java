@@ -250,27 +250,25 @@ public class HttpClient {
         setCacheVersion(cacheVersion);
 
         if (Tml.getConfig().isAndroidApp()) {
+            // load version from local cache
+            Tml.getLogger().debug("load version from local cache...");
             cacheVersion.fetchFromCache();
-            if (cacheVersion.getTimestamp() == null || cacheVersion.getTmlMode() != Tml.getConfig().getTmlMode()) {
-                cacheVersion.setTmlMode(Tml.getConfig().getTmlMode());
-                // load version from server
-                switch (Tml.getConfig().getTmlMode()) {
-                    case API_LIVE:
-                        cacheVersion.setVersion("live");
-                        cacheVersion.markAsUpdated();
-                        Tml.getCache().store(getCacheVersion().getVersionKey(), getCacheVersion().toJSON(), Utils.buildMap());
-                        break;
-                    case CDN:
-                    case NONE:
-                        Tml.getLogger().debug("load version from the server...");
-                        cacheVersion.updateFromCDN(getFromCDN("version", Utils.buildMap("uncompressed", true)));
-                        break;
-                }
-            } else {
-                // load version from local cache
-                Tml.getLogger().debug("load version from local cache...");
-                getCacheVersion().fetchFromCache();
+//            if (cacheVersion.getTimestamp() == null || cacheVersion.getTmlMode() != Tml.getConfig().getTmlMode()) {
+            cacheVersion.setTmlMode(Tml.getConfig().getTmlMode());
+            // load version from server
+            switch (Tml.getConfig().getTmlMode()) {
+                case API_LIVE:
+                    cacheVersion.setVersion("live");
+                    cacheVersion.markAsUpdated();
+                    Tml.getCache().store(cacheVersion.getVersionKey(), cacheVersion.toJSON(), Utils.buildMap());
+                    break;
+                case CDN:
+                case NONE:
+                    Tml.getLogger().debug("load version from the server...");
+                    cacheVersion.updateFromCDN(getFromCDN("version", Utils.buildMap("uncompressed", true)));
+                    break;
             }
+//            }
             Tml.getLogger().debug("Cache version: " + cacheVersion.getVersion() + " " + cacheVersion.getExpirationMessage());
             return cacheVersion;
         }
@@ -315,8 +313,8 @@ public class HttpClient {
 
             return response;
         } catch (Exception ex) {
-            Tml.getLogger().debug("Failed to get from CDN " + cacheKey + " with error: " + ex.getMessage());
-            return cacheKey.equals("version") ? null : "{}";
+            Tml.getLogger().error("Failed to get from CDN " + cacheKey + " with error: " + ex.getMessage());
+            return cacheKey.equals("version") ? (String) Tml.getCache().fetch(getCacheVersion().getVersionKey(), Utils.buildMap("cache_key", CacheVersion.VERSION_KEY)) : "{}";
         }
     }
 
