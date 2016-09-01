@@ -35,12 +35,15 @@
 
 package com.translationexchange.core;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.translationexchange.core.cache.Cache;
+import com.translationexchange.core.cache.FileCache;
 import com.translationexchange.core.decorators.Decorator;
 import com.translationexchange.core.decorators.HtmlDecorator;
 import com.translationexchange.core.decorators.PlainDecorator;
@@ -151,6 +154,10 @@ public class Configuration {
      * This mode must never be used in production
      */
     private boolean keyRegistrationMode;
+
+    private boolean androidApp;
+
+    private TmlMode tmlMode = TmlMode.CDN;
 
     /**
      * <p>Constructor for Configuration.</p>
@@ -720,7 +727,7 @@ public class Configuration {
     /**
      * <p>Setter for the field <code>contextRules</code>.</p>
      *
-     * @param contextRules a {@link Map} object.
+     * @param translatorOptions a {@link Map} object.
      */
     public void setTranslatorOptions(Map<String, Object> translatorOptions) {
         this.translatorOptions = translatorOptions;
@@ -926,4 +933,23 @@ public class Configuration {
         this.keyRegistrationMode = false;
     }
 
+    public boolean isAndroidApp() {
+        return androidApp;
+    }
+
+    public void setAndroidApp(boolean androidApp) {
+        this.androidApp = androidApp;
+    }
+
+    public TmlMode getTmlMode() {
+        return tmlMode;
+    }
+
+    public void setTmlMode(TmlMode tmlMode) {
+        this.tmlMode = tmlMode;
+        if (tmlMode.equals(TmlMode.API_LIVE)) {
+            Cache cache = Tml.getCache();
+            cache.delete("live", Utils.buildMap("directory", true));
+        }
+    }
 }

@@ -1,15 +1,15 @@
 
 /**
  * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
- *
- *  _______                  _       _   _             ______          _
+ * <p/>
+ * _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
- *    | |_ __ __ _ _ __  ___| | __ _| |_ _  ___  _ __ | |__  __  _____| |__   __ _ _ __   __ _  ___
- *    | | '__/ _` | '_ \/ __| |/ _` | __| |/ _ \| '_ \|  __| \ \/ / __| '_ \ / _` | '_ \ / _` |/ _ \
- *    | | | | (_| | | | \__ \ | (_| | |_| | (_) | | | | |____ >  < (__| | | | (_| | | | | (_| |  __/
- *    |_|_|  \__,_|_| |_|___/_|\__,_|\__|_|\___/|_| |_|______/_/\_\___|_| |_|\__,_|_| |_|\__, |\___|
- *                                                                                        __/ |
- *                                                                                       |___/
+ * | |_ __ __ _ _ __  ___| | __ _| |_ _  ___  _ __ | |__  __  _____| |__   __ _ _ __   __ _  ___
+ * | | '__/ _` | '_ \/ __| |/ _` | __| |/ _ \| '_ \|  __| \ \/ / __| '_ \ / _` | '_ \ / _` |/ _ \
+ * | | | | (_| | | | \__ \ | (_| | |_| | (_) | | | | |____ >  < (__| | | | (_| | | | | (_| |  __/
+ * |_|_|  \__,_|_| |_|___/_|\__,_|\__|_|\___/|_| |_|______/_/\_\___|_| |_|\__,_|_| |_|\__, |\___|
+ * __/ |
+ * |___/
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -17,10 +17,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- *
+ * <p/>
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -43,35 +43,36 @@ import java.util.regex.Pattern;
 
 import com.translationexchange.core.Utils;
 import com.translationexchange.core.languages.Language;
+
 public class DecorationTokenizer extends Tokenizer {
     /** Constant <code>TOKEN_BRACKET</code> */
     public static final String TOKEN_BRACKET = "[";
 
     /** Constant <code>RESERVED_TOKEN</code> */
-    public static final String RESERVED_TOKEN  = "tml";
+    public static final String RESERVED_TOKEN = "tml";
     /** Constant <code>RE_SHORT_TOKEN_START</code> */
-    public static final String RE_SHORT_TOKEN_START = "\\[[\\w]*:";				// [link:
+    public static final String RE_SHORT_TOKEN_START = "\\[[\\w]*:";                // [link:
     /** Constant <code>RE_SHORT_TOKEN_END</code> */
-    public static final String RE_SHORT_TOKEN_END   = "\\]";					// ]	
+    public static final String RE_SHORT_TOKEN_END = "\\]";                    // ]
     /** Constant <code>RE_LONG_TOKEN_STAR</code> */
-    public static final String RE_LONG_TOKEN_START  = "\\[[\\w]*\\]";			// [link]
+    public static final String RE_LONG_TOKEN_START = "\\[[\\w]*\\]";            // [link]
     /** Constant <code>RE_LONG_TOKEN_END</code> */
-    public static final String RE_LONG_TOKEN_END    = "\\[\\/[\\w]*\\]";		// [/link]	
+    public static final String RE_LONG_TOKEN_END = "\\[\\/[\\w]*\\]";        // [/link]
     /** Constant <code>RE_HTML_TOKEN_START</code> */
-    public static final String RE_HTML_TOKEN_START  = "<[^\\>]*>";              // <link> 	 
+    public static final String RE_HTML_TOKEN_START = "<[^\\>]*>";              // <link>
     /** Constant <code>RE_HTML_TOKEN_END</code> */
-    public static final String RE_HTML_TOKEN_END    = "<\\/[^\\>]*>";			// </link>             
+    public static final String RE_HTML_TOKEN_END = "<\\/[^\\>]*>";            // </link>
     /** Constant <code>RE_TEXT</code> */
-    public static final String RE_TEXT              = "[^\\[\\]<>]+";			// anything that is left
+    public static final String RE_TEXT = "[^\\[\\]<>]+";            // anything that is left
 
     /** Constant <code>TOKEN_TYPE_SHORT</code> */
-    public static final String TOKEN_TYPE_SHORT     = "short";
+    public static final String TOKEN_TYPE_SHORT = "short";
     /** Constant <code>TOKEN_TYPE_LONG</code> */
-    public static final String TOKEN_TYPE_LONG      = "long";
+    public static final String TOKEN_TYPE_LONG = "long";
     /** Constant <code>TOKEN_TYPE_HTML</code> */
-    public static final String TOKEN_TYPE_HTML      = "html";
+    public static final String TOKEN_TYPE_HTML = "html";
     /** Constant <code>PLACEHOLDER</code> */
-    public static final String PLACEHOLDER          = "{$0}";
+    public static final String PLACEHOLDER = "{$0}";
 
 
     /**
@@ -117,7 +118,7 @@ public class DecorationTokenizer extends Tokenizer {
 
     /** {@inheritDoc} */
     public void tokenize(String label, List<String> allowedTokenNames) {
-        this.label =  "[" + RESERVED_TOKEN + "]" + label + "[/" + RESERVED_TOKEN + "]";
+        this.label = "[" + RESERVED_TOKEN + "]" + label + "[/" + RESERVED_TOKEN + "]";
         this.tokenNames = new ArrayList<String>();
         this.allowedTokenNames = allowedTokenNames;
         tokenize();
@@ -136,7 +137,7 @@ public class DecorationTokenizer extends Tokenizer {
                 RE_HTML_TOKEN_START,
                 RE_HTML_TOKEN_END,
                 RE_TEXT
-            ).toArray(), "|"
+                ).toArray(), "|"
         );
 
         Pattern pattern = Pattern.compile(regex);
@@ -144,7 +145,7 @@ public class DecorationTokenizer extends Tokenizer {
 
         this.elements = new ArrayList<String>();
 
-        while(matcher.find()) {
+        while (matcher.find()) {
             this.elements.add(matcher.group());
         }
 
@@ -152,60 +153,60 @@ public class DecorationTokenizer extends Tokenizer {
         this.fragments = new ArrayList<String>(this.elements);
     }
 
-	/**
-	 * <p>Getter for the field <code>expression</code>.</p>
-	 *
-	 * @return a {@link java.lang.Object} object.
-	 */
-	protected Object getExpression() {
-		return expression;
-	}
+    /**
+     * <p>Getter for the field <code>expression</code>.</p>
+     *
+     * @return a {@link java.lang.Object} object.
+     */
+    protected Object getExpression() {
+        return expression;
+    }
 
-	/**
-	 * <p>Setter for the field <code>expression</code>.</p>
-	 *
-	 * @param expression a {@link java.lang.Object} object.
-	 */
-	protected void setExpression(Object expression) {
-		this.expression = expression;
-	}
+    /**
+     * <p>Setter for the field <code>expression</code>.</p>
+     *
+     * @param expression a {@link java.lang.Object} object.
+     */
+    protected void setExpression(Object expression) {
+        this.expression = expression;
+    }
 
-	/**
-	 * <p>Getter for the field <code>fragments</code>.</p>
-	 *
-	 * @return a {@link java.util.List} object.
-	 */
-	protected List<String> getFragments() {
-		return fragments;
-	}
+    /**
+     * <p>Getter for the field <code>fragments</code>.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
+    protected List<String> getFragments() {
+        return fragments;
+    }
 
-	/**
-	 * <p>Setter for the field <code>fragments</code>.</p>
-	 *
-	 * @param fragments a {@link java.util.List} object.
-	 */
-	protected void setFragments(List<String> fragments) {
-		this.fragments = fragments;
-	}
+    /**
+     * <p>Setter for the field <code>fragments</code>.</p>
+     *
+     * @param fragments a {@link java.util.List} object.
+     */
+    protected void setFragments(List<String> fragments) {
+        this.fragments = fragments;
+    }
 
-	/**
-	 * <p>Getter for the field <code>elements</code>.</p>
-	 *
-	 * @return a {@link java.util.List} object.
-	 */
-	protected List<String> getElements() {
-		return elements;
-	}
+    /**
+     * <p>Getter for the field <code>elements</code>.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
+    protected List<String> getElements() {
+        return elements;
+    }
 
-	/**
-	 * <p>Setter for the field <code>elements</code>.</p>
-	 *
-	 * @param elements a {@link java.util.List} object.
-	 */
-	protected void setElements(List<String> elements) {
-		this.elements = elements;
-	}
-    
+    /**
+     * <p>Setter for the field <code>elements</code>.</p>
+     *
+     * @param elements a {@link java.util.List} object.
+     */
+    protected void setElements(List<String> elements) {
+        this.elements = elements;
+    }
+
     /**
      *
      * @return
@@ -256,26 +257,26 @@ public class DecorationTokenizer extends Tokenizer {
 
         if (isMatchingExpression(token, RE_SHORT_TOKEN_START)) {
             return parseTree(
-	    		token.trim().replaceAll("[\\[:]", ""), 
-	    		TOKEN_TYPE_SHORT
+                    token.trim().replaceAll("[\\[:]", ""),
+                    TOKEN_TYPE_SHORT
             );
         }
 
         if (isMatchingExpression(token, RE_LONG_TOKEN_START)) {
             return parseTree(
-	    		token.trim().replaceAll("[\\[\\]]", ""), 
-	    		TOKEN_TYPE_LONG
-    		);
+                    token.trim().replaceAll("[\\[\\]]", ""),
+                    TOKEN_TYPE_LONG
+            );
         }
 
         if (isMatchingExpression(token, RE_HTML_TOKEN_START)) {
             if (token.indexOf("/>") != -1) return token;
             return parseTree(
-	    		token.trim().replaceAll("[<>]", ""), 
-	    		TOKEN_TYPE_HTML
-    		);
+                    token.trim().replaceAll("[<>]", ""),
+                    TOKEN_TYPE_HTML
+            );
         }
-        
+
         return token;
     }
 
@@ -295,7 +296,7 @@ public class DecorationTokenizer extends Tokenizer {
 
         if (type.equals(TOKEN_TYPE_SHORT)) {
             boolean first = true;
-            while (peek() != null && ! isMatchingExpression(peek(), RE_SHORT_TOKEN_END)) {
+            while (peek() != null && !isMatchingExpression(peek(), RE_SHORT_TOKEN_END)) {
                 Object value = parse();
                 if (first && value instanceof String) {
                     value = ((String) value).replaceAll("^\\s+", "");
@@ -305,11 +306,11 @@ public class DecorationTokenizer extends Tokenizer {
             }
 
         } else if (type.equals(TOKEN_TYPE_LONG)) {
-            while (peek() != null && ! isMatchingExpression(peek(), RE_LONG_TOKEN_END)) {
+            while (peek() != null && !isMatchingExpression(peek(), RE_LONG_TOKEN_END)) {
                 tree.add(parse());
             }
         } else if (type.equals(TOKEN_TYPE_HTML)) {
-            while (peek() != null && ! isMatchingExpression(peek(), RE_HTML_TOKEN_END)) {
+            while (peek() != null && !isMatchingExpression(peek(), RE_HTML_TOKEN_END)) {
                 tree.add(parse());
             }
         }
@@ -345,12 +346,12 @@ public class DecorationTokenizer extends Tokenizer {
      * @param expr a {@link java.lang.Object} object.
      * @return a {@link java.lang.String} object.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected String evaluate(Object expr) {
         if (!(expr instanceof List))
             return expr.toString();
 
-		List<Object> args = new ArrayList<Object>((List) expr);
+        List<Object> args = new ArrayList<Object>((List) expr);
         String token = (String) args.remove(0);
 
         List<Object> processedValues = new ArrayList<Object>();
@@ -371,7 +372,7 @@ public class DecorationTokenizer extends Tokenizer {
 
     /** {@inheritDoc} */
     public static boolean isApplicable(String label) {
-        return label.contains(TOKEN_BRACKET);
+        return label != null && label.contains(TOKEN_BRACKET);
     }
 
 }

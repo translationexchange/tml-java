@@ -189,7 +189,6 @@ public class HttpClient {
     /**
      * Checks if cache should be used
      *
-     * @param options a {@link java.util.Map} object.
      * @return a boolean.
      */
     public boolean isLiveApi() {
@@ -242,15 +241,39 @@ public class HttpClient {
      * Verify that the current cache version is correct
      * Check it against the API
      */
-    private void verifyCacheVersion() throws Exception {
+    private CacheVersion verifyCacheVersion() throws Exception {
         // If version has already been fetched in the current request, use it
         if (getCacheVersion() != null)
-            return;
+            return getCacheVersion();
 
-        setCacheVersion(new CacheVersion());
+        CacheVersion cacheVersion = new CacheVersion();
+        setCacheVersion(cacheVersion);
 
-        // Fetch from local cache
-        getCacheVersion().fetchFromCache();
+        if (Tml.getConfig().isAndroidApp()) {
+            cacheVersion.fetchFromCache();
+            if (cacheVersion.getTimestamp() == null || cacheVersion.getTmlMode() != Tml.getConfig().getTmlMode()) {
+                cacheVersion.setTmlMode(Tml.getConfig().getTmlMode());
+                // load version from server
+                switch (Tml.getConfig().getTmlMode()) {
+                    case API_LIVE:
+                        cacheVersion.setVersion("live");
+                        cacheVersion.markAsUpdated();
+                        Tml.getCache().store(getCacheVersion().getVersionKey(), getCacheVersion().toJSON(), Utils.buildMap());
+                        break;
+                    case CDN:
+                    case NONE:
+                        Tml.getLogger().debug("load version from the server...");
+                        cacheVersion.updateFromCDN(getFromCDN("version", Utils.buildMap("uncompressed", true)));
+                        break;
+                }
+            } else {
+                // load version from local cache
+                Tml.getLogger().debug("load version from local cache...");
+                getCacheVersion().fetchFromCache();
+            }
+            Tml.getLogger().debug("Cache version: " + cacheVersion.getVersion() + " " + cacheVersion.getExpirationMessage());
+            return cacheVersion;
+        }
 
         // If no version in cache or it is expired, fetch it from the CDN
         if (getCacheVersion().isExpired()) {
@@ -259,6 +282,7 @@ public class HttpClient {
         }
 
         Tml.getLogger().debug("Cache version: " + cacheVersion.getVersion() + " " + cacheVersion.getExpirationMessage());
+        return cacheVersion;
     }
 
     /**
@@ -310,6 +334,46 @@ public class HttpClient {
         String responseText = null;
         String cacheKey = (String) options.get("cache_key");
         Map<String, Object> result = null;
+
+        if (Tml.getConfig().isAndroidApp()) {
+
+            verifyCacheVersion();
+
+            // put the current version into options
+            options.put(CacheVersion.VERSION_KEY, getCacheVersion().getVersion());
+
+            responseText = (String) Tml.getCache().fetch(cacheKey, options);
+            if (responseText != null)
+                return processJSONResponse(responseText, options);
+
+            // if no data in the local cache
+            switch (Tml.getConfig().getTmlMode()) {
+                case API_LIVE:
+                    responseText = get(path, params, options);
+                    break;
+                case CDN:
+                case NONE:
+                    responseText = getFromCDN(cacheKey, options);
+                    break;
+            }
+
+            if (responseText == null)
+                return null;
+
+            result = processJSONResponse(responseText, options);
+
+            Map<String, Object> extensions = (Map<String, Object>) result.get(EXTENSIONS_KEY);
+
+            // never store extension in cache
+            if (extensions != null) {
+                result.remove(EXTENSIONS_KEY);
+                responseText = Utils.buildJSON(result);
+                result.put(EXTENSIONS_KEY, extensions);
+            }
+
+            Tml.getCache().store(cacheKey, responseText, options);
+            return result;
+        }
 
         // for live requests, process them immediately
         if (isLiveApi())

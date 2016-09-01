@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
- *
- *  _______                  _       _   _             ______          _
+ * <p/>
+ * _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
- *    | |_ __ __ _ _ __  ___| | __ _| |_ _  ___  _ __ | |__  __  _____| |__   __ _ _ __   __ _  ___
- *    | | '__/ _` | '_ \/ __| |/ _` | __| |/ _ \| '_ \|  __| \ \/ / __| '_ \ / _` | '_ \ / _` |/ _ \
- *    | | | | (_| | | | \__ \ | (_| | |_| | (_) | | | | |____ >  < (__| | | | (_| | | | | (_| |  __/
- *    |_|_|  \__,_|_| |_|___/_|\__,_|\__|_|\___/|_| |_|______/_/\_\___|_| |_|\__,_|_| |_|\__, |\___|
- *                                                                                        __/ |
- *                                                                                       |___/
+ * | |_ __ __ _ _ __  ___| | __ _| |_ _  ___  _ __ | |__  __  _____| |__   __ _ _ __   __ _  ___
+ * | | '__/ _` | '_ \/ __| |/ _` | __| |/ _ \| '_ \|  __| \ \/ / __| '_ \ / _` | '_ \ / _` |/ _ \
+ * | | | | (_| | | | \__ \ | (_| | |_| | (_) | | | | |____ >  < (__| | | | (_| | | | | (_| |  __/
+ * |_|_|  \__,_|_| |_|___/_|\__,_|\__|_|\___/|_| |_|______/_/\_\___|_| |_|\__,_|_| |_|\__, |\___|
+ * __/ |
+ * |___/
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -16,10 +16,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- *
+ * <p/>
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -75,12 +75,12 @@ public class Tml {
      * Tml logger
      */
     private static LoggerInterface logger;
-    
+
     /**
      * Periodically send missing keys to the server, should only be used in a single user mode (desktop, mobile)
      */
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    
+
     /**
      * Schedule handler
      */
@@ -98,21 +98,22 @@ public class Tml {
 
     /**
      * Returns library version
-     * 
+     *
      * @return
      */
     public static String getFullVersion() {
-    	return "tml-java v" + Tml.VERSION + " (OkHttp v2.4.0)";
+        return "tml-java v" + Tml.VERSION + " (OkHttp v2.4.0)";
     }
-    
+
     /**
      * Set the current session
      *
      * @param newSession a {@link com.translationexchange.core.Session} object.
      */
     public static void setSession(Session newSession) {
-    	session = newSession;
+        session = newSession;
     }
+
     /**
      * Sets current language in the singleton instance
      *
@@ -126,10 +127,10 @@ public class Tml {
      * <p>init.</p>
      */
     public static void init() {
-    	Map <String, Object> options = getConfig().getApplication();
+        Map<String, Object> options = getConfig().getApplication();
         init((String) options.get("key"), (String) options.get("token"), options);
     }
-    
+
     /**
      * <p>init.</p>
      *
@@ -148,15 +149,15 @@ public class Tml {
      * @param options a {@link java.util.Map} object.
      */
     public static void init(String key, String token, Map<String, Object> options) {
-    	if (options == null) {
-    		options = new HashMap<String, Object>();
-    	}
-    	options.put("key", key);
-    	options.put("token", token);
+        if (options == null) {
+            options = new HashMap<String, Object>();
+        }
+        options.put("key", key);
+        options.put("token", token);
         setSession(new Session(options));
         if (!isSchedulerRunning()) startScheduledTasks();
     }
-    
+
     /**
      * <p>isSchedulerRunning.</p>
      *
@@ -165,7 +166,7 @@ public class Tml {
     public static boolean isSchedulerRunning() {
         return applicationScheduleHandler != null;
     }
-    
+
     /**
      * <p>startScheduledTasks.</p>
      */
@@ -191,7 +192,7 @@ public class Tml {
         applicationScheduleHandler.cancel(true);
         applicationScheduleHandler = null;
     }
-    
+
     /**
      * Get an instance of the configuration object
      *
@@ -209,21 +210,21 @@ public class Tml {
      *
      * @return a {@link com.translationexchange.core.cache.Cache} object.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static Cache getCache() {
-    	if (!getConfig().isCacheEnabled())
-    		return null;
-    	
-        if (cache  == null) {
-        	try {        		
-        		Map<String, Object> cacheData = getConfig().getCache();
-        		String className = (String) cacheData.get("class");
-				Class cacheClass = Class.forName(className);
-        		Constructor<CacheAdapter> constructor = cacheClass.getConstructor(Map.class);
-        		cache = constructor.newInstance(cacheData);
-        	} catch (Exception ex) {
-        		getLogger().logException(ex);
-        	}
+        if (!getConfig().isCacheEnabled())
+            return null;
+
+        if (cache == null) {
+            try {
+                Map<String, Object> cacheData = getConfig().getCache();
+                String className = (String) cacheData.get("class");
+                Class cacheClass = Class.forName(className);
+                Constructor<CacheAdapter> constructor = cacheClass.getConstructor(Map.class);
+                cache = constructor.newInstance(cacheData);
+            } catch (Exception ex) {
+                getLogger().logException(ex);
+            }
         }
         return cache;
     }
@@ -233,11 +234,13 @@ public class Tml {
      *
      * @return a {@link com.translationexchange.core.Logger} object.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-	public static LoggerInterface getLogger() {
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static LoggerInterface getLogger() {
         if (logger == null) {
+            System.out.println("getLogger called");
             try {
                 if (getConfig().getLogger() != null && getConfig().getLogger().containsKey("class")) {
+                    System.out.println("getLogger Android");
                     Map<String, Object> cacheData = getConfig().getLogger();
                     String className = (String) cacheData.get("class");
                     Class cacheClass = Class.forName(className);
@@ -278,9 +281,9 @@ public class Tml {
      * @param language a {@link com.translationexchange.core.languages.Language} object.
      */
     public static void switchLanguage(Language language) {
-    	switchLanguage(language, null);
+        switchLanguage(language, null);
     }
-    
+
     /**
      * <p>switchLanguage.</p>
      *
@@ -288,12 +291,12 @@ public class Tml {
      * @param options a {@link java.util.Map} object.
      */
     public static void switchLanguage(Language language, Map<String, Object> options) {
-    	// TODO: if the connection is not present, do it offline, if possible
-    	// delete language cache
+        // TODO: if the connection is not present, do it offline, if possible
+        // delete language cache
 //    	if (options == null || options.get("offline") == null) {
 //    		getCache().delete(language.getLocale(), Utils.buildMap("directory", true));
 //    	}
-    	getSession().switchLanguage(language);
+        getSession().switchLanguage(language);
     }
 
 //    /**
@@ -400,7 +403,7 @@ public class Tml {
      * @param key a {@link java.lang.String} object.
      */
     public static void initSource(String key) {
-    	initSource(key, getCurrentLanguage().getLocale());
+        initSource(key, getCurrentLanguage().getLocale());
     }
 
     /**
@@ -410,27 +413,27 @@ public class Tml {
      * @param locale a {@link java.lang.String} object.
      */
     public static void initSource(String key, String locale) {
-    	getApplication().getSource(key, locale, null);
+        getApplication().getSource(key, locale, null);
     }
-    
+
     /**
      * <p>initLanguage.</p>
      *
      * @param locale a {@link java.lang.String} object.
      */
     public static void initLanguage(String locale) {
-    	getApplication().getLanguage(locale);
+        getApplication().getLanguage(locale);
     }
-    
+
     /**
      * <p>addObserver.</p>
      *
      * @param observer a {@link java.util.Observer} object.
      */
     public static void addObserver(Observer observer) {
-    	getSession().addObserver(observer);
+        getSession().addObserver(observer);
     }
-    
+
     /******************************************************************************************************
      *
      * Helper Methods for translations

@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
- *
- *  _______                  _       _   _             ______          _
+ * <p/>
+ * _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
- *    | |_ __ __ _ _ __  ___| | __ _| |_ _  ___  _ __ | |__  __  _____| |__   __ _ _ __   __ _  ___
- *    | | '__/ _` | '_ \/ __| |/ _` | __| |/ _ \| '_ \|  __| \ \/ / __| '_ \ / _` | '_ \ / _` |/ _ \
- *    | | | | (_| | | | \__ \ | (_| | |_| | (_) | | | | |____ >  < (__| | | | (_| | | | | (_| |  __/
- *    |_|_|  \__,_|_| |_|___/_|\__,_|\__|_|\___/|_| |_|______/_/\_\___|_| |_|\__,_|_| |_|\__, |\___|
- *                                                                                        __/ |
- *                                                                                       |___/
+ * | |_ __ __ _ _ __  ___| | __ _| |_ _  ___  _ __ | |__  __  _____| |__   __ _ _ __   __ _  ___
+ * | | '__/ _` | '_ \/ __| |/ _` | __| |/ _ \| '_ \|  __| \ \/ / __| '_ \ / _` | '_ \ / _` |/ _ \
+ * | | | | (_| | | | \__ \ | (_| | |_| | (_) | | | | |____ >  < (__| | | | (_| | | | | (_| |  __/
+ * |_|_|  \__,_|_| |_|___/_|\__,_|\__|_|\___/|_| |_|______/_/\_\___|_| |_|\__,_|_| |_|\__, |\___|
+ * __/ |
+ * |___/
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -16,10 +16,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- *
+ * <p/>
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -33,6 +33,7 @@
  */
 
 package com.translationexchange.core;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,31 +41,38 @@ import java.util.List;
 import java.util.Map;
 
 import com.translationexchange.core.languages.Language;
+
 public class Application extends Base {
-    /** Constant <code>TREX_API_HOST="https://api.translationexchange.com"</code> */
+    /**
+     * Constant <code>TREX_API_HOST="https://api.translationexchange.com"</code>
+     */
     public static final String TREX_API_HOST = "https://api.translationexchange.com";
 
-    /** Constant <code>TREX_CDN_HOST="https://cdn.translationexchange.com"</code> */
+    /**
+     * Constant <code>TREX_CDN_HOST="https://cdn.translationexchange.com"</code>
+     */
     public static final String TREX_CDN_HOST = "https://cdn.translationexchange.com";
-    
-    /** Constant <code>UNDEFINED_SOURCE="undefined"</code> */
+
+    /**
+     * Constant <code>UNDEFINED_SOURCE="undefined"</code>
+     */
     public static final String UNDEFINED_SOURCE = "undefined";
-    
+
     /**
      * Current TrEx session
      */
     private Session session;
 
     /**
-     * Application host 
+     * Application host
      */
     private String host;
 
     /**
-     * CDN host 
+     * CDN host
      */
     private String cdnHost;
-    
+
     /**
      * Application key - must always be specified
      */
@@ -105,7 +113,7 @@ public class Application extends Base {
      */
     private String css;
 
-	/**
+    /**
      * Application features
      */
     private Map<String, Boolean> features;
@@ -151,9 +159,9 @@ public class Application extends Base {
      * Default constructor
      */
     public Application() {
-    	super();
+        super();
     }
-    
+
     /**
      * <p>Constructor for Application.</p>
      *
@@ -162,8 +170,8 @@ public class Application extends Base {
     public Application(Map<String, Object> attributes) {
         super(attributes);
     }
-    
-    
+
+
     /**
      * <p>Getter for the field <code>key</code>.</p>
      *
@@ -271,7 +279,7 @@ public class Application extends Base {
     public void setCdnHost(String cdnHost) {
         this.cdnHost = cdnHost;
     }
-    
+
     /**
      * <p>Setter for the field <code>key</code>.</p>
      *
@@ -369,8 +377,8 @@ public class Application extends Base {
      */
     public String getAccessToken() {
         return accessToken;
-    }    
-    
+    }
+
     /**
      * <p>Getter for the field <code>defaultLocale</code>.</p>
      *
@@ -380,10 +388,12 @@ public class Application extends Base {
         return defaultLocale;
     }
 
- 
-    /** {@inheritDoc} */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
     public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("key") != null)
             setKey((String) attributes.get("key"));
@@ -393,7 +403,7 @@ public class Application extends Base {
 
         if (attributes.get("access_token") != null)
             setAccessToken((String) attributes.get("access_token"));
-        
+
         if (attributes.get("host") != null)
             setHost((String) attributes.get("host"));
 
@@ -419,21 +429,28 @@ public class Application extends Base {
 //            }
 
         }
-        
+
         if (attributes.get("languages") != null) {
             for (Object data : ((List) attributes.get("languages"))) {
-                addLanguage(new Language((Map) data));
+                Language language = new Language((Map) data);
+                addLanguage(language);
+
+//                if (!language.hasDefinition()) {
+//                    language.load();
+//                }
             }
         }
 
         if (attributes.get("sources") != null) {
             for (Object data : ((List) attributes.get("sources"))) {
-                addSource(new Source((Map) data));
+                Source source = new Source((Map) data);
+//                source.load(null);
+                addSource(source);
             }
         }
-        
+
         if (attributes.get("extensions") != null) {
-        	loadExtensions((Map<String, Object>) attributes.get("extensions"));	
+            loadExtensions((Map<String, Object>) attributes.get("extensions"));
         }
     }
 
@@ -444,23 +461,23 @@ public class Application extends Base {
      */
     public void load(Map<String, Object> params) {
         try {
-        	Tml.getLogger().debug("Loading application...");
-        	Map<String, Object> data = getHttpClient().getJSONMap("projects/" + getKey() + "/definition", 
-                	params,
-    	    		Utils.buildMap("cache_key", "application")
+            Tml.getLogger().debug("Loading application...");
+            Map<String, Object> data = getHttpClient().getJSONMap("projects/" + getKey() + "/definition",
+                    params,
+                    Utils.buildMap("cache_key", "application")
             );
-        	if (data == null) {
-        		setDefaultLocale(Tml.getConfig().getDefaultLocale());
-            	addLanguage(Tml.getConfig().getDefaultLanguage());
+            if (data == null) {
+                setDefaultLocale(Tml.getConfig().getDefaultLocale());
+                addLanguage(Tml.getConfig().getDefaultLanguage());
                 Tml.getLogger().debug("No release has been published or no cache has been provided");
-            	setLoaded(false);
-        	} else {
-        		this.updateAttributes(data);
+                setLoaded(false);
+            } else {
+                this.updateAttributes(data);
                 setLoaded(true);
-        	}
+            }
         } catch (Exception ex) {
-        	setLoaded(false);
-        	addLanguage(Tml.getConfig().getDefaultLanguage());
+            setLoaded(false);
+            addLanguage(Tml.getConfig().getDefaultLanguage());
             Tml.getLogger().logException("Failed to load application", ex);
         }
     }
@@ -469,57 +486,57 @@ public class Application extends Base {
      * Loads application from the service
      */
     public void load() {
-    	load(Utils.buildMap());	
+        load(Utils.buildMap());
     }
-    
+
     /**
-     * Only happens during API calls, 
-     * 
+     * Only happens during API calls,
+     *
      * @param extensions
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-	private void loadExtensions(Map<String, Object> extensions) {
-    	String sourceLocale = getDefaultLocale();
-    
-    	if (extensions.get("languages") != null) {
-    		Map<String, Object> languages = (Map<String, Object>) extensions.get("languages");
-			Iterator entries = languages.entrySet().iterator();
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private void loadExtensions(Map<String, Object> extensions) {
+        String sourceLocale = getDefaultLocale();
+
+        if (extensions.get("languages") != null) {
+            Map<String, Object> languages = (Map<String, Object>) extensions.get("languages");
+            Iterator entries = languages.entrySet().iterator();
             while (entries.hasNext()) {
-				Map.Entry entry = (Map.Entry) entries.next();
+                Map.Entry entry = (Map.Entry) entries.next();
                 String locale = (String) entry.getKey();
                 if (!locale.equals(getDefaultLocale()))
-                	sourceLocale = locale;
-                
+                    sourceLocale = locale;
+
                 Map<String, Object> data = (Map<String, Object>) entry.getValue();
-                
+
                 Language language = getLanguagesByLocale().get(locale);
                 if (language == null) {
-                	language = new Language(Utils.buildMap("application", this)); 
-                	getLanguagesByLocale().put(locale, language);
+                    language = new Language(Utils.buildMap("application", this));
+                    getLanguagesByLocale().put(locale, language);
                 }
-            	language.updateAttributes(data);
-            	language.setLoaded(true);
+                language.updateAttributes(data);
+                language.setLoaded(true);
             }
-    	}
-    	
-    	if (extensions.get("sources") != null) {
-    		Map<String, Object> sources = (Map<String, Object>) extensions.get("sources");
-			Iterator entries = sources.entrySet().iterator();
+        }
+
+        if (extensions.get("sources") != null) {
+            Map<String, Object> sources = (Map<String, Object>) extensions.get("sources");
+            Iterator entries = sources.entrySet().iterator();
             while (entries.hasNext()) {
-				Map.Entry entry = (Map.Entry) entries.next();
+                Map.Entry entry = (Map.Entry) entries.next();
                 String key = (String) entry.getKey();
                 Map<String, Object> data = (Map<String, Object>) entry.getValue();
                 Source source = getSourcesByKeys().get(key);
                 if (source == null) {
-                	source = new Source(Utils.buildMap("application", this, "key", key, "locale", sourceLocale));
-                	getSourcesByKeys().put(key, source);
+                    source = new Source(Utils.buildMap("application", this, "key", key, "locale", sourceLocale));
+                    getSourcesByKeys().put(key, source);
                 }
-            	source.updateTranslationKeys(data);
-            	source.setLoaded(true);
+                source.updateTranslationKeys(data);
+                source.setLoaded(true);
             }
-    	}
+        }
     }
-    
+
     /**
      * Returns the first accepted locale from the application languages
      *
@@ -527,31 +544,31 @@ public class Application extends Base {
      * @return a {@link java.lang.String} object.
      */
     public String getFirstAcceptedLocale(String locale) {
-    	if (locale == null)
-    		return getDefaultLocale();
-    	
-    	String[] locales = locale.split(",");
-    	 
-    	for(String loc : locales) {
-    	    if (getLanguagesByLocale().get(loc) != null) 
-    			return loc;
-    	}
-    	
-    	return getDefaultLocale();
+        if (locale == null)
+            return getDefaultLocale();
+
+        String[] locales = locale.split(",");
+
+        for (String loc : locales) {
+            if (getLanguagesByLocale().get(loc) != null)
+                return loc;
+        }
+
+        return getDefaultLocale();
     }
-    
+
     /**
      * <p>isKeyRegistrationEnabled.</p>
      *
      * @return true/false based on whether the app is in translation mode
      */
     public boolean isKeyRegistrationEnabled() {
-    	if (Tml.getConfig().isKeyRegistrationModeEnabled())
-    		return true;
-    	
-    	if (getSession() == null) 
-    		return false;
-    	
+        if (Tml.getConfig().isKeyRegistrationModeEnabled())
+            return true;
+
+        if (getSession() == null)
+            return false;
+
         return getSession().isInlineModeEnabled();
     }
 
@@ -570,47 +587,56 @@ public class Application extends Base {
      * @return a {@link java.lang.String} object.
      */
     public String getTranslationsCacheKey(String locale) {
-    	return locale + "/translations";
+        return locale + "/translations";
     }
-    
+
     /**
      * <p>updateTranslationKeys.</p>
      *
      * @param language a {@link com.translationexchange.core.languages.Language} object.
-     * @param data a {@link java.util.Map} object.
+     * @param data     a {@link java.util.Map} object.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-	public void updateTranslationKeys(Language language, Map<String, Object> data) {
-    	Iterator entries = ((Map) data.get("results")).entrySet().iterator();
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public void updateTranslationKeys(Language language, Map<String, Object> data) {
+        if (data == null || data.isEmpty()) {
+            return;
+        }
+        Iterator entries = ((Map) data.get("results")).entrySet().iterator();
         while (entries.hasNext()) {
             Map.Entry entry = (Map.Entry) entries.next();
             String key = (String) entry.getKey();
             List<Map<String, Object>> keyTranslations = (List<Map<String, Object>>) entry.getValue();
-            
+
             TranslationKey tkey = getTranslationKey(key);
-            
+
             if (tkey == null) {
-            	tkey = new TranslationKey(key);
-        		addTranslationKey(tkey);
+                tkey = new TranslationKey(key);
+                addTranslationKey(tkey);
             }
-            
+
             List<Translation> translations = new ArrayList<Translation>();
             for (Map<String, Object> translationData : (List<Map<String, Object>>) keyTranslations) {
                 Translation translation = new Translation(translationData);
                 String locale = (String) translationData.get("locale");
-                
+
                 if (locale == null)
-                	locale = language.getLocale();
-                
+                    locale = language.getLocale();
+
                 translation.setLanguage(getLanguage(locale));
+
+                if (tkey.getLabel() == null || tkey.getLabel().equals("")) {
+                    tkey.setLabel(translation.getLabel());
+                    tkey.setLocale(translation.getLanguage().getLocale());
+                }
+
                 translations.add(translation);
             }
             tkey.setTranslations(language.getLocale(), translations);
             addTranslationKey(tkey);
         }
     }
-    
-    
+
+
     /**
      * Loads translations from the service for a given language and caches them in the application
      *
@@ -618,17 +644,16 @@ public class Application extends Base {
      */
     public void loadTranslations(Language language) {
         try {
-        	this.updateTranslationKeys(language, getHttpClient().getJSONMap("projects/current/translations",
-            	Utils.buildMap("all", "true", "locale", language.getLocale()),
-        		Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()))
+            this.updateTranslationKeys(language, getHttpClient().getJSONMap("projects/current/translations",
+                    Utils.buildMap("all", "true", "locale", language.getLocale()),
+                    Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()))
             ));
         } catch (Exception ex) {
-        	Tml.getLogger().logException(ex);
+            Tml.getLogger().logException(ex);
         }
     }
 
     /**
-     *
      * @return
      */
     public Map<String, Map<String, TranslationKey>> getMissingTranslationKeysBySources() {
@@ -643,18 +668,18 @@ public class Application extends Base {
      * @param translationKey a {@link com.translationexchange.core.TranslationKey} object.
      */
     public synchronized void registerMissingTranslationKey(TranslationKey translationKey) {
-    	registerMissingTranslationKey(translationKey, "undefined");
+        registerMissingTranslationKey(translationKey, "undefined");
     }
-    
+
     /**
      * <p>registerMissingTranslationKey.</p>
      *
      * @param translationKey a {@link com.translationexchange.core.TranslationKey} object.
-     * @param sourceKey a {@link java.lang.String} object.
+     * @param sourceKey      a {@link java.lang.String} object.
      */
     public synchronized void registerMissingTranslationKey(TranslationKey translationKey, String sourceKey) {
-        if (!isKeyRegistrationEnabled())
-            return;
+//        if (!isKeyRegistrationEnabled())
+//            return;
 
         Map<String, TranslationKey> translationKeys = getMissingTranslationKeysBySources().get(sourceKey);
         if (translationKeys == null) {
@@ -671,23 +696,25 @@ public class Application extends Base {
      * Submits missing translations keys to the server
      */
     public synchronized void submitMissingTranslationKeys() {
-        if (!isKeyRegistrationEnabled() || getMissingTranslationKeysBySources().size() == 0)
+        if (getMissingTranslationKeysBySources().size() == 0)
             return;
+//        if (!isKeyRegistrationEnabled() || getMissingTranslationKeysBySources().size() == 0)
+//            return;
 
         Tml.getLogger().debug("Submitting missing translation keys...");
 
         List<Map<String, Object>> params = new ArrayList<Map<String, Object>>();
 
         List<String> sourceKeys = new ArrayList<String>();
-        
+
         Iterator<Map.Entry<String, Map<String, TranslationKey>>> entries = missingTranslationKeysBySources.entrySet().iterator();
         while (entries.hasNext()) {
             Map.Entry<String, Map<String, TranslationKey>> entry = entries.next();
             String source = entry.getKey();
-            
+
             if (!sourceKeys.contains(source))
-            	sourceKeys.add(source);
-            
+                sourceKeys.add(source);
+
             Map<String, TranslationKey> translationKeys = entry.getValue();
             List<Object> keys = new ArrayList<Object>();
 
@@ -700,7 +727,7 @@ public class Application extends Base {
         }
 
         registerKeys(Utils.buildMap("source_keys", Utils.buildJSON(params), "app_id", getKey()));
-        
+
         this.missingTranslationKeysBySources.clear();
     }
 
@@ -712,14 +739,14 @@ public class Application extends Base {
      */
     public boolean registerKeys(Map<String, Object> map) {
         try {
-        	getHttpClient().post("sources/register_keys", map);
-        	return true;
+            getHttpClient().post("sources/register_keys", map);
+            return true;
         } catch (Exception ex) {
             Tml.getLogger().logException("Failed to register missing translation keys", ex);
             return false;
         }
     }
-    
+
     /**
      * Checks if the locale is in the list of supported locales
      *
@@ -727,13 +754,13 @@ public class Application extends Base {
      * @return a boolean.
      */
     public boolean isSupportedLocale(String locale) {
-    	for (Language language : getLanguages()) {
-    		if (language.getLocale().equals(locale))
-    			return true;
-    	}
-    	return false;
+        for (Language language : getLanguages()) {
+            if (language.getLocale().equals(locale))
+                return true;
+        }
+        return false;
     }
-    
+
     /**
      * <p>getLanguage.</p>
      *
@@ -751,9 +778,9 @@ public class Application extends Base {
     protected Map<String, Language> getLanguagesByLocale() {
         if (languagesByLocales == null)
             languagesByLocales = new HashMap<String, Language>();
-        return languagesByLocales; 
+        return languagesByLocales;
     }
-    
+
     /**
      * <p>getLanguage.</p>
      *
@@ -762,11 +789,13 @@ public class Application extends Base {
      */
     public Language getLanguage(String locale) {
         if (getLanguagesByLocale().get(locale) == null) {
-        	getLanguagesByLocale().put(locale, new Language(Utils.buildMap("application", this, "locale", locale)));
+            getLanguagesByLocale().put(locale, new Language(Utils.buildMap("application", this, "locale", locale)));
         }
 
         Language language = getLanguagesByLocale().get(locale);
-        if (!language.hasDefinition()) language.load();
+        if (!language.hasDefinition()) {
+            language.load();
+        }
         return language;
     }
 
@@ -782,12 +811,12 @@ public class Application extends Base {
 
         return sourcesByKeys;
     }
-    
+
     /**
      * Get source with translations for a specific locale
      *
-     * @param key a {@link java.lang.String} object.
-     * @param locale a {@link java.lang.String} object.
+     * @param key     a {@link java.lang.String} object.
+     * @param locale  a {@link java.lang.String} object.
      * @param options a {@link java.util.Map} object.
      * @return a {@link com.translationexchange.core.Source} object.
      */
@@ -832,7 +861,7 @@ public class Application extends Base {
             languagesByLocales = new HashMap<String, Language>();
 
         Language language = languagesByLocales.get(locale);
-        if (language!=null)
+        if (language != null)
             featuredLanguages.add(language);
     }
 
@@ -868,7 +897,7 @@ public class Application extends Base {
 
     /**
      * Returns translation key map
-     * 
+     *
      * @return
      */
     private Map<String, TranslationKey> getTranslationKeys() {
@@ -884,7 +913,7 @@ public class Application extends Base {
      * @return a {@link com.translationexchange.core.TranslationKey} object.
      */
     public TranslationKey getTranslationKey(String key) {
-    	return getTranslationKeys().get(key);
+        return getTranslationKeys().get(key);
     }
 
     /**
@@ -904,15 +933,15 @@ public class Application extends Base {
      * @return a boolean.
      */
     public boolean isFeatureEnabled(String feature) {
-    	if (getFeatures() == null)
-    		return false;
-    	
-    	if (getFeatures().get(feature) == null)
-    		return false;
-    	
-    	return getFeatures().get(feature);
+        if (getFeatures() == null)
+            return false;
+
+        if (getFeatures().get(feature) == null)
+            return false;
+
+        return getFeatures().get(feature);
     }
-    
+
     /**
      * Returns API host
      *
@@ -925,7 +954,6 @@ public class Application extends Base {
     }
 
     /**
-     * 
      * @return
      */
     public String getCdnHost() {
@@ -933,7 +961,7 @@ public class Application extends Base {
             return TREX_CDN_HOST;
         return cdnHost;
     }
-    
+
     /**
      * Returns HTTP client
      *
@@ -952,7 +980,7 @@ public class Application extends Base {
      * @return a {@link java.lang.String} object.
      */
     public String toString() {
-        return  this.name + " (" + this.key + ")";
+        return this.name + " (" + this.key + ")";
     }
 
 }

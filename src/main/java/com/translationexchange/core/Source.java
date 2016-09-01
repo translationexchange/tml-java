@@ -232,7 +232,7 @@ public class Source extends Base {
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void updateTranslationKeys(Map<String, Object> data) {
-        if (data == null || data.isEmpty() || !data.containsKey("result")) {
+        if (data == null || data.isEmpty()) {
             return;
         }
 
@@ -240,8 +240,7 @@ public class Source extends Base {
         while (entries.hasNext()) {
             Map.Entry entry = (Map.Entry) entries.next();
             String key = (String) entry.getKey();
-            List<Map<String, Object>> translationsData = (List<Map<String, Object>>) entry
-                    .getValue();
+            List<Map<String, Object>> translationsData = (List<Map<String, Object>>) entry.getValue();
 
             TranslationKey tkey = null;
             if (getApplication() != null)
@@ -253,6 +252,8 @@ public class Source extends Base {
                     getApplication().addTranslationKey(tkey);
             }
 
+            tkey.setLocale(getLocale());
+
             List<Translation> translations = new ArrayList<Translation>();
             for (Map<String, Object> translationData : translationsData) {
                 Translation translation = new Translation(translationData);
@@ -262,12 +263,11 @@ public class Source extends Base {
                     locale = getLocale();
 
                 if (getApplication() != null)
-                    translation.setLanguage(getApplication()
-                            .getLanguage(locale));
+                    translation.setLanguage(getApplication().getLanguage(locale));
 
                 if (tkey.getLabel() == null || tkey.getLabel().equals("")) {
                     tkey.setLabel(translation.getLabel());
-                    tkey.setLocale(translation.getLanguage().getLocale());
+                    tkey.setLocale(getLocale());
                 }
                 translations.add(translation);
             }
@@ -285,8 +285,7 @@ public class Source extends Base {
      * @return a {@link java.lang.String} object.
      */
     public static String getCacheKey(String locale, String key) {
-        return locale + File.separator + "sources"
-                + (key.startsWith(File.separator) ? "" : File.separator) + key;
+        return locale + File.separator + "sources" + (key.startsWith(File.separator) ? "" : File.separator) + key;
     }
 
     /**

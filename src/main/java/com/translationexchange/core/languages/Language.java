@@ -44,6 +44,7 @@ import com.translationexchange.core.Application;
 import com.translationexchange.core.Base;
 import com.translationexchange.core.Configuration;
 import com.translationexchange.core.Source;
+import com.translationexchange.core.Tml;
 import com.translationexchange.core.TranslationKey;
 import com.translationexchange.core.Utils;
 
@@ -239,10 +240,12 @@ public class Language extends Base {
         return cases;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void updateAttributes(Map<String, Object> attributes) {
-        if (attributes.isEmpty())
+        if (attributes == null || attributes.isEmpty())
             return;
         if (attributes.get("application") != null)
             setApplication((Application) attributes.get("application"));
@@ -296,7 +299,7 @@ public class Language extends Base {
             setLoaded(true);
         } catch (Exception ex) {
             setLoaded(false);
-//             Tml.getLogger().logException(ex);
+            Tml.getLogger().logException(ex);
         }
     }
 
@@ -379,6 +382,7 @@ public class Language extends Base {
 
     /**
      * Returns a value from options or block options
+     *
      * @param key
      * @param options
      * @param defaultValue
@@ -432,7 +436,7 @@ public class Language extends Base {
     /**
      * <p>translate.</p>
      *
-     * @param label a {@link java.lang.String} object.
+     * @param label       a {@link java.lang.String} object.
      * @param description a {@link java.lang.String} object.
      * @return a {@link java.lang.Object} object.
      */
@@ -443,7 +447,7 @@ public class Language extends Base {
     /**
      * <p>translate.</p>
      *
-     * @param label a {@link java.lang.String} object.
+     * @param label  a {@link java.lang.String} object.
      * @param tokens a {@link java.util.Map} object.
      * @return a {@link java.lang.Object} object.
      */
@@ -454,10 +458,10 @@ public class Language extends Base {
     /**
      * Translation method
      *
-     * @param label a {@link java.lang.String} object.
+     * @param label       a {@link java.lang.String} object.
      * @param description a {@link java.lang.String} object.
-     * @param tokens a {@link java.util.Map} object.
-     * @param options a {@link java.util.Map} object.
+     * @param tokens      a {@link java.util.Map} object.
+     * @param options     a {@link java.util.Map} object.
      * @return a {@link java.lang.Object} object.
      */
     public Object translate(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
@@ -473,40 +477,24 @@ public class Language extends Base {
         if (sourceKey == null || sourceKey.equals("") || sourceKey.equals("/"))
             sourceKey = "index";
 
-        String sourcePath = Utils.join(getApplication().getSession().getSourcePath(), Configuration.SOURCE_SEPARATOR);
-//        Tml.getLogger().debug("Source path: " + sourcePath + " Key: " + label);
-
         // Source based keys in mobile or desktop environments require sources to be pre-loading in a separate thread
-        Source source = getApplication().getSource(sourceKey, this.getLocale(), options);
-        if (source != null) {
-            TranslationKey matchedKey = source.getTranslationKey(keyHash);
-            if (matchedKey != null) {
-                return matchedKey.translate(this);
+        Source source = getApplication().getSource(sourceKey, getLocale(), options);
+        TranslationKey matchedKey = null;
+        if (source != null && (matchedKey = source.getTranslationKey(keyHash)) != null) {
+            if (matchedKey.getLabel() == null) {
+                matchedKey.setLabel(label);
+                matchedKey.setDescription(description);
             }
-
-//            if (matchedKey != null) {
-//                matchedKey.setLabel(label);
-//                matchedKey.setDescription(description);
-//                return matchedKey.translate(this, tokens, options);
-//            }
-
+            return matchedKey.translate(this);
+        } else {
             Map<String, Object> opts = new HashMap<String, Object>(options);
             opts.put("pending", "true");
 
+            String sourcePath = Utils.join(getApplication().getSession().getSourcePath(), Configuration.SOURCE_SEPARATOR);
             TranslationKey tempKey = createTranslationKey(keyHash, label, description, opts);
-
             getApplication().registerMissingTranslationKey(tempKey, sourcePath);
+            return tempKey.translate(this, tokens, options);
         }
-
-        TranslationKey matchedKey = getApplication().getTranslationKey(keyHash);
-        if (matchedKey != null) {
-            matchedKey.setLabel(label);
-            matchedKey.setDescription(description);
-            return matchedKey.translate(this, tokens, options);
-        }
-
-        TranslationKey tempKey = createTranslationKey(keyHash, label, description, options);
-        return tempKey.translate(this, tokens, options);
     }
 
     /**
@@ -517,7 +505,8 @@ public class Language extends Base {
      */
     public String getAlignment(String target) {
         if (isRightToLeft()) return target;
-        return target == "left" ? "right" : "left";
+        return target.equals("left") ? "right" : "left";
+//        return target == "left" ? "right" : "left";
     }
 
     /**

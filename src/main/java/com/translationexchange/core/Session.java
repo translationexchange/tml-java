@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
- *
- *  _______                  _       _   _             ______          _
+ * <p/>
+ * _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
- *    | |_ __ __ _ _ __  ___| | __ _| |_ _  ___  _ __ | |__  __  _____| |__   __ _ _ __   __ _  ___
- *    | | '__/ _` | '_ \/ __| |/ _` | __| |/ _ \| '_ \|  __| \ \/ / __| '_ \ / _` | '_ \ / _` |/ _ \
- *    | | | | (_| | | | \__ \ | (_| | |_| | (_) | | | | |____ >  < (__| | | | (_| | | | | (_| |  __/
- *    |_|_|  \__,_|_| |_|___/_|\__,_|\__|_|\___/|_| |_|______/_/\_\___|_| |_|\__,_|_| |_|\__, |\___|
- *                                                                                        __/ |
- *                                                                                       |___/
+ * | |_ __ __ _ _ __  ___| | __ _| |_ _  ___  _ __ | |__  __  _____| |__   __ _ _ __   __ _  ___
+ * | | '__/ _` | '_ \/ __| |/ _` | __| |/ _ \| '_ \|  __| \ \/ / __| '_ \ / _` | '_ \ / _` |/ _ \
+ * | | | | (_| | | | \__ \ | (_| | |_| | (_) | | | | |____ >  < (__| | | | (_| | | | | (_| |  __/
+ * |_|_|  \__,_|_| |_|___/_|\__,_|\__|_|\___/|_| |_|______/_/\_\___|_| |_|\__,_|_| |_|\__, |\___|
+ * __/ |
+ * |___/
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -16,10 +16,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- *
+ * <p/>
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -51,9 +51,9 @@ import com.translationexchange.core.tokenizers.DomTokenizer;
 
 public class Session extends Observable {
 
-	public static final String SESSION_KEY = "session";
+    public static final String SESSION_KEY = "session";
 
-	/**
+    /**
      * Current application
      */
     private Application application;
@@ -82,7 +82,7 @@ public class Session extends Observable {
      * Default constructor
      */
     public Session() {
-    	this(Tml.getConfig().getApplication());
+        this(Tml.getConfig().getApplication());
     }
 
     /**
@@ -91,63 +91,62 @@ public class Session extends Observable {
      * @param options a {@link java.util.Map} object.
      */
     @SuppressWarnings("unchecked")
-	public Session(Map <String, Object> options) {
-    	if (options == null) {
-    		options = new HashMap<String, Object>();
-    	}
+    public Session(Map<String, Object> options) {
+        if (options == null) {
+            options = new HashMap<String, Object>();
+        }
 
-    	String[] keys = {"key", "token", "host", "cdn_host"};
-    	for (String key :  keys) {
-        	if (options.get(key) == null)
-        		options.put(key, Tml.getConfig().getApplication().get(key));
-    	}
+        String[] keys = {"key", "token", "host", "cdn_host"};
+        for (String key : keys) {
+            if (options.get(key) == null)
+                options.put(key, Tml.getConfig().getApplication().get(key));
+        }
 
-    	// translator token takes precedence
-    	if (options.get("oauth") != null) {
-    		Map<String, String> oauth = (Map<String, String>) options.get("oauth");
-    		options.put("token", oauth.get("token"));
-    	}
-    	
-    	// create translator object
-    	if (options.get("translator") != null) {
-    		setCurrentTranslator(new Translator((Map<String, Object>) options.get("translator")));
-    	}
-    	
-    	Map<String, Object> applicationParams = Utils.buildMap();
-    	if (options.get("locale") != null) {
-    		applicationParams.put("locale", options.get("locale"));
-    	}
+        // translator token takes precedence
+        if (options.get("oauth") != null) {
+            Map<String, String> oauth = (Map<String, String>) options.get("oauth");
+            options.put("token", oauth.get("token"));
+        }
 
-    	if (options.get("source") != null) {
-    		applicationParams.put("source", options.get("source"));
-    		setCurrentSource((String)options.get("source"));
-    	}
-    	try {
-    	    setApplication(initializeApplication(options));
-    	    getApplication().setSession(this);
+        // create translator object
+        if (options.get("translator") != null) {
+            setCurrentTranslator(new Translator((Map<String, Object>) options.get("translator")));
+        }
+
+        Map<String, Object> applicationParams = Utils.buildMap();
+        if (options.get("locale") != null) {
+            applicationParams.put("locale", options.get("locale"));
+        }
+
+        if (options.get("source") != null) {
+            applicationParams.put("source", options.get("source"));
+            setCurrentSource((String) options.get("source"));
+        }
+        try {
+            setApplication(initializeApplication(options));
+            getApplication().setSession(this);
             getApplication().load(applicationParams);
             setCurrentLocale(getApplication().getFirstAcceptedLocale((String) options.get("locale")));
-    	} catch(Exception ex) {
-    	    Tml.getLogger().logException("Failed to load application. Therefore session could not be loaded", ex);
-    	    // todo: might be a good way to re-raise custom exception SessionLoadException()
-    	}
-    	Tml.getConfig().setDecorator("html");
+        } catch (Exception ex) {
+            Tml.getLogger().logException("Failed to load application. Therefore session could not be loaded", ex);
+            // todo: might be a good way to re-raise custom exception SessionLoadException()
+        }
+        Tml.getConfig().setDecorator("html");
     }
-    
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Application initializeApplication(Map<String, Object> options) throws Exception {
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static Application initializeApplication(Map<String, Object> options) throws Exception {
         String applicationClass = "";
-        if(options.get("applicationClass") != null) {
+        if (options.get("applicationClass") != null) {
             applicationClass = (String) options.get("applicationClass");
         } else {
             applicationClass = Tml.getConfig().getApplicationClass();
         }
         Class appClass = Utils.loadClassByName(applicationClass);
-        Constructor<Application> constructor = appClass.getConstructor(Map.class);            
-        Application application = (Application) constructor.newInstance(options);
-        return application;
+        Constructor<Application> constructor = appClass.getConstructor(Map.class);
+        return constructor.newInstance(options);
     }
-    
+
     /**
      * <p>Getter for the field <code>currentLanguage</code>.</p>
      *
@@ -165,8 +164,8 @@ public class Session extends Observable {
     public void switchLanguage(Language language) {
 //        if (getCurrentLanguage().equals(language))
 //            return;
-        
-    	language = getApplication().getLanguage(language.getLocale());
+
+        language = getApplication().getLanguage(language.getLocale());
         setCurrentLanguage(language);
 
         getApplication().resetTranslations();
@@ -200,7 +199,7 @@ public class Session extends Observable {
      * @return a {@link java.lang.String} object.
      */
     public String getCurrentSource() {
-        if(currentSource == null) {
+        if (currentSource == null) {
             return "";
         }
         return currentSource;
@@ -270,22 +269,22 @@ public class Session extends Observable {
      */
     @SuppressWarnings("rawtypes")
     public List<String> getSourcePath() {
-    	List<String> path = new ArrayList<String>();
-    	path.add(getCurrentSource());
-    	if (this.blockOptions == null)
-    		return path;
-    	
-    	List<String> subpath = new ArrayList<String>();
-    	for (Map options : this.blockOptions) {
-    		if (options.get("source") != null)
-    			subpath.add((String)options.get("source"));	
-    	}
-    	
-    	Collections.reverse(subpath);
-    	path.addAll(subpath);
-    	return path;
+        List<String> path = new ArrayList<String>();
+        path.add(getCurrentSource());
+        if (this.blockOptions == null)
+            return path;
+
+        List<String> subpath = new ArrayList<String>();
+        for (Map options : this.blockOptions) {
+            if (options.get("source") != null)
+                subpath.add((String) options.get("source"));
+        }
+
+        Collections.reverse(subpath);
+        path.addAll(subpath);
+        return path;
     }
-    
+
     /**
      * <p>Getter for the field <code>application</code>.</p>
      *
@@ -328,10 +327,10 @@ public class Session extends Observable {
      * @return a boolean.
      */
     public boolean isInlineModeEnabled() {
-    	if (getCurrentTranslator() == null) return false;
-    	return getCurrentTranslator().isInline();
+        if (getCurrentTranslator() == null) return false;
+        return getCurrentTranslator().isInline();
     }
-    
+
     /**
      * Translates a simple label
      *
@@ -399,11 +398,11 @@ public class Session extends Observable {
      */
     public String translate(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
         if (options == null)
-        	options = new HashMap<String, Object>();
-    	options.put(Session.SESSION_KEY, this);
+            options = new HashMap<String, Object>();
+        options.put(Session.SESSION_KEY, this);
         return (String) getCurrentLanguage().translate(label, description, tokens, options);
     }
-    
+
     /**
      * <p>trh.</p>
      *
@@ -413,13 +412,13 @@ public class Session extends Observable {
      * @return a {@link java.lang.String} object.
      */
     public String trh(String html, Map<String, Object> tokens, Map<String, Object> options) {
-        if(options == null) {
+        if (options == null) {
             options = new HashMap<String, Object>();
         }
         options.put(Session.SESSION_KEY, this);
         return new DomTokenizer(tokens, options).translate(html);
     }
-    
+
     /**
      * <p>translateStyledString.</p>
      *
@@ -450,7 +449,7 @@ public class Session extends Observable {
      * @return a {@link java.lang.Object} object.
      */
     public Object translateStyledString(String label, String description, Map<String, Object> tokens) {
-        return  translateStyledString(label, description, tokens, null);
+        return translateStyledString(label, description, tokens, null);
     }
 
     /**
@@ -489,7 +488,7 @@ public class Session extends Observable {
         if (options == null)
             options = new HashMap<String, Object>();
 
-    	options.put(Session.SESSION_KEY, this);
+        options.put(Session.SESSION_KEY, this);
         options.put(TranslationKey.TOKENIZER_KEY, TranslationKey.DEFAULT_TOKENIZERS_STYLED);
         return getCurrentLanguage().translate(label, description, tokens, options);
     }
