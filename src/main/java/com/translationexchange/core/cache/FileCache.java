@@ -45,6 +45,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.translationexchange.core.Application;
+import com.translationexchange.core.HttpClient;
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.Utils;
 
@@ -53,12 +55,16 @@ public class FileCache extends CacheAdapter implements Cache {
     protected File cachePath;
 
     /**
+     * Current cache version
+     */
+    private CacheVersion cacheVersion = null;
+
+    /**
      * <p>
      * Constructor for FileCache.
      * </p>
      *
-     * @param config
-     *            a {@link java.util.Map} object.
+     * @param config a {@link java.util.Map} object.
      */
     public FileCache(Map<String, Object> config) {
         super(config);
@@ -120,8 +126,7 @@ public class FileCache extends CacheAdapter implements Cache {
      * Getter for the field <code>cachePath</code>.
      * </p>
      *
-     * @param cacheKey
-     *            a {@link java.lang.String} object.
+     * @param cacheKey a {@link java.lang.String} object.
      * @return a {@link java.io.File} object.
      */
     protected File getCachePath(String cacheKey, Map<String, Object> options) {
@@ -153,11 +158,9 @@ public class FileCache extends CacheAdapter implements Cache {
      * readFile.
      * </p>
      *
-     * @param file
-     *            a {@link java.io.File} object.
+     * @param file a {@link java.io.File} object.
      * @return a {@link java.lang.String} object.
-     * @throws java.lang.Exception
-     *             if any.
+     * @throws java.lang.Exception if any.
      */
     protected String readFile(File file) throws Exception {
         BufferedReader br = new BufferedReader(new FileReader(file));
@@ -178,7 +181,9 @@ public class FileCache extends CacheAdapter implements Cache {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Object fetch(String key, Map<String, Object> options) {
         File cacheFile = getCachePath(key, options);
         if (!cacheFile.exists()) {
@@ -200,12 +205,9 @@ public class FileCache extends CacheAdapter implements Cache {
      * writeFile.
      * </p>
      *
-     * @param file
-     *            a {@link java.io.File} object.
-     * @param data
-     *            a {@link java.lang.Object} object.
-     * @throws java.lang.Exception
-     *             if any.
+     * @param file a {@link java.io.File} object.
+     * @param data a {@link java.lang.Object} object.
+     * @throws java.lang.Exception if any.
      */
     protected void writeFile(File file, Object data) throws Exception {
         PrintWriter writer = new PrintWriter(file, "UTF-8");
@@ -213,7 +215,9 @@ public class FileCache extends CacheAdapter implements Cache {
         writer.close();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void store(String key, Object data, Map<String, Object> options) {
         File cacheFile = getCachePath(key, options);
 
@@ -225,7 +229,9 @@ public class FileCache extends CacheAdapter implements Cache {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void delete(String key, Map<String, Object> options) {
         File cacheFile = getCachePath(key, options);
 
@@ -243,12 +249,55 @@ public class FileCache extends CacheAdapter implements Cache {
     }
 
     /**
+     * Verify that the current cache version is correct
+     * Check it against the API
+     */
+    public CacheVersion verifyCacheVersion(Application application) throws Exception {
+        if (cacheVersion != null)
+            return cacheVersion;
+
+        cacheVersion = new CacheVersion();
+
+        if (Tml.getConfig().isAndroidApp()) {
+            // load version from local cache
+            Tml.getLogger().debug("load version from local cache...");
+            cacheVersion.fetchFromCache();
+//            if (cacheVersion.getTimestamp() == null || cacheVersion.getTmlMode() != Tml.getConfig().getTmlMode()) {
+            cacheVersion.setTmlMode(Tml.getConfig().getTmlMode());
+            // load version from server
+            switch (Tml.getConfig().getTmlMode()) {
+                case API_LIVE:
+                    cacheVersion.setVersion("live");
+                    cacheVersion.markAsUpdated();
+                    Tml.getCache().store(cacheVersion.getVersionKey(), cacheVersion.toJSON(), Utils.buildMap());
+                    break;
+                case CDN:
+                case NONE:
+                    Tml.getLogger().debug("load version from the server...");
+                    cacheVersion.updateFromCDN(application.getHttpClient().getFromCDN("version", Utils.buildMap("uncompressed", true)));
+                    break;
+            }
+//            }
+            Tml.getLogger().debug("Cache version: " + cacheVersion.getVersion() + " " + cacheVersion.getExpirationMessage());
+            return cacheVersion;
+        }
+
+        // If no version in cache or it is expired, fetch it from the CDN
+        if (cacheVersion.isExpired()) {
+            Tml.getLogger().debug("Fetching version from CDN...");
+            cacheVersion.updateFromCDN(application.getHttpClient().getFromCDN("version", Utils.buildMap("uncompressed", true)));
+        }
+
+        Tml.getLogger().debug("Cache version: " + cacheVersion.getVersion() + " " + cacheVersion.getExpirationMessage());
+        return cacheVersion;
+    }
+
+    /**
      * <p>
      * deleteDirectory.
      * </p>
      *
-     * @param directory
-     *            a {@link java.io.File} object.
+     * @param directory a {@link java.io.File} object.
      * @return a boolean.
      */
     public static boolean deleteDirectory(File directory) {

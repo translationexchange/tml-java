@@ -124,6 +124,7 @@ public class Session extends Observable {
         }
         try {
             setApplication(initializeApplication(options));
+            Tml.getCache().verifyCacheVersion(getApplication());
             getApplication().setSession(this);
             getApplication().load(applicationParams);
             setCurrentLocale(getApplication().getFirstAcceptedLocale((String) options.get("locale")));

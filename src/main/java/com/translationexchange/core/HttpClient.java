@@ -65,11 +65,6 @@ public class HttpClient {
     public static final String EXTENSIONS_KEY = "extensions";
 
     /**
-     * Current cache version
-     */
-    private CacheVersion cacheVersion = null;
-
-    /**
      * Application that uses the HttpClient
      */
     private Application application;
@@ -220,77 +215,14 @@ public class HttpClient {
     }
 
     /**
-     * Returns cache version
-     *
-     * @return
-     */
-    public CacheVersion getCacheVersion() {
-        return cacheVersion;
-    }
-
-    /**
-     * Sets cache version
-     *
-     * @param cacheVersion
-     */
-    public void setCacheVersion(CacheVersion cacheVersion) {
-        this.cacheVersion = cacheVersion;
-    }
-
-    /**
-     * Verify that the current cache version is correct
-     * Check it against the API
-     */
-    private CacheVersion verifyCacheVersion() throws Exception {
-        // If version has already been fetched in the current request, use it
-        if (getCacheVersion() != null)
-            return getCacheVersion();
-
-        CacheVersion cacheVersion = new CacheVersion();
-        setCacheVersion(cacheVersion);
-
-        if (Tml.getConfig().isAndroidApp()) {
-            // load version from local cache
-            Tml.getLogger().debug("load version from local cache...");
-            cacheVersion.fetchFromCache();
-//            if (cacheVersion.getTimestamp() == null || cacheVersion.getTmlMode() != Tml.getConfig().getTmlMode()) {
-            cacheVersion.setTmlMode(Tml.getConfig().getTmlMode());
-            // load version from server
-            switch (Tml.getConfig().getTmlMode()) {
-                case API_LIVE:
-                    cacheVersion.setVersion("live");
-                    cacheVersion.markAsUpdated();
-                    Tml.getCache().store(cacheVersion.getVersionKey(), cacheVersion.toJSON(), Utils.buildMap());
-                    break;
-                case CDN:
-                case NONE:
-                    Tml.getLogger().debug("load version from the server...");
-                    cacheVersion.updateFromCDN(getFromCDN("version", Utils.buildMap("uncompressed", true)));
-                    break;
-            }
-//            }
-            Tml.getLogger().debug("Cache version: " + cacheVersion.getVersion() + " " + cacheVersion.getExpirationMessage());
-            return cacheVersion;
-        }
-
-        // If no version in cache or it is expired, fetch it from the CDN
-        if (getCacheVersion().isExpired()) {
-            Tml.getLogger().debug("Fetching version from CDN...");
-            getCacheVersion().updateFromCDN(getFromCDN("version", Utils.buildMap("uncompressed", true)));
-        }
-
-        Tml.getLogger().debug("Cache version: " + cacheVersion.getVersion() + " " + cacheVersion.getExpirationMessage());
-        return cacheVersion;
-    }
-
-    /**
      * Fetch data from the CDN
      *
      * @param cacheKey
      * @return
      */
-    private String getFromCDN(String cacheKey, Map<String, Object> options) throws Exception {
-        if (getCacheVersion().isUnreleased() && !cacheKey.equals("version"))
+    public String getFromCDN(String cacheKey, Map<String, Object> options) throws Exception {
+        CacheVersion cacheVersion = Tml.getCache().verifyCacheVersion(getApplication());
+        if (cacheVersion.isUnreleased() && !cacheKey.equals("version"))
             return null;
 
         try {
@@ -302,7 +234,7 @@ public class HttpClient {
             if (cacheKey.equals("version")) {
                 cachePath = getCdnPath(cachePath) + ".json";
             } else
-                cachePath = getCdnPath(getCacheVersion().getVersion() + cachePath) + ".json.gz";
+                cachePath = getCdnPath(cacheVersion.getVersion() + cachePath) + ".json.gz";
 
             String response = get(Utils.buildURL(getApplication().getCdnHost(), cachePath), options);
 
@@ -314,7 +246,7 @@ public class HttpClient {
             return response;
         } catch (Exception ex) {
             Tml.getLogger().error("Failed to get from CDN " + cacheKey + " with error: " + ex.getMessage());
-            return cacheKey.equals("version") ? (String) Tml.getCache().fetch(getCacheVersion().getVersionKey(), Utils.buildMap("cache_key", CacheVersion.VERSION_KEY)) : "{}";
+            return cacheKey.equals("version") ? (String) Tml.getCache().fetch(cacheVersion.getVersionKey(), Utils.buildMap("cache_key", CacheVersion.VERSION_KEY)) : "{}";
         }
     }
 
@@ -333,12 +265,12 @@ public class HttpClient {
         String cacheKey = (String) options.get("cache_key");
         Map<String, Object> result = null;
 
+        CacheVersion cacheVersion = Tml.getCache().verifyCacheVersion(getApplication());
+
         if (Tml.getConfig().isAndroidApp()) {
 
-            verifyCacheVersion();
-
             // put the current version into options
-            options.put(CacheVersion.VERSION_KEY, getCacheVersion().getVersion());
+            options.put(CacheVersion.VERSION_KEY, cacheVersion.getVersion());
 
             responseText = (String) Tml.getCache().fetch(cacheKey, options);
             if (responseText != null)
@@ -382,13 +314,13 @@ public class HttpClient {
             return null;
 
         // verify that cache version is up to date
-        verifyCacheVersion();
+//        verifyCacheVersion();
 
-        if (getCacheVersion().isUnreleased())
+        if (cacheVersion.isUnreleased())
             return null;
 
         // put the current version into options
-        options.put(CacheVersion.VERSION_KEY, getCacheVersion().getVersion());
+        options.put(CacheVersion.VERSION_KEY, cacheVersion.getVersion());
 
         responseText = (String) Tml.getCache().fetch(cacheKey, options);
 
