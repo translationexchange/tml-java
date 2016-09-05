@@ -42,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.translationexchange.core.cache.Cache;
 import com.translationexchange.core.cache.CacheAdapter;
+import com.translationexchange.core.cache.CacheVersion;
 import com.translationexchange.core.languages.Language;
 import com.translationexchange.core.logger.LoggerInterface;
 
@@ -52,11 +53,13 @@ import com.translationexchange.core.logger.LoggerInterface;
  * @version $Id: $Id
  */
 public class Tml {
-    /** Constant <code>VERSION="0.2.1"</code> */
+    /**
+     * Constant <code>VERSION="0.2.1"</code>
+     */
     public static final String VERSION = "0.2.1";
 
     /**
-     * Static instance of Tml session. For mobile and desktop applications, only a singleton session is needed. 
+     * Static instance of Tml session. For mobile and desktop applications, only a singleton session is needed.
      * For web applications, the session must be created for every request. Session contains dynamic information per user/language.
      */
     private static Session session = null;
@@ -85,7 +88,6 @@ public class Tml {
      * Schedule handler
      */
     private static ScheduledFuture<?> applicationScheduleHandler;
-
 
     /**
      * Get the current session
@@ -134,7 +136,7 @@ public class Tml {
     /**
      * <p>init.</p>
      *
-     * @param key a {@link java.lang.String} object.
+     * @param key   a {@link java.lang.String} object.
      * @param token a {@link java.lang.String} object.
      */
     public static void init(String key, String token) {
@@ -144,8 +146,8 @@ public class Tml {
     /**
      * <p>init.</p>
      *
-     * @param key a {@link java.lang.String} object.
-     * @param token a {@link java.lang.String} object.
+     * @param key     a {@link java.lang.String} object.
+     * @param token   a {@link java.lang.String} object.
      * @param options a {@link java.util.Map} object.
      */
     public static void init(String key, String token, Map<String, Object> options) {
@@ -259,15 +261,15 @@ public class Tml {
 
 
     /**
-     **************************************************************************************************
-     *
+     * *************************************************************************************************
+     * <p/>
      * Instance Definition
-     *
+     * <p/>
      * For web environment, where every request needs its own set of attributes, an instance of Tml must
      * be created and propagated with the request context. In those scenarios, a shared cache, like Memcached
      * or Redis should be used to ensure that all instances of application servers can reuse translations.
-     *
-     ***************************************************************************************************
+     * <p/>
+     * **************************************************************************************************
      *
      * @return a {@link com.translationexchange.core.languages.Language} object.
      */
@@ -288,7 +290,7 @@ public class Tml {
      * <p>switchLanguage.</p>
      *
      * @param language a {@link com.translationexchange.core.languages.Language} object.
-     * @param options a {@link java.util.Map} object.
+     * @param options  a {@link java.util.Map} object.
      */
     public static void switchLanguage(Language language, Map<String, Object> options) {
         // TODO: if the connection is not present, do it offline, if possible
@@ -409,7 +411,7 @@ public class Tml {
     /**
      * <p>initSource.</p>
      *
-     * @param key a {@link java.lang.String} object.
+     * @param key    a {@link java.lang.String} object.
      * @param locale a {@link java.lang.String} object.
      */
     public static void initSource(String key, String locale) {
@@ -453,7 +455,7 @@ public class Tml {
     /**
      * <p>translate.</p>
      *
-     * @param label a {@link java.lang.String} object.
+     * @param label       a {@link java.lang.String} object.
      * @param description a {@link java.lang.String} object.
      * @return a {@link java.lang.String} object.
      */
@@ -464,9 +466,9 @@ public class Tml {
     /**
      * <p>translate.</p>
      *
-     * @param label a {@link java.lang.String} object.
+     * @param label       a {@link java.lang.String} object.
      * @param description a {@link java.lang.String} object.
-     * @param tokens a {@link java.util.Map} object.
+     * @param tokens      a {@link java.util.Map} object.
      * @return a {@link java.lang.String} object.
      */
     public static String translate(String label, String description, Map<String, Object> tokens) {
@@ -476,7 +478,7 @@ public class Tml {
     /**
      * <p>translate.</p>
      *
-     * @param label a {@link java.lang.String} object.
+     * @param label  a {@link java.lang.String} object.
      * @param tokens a {@link java.util.Map} object.
      * @return a {@link java.lang.String} object.
      */
@@ -487,8 +489,8 @@ public class Tml {
     /**
      * <p>translate.</p>
      *
-     * @param label a {@link java.lang.String} object.
-     * @param tokens a {@link java.util.Map} object.
+     * @param label   a {@link java.lang.String} object.
+     * @param tokens  a {@link java.util.Map} object.
      * @param options a {@link java.util.Map} object.
      * @return a {@link java.lang.String} object.
      */

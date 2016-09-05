@@ -96,7 +96,7 @@ public class Session extends Observable {
             options = new HashMap<String, Object>();
         }
 
-        String[] keys = {"key", "token", "host", "cdn_host"};
+        String[] keys = {"key", "token", "host", "cdn_host", "auth_url"};
         for (String key : keys) {
             if (options.get(key) == null)
                 options.put(key, Tml.getConfig().getApplication().get(key));
@@ -344,7 +344,7 @@ public class Session extends Observable {
     /**
      * <p>translate.</p>
      *
-     * @param label a {@link java.lang.String} object.
+     * @param label       a {@link java.lang.String} object.
      * @param description a {@link java.lang.String} object.
      * @return a {@link java.lang.String} object.
      */
@@ -355,9 +355,9 @@ public class Session extends Observable {
     /**
      * <p>translate.</p>
      *
-     * @param label a {@link java.lang.String} object.
+     * @param label       a {@link java.lang.String} object.
      * @param description a {@link java.lang.String} object.
-     * @param tokens a {@link java.util.Map} object.
+     * @param tokens      a {@link java.util.Map} object.
      * @return a {@link java.lang.String} object.
      */
     public String translate(String label, String description, Map<String, Object> tokens) {
@@ -367,7 +367,7 @@ public class Session extends Observable {
     /**
      * <p>translate.</p>
      *
-     * @param label a {@link java.lang.String} object.
+     * @param label  a {@link java.lang.String} object.
      * @param tokens a {@link java.util.Map} object.
      * @return a {@link java.lang.String} object.
      */
@@ -378,8 +378,8 @@ public class Session extends Observable {
     /**
      * <p>translate.</p>
      *
-     * @param label a {@link java.lang.String} object.
-     * @param tokens a {@link java.util.Map} object.
+     * @param label   a {@link java.lang.String} object.
+     * @param tokens  a {@link java.util.Map} object.
      * @param options a {@link java.util.Map} object.
      * @return a {@link java.lang.String} object.
      */
@@ -390,10 +390,10 @@ public class Session extends Observable {
     /**
      * <p>translate.</p>
      *
-     * @param label a {@link java.lang.String} object.
+     * @param label       a {@link java.lang.String} object.
      * @param description a {@link java.lang.String} object.
-     * @param tokens a {@link java.util.Map} object.
-     * @param options a {@link java.util.Map} object.
+     * @param tokens      a {@link java.util.Map} object.
+     * @param options     a {@link java.util.Map} object.
      * @return a {@link java.lang.String} object.
      */
     public String translate(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
@@ -406,8 +406,8 @@ public class Session extends Observable {
     /**
      * <p>trh.</p>
      *
-     * @param html a {@link java.lang.String} object.
-     * @param tokens a {@link java.util.Map} object.
+     * @param html    a {@link java.lang.String} object.
+     * @param tokens  a {@link java.util.Map} object.
      * @param options a {@link java.util.Map} object.
      * @return a {@link java.lang.String} object.
      */
@@ -432,7 +432,7 @@ public class Session extends Observable {
     /**
      * <p>translateStyledString.</p>
      *
-     * @param label a {@link java.lang.String} object.
+     * @param label       a {@link java.lang.String} object.
      * @param description a {@link java.lang.String} object.
      * @return a {@link java.lang.Object} object.
      */
@@ -443,9 +443,9 @@ public class Session extends Observable {
     /**
      * <p>translateStyledString.</p>
      *
-     * @param label a {@link java.lang.String} object.
+     * @param label       a {@link java.lang.String} object.
      * @param description a {@link java.lang.String} object.
-     * @param tokens a {@link java.util.Map} object.
+     * @param tokens      a {@link java.util.Map} object.
      * @return a {@link java.lang.Object} object.
      */
     public Object translateStyledString(String label, String description, Map<String, Object> tokens) {
@@ -455,7 +455,7 @@ public class Session extends Observable {
     /**
      * <p>translateStyledString.</p>
      *
-     * @param label a {@link java.lang.String} object.
+     * @param label  a {@link java.lang.String} object.
      * @param tokens a {@link java.util.Map} object.
      * @return a {@link java.lang.Object} object.
      */
@@ -466,8 +466,8 @@ public class Session extends Observable {
     /**
      * <p>translateStyledString.</p>
      *
-     * @param label a {@link java.lang.String} object.
-     * @param tokens a {@link java.util.Map} object.
+     * @param label   a {@link java.lang.String} object.
+     * @param tokens  a {@link java.util.Map} object.
      * @param options a {@link java.util.Map} object.
      * @return a {@link java.lang.Object} object.
      */
@@ -478,10 +478,10 @@ public class Session extends Observable {
     /**
      * <p>translateStyledString.</p>
      *
-     * @param label a {@link java.lang.String} object.
+     * @param label       a {@link java.lang.String} object.
      * @param description a {@link java.lang.String} object.
-     * @param tokens a {@link java.util.Map} object.
-     * @param options a {@link java.util.Map} object.
+     * @param tokens      a {@link java.util.Map} object.
+     * @param options     a {@link java.util.Map} object.
      * @return a {@link java.lang.Object} object.
      */
     public Object translateStyledString(String label, String description, Map<String, Object> tokens, Map<String, Object> options) {
