@@ -291,6 +291,15 @@ public class Application extends Base {
     }
 
     /**
+     * <p>Setter for the field <code>authUrl</code>.</p>
+     *
+     * @param authUrl a {@link java.lang.String} object.
+     */
+    public void setAuthUrl(String authUrl) {
+        this.authUrl = authUrl;
+    }
+
+    /**
      * <p>Setter for the field <code>key</code>.</p>
      *
      * @param key a {@link java.lang.String} object.
@@ -421,7 +430,7 @@ public class Application extends Base {
             setCdnHost((String) attributes.get("cdn_host"));
 
         if (attributes.get("auth_url") != null)
-            setCdnHost((String) attributes.get("auth_url"));
+            setAuthUrl((String) attributes.get("auth_url"));
 
         setName((String) attributes.get("name"));
         setDescription((String) attributes.get("description"));
@@ -986,7 +995,7 @@ public class Application extends Base {
         String url = TREX_AUTH_URL;
         if (authUrl != null)
             url = authUrl;
-        url += "&app_id=" + key;
+        url += "?s=android&app_id=" + key;
         return url;
 //        return TREX_AUTH_URL + "app_id=";
 //        return authUrl;

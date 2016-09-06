@@ -219,7 +219,7 @@ public class CacheVersion {
         if (data != null) {
             Map<String, Object> jsonData = (Map<String, Object>) Utils.parseJSON(data);
             String status = null;
-            if ((status = jsonData.get("status").toString()) != null) {
+            if ((status = (String) jsonData.get("status")) != null) {
                 return;
             }
         }

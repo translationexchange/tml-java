@@ -55,11 +55,6 @@ public class FileCache extends CacheAdapter implements Cache {
     protected File cachePath;
 
     /**
-     * Current cache version
-     */
-    private CacheVersion cacheVersion = null;
-
-    /**
      * <p>
      * Constructor for FileCache.
      * </p>
@@ -246,50 +241,6 @@ public class FileCache extends CacheAdapter implements Cache {
                 return;
             cacheFile.delete();
         }
-    }
-
-    /**
-     * Verify that the current cache version is correct
-     * Check it against the API
-     */
-    public CacheVersion verifyCacheVersion(Application application) throws Exception {
-        if (cacheVersion != null)
-            return cacheVersion;
-
-        cacheVersion = new CacheVersion();
-
-        if (Tml.getConfig().isAndroidApp()) {
-            // load version from local cache
-            Tml.getLogger().debug("load version from local cache...");
-            cacheVersion.fetchFromCache();
-//            if (cacheVersion.getTimestamp() == null || cacheVersion.getTmlMode() != Tml.getConfig().getTmlMode()) {
-            cacheVersion.setTmlMode(Tml.getConfig().getTmlMode());
-            // load version from server
-            switch (Tml.getConfig().getTmlMode()) {
-                case API_LIVE:
-                    cacheVersion.setVersion("live");
-                    cacheVersion.markAsUpdated();
-                    Tml.getCache().store(cacheVersion.getVersionKey(), cacheVersion.toJSON(), Utils.buildMap());
-                    break;
-                case CDN:
-                case NONE:
-                    Tml.getLogger().debug("load version from the server...");
-                    cacheVersion.updateFromCDN(application.getHttpClient().getFromCDN("version", Utils.buildMap("uncompressed", true)));
-                    break;
-            }
-//            }
-            Tml.getLogger().debug("Cache version: " + cacheVersion.getVersion() + " " + cacheVersion.getExpirationMessage());
-            return cacheVersion;
-        }
-
-        // If no version in cache or it is expired, fetch it from the CDN
-        if (cacheVersion.isExpired()) {
-            Tml.getLogger().debug("Fetching version from CDN...");
-            cacheVersion.updateFromCDN(application.getHttpClient().getFromCDN("version", Utils.buildMap("uncompressed", true)));
-        }
-
-        Tml.getLogger().debug("Cache version: " + cacheVersion.getVersion() + " " + cacheVersion.getExpirationMessage());
-        return cacheVersion;
     }
 
     /**
