@@ -216,6 +216,13 @@ public class CacheVersion {
      * @param data
      */
     public void updateFromCDN(String data) {
+        if (data != null) {
+            Map<String, Object> jsonData = (Map<String, Object>) Utils.parseJSON(data);
+            String status = null;
+            if ((status = jsonData.get("status").toString()) != null) {
+                return;
+            }
+        }
         // no release has been published yet on the CDN
         if (data == null) {
             setVersion(UNRELEASED_VERSION);

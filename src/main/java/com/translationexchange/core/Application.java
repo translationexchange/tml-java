@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
- * <p>
+ * <p/>
  * _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
  * | |_ __ __ _ _ __  ___| | __ _| |_ _  ___  _ __ | |__  __  _____| |__   __ _ _ __   __ _  ___
@@ -16,10 +16,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * <p>
+ * <p/>
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * <p>
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -419,6 +419,9 @@ public class Application extends Base {
 
         if (attributes.get("cdn_host") != null)
             setCdnHost((String) attributes.get("cdn_host"));
+
+        if (attributes.get("auth_url") != null)
+            setCdnHost((String) attributes.get("auth_url"));
 
         setName((String) attributes.get("name"));
         setDescription((String) attributes.get("description"));
@@ -980,9 +983,13 @@ public class Application extends Base {
      * @return a {@link java.lang.String} object.
      */
     public String getAuthUrl() {
-        if (authUrl == null)
-            return TREX_AUTH_URL;
-        return authUrl;
+        String url = TREX_AUTH_URL;
+        if (authUrl != null)
+            url = authUrl;
+        url += "&app_id=" + key;
+        return url;
+//        return TREX_AUTH_URL + "app_id=";
+//        return authUrl;
     }
 
     /**
