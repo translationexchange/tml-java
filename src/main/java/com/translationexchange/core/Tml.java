@@ -31,6 +31,11 @@
 
 package com.translationexchange.core;
 
+import com.translationexchange.core.cache.Cache;
+import com.translationexchange.core.cache.CacheAdapter;
+import com.translationexchange.core.languages.Language;
+import com.translationexchange.core.logger.LoggerInterface;
+
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,12 +44,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import com.translationexchange.core.cache.Cache;
-import com.translationexchange.core.cache.CacheAdapter;
-import com.translationexchange.core.cache.CacheVersion;
-import com.translationexchange.core.languages.Language;
-import com.translationexchange.core.logger.LoggerInterface;
 
 /**
  * A static utility session wrapper class for using by Mobile and Desktop application.
@@ -178,10 +177,10 @@ public class Tml {
 
         applicationScheduleHandler = scheduler.scheduleAtFixedRate(new Runnable() {
             public void run() {
-//                getLogger().debug("Running scheduled tasks...");
+                getLogger().debug("Running scheduled tasks...");
                 getSession().getApplication().submitMissingTranslationKeys();
             }
-        }, 5, 5, TimeUnit.SECONDS);
+        }, 10, 5, TimeUnit.SECONDS);
     }
 
     /**

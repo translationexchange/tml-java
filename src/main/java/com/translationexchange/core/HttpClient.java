@@ -35,6 +35,14 @@
 
 package com.translationexchange.core;
 
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Request.Builder;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+import com.translationexchange.core.cache.CacheVersion;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -48,14 +56,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Request.Builder;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-import com.translationexchange.core.cache.CacheVersion;
 
 public class HttpClient {
     /**
@@ -267,44 +267,6 @@ public class HttpClient {
 
         CacheVersion cacheVersion = Tml.getCache().verifyCacheVersion(getApplication());
 
-        if (Tml.getConfig().isAndroidApp()) {
-
-            // put the current version into options
-            options.put(CacheVersion.VERSION_KEY, cacheVersion.getVersion());
-
-            responseText = (String) Tml.getCache().fetch(cacheKey, options);
-            if (responseText != null)
-                return processJSONResponse(responseText, options);
-
-            // if no data in the local cache
-            switch (Tml.getConfig().getTmlMode()) {
-                case API_LIVE:
-                    responseText = get(path, params, options);
-                    break;
-                case CDN:
-                case NONE:
-                    responseText = getFromCDN(cacheKey, options);
-                    break;
-            }
-
-            if (responseText == null)
-                return null;
-
-            result = processJSONResponse(responseText, options);
-
-            Map<String, Object> extensions = (Map<String, Object>) result.get(EXTENSIONS_KEY);
-
-            // never store extension in cache
-            if (extensions != null) {
-                result.remove(EXTENSIONS_KEY);
-                responseText = Utils.buildJSON(result);
-                result.put(EXTENSIONS_KEY, extensions);
-            }
-
-            Tml.getCache().store(cacheKey, responseText, options);
-            return result;
-        }
-
         // for live requests, process them immediately
         if (isLiveApi())
             return processJSONResponse(get(path, params, options), options);
@@ -358,7 +320,7 @@ public class HttpClient {
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    private Map<String, Object> processJSONResponse(String responseText, Map<String, Object> options) throws Exception {
+    public Map<String, Object> processJSONResponse(String responseText, Map<String, Object> options) throws Exception {
         String cacheKey = (String) options.get("cache_key");
 
         Map<String, Object> result = (Map<String, Object>) Utils.parseJSON(responseText);
@@ -452,8 +414,10 @@ public class HttpClient {
     @SuppressWarnings("rawtypes")
     public Object post(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
         URL url = Utils.buildURL(getApplication().getHost(), API_PATH + path, Utils.buildMap("access_token", this.getAccessToken()));
+//        params.put("access_token", getAccessToken());
 
         Tml.getLogger().debug("HTTP Post: " + url.toString());
+        Tml.getLogger().debug("HTTP Params: " + params.toString());
 
         long t0 = new Date().getTime();
 
@@ -468,7 +432,10 @@ public class HttpClient {
         }
         RequestBody formBody = formBuilder.build();
 
-        Builder builder = new Request.Builder().url(url.toString()).header("User-Agent", Tml.getFullVersion());
+        Builder builder = new Request.Builder()
+                .url(url.toString())
+                .addHeader("User-Agent", Tml.getFullVersion());
+//                .addHeader("Authorization", "Access-Token " + getAccessToken());
         builder = builder.post(formBody);
         Request request = builder.build();
 

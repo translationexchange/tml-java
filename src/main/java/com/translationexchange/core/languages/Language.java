@@ -35,11 +35,6 @@
 
 package com.translationexchange.core.languages;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import com.translationexchange.core.Application;
 import com.translationexchange.core.Base;
 import com.translationexchange.core.Configuration;
@@ -47,6 +42,11 @@ import com.translationexchange.core.Source;
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.TranslationKey;
 import com.translationexchange.core.Utils;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class Language extends Base {
 
@@ -481,12 +481,14 @@ public class Language extends Base {
         Source source = getApplication().getSource(sourceKey, getLocale(), options);
         TranslationKey matchedKey = null;
         if (source != null && (matchedKey = source.getTranslationKey(keyHash)) != null) {
+            Tml.getLogger().info("translate", label + " exist");
             if (matchedKey.getLabel() == null) {
                 matchedKey.setLabel(label);
                 matchedKey.setDescription(description);
             }
             return matchedKey.translate(this);
         } else {
+            Tml.getLogger().info("translate", label + " not exist");
             Map<String, Object> opts = new HashMap<String, Object>(options);
             opts.put("pending", "true");
 

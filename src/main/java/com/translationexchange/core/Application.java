@@ -1013,6 +1013,10 @@ public class Application extends Base {
         return httpClient;
     }
 
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
+
     /**
      * Returns a string representation of the object
      *

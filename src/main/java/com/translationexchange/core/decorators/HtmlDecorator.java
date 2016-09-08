@@ -1,4 +1,3 @@
-
 /**
  * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
  * <p/>
@@ -35,13 +34,6 @@
 
 package com.translationexchange.core.decorators;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.StringUtils;
-
 import com.translationexchange.core.Session;
 import com.translationexchange.core.TranslationKey;
 import com.translationexchange.core.Utils;
@@ -49,6 +41,13 @@ import com.translationexchange.core.languages.Language;
 import com.translationexchange.core.languages.LanguageCase;
 import com.translationexchange.core.languages.LanguageCaseRule;
 import com.translationexchange.core.tokens.Token;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class HtmlDecorator implements Decorator {
 

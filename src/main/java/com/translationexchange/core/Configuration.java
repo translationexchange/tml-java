@@ -35,21 +35,19 @@
 
 package com.translationexchange.core;
 
-import java.io.File;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.translationexchange.core.cache.Cache;
-import com.translationexchange.core.cache.FileCache;
 import com.translationexchange.core.decorators.Decorator;
 import com.translationexchange.core.decorators.HtmlDecorator;
 import com.translationexchange.core.decorators.PlainDecorator;
 import com.translationexchange.core.languages.Language;
 import com.translationexchange.core.languages.LanguageContext;
 import com.translationexchange.core.rulesengine.Variable;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Configuration {
 
@@ -176,7 +174,7 @@ public class Configuration {
                 "com.translationexchange.core.tokens.PipedToken"
         );
 
-        this.applicationClass = "com.translationexchange.core.Application";
+        this.applicationClass = Application.class.getName();
 
         this.cache = Utils.buildMap(
                 "enabled", true,
