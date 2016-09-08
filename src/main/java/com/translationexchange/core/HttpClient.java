@@ -106,10 +106,6 @@ public class HttpClient {
         return getApplication().getAccessToken();
     }
 
-    protected void clearAccessCode() {
-        getApplication().clearAccessCode();
-    }
-
     /**
      * @return Application Key
      * @throws Exception

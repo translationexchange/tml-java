@@ -56,7 +56,7 @@ public class Application extends Base {
     /**
      * Constant <code>TREX_AUTH_URL="https://sandbox-gateway.translationexchange.com/?s=android"</code>
      */
-    public static final String TREX_AUTH_URL = "https://sandbox-gateway.translationexchange.com/?s=android";
+    public static final String TREX_AUTH_URL = "https://sandbox-gateway.translationexchange.com";
 
     /**
      * Constant <code>UNDEFINED_SOURCE="undefined"</code>
@@ -396,10 +396,6 @@ public class Application extends Base {
      */
     public String getAccessToken() {
         return accessToken;
-    }
-
-    public void clearAccessCode() {
-        accessToken = null;
     }
 
     /**
@@ -1000,6 +996,14 @@ public class Application extends Base {
         if (authUrl != null)
             url = authUrl;
         url += "?s=android&app_id=" + key;
+        return url;
+    }
+
+    public String getLogoutUrl() {
+        String url = TREX_AUTH_URL;
+        if (authUrl != null)
+            url = authUrl;
+        url += "/logout?s=android&app_id=" + key;
         return url;
 //        return TREX_AUTH_URL + "app_id=";
 //        return authUrl;
