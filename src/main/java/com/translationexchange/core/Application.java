@@ -34,13 +34,13 @@
 
 package com.translationexchange.core;
 
+import com.translationexchange.core.languages.Language;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import com.translationexchange.core.languages.Language;
 
 public class Application extends Base {
     /**
@@ -396,6 +396,10 @@ public class Application extends Base {
      */
     public String getAccessToken() {
         return accessToken;
+    }
+
+    public void clearAccessCode() {
+        accessToken = null;
     }
 
     /**

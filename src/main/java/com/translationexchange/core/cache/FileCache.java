@@ -34,6 +34,9 @@
 
 package com.translationexchange.core.cache;
 
+import com.translationexchange.core.Tml;
+import com.translationexchange.core.Utils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,11 +47,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import com.translationexchange.core.Application;
-import com.translationexchange.core.HttpClient;
-import com.translationexchange.core.Tml;
-import com.translationexchange.core.Utils;
 
 public class FileCache extends CacheAdapter implements Cache {
     protected File applicationPath;

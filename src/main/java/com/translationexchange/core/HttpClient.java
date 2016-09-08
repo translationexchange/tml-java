@@ -88,7 +88,7 @@ public class HttpClient {
      *
      * @return
      */
-    private OkHttpClient getOkHttpClient() {
+    protected OkHttpClient getOkHttpClient() {
         if (client == null) {
             client = new OkHttpClient();
             client.setConnectTimeout(10, TimeUnit.SECONDS);
@@ -102,8 +102,12 @@ public class HttpClient {
      * @return Access Token
      * @throws Exception
      */
-    private String getAccessToken() throws Exception {
+    protected String getAccessToken() throws Exception {
         return getApplication().getAccessToken();
+    }
+
+    protected void clearAccessCode() {
+        getApplication().clearAccessCode();
     }
 
     /**
@@ -320,7 +324,7 @@ public class HttpClient {
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    public Map<String, Object> processJSONResponse(String responseText, Map<String, Object> options) throws Exception {
+    protected Map<String, Object> processJSONResponse(String responseText, Map<String, Object> options) throws Exception {
         String cacheKey = (String) options.get("cache_key");
 
         Map<String, Object> result = (Map<String, Object>) Utils.parseJSON(responseText);
