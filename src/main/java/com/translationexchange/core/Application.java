@@ -35,6 +35,7 @@
 package com.translationexchange.core;
 
 import com.translationexchange.core.languages.Language;
+import com.translationexchange.core.tools.Tools;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -134,6 +135,8 @@ public class Application extends Base {
      * application, the language will be reloaded from the server to get all rules and definitions.
      */
     private List<Language> languages;
+
+    private Tools tools;
 
     /**
      * List of featured locales
@@ -473,6 +476,11 @@ public class Application extends Base {
 
         if (attributes.get("extensions") != null) {
             loadExtensions((Map<String, Object>) attributes.get("extensions"));
+        }
+
+        if (attributes.get("tools") != null) {
+            tools = new Tools((Map<String, Object>) attributes.get("tools"));
+            tools.setLoaded(true);
         }
     }
 
