@@ -410,6 +410,9 @@ public class Application extends Base {
         return defaultLocale;
     }
 
+    public Tools getTools() {
+        return tools;
+    }
 
     /**
      * {@inheritDoc}
@@ -496,7 +499,7 @@ public class Application extends Base {
                     params,
                     Utils.buildMap("cache_key", "application")
             );
-            if (data == null) {
+            if (data == null || data.isEmpty()) {
                 setDefaultLocale(Tml.getConfig().getDefaultLocale());
                 addLanguage(Tml.getConfig().getDefaultLanguage());
                 Tml.getLogger().debug("No release has been published or no cache has been provided");

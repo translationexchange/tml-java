@@ -368,7 +368,7 @@ public class Tml {
      * @return a {@link com.translationexchange.core.Application} object.
      */
     public static Application getApplication() {
-        return getSession().getApplication();
+        return getSession() == null ? null : getSession().getApplication();
     }
 
     /**

@@ -34,15 +34,15 @@
 
 package com.translationexchange.core.cache;
 
+import com.translationexchange.core.Tml;
+import com.translationexchange.core.TmlMode;
+import com.translationexchange.core.Utils;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.translationexchange.core.Tml;
-import com.translationexchange.core.TmlMode;
-import com.translationexchange.core.Utils;
 
 public class CacheVersion {
 
@@ -71,12 +71,7 @@ public class CacheVersion {
      */
     private Long timestamp;
 
-    /**
-     * Expired time
-     */
-    private Long expiredIn;
-
-    private TmlMode tmlMode = TmlMode.NONE;
+//    private TmlMode tmlMode = TmlMode.CDN;
 
     /**
      * Get timestamp
@@ -96,24 +91,13 @@ public class CacheVersion {
         this.timestamp = timestamp;
     }
 
-    public Long getExpiredIn() {
-        if (expiredIn == null) {
-            expiredIn = new Date().getTime();
-        }
-        return expiredIn;
-    }
-
-    public void setExpiredIn(Long expiredIn) {
-        this.expiredIn = expiredIn;
-    }
-
-    public TmlMode getTmlMode() {
-        return tmlMode;
-    }
-
-    public void setTmlMode(TmlMode tmlMode) {
-        this.tmlMode = tmlMode;
-    }
+//    public TmlMode getTmlMode() {
+//        return tmlMode;
+//    }
+//
+//    public void setTmlMode(TmlMode tmlMode) {
+//        this.tmlMode = tmlMode;
+//    }
 
     /**
      * Get version
@@ -149,8 +133,7 @@ public class CacheVersion {
         if (getTimestamp() == null)
             return true;
 
-        long validWindow = getExpiredIn();
-//        long validWindow = getTimestamp().longValue() + getVerificationInterval();
+        long validWindow = getTimestamp().longValue() + getVerificationInterval();
         long now = new Date().getTime();
         return validWindow <= now;
     }
@@ -187,8 +170,8 @@ public class CacheVersion {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("version", getVersion());
         data.put("t", getTimestamp());
-        data.put("expired_in", getTimestamp() + getVerificationInterval());
-        data.put("tml_mode", getTmlMode().name());
+        data.put("tml_mode", Tml.getConfig().getTmlMode().name());
+//        data.put("tml_mode", getTmlMode().name());
         return Utils.buildJSON(data);
     }
 
@@ -203,7 +186,8 @@ public class CacheVersion {
         // No version has ever been stored in the local cache
         if (data == null) {
             setVersion(UNRELEASED_VERSION);
-            setTmlMode(TmlMode.NONE);
+//            setTmlMode(TmlMode.CDN);
+            Tml.getConfig().setTmlMode(TmlMode.CDN);
         } else {
             updateFromJSON(data);
         }
@@ -248,12 +232,9 @@ public class CacheVersion {
             if (jsonData.containsKey("t")) {
                 setTimestamp((Long) jsonData.get("t"));
             }
-            if (jsonData.containsKey("expired_in")) {
-                setExpiredIn((Long) jsonData.get("expired_in"));
-            }
-
             if (jsonData.containsKey("tml_mode")) {
-                setTmlMode(TmlMode.valueOf(jsonData.get("tml_mode").toString()));
+//                setTmlMode(TmlMode.valueOf(jsonData.get("tml_mode").toString()));
+                Tml.getConfig().setTmlMode(TmlMode.valueOf(jsonData.get("tml_mode").toString()));
             }
         } else {
             setVersion(data);
@@ -285,7 +266,7 @@ public class CacheVersion {
         Integer seconds = (Integer) Tml.getConfig().getCache().get("version_check_interval");
 
         if (seconds == null)
-            seconds = new Integer(60 * 60);
+            seconds = new Integer(15 * 60);
 
         return seconds.intValue() * 1000;
     }
@@ -299,8 +280,7 @@ public class CacheVersion {
         if (getTimestamp() == null)
             return "expired";
 
-        long validWindow = getExpiredIn();
-//        long validWindow = getTimestamp().longValue() + getVerificationInterval();
+        long validWindow = getTimestamp().longValue() + getVerificationInterval();
         long now = new Date().getTime();
 
         if (now > validWindow)

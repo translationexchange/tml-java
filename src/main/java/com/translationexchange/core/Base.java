@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
- *
- *  _______                  _       _   _             ______          _
+ * <p/>
+ * _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
- *    | |_ __ __ _ _ __  ___| | __ _| |_ _  ___  _ __ | |__  __  _____| |__   __ _ _ __   __ _  ___
- *    | | '__/ _` | '_ \/ __| |/ _` | __| |/ _ \| '_ \|  __| \ \/ / __| '_ \ / _` | '_ \ / _` |/ _ \
- *    | | | | (_| | | | \__ \ | (_| | |_| | (_) | | | | |____ >  < (__| | | | (_| | | | | (_| |  __/
- *    |_|_|  \__,_|_| |_|___/_|\__,_|\__|_|\___/|_| |_|______/_/\_\___|_| |_|\__,_|_| |_|\__, |\___|
- *                                                                                        __/ |
- *                                                                                       |___/
+ * | |_ __ __ _ _ __  ___| | __ _| |_ _  ___  _ __ | |__  __  _____| |__   __ _ _ __   __ _  ___
+ * | | '__/ _` | '_ \/ __| |/ _` | __| |/ _ \| '_ \|  __| \ \/ / __| '_ \ / _` | '_ \ / _` |/ _ \
+ * | | | | (_| | | | \__ \ | (_| | |_| | (_) | | | | |____ >  < (__| | | | (_| | | | | (_| |  __/
+ * |_|_|  \__,_|_| |_|___/_|\__,_|\__|_|\___/|_| |_|______/_/\_\___|_| |_|\__,_|_| |_|\__, |\___|
+ * __/ |
+ * |___/
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -16,10 +16,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- *
+ * <p/>
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -41,8 +41,8 @@ import java.util.Map;
  */
 public abstract class Base {
 
-	private Boolean loaded;
-	
+    private Boolean loaded;
+
     /**
      * Default constructor
      */
@@ -67,22 +67,22 @@ public abstract class Base {
      */
     public abstract void updateAttributes(Map<String, Object> attributes);
 
-	/**
-	 * Checks if the model has been loaded from the server
-	 *
-	 * @return a {@link java.lang.Boolean} object.
-	 */
-	public Boolean isLoaded() {
-		return loaded;
-	}
+    /**
+     * Checks if the model has been loaded from the server
+     *
+     * @return a {@link java.lang.Boolean} object.
+     */
+    public Boolean isLoaded() {
+        return loaded;
+    }
 
-	/**
-	 * Indicates that the model has been loaded from Cache or API
-	 *
-	 * @param loaded a {@link java.lang.Boolean} object.
-	 */
-	public void setLoaded(Boolean loaded) {
-		this.loaded = loaded;
-	}
-    
+    /**
+     * Indicates that the model has been loaded from Cache or API
+     *
+     * @param loaded a {@link java.lang.Boolean} object.
+     */
+    public void setLoaded(Boolean loaded) {
+        this.loaded = loaded;
+    }
+
 }

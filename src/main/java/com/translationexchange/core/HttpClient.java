@@ -72,7 +72,7 @@ public class HttpClient {
     /**
      * 3rd Party client to be used in the implementation
      */
-    private OkHttpClient client;
+    protected OkHttpClient client;
 
     /**
      * Default constructor
