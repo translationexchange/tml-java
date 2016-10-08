@@ -35,7 +35,6 @@
 
 package com.translationexchange.core;
 
-import com.translationexchange.core.cache.Cache;
 import com.translationexchange.core.decorators.Decorator;
 import com.translationexchange.core.decorators.HtmlDecorator;
 import com.translationexchange.core.decorators.PlainDecorator;
@@ -152,10 +151,6 @@ public class Configuration {
      * This mode must never be used in production
      */
     private boolean keyRegistrationMode;
-
-    private boolean androidApp;
-
-    private TmlMode tmlMode = TmlMode.CDN;
 
     /**
      * <p>Constructor for Configuration.</p>
@@ -931,23 +926,4 @@ public class Configuration {
         this.keyRegistrationMode = false;
     }
 
-    public boolean isAndroidApp() {
-        return androidApp;
-    }
-
-    public void setAndroidApp(boolean androidApp) {
-        this.androidApp = androidApp;
-    }
-
-    public TmlMode getTmlMode() {
-        return tmlMode;
-    }
-
-    public void setTmlMode(TmlMode tmlMode) {
-        this.tmlMode = tmlMode;
-        if (tmlMode.equals(TmlMode.API_LIVE)) {
-            Cache cache = Tml.getCache();
-            cache.delete("live", Utils.buildMap("directory", true));
-        }
-    }
 }

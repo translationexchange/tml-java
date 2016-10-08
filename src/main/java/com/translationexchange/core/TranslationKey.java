@@ -35,6 +35,12 @@
 
 package com.translationexchange.core;
 
+import com.translationexchange.core.decorators.Decorator;
+import com.translationexchange.core.languages.Language;
+import com.translationexchange.core.tokenizers.DataTokenizer;
+import com.translationexchange.core.tokenizers.DecorationTokenizer;
+import com.translationexchange.core.tokenizers.Tokenizer;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
@@ -45,21 +51,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.translationexchange.core.decorators.Decorator;
-import com.translationexchange.core.languages.Language;
-import com.translationexchange.core.tokenizers.DataTokenizer;
-import com.translationexchange.core.tokenizers.DecorationTokenizer;
-import com.translationexchange.core.tokenizers.Tokenizer;
-
 public class TranslationKey extends Base {
 
-    /** Constant <code>TOKENIZER_KEY="tokenizer"</code> */
+    /**
+     * Constant <code>TOKENIZER_KEY="tokenizer"</code>
+     */
     public static final String TOKENIZER_KEY = "tokenizer";
-    /** Constant <code>DEFAULT_TOKENIZERS_DATA="data"</code> */
+    /**
+     * Constant <code>DEFAULT_TOKENIZERS_DATA="data"</code>
+     */
     public static final String DEFAULT_TOKENIZERS_DATA = "data";
-    /** Constant <code>DEFAULT_TOKENIZERS_HTML="html"</code> */
+    /**
+     * Constant <code>DEFAULT_TOKENIZERS_HTML="html"</code>
+     */
     public static final String DEFAULT_TOKENIZERS_HTML = "html";
-    /** Constant <code>DEFAULT_TOKENIZERS_STYLED="styled"</code> */
+    /**
+     * Constant <code>DEFAULT_TOKENIZERS_STYLED="styled"</code>
+     */
     public static final String DEFAULT_TOKENIZERS_STYLED = "styled";
 
     /**
@@ -125,7 +133,6 @@ public class TranslationKey extends Base {
     }
 
     /**
-     *
      * @param key
      */
     public TranslationKey(String key) {
@@ -245,7 +252,7 @@ public class TranslationKey extends Base {
     /**
      * Sets translations for a specific locale. Translation key can have translations for multiple locales.
      *
-     * @param locale a {@link java.lang.String} object.
+     * @param locale       a {@link java.lang.String} object.
      * @param translations a {@link java.util.List} object.
      */
     public void setTranslations(String locale, List<Translation> translations) {
@@ -366,7 +373,9 @@ public class TranslationKey extends Base {
         this.registered = registered;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void updateAttributes(Map<String, Object> attributes) {
         if (attributes.get("application") != null)
@@ -452,7 +461,7 @@ public class TranslationKey extends Base {
     /**
      * Generates unique hash key for the translation key using label and description
      *
-     * @param label a {@link java.lang.String} object.
+     * @param label       a {@link java.lang.String} object.
      * @param description a {@link java.lang.String} object.
      * @return a {@link java.lang.String} object.
      */
@@ -522,7 +531,7 @@ public class TranslationKey extends Base {
      * <p>translate.</p>
      *
      * @param language a {@link com.translationexchange.core.languages.Language} object.
-     * @param tokens a {@link java.util.Map} object.
+     * @param tokens   a {@link java.util.Map} object.
      * @return a {@link java.lang.Object} object.
      */
     public Object translate(Language language, Map<String, Object> tokens) {
@@ -533,8 +542,8 @@ public class TranslationKey extends Base {
      * <p>translate.</p>
      *
      * @param language a {@link com.translationexchange.core.languages.Language} object.
-     * @param tokens a {@link java.util.Map} object.
-     * @param options a {@link java.util.Map} object.
+     * @param tokens   a {@link java.util.Map} object.
+     * @param options  a {@link java.util.Map} object.
      * @return a {@link java.lang.Object} object.
      */
     public Object translate(Language language, Map<String, Object> tokens, Map<String, Object> options) {
@@ -553,12 +562,12 @@ public class TranslationKey extends Base {
     /**
      * <p>applyTokenizer.</p>
      *
-     * @param key a {@link java.lang.String} object. It defines tokenizer class by key e.g. `data`, `html`
-     * @param translatedLabel a {@link java.lang.String} object.
+     * @param key                 a {@link java.lang.String} object. It defines tokenizer class by key e.g. `data`, `html`
+     * @param translatedLabel     a {@link java.lang.String} object.
      * @param translationLanguage a {@link com.translationexchange.core.languages.Language} object.
-     * @param tokens a {@link java.util.Map} object.
-     * @param options a {@link java.util.Map} object.
-     * @param allowedTokenNames a {@link java.util.List} object.
+     * @param tokens              a {@link java.util.Map} object.
+     * @param options             a {@link java.util.Map} object.
+     * @param allowedTokenNames   a {@link java.util.List} object.
      * @return a {@link java.lang.Object} object.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -582,11 +591,11 @@ public class TranslationKey extends Base {
     /**
      * <p>substitute.</p>
      *
-     * @param translatedLabel a {@link java.lang.String} object.
-     * @param tokens a {@link java.util.Map} object.
-     * @param options a {@link java.util.Map} object.
+     * @param translatedLabel     a {@link java.lang.String} object.
+     * @param tokens              a {@link java.util.Map} object.
+     * @param options             a {@link java.util.Map} object.
      * @param translationLanguage a {@link com.translationexchange.core.languages.Language} object.
-     * @param targetLanguage a {@link com.translationexchange.core.languages.Language} object.
+     * @param targetLanguage      a {@link com.translationexchange.core.languages.Language} object.
      * @return a {@link java.lang.Object} object.
      */
     public Object substitute(String translatedLabel, Map<String, Object> tokens, Language translationLanguage, Language targetLanguage, Map<String, Object> options) {
@@ -598,7 +607,7 @@ public class TranslationKey extends Base {
 
         // HTML Tokenizer should always be invoked before the data tokenizer for web pages, to avoid HTML injection through data tokens
         // Non-HTML tokenizer must reverse the order to properly decorate labels
-        if (tokenizerKey == DEFAULT_TOKENIZERS_HTML) {
+        if (tokenizerKey.equals(DEFAULT_TOKENIZERS_HTML)) {
             translatedLabel = (String) applyTokenizer(DEFAULT_TOKENIZERS_HTML, translatedLabel, translationLanguage, getAllowedDecorationTokenNames(), tokens, options);
             result = applyTokenizer(DEFAULT_TOKENIZERS_DATA, translatedLabel, translationLanguage, getAllowedDataTokenNames(), tokens, options);
         } else {
@@ -641,7 +650,7 @@ public class TranslationKey extends Base {
     }
 
     @SuppressWarnings("rawtypes")
-	private Class getTokenizerByKey(String key) throws ClassNotFoundException {
+    private Class getTokenizerByKey(String key) throws ClassNotFoundException {
         return Class.forName(Tml.getConfig().getTokenizerClass(key));
     }
 }

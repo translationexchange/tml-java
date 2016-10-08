@@ -31,6 +31,9 @@
 
 package com.translationexchange.core;
 
+import com.translationexchange.core.languages.Language;
+import com.translationexchange.core.tokenizers.DomTokenizer;
+
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,9 +41,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
-
-import com.translationexchange.core.languages.Language;
-import com.translationexchange.core.tokenizers.DomTokenizer;
 
 /**
  * Represents a TML application session or a web request
@@ -122,6 +122,11 @@ public class Session extends Observable {
             applicationParams.put("source", options.get("source"));
             setCurrentSource((String) options.get("source"));
         }
+
+        init(options, applicationParams);
+    }
+
+    public void init(Map<String, Object> options, Map<String, Object> applicationParams) {
         try {
             setApplication(initializeApplication(options));
             Tml.getCache().verifyCacheVersion(getApplication());

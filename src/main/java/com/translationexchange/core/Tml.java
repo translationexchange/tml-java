@@ -206,6 +206,10 @@ public class Tml {
         return config;
     }
 
+    public static void setConfig(Configuration c) {
+        config = c;
+    }
+
     /**
      * Get an instance of the Cache object
      *
@@ -230,6 +234,10 @@ public class Tml {
         return cache;
     }
 
+    public static void setCache(Cache c) {
+        cache = c;
+    }
+
     /**
      * Get an instance of the logger object
      *
@@ -238,10 +246,8 @@ public class Tml {
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static LoggerInterface getLogger() {
         if (logger == null) {
-            System.out.println("getLogger called");
             try {
                 if (getConfig().getLogger() != null && getConfig().getLogger().containsKey("class")) {
-                    System.out.println("getLogger Android");
                     Map<String, Object> cacheData = getConfig().getLogger();
                     String className = (String) cacheData.get("class");
                     Class cacheClass = Class.forName(className);

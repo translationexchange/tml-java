@@ -34,6 +34,7 @@
 
 package com.translationexchange.core;
 
+import com.translationexchange.core.cache.CacheVersion;
 import com.translationexchange.core.languages.Language;
 import com.translationexchange.core.tools.Tools;
 
@@ -57,7 +58,7 @@ public class Application extends Base {
     /**
      * Constant <code>TREX_AUTH_URL="https://sandbox-gateway.translationexchange.com/?s=android"</code>
      */
-    public static final String TREX_AUTH_URL = "https://sandbox-gateway.translationexchange.com";
+    public static final String TREX_AUTH_URL = "https://gateway.translationexchange.com";
 
     /**
      * Constant <code>UNDEFINED_SOURCE="undefined"</code>
@@ -161,7 +162,7 @@ public class Application extends Base {
     /**
      * Missing translation keys
      */
-    private Map<String, Map<String, TranslationKey>> missingTranslationKeysBySources;
+    protected Map<String, Map<String, TranslationKey>> missingTranslationKeysBySources;
 
     /**
      * API Client
@@ -450,19 +451,12 @@ public class Application extends Base {
         if (attributes.get("features") != null) {
             Map map = new HashMap<String, Boolean>((Map) attributes.get("features"));
             setFeatures(map);
-//            if(map.containsKey("inline_translations") && getSession()!=null){
-//                Translator translation = new Translator();
-//                translation.setInline((boolean) map.get("inline_translations"));
-//                getSession().setCurrentTranslator(translation);
-//            }
-
         }
 
         if (attributes.get("languages") != null) {
             for (Object data : ((List) attributes.get("languages"))) {
                 Language language = new Language((Map) data);
                 addLanguage(language);
-
 //                if (!language.hasDefinition()) {
 //                    language.load();
 //                }
@@ -505,7 +499,7 @@ public class Application extends Base {
                 Tml.getLogger().debug("No release has been published or no cache has been provided");
                 setLoaded(false);
             } else {
-                this.updateAttributes(data);
+                updateAttributes(data);
                 setLoaded(true);
             }
         } catch (Exception ex) {
@@ -681,6 +675,14 @@ public class Application extends Base {
                     Utils.buildMap("all", "true", "locale", language.getLocale()),
                     Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()))
             ));
+        } catch (Exception ex) {
+            Tml.getLogger().logException(ex);
+        }
+    }
+
+    public void loadTranslationsLocal(Language language, String cacheVersion) {
+        try {
+            updateTranslationKeys(language, getHttpClient().getJSONMap(Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()), CacheVersion.VERSION_KEY, cacheVersion)));
         } catch (Exception ex) {
             Tml.getLogger().logException(ex);
         }
@@ -1016,8 +1018,6 @@ public class Application extends Base {
             url = authUrl;
         url += "/logout?s=android&app_id=" + key;
         return url;
-//        return TREX_AUTH_URL + "app_id=";
-//        return authUrl;
     }
 
     /**

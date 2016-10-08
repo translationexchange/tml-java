@@ -311,6 +311,16 @@ public class HttpClient {
         return result;
     }
 
+    public Map<String, Object> getJSONMap(Map<String, Object> options) throws Exception {
+        String cacheKey = (String) options.get("cache_key");
+        String responseText = (String) Tml.getCache().fetch(cacheKey, options);
+        if (responseText != null) {
+            Tml.getLogger().debug("");
+            return processJSONResponse(responseText, options);
+        }
+        return null;
+    }
+
     /**
      * Converts response text to JSON
      *
@@ -414,14 +424,11 @@ public class HttpClient {
     @SuppressWarnings("rawtypes")
     public Object post(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
         URL url = Utils.buildURL(getApplication().getHost(), API_PATH + path, Utils.buildMap("access_token", this.getAccessToken()));
-//        params.put("access_token", getAccessToken());
 
         Tml.getLogger().debug("HTTP Post: " + url.toString());
         Tml.getLogger().debug("HTTP Params: " + params.toString());
 
         long t0 = new Date().getTime();
-
-//        Tml.getLogger().debug(Utils.buildJSON(params));
 
         FormEncodingBuilder formBuilder = new FormEncodingBuilder();
 
@@ -435,14 +442,11 @@ public class HttpClient {
         Builder builder = new Request.Builder()
                 .url(url.toString())
                 .addHeader("User-Agent", Tml.getFullVersion());
-//                .addHeader("Authorization", "Access-Token " + getAccessToken());
         builder = builder.post(formBody);
         Request request = builder.build();
 
         Response response = getOkHttpClient().newCall(request).execute();
         if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-//        String responseStr = response.body().string(); 
-//        Tml.getLogger().debug(responseStr);
 
         long t1 = new Date().getTime();
 

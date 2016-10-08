@@ -34,11 +34,11 @@
 
 package com.translationexchange.core.cache;
 
-import java.util.Map;
-
 import com.translationexchange.core.Application;
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.Utils;
+
+import java.util.Map;
 
 public abstract class CacheAdapter implements Cache {
 
@@ -156,5 +156,9 @@ public abstract class CacheAdapter implements Cache {
 
         Tml.getLogger().debug("Cache version: " + cacheVersion.getVersion() + " " + cacheVersion.getExpirationMessage());
         return cacheVersion;
+    }
+
+    public void setCacheVersion(CacheVersion cacheVersion) {
+        this.cacheVersion = cacheVersion;
     }
 }

@@ -34,6 +34,8 @@
 
 package com.translationexchange.core;
 
+import com.translationexchange.core.cache.CacheVersion;
+
 import java.io.File;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -305,15 +307,12 @@ public class Source extends Base {
     public String generateMD5Key() {
         try {
             MessageDigest m = MessageDigest.getInstance("MD5");
-            String hashText = new BigInteger(1, m.digest(this.getKey()
-                    .getBytes("UTF-8"))).toString(16);
+            String hashText = new BigInteger(1, m.digest(this.getKey().getBytes("UTF-8"))).toString(16);
             while (hashText.length() < 32)
                 hashText = "0" + hashText;
             return hashText;
         } catch (Exception ex) {
-            Tml.getLogger().logException(
-                    "Failed to generate md5 key for source: " + this.getKey(),
-                    ex);
+            Tml.getLogger().logException("Failed to generate md5 key for source: " + this.getKey(), ex);
             return null;
         }
     }
@@ -329,7 +328,7 @@ public class Source extends Base {
                 options = new HashMap<String, Object>();
             if (!options.containsKey("dry") || !Boolean.valueOf((String) options.get("dry"))) {
                 options.put("cache_key", getCacheKey());
-                this.updateTranslationKeys(getApplication().getHttpClient().getJSONMap("sources/" + this.generateMD5Key() + "/translations", Utils.buildMap("app_id", getApplication().getKey(), "all", "true", "locale", getLocale()), options));
+                updateTranslationKeys(getApplication().getHttpClient().getJSONMap("sources/" + this.generateMD5Key() + "/translations", Utils.buildMap("app_id", getApplication().getKey(), "all", "true", "locale", getLocale()), options));
             }
             setLoaded(true);
         } catch (Exception ex) {
@@ -357,10 +356,9 @@ public class Source extends Base {
      * @param translationKey a {@link com.translationexchange.core.TranslationKey} object.
      */
     public void addTranslationKey(TranslationKey translationKey) {
-        if (getApplication() != null)
-            translationKey = getApplication().cacheTranslationKey(
-                    translationKey);
-
+        if (getApplication() != null) {
+            translationKey = getApplication().cacheTranslationKey(translationKey);
+        }
         getTranslationKeys().put(translationKey.getKey(), translationKey);
     }
 

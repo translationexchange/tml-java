@@ -60,7 +60,7 @@ public class HtmlDecorator implements Decorator {
         if (session == null || !session.getApplication().isLoaded())
             return false;
 
-        return (session != null && session.getCurrentTranslator() != null && session.getCurrentTranslator().isInline());
+        return (session.getCurrentTranslator() != null && session.getCurrentTranslator().isInline());
     }
 
     private String getDecorationElement(String defaultName, Map<String, Object> options) {

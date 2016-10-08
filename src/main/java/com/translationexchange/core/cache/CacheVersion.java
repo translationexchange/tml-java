@@ -35,7 +35,6 @@
 package com.translationexchange.core.cache;
 
 import com.translationexchange.core.Tml;
-import com.translationexchange.core.TmlMode;
 import com.translationexchange.core.Utils;
 
 import java.util.ArrayList;
@@ -71,8 +70,6 @@ public class CacheVersion {
      */
     private Long timestamp;
 
-//    private TmlMode tmlMode = TmlMode.CDN;
-
     /**
      * Get timestamp
      *
@@ -90,14 +87,6 @@ public class CacheVersion {
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
-
-//    public TmlMode getTmlMode() {
-//        return tmlMode;
-//    }
-//
-//    public void setTmlMode(TmlMode tmlMode) {
-//        this.tmlMode = tmlMode;
-//    }
 
     /**
      * Get version
@@ -170,7 +159,7 @@ public class CacheVersion {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("version", getVersion());
         data.put("t", getTimestamp());
-        data.put("tml_mode", Tml.getConfig().getTmlMode().name());
+//        data.put("tml_mode", Tml.getConfig().getTmlMode().name());
 //        data.put("tml_mode", getTmlMode().name());
         return Utils.buildJSON(data);
     }
@@ -182,12 +171,9 @@ public class CacheVersion {
      */
     public boolean fetchFromCache() {
         String data = (String) Tml.getCache().fetch(getVersionKey(), Utils.buildMap("cache_key", VERSION_KEY));
-
         // No version has ever been stored in the local cache
         if (data == null) {
             setVersion(UNRELEASED_VERSION);
-//            setTmlMode(TmlMode.CDN);
-            Tml.getConfig().setTmlMode(TmlMode.CDN);
         } else {
             updateFromJSON(data);
         }
@@ -232,10 +218,6 @@ public class CacheVersion {
             if (jsonData.containsKey("t")) {
                 setTimestamp((Long) jsonData.get("t"));
             }
-            if (jsonData.containsKey("tml_mode")) {
-//                setTmlMode(TmlMode.valueOf(jsonData.get("tml_mode").toString()));
-                Tml.getConfig().setTmlMode(TmlMode.valueOf(jsonData.get("tml_mode").toString()));
-            }
         } else {
             setVersion(data);
         }
@@ -266,7 +248,8 @@ public class CacheVersion {
         Integer seconds = (Integer) Tml.getConfig().getCache().get("version_check_interval");
 
         if (seconds == null)
-            seconds = new Integer(15 * 60);
+            seconds = new Integer(1 * 60);
+//            seconds = new Integer(60 * 60);
 
         return seconds.intValue() * 1000;
     }
