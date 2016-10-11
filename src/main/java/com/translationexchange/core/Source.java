@@ -34,8 +34,6 @@
 
 package com.translationexchange.core;
 
-import com.translationexchange.core.cache.CacheVersion;
-
 import java.io.File;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -250,11 +248,11 @@ public class Source extends Base {
 
             if (tkey == null) {
                 tkey = new TranslationKey(key);
-                if (getApplication() != null)
+                if (getApplication() != null) {
                     getApplication().addTranslationKey(tkey);
+                    tkey.setLocale(getApplication().getDefaultLocale());
+                }
             }
-
-            tkey.setLocale(getLocale());
 
             List<Translation> translations = new ArrayList<Translation>();
             for (Map<String, Object> translationData : translationsData) {
@@ -269,7 +267,6 @@ public class Source extends Base {
 
                 if (tkey.getLabel() == null || tkey.getLabel().equals("")) {
                     tkey.setLabel(translation.getLabel());
-                    tkey.setLocale(getLocale());
                 }
                 translations.add(translation);
             }

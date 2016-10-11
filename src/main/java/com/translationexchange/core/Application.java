@@ -638,6 +638,7 @@ public class Application extends Base {
 
             if (tkey == null) {
                 tkey = new TranslationKey(key);
+                tkey.setLocale(getDefaultLocale());
                 addTranslationKey(tkey);
             }
 
@@ -653,7 +654,6 @@ public class Application extends Base {
 
                 if (tkey.getLabel() == null || tkey.getLabel().equals("")) {
                     tkey.setLabel(translation.getLabel());
-                    tkey.setLocale(translation.getLanguage().getLocale());
                 }
 
                 translations.add(translation);
