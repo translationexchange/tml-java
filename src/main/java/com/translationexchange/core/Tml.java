@@ -81,12 +81,12 @@ public class Tml {
     /**
      * Periodically send missing keys to the server, should only be used in a single user mode (desktop, mobile)
      */
-    private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    protected static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     /**
      * Schedule handler
      */
-    private static ScheduledFuture<?> applicationScheduleHandler;
+    protected static ScheduledFuture<?> applicationScheduleHandler;
 
     /**
      * Get the current session
