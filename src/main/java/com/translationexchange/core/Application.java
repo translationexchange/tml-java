@@ -671,7 +671,7 @@ public class Application extends Base {
      */
     public void loadTranslations(Language language) {
         try {
-            this.updateTranslationKeys(language, getHttpClient().getJSONMap("projects/current/translations",
+            this.updateTranslationKeys(language, getHttpClient().getJSONMap("projects/" + getKey() + "/translations",
                     Utils.buildMap("all", "true", "locale", language.getLocale()),
                     Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()))
             ));

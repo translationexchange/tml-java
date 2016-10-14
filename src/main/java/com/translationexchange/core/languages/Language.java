@@ -493,6 +493,7 @@ public class Language extends Base {
         Source source = getApplication().getSource(sourceKey, getLocale(), options);
         TranslationKey matchedKey = null;
         if (source != null && (matchedKey = source.getTranslationKey(keyHash)) != null) {
+        	// just in case update the label in the key
             if (matchedKey.getLabel() == null) {
                 matchedKey.setLabel(label);
                 matchedKey.setDescription(description);
