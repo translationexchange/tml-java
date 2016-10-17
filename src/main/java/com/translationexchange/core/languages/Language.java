@@ -292,6 +292,9 @@ public class Language extends Base {
      */
     public void load() {
         try {
+            if (getLocale() == null || getLocale().length() == 0) {
+                setLoaded(false);
+            }
             Map<String, Object> attributes = getApplication().getHttpClient().getJSONMap("languages/" + getLocale() + "/definition",
                     Utils.buildMap(),
                     Utils.buildMap("cache_key", getCacheKey())
@@ -493,7 +496,7 @@ public class Language extends Base {
         Source source = getApplication().getSource(sourceKey, getLocale(), options);
         TranslationKey matchedKey = null;
         if (source != null && (matchedKey = source.getTranslationKey(keyHash)) != null) {
-        	// just in case update the label in the key
+            // just in case update the label in the key
             if (matchedKey.getLabel() == null) {
                 matchedKey.setLabel(label);
                 matchedKey.setDescription(description);
@@ -537,12 +540,13 @@ public class Language extends Base {
         } else {
             String log = "Label not found" + "\nLabel: " + label + "\nDescription: " + description + "\nKey Hash: " + keyHash;
             Tml.getLogger().warn("Language", log);
-
             Map<String, Object> opts = new HashMap<String, Object>(options);
             opts.put("pending", "true");
             String sourcePath = Utils.join(getApplication().getSession().getSourcePath(), Configuration.SOURCE_SEPARATOR);
             TranslationKey tempKey = createTranslationKey(keyHash, label, description, opts);
-            getApplication().registerMissingTranslationKey(tempKey, sourcePath);
+            if (getLocale().equals(getApplication().getDefaultLocale())) {
+                getApplication().registerMissingTranslationKey(tempKey, sourcePath);
+            }
             return tempKey.translate(this, tokens, options);
         }
     }

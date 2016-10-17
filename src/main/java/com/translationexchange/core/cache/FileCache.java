@@ -213,7 +213,6 @@ public class FileCache extends CacheAdapter implements Cache {
      */
     public void store(String key, Object data, Map<String, Object> options) {
         File cacheFile = getCachePath(key, options);
-
         try {
             Tml.getLogger().debug("Writing cache to :" + cacheFile);
             writeFile(cacheFile, data);

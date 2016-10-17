@@ -731,8 +731,9 @@ public class Application extends Base {
      * Submits missing translations keys to the server
      */
     public synchronized void submitMissingTranslationKeys() {
-        if (getMissingTranslationKeysBySources().size() == 0)
+        if (getMissingTranslationKeysBySources().size() == 0) {
             return;
+        }
 //        if (!isKeyRegistrationEnabled() || getMissingTranslationKeysBySources().size() == 0)
 //            return;
 

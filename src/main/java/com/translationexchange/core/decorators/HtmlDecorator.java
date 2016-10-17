@@ -35,7 +35,6 @@
 package com.translationexchange.core.decorators;
 
 import com.translationexchange.core.Session;
-import com.translationexchange.core.Tml;
 import com.translationexchange.core.TranslationKey;
 import com.translationexchange.core.Utils;
 import com.translationexchange.core.languages.Language;
@@ -78,7 +77,7 @@ public class HtmlDecorator implements Decorator {
      * {@inheritDoc}
      */
     public String decorate(String translatedLabel, Language translationLanguage, Language targetLanguage, TranslationKey translationKey, Map<String, Object> options) {
-        Tml.getLogger().debug(translatedLabel + " : " + translationLanguage.getLocale() + " :: " + translationKey.getLocale() + " => " + targetLanguage.getLocale());
+//        Tml.getLogger().debug(translatedLabel + " : " + translationLanguage.getLocale() + " :: " + translationKey.getLocale() + " => " + targetLanguage.getLocale());
 
         if (!isEnabled(options))
             return translatedLabel;

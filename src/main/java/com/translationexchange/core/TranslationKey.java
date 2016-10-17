@@ -517,6 +517,24 @@ public class TranslationKey extends Base {
         return null;
     }
 
+    public Translation findAcceptableTranslation(String locale) {
+        List<Translation> availableTranslations = getTranslations(locale);
+        if (availableTranslations == null || availableTranslations.size() == 0)
+            return null;
+
+        if (availableTranslations.size() == 1) {
+            Translation translation = availableTranslations.get(0);
+            if (!translation.hasContext()) return translation;
+        }
+
+        for (Translation translation : availableTranslations) {
+            if (translation.getLocale().equals(locale))
+                return translation;
+        }
+
+        return null;
+    }
+
     /**
      * <p>translate.</p>
      *
