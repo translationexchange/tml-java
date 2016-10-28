@@ -15,7 +15,6 @@ import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -29,7 +28,7 @@ public class HttpClientTest {
         server.start();
         final Dispatcher dispatcher = new Dispatcher() {
             
-            private final Map<String, Object> MOCKING_SERVICES = Utils.buildMap(
+            private final Map<String, Object> MOCKING_SERVICES = Utils.map(
                     "projects\\/(\\w)+\\/definition", "project/definition.json"
                     );
             

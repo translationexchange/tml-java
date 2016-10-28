@@ -34,10 +34,6 @@ package com.translationexchange.core;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.translationexchange.core.Application;
-import com.translationexchange.core.Source;
-import com.translationexchange.core.Utils;
-
 /**
  * Created by michael on 3/15/14.
  */
@@ -47,7 +43,7 @@ public class SourceTest extends BaseTest {
     public void testCreation() {
         Application app = new Application(loadJSONMap("/application.json"));
 
-        Source source = new Source(Utils.buildMap(
+        Source source = new Source(Utils.map(
                 "application", app,
                 "locale", "ru",
                 "key", "key",

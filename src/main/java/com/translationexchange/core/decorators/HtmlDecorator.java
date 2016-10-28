@@ -123,7 +123,7 @@ public class HtmlDecorator implements Decorator {
         if (!isEnabled(options))
             return transformed;
 
-        Map<String, Object> data = Utils.buildMap(
+        Map<String, Object> data = Utils.map(
                 "keyword", languageCase.getKeyword(),
                 "language_name", languageCase.getLanguage().getEnglishName(),
                 "latin_name", languageCase.getLatinName(),
@@ -138,7 +138,7 @@ public class HtmlDecorator implements Decorator {
         payload = Base64.encodeBase64String(StringUtils.getBytesUtf8(payload));
         payload.replaceAll("\n", "");
 
-        Map<String, Object> attributes = Utils.buildMap(
+        Map<String, Object> attributes = Utils.map(
                 "class", "tml_language_case",
                 "data-locale", languageCase.getLanguage().getLocale(),
                 "data-rule", payload

@@ -1,6 +1,5 @@
 package com.translationexchange.core.tokenizers;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -15,13 +14,12 @@ import org.junit.Test;
 import com.translationexchange.core.BaseTest;
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.Utils;
-import com.translationexchange.core.tokenizers.DomTokenizer;
 
 public class DomTokenizerTest extends BaseTest {
     
     @Test
     public void testSpec() throws Exception {
-        DomTokenizer dt = new DomTokenizer(Utils.buildMap(), Tml.getConfig().getTranslatorOptions());
+        DomTokenizer dt = new DomTokenizer(Utils.map(), Tml.getConfig().getTranslatorOptions());
         
         Method isEmptyString = Utils.getPrivateMethod(dt, "isEmptyString", String.class);
         Assert.assertTrue((Boolean) isEmptyString.invoke(dt, "            \n\n"));
@@ -57,7 +55,7 @@ public class DomTokenizerTest extends BaseTest {
     
     @Test
     public void testJSoupSpec() throws Exception {
-        DomTokenizer dt = new DomTokenizer(Utils.buildMap(), Tml.getConfig().getTranslatorOptions());
+        DomTokenizer dt = new DomTokenizer(Utils.map(), Tml.getConfig().getTranslatorOptions());
         String htmlString = "<html><head><script id=\"script\" type=\"src\"></script></head><body><h1 id=\"test\">Mr. Belvedere Fan Club</h1><i></i><div id=\"no-translate-1\" notranslate></div><div tmltype=\"notranslate\" id=\"no-translate-2\"></div><b class=\"mapped-tag\">dasd</b><p class=\"empty\"></p><p><br class=\"self-closing\"/><span id=\"test-span\">Hmm</span></p><div id=\"with-child\"><i class=\"only-child\"></i></div></body></html>";
         Document doc = Jsoup.parse(htmlString);
         Element root = doc.select("html").first();
@@ -138,7 +136,7 @@ public class DomTokenizerTest extends BaseTest {
         Map<String, Object> transOptions = Utils.extendMap(Tml.getConfig().getTranslatorOptions(),
                         "debug", true,
                         "debug_format", "{{{{$0}}}}");
-        DomTokenizer dt = new DomTokenizer(Utils.buildMap(), transOptions);
+        DomTokenizer dt = new DomTokenizer(Utils.map(), transOptions);
         Assert.assertEquals(
                 "<h1>{{{Mr. Belvedere Fan Club}}}</h1>",
                 dt.translate("<html><body><h1>Mr. Belvedere Fan Club</h1></body></html>"));

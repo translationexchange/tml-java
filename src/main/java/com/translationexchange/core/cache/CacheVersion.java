@@ -170,7 +170,7 @@ public class CacheVersion {
      * @return a {@link java.lang.String} object.
      */
     public boolean fetchFromCache() {
-        String data = (String) Tml.getCache().fetch(getVersionKey(), Utils.buildMap("cache_key", VERSION_KEY));
+        String data = (String) Tml.getCache().fetch(getVersionKey(), Utils.map("cache_key", VERSION_KEY));
         // No version has ever been stored in the local cache
         if (data == null) {
             setVersion(UNRELEASED_VERSION);
@@ -202,7 +202,7 @@ public class CacheVersion {
 
         markAsUpdated();
 
-        Tml.getCache().store(getVersionKey(), toJSON(), Utils.buildMap());
+        Tml.getCache().store(getVersionKey(), toJSON(), Utils.map());
     }
 
     /**

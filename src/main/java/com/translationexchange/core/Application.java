@@ -491,7 +491,7 @@ public class Application extends Base {
             Tml.getLogger().debug("Loading application...");
             Map<String, Object> data = getHttpClient().getJSONMap("projects/" + getKey() + "/definition",
                     params,
-                    Utils.buildMap("cache_key", "application")
+                    Utils.map("cache_key", "application")
             );
             if (data == null || data.isEmpty()) {
                 setDefaultLocale(Tml.getConfig().getDefaultLocale());
@@ -513,7 +513,7 @@ public class Application extends Base {
      * Loads application from the service
      */
     public void load() {
-        load(Utils.buildMap());
+        load(Utils.map());
     }
 
     /**
@@ -538,7 +538,7 @@ public class Application extends Base {
 
                 Language language = getLanguagesByLocale().get(locale);
                 if (language == null) {
-                    language = new Language(Utils.buildMap("application", this));
+                    language = new Language(Utils.map("application", this));
                     getLanguagesByLocale().put(locale, language);
                 }
                 language.updateAttributes(data);
@@ -555,7 +555,7 @@ public class Application extends Base {
                 Map<String, Object> data = (Map<String, Object>) entry.getValue();
                 Source source = getSourcesByKeys().get(key);
                 if (source == null) {
-                    source = new Source(Utils.buildMap("application", this, "key", key, "locale", sourceLocale));
+                    source = new Source(Utils.map("application", this, "key", key, "locale", sourceLocale));
                     getSourcesByKeys().put(key, source);
                 }
                 source.updateTranslationKeys(data);
@@ -672,8 +672,8 @@ public class Application extends Base {
     public void loadTranslations(Language language) {
         try {
             this.updateTranslationKeys(language, getHttpClient().getJSONMap("projects/" + getKey() + "/translations",
-                    Utils.buildMap("all", "true", "locale", language.getLocale()),
-                    Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()))
+                    Utils.map("all", "true", "locale", language.getLocale()),
+                    Utils.map("cache_key", getTranslationsCacheKey(language.getLocale()))
             ));
         } catch (Exception ex) {
             Tml.getLogger().logException(ex);
@@ -682,7 +682,7 @@ public class Application extends Base {
 
     public void loadTranslationsLocal(Language language, String cacheVersion) {
         try {
-            updateTranslationKeys(language, getHttpClient().getJSONMap(Utils.buildMap("cache_key", getTranslationsCacheKey(language.getLocale()), CacheVersion.VERSION_KEY, cacheVersion)));
+            updateTranslationKeys(language, getHttpClient().getJSONMap(Utils.map("cache_key", getTranslationsCacheKey(language.getLocale()), CacheVersion.VERSION_KEY, cacheVersion)));
         } catch (Exception ex) {
             Tml.getLogger().logException(ex);
         }
@@ -759,10 +759,10 @@ public class Application extends Base {
                 keys.add(translationKey.toMap());
             }
 
-            params.add(Utils.buildMap("source", source, "keys", keys));
+            params.add(Utils.map("source", source, "keys", keys));
         }
 
-        registerKeys(Utils.buildMap("source_keys", Utils.buildJSON(params), "app_id", getKey()));
+        registerKeys(Utils.map("source_keys", Utils.buildJSON(params), "app_id", getKey()));
 
         this.missingTranslationKeysBySources.clear();
     }
@@ -825,7 +825,7 @@ public class Application extends Base {
      */
     public Language getLanguage(String locale) {
         if (getLanguagesByLocale().get(locale) == null) {
-            getLanguagesByLocale().put(locale, new Language(Utils.buildMap("application", this, "locale", locale)));
+            getLanguagesByLocale().put(locale, new Language(Utils.map("application", this, "locale", locale)));
         }
 
         Language language = getLanguagesByLocale().get(locale);
@@ -858,7 +858,7 @@ public class Application extends Base {
      */
     public Source getSource(String key, String locale, Map<String, Object> options) {
         if (getSourcesByKeys().get(key) == null) {
-            Source source = new Source(Utils.buildMap("application", this, "key", key, "locale", locale));
+            Source source = new Source(Utils.map("application", this, "key", key, "locale", locale));
             source.load(options);
             getSourcesByKeys().put(key, source);
         }

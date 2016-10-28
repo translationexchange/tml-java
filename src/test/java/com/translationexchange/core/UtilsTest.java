@@ -34,8 +34,6 @@ package com.translationexchange.core;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.translationexchange.core.Utils;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +51,7 @@ public class UtilsTest extends BaseTest {
         expectation.put("name", "Michael");
         expectation.put("gender", "male");
 
-        Map<String, Object> result = Utils.buildMap(
+        Map<String, Object> result = Utils.map(
                 "name", "Michael",
                 "gender", "male"
         );
@@ -72,7 +70,7 @@ public class UtilsTest extends BaseTest {
         
         Assert.assertEquals(
 	        expectation,
-	        Utils.buildMap(
+	        Utils.map(
 	            "first_name", "Michael",
 	            "last_name", "Berk"
 	        )
@@ -82,7 +80,7 @@ public class UtilsTest extends BaseTest {
 
         Assert.assertEquals(
     	        expectation,
-    	        Utils.extendMap(Utils.buildMap(
+    	        Utils.extendMap(Utils.map(
     	            "first_name", "Michael",
     	            "last_name", "Berk"
     	        ), "gender", "male")
@@ -125,14 +123,14 @@ public class UtilsTest extends BaseTest {
 
     @Test
     public void testBuildingQueryString() throws Exception {
-        String query = Utils.buildQueryString(Utils.buildMap("name", "Michael", "gender", "male"));
+        String query = Utils.buildQueryString(Utils.map("name", "Michael", "gender", "male"));
 
         Assert.assertEquals(
                 "gender=male&name=Michael",
                 query
         );
 
-        query = Utils.buildQueryString(Utils.buildMap("name", "John Peterson", "gender", "male"));
+        query = Utils.buildQueryString(Utils.map("name", "John Peterson", "gender", "male"));
 
         Assert.assertEquals(
                 "gender=male&name=John+Peterson",
@@ -143,7 +141,7 @@ public class UtilsTest extends BaseTest {
 
     @Test
     public void testBuildingUrl() throws Exception {
-        URL url = Utils.buildURL("http://google.com", "/search", Utils.buildMap("q", "test"));
+        URL url = Utils.buildURL("http://google.com", "/search", Utils.map("q", "test"));
 
         Assert.assertEquals(
                 "http://google.com/search?q=test",
@@ -191,7 +189,7 @@ public class UtilsTest extends BaseTest {
         );
 
         Assert.assertEquals(
-                Utils.buildMap("name", "Michael"),
+                Utils.map("name", "Michael"),
                 Utils.parseJSON("{\"name\": \"Michael\"}")
         );
     }
@@ -205,7 +203,7 @@ public class UtilsTest extends BaseTest {
 
         Assert.assertEquals(
                 "{\"name\":\"Michael\"}",
-                Utils.buildJSON(Utils.buildMap("name", "Michael"))
+                Utils.buildJSON(Utils.map("name", "Michael"))
         );
     }
 
@@ -214,7 +212,7 @@ public class UtilsTest extends BaseTest {
     public void testBuildMapWithOneArgumentFails() {
         Assert.assertEquals(
                 null,
-                Utils.buildMap("a")
+                Utils.map("a")
         );
     }
 
@@ -230,7 +228,7 @@ public class UtilsTest extends BaseTest {
     public void testBuildMapWithNullValueFails() {
         Assert.assertEquals(
                 null,
-                Utils.buildMap("a", "b", null, "c")
+                Utils.map("a", "b", null, "c")
         );
     }
 
@@ -249,7 +247,7 @@ public class UtilsTest extends BaseTest {
 
         Assert.assertEquals(
                 map,
-                Utils.buildMap("a", "b")
+                Utils.map("a", "b")
         );
     }
 

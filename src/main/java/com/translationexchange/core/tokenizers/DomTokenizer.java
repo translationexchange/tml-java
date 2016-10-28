@@ -37,7 +37,7 @@ public class DomTokenizer {
      * Default constructor
      */
     public DomTokenizer() {
-        this(Utils.buildMap(), Utils.buildMap());
+        this(Utils.map(), Utils.map());
     }
     
     /**
@@ -47,7 +47,7 @@ public class DomTokenizer {
      */
     
     public DomTokenizer(Map<String, Object> context) {
-        this(context, Utils.buildMap());
+        this(context, Utils.map());
     }
 
     /**
@@ -63,7 +63,7 @@ public class DomTokenizer {
     }
 
     private void resetContext() {
-        Map<String, Object> map = Utils.buildMap();
+        Map<String, Object> map = Utils.map();
         map.putAll(this.context);
         this.tokensData = map;
     }

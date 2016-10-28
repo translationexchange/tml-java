@@ -204,11 +204,11 @@ public class LanguageCaseRule extends Base {
     		return null;
     	
     	if (object == null)
-    		return Utils.buildMap(VARIABLE_NAME_GENDER, "unknown");
+    		return Utils.map(VARIABLE_NAME_GENDER, "unknown");
     	
     	LanguageContext context = languageCase.getLanguage().getContextByKeyword("gender");
     	if (context == null)
-    		return Utils.buildMap(VARIABLE_NAME_GENDER, "unknown");
+    		return Utils.map(VARIABLE_NAME_GENDER, "unknown");
     	
     	return context.getVariables(object);
     }

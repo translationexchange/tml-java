@@ -113,7 +113,7 @@ public class Session extends Observable {
             setCurrentTranslator(new Translator((Map<String, Object>) options.get("translator")));
         }
 
-        Map<String, Object> applicationParams = Utils.buildMap();
+        Map<String, Object> applicationParams = Utils.map();
         if (options.get("locale") != null) {
             applicationParams.put("locale", options.get("locale"));
         }

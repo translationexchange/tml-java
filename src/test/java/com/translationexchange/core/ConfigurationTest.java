@@ -31,8 +31,6 @@
 
 package com.translationexchange.core;
 
-import com.translationexchange.core.Configuration;
-import com.translationexchange.core.Utils;
 import com.translationexchange.core.languages.Language;
 import com.translationexchange.core.rulesengine.Variable;
 
@@ -56,19 +54,19 @@ public class ConfigurationTest {
         var = config.getContextVariable("gender", "@gender");
         Assert.assertEquals(
                 "male",
-                var.getValue(null, Utils.buildMap("gender", "male"))
+                var.getValue(null, Utils.map("gender", "male"))
         );
 
         var = config.getContextVariable("gender", "@gender");
         Assert.assertEquals(
                 "female",
-                var.getValue(null, Utils.buildMap("object", Utils.buildMap("gender", "female", "name", "Michael"), "attribute", "name"))
+                var.getValue(null, Utils.map("object", Utils.map("gender", "female", "name", "Michael"), "attribute", "name"))
         );
 
         var = config.getContextVariable("genders", "@genders");
         Assert.assertEquals(
                 Utils.buildList("male"),
-                var.getValue(null, Utils.buildMap("gender", "male"))
+                var.getValue(null, Utils.map("gender", "male"))
         );
 
         Date today = new Date();

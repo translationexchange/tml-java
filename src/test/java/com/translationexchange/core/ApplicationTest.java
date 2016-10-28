@@ -36,7 +36,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -100,11 +99,11 @@ public class ApplicationTest extends BaseTest {
         );
 
         Assert.assertEquals(
-                Utils.buildMap(
-                        "data", Utils.buildMap(
+                Utils.map(
+                        "data", Utils.map(
                             "nbsp", "&nbsp;"
                         ),
-                        "decoration", Utils.buildMap(
+                        "decoration", Utils.map(
                             "link", "<a href=\"{$href}\">{$0}</a>",
                             "strong", "<strong>{$0}</strong>"
                         )
@@ -222,7 +221,7 @@ public class ApplicationTest extends BaseTest {
     public void testSubmittingMissingTranslationKeys() throws Exception {
     	Application app = spy(new Application(loadJSONMap("/application.json")));
     	when(app.isKeyRegistrationEnabled()).thenReturn(true);
-    	TranslationKey dummyKey = new TranslationKey(Utils.buildMap("label", "Hello", "description", "Greeting"));
+    	TranslationKey dummyKey = new TranslationKey(Utils.map("label", "Hello", "description", "Greeting"));
     	app.registerMissingTranslationKey(dummyKey);
     	Map<String, TranslationKey> registeredKeys = app.getMissingTranslationKeysBySources().get(Application.UNDEFINED_SOURCE);
     	Assert.assertTrue(registeredKeys.containsKey(dummyKey.getKey()));
@@ -286,15 +285,15 @@ public class ApplicationTest extends BaseTest {
     			"http://google.com",
     			app.getCdnHost());
     	
-    	TranslationKey tkey = new TranslationKey(Utils.buildMap("label", "Hello World", "Description", "Greeting"));
-    	tkey.addTranslation(new Translation(Utils.buildMap("label", "Privet Mir", "locale", "ru")));
+    	TranslationKey tkey = new TranslationKey(Utils.map("label", "Hello World", "Description", "Greeting"));
+    	tkey.addTranslation(new Translation(Utils.map("label", "Privet Mir", "locale", "ru")));
     	
     	app.cacheTranslationKey(tkey);
 
     	app.cacheTranslationKey(tkey);
     	
     	Assert.assertEquals(
-    			Utils.buildMap(),
+    			Utils.map(),
     			app.getSourcesByKeys()
     	);
     	

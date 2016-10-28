@@ -157,26 +157,26 @@ public class DataToken extends Token {
      *
      * - if an object is passed without a substitution value, it will use toString() to get the value:
      *
-     *     Tml.translate("Hello {user}", Utils.buildMap("user", current_user))
-     *     Tml.translate("{count||message}", Utils.buildMap("count", counter))
+     *     Tml.translate("Hello {user}", Utils.map("user", current_user))
+     *     Tml.translate("{count||message}", Utils.map("count", counter))
      *
      * - if an object is a list, the first value is the context object, the second value is the substitution value:
      *
-     *     Tml.translate("Hello {user}", Utils.buildMap("user", Utils.buildList(current_user, "Michael")))
-     *     Tml.translate("Hello {user}", Utils.buildMap("user", Utils.buildList(current_user, current_user.name)))
+     *     Tml.translate("Hello {user}", Utils.map("user", Utils.buildList(current_user, "Michael")))
+     *     Tml.translate("Hello {user}", Utils.map("user", Utils.buildList(current_user, current_user.name)))
      *
      * - if an object is a map (mostly used for JSON), it must provide the object and the value/attribute for substitution:
      *
-     *     Tml.translate("Hello {user}", Utils.buildMap("user", Utils.buildMap(
-     *                                       "object", Utils.buildMap(
+     *     Tml.translate("Hello {user}", Utils.map("user", Utils.map(
+     *                                       "object", Utils.map(
      *                                           "name", "Michael",
      *                                           "gender", "male"
      *                                       ),
      *                                       "value", "Michael"
      *                                    ))
      *
-     *     Tml.translate("Hello {user}", Utils.buildMap("user", Utils.buildMap(
-     *                                       "object", Utils.buildMap(
+     *     Tml.translate("Hello {user}", Utils.map("user", Utils.map(
+     *                                       "object", Utils.map(
      *                                           "name", "Michael",
      *                                           "gender", "male"
      *                                       ),
@@ -185,14 +185,14 @@ public class DataToken extends Token {
      *
      * - if you don't need the substitution, you can provide an object directly:
      *
-     *     Tml.translate("{user| He, She}", Utils.buildMap("user", Utils.buildMap(
+     *     Tml.translate("{user| He, She}", Utils.map("user", Utils.map(
      *                                           "name", "Michael",
      *                                           "gender", "male"
      *                                       ))
      *
      * - the most explicit way is to use the DataTokenValue interface:
      *
-     *     Tml.translate("Hello {user}", Utils.buildMap("user", new DataTokenValue() {
+     *     Tml.translate("Hello {user}", Utils.map("user", new DataTokenValue() {
      *                                        public Object getContextObject() {
      *                                           return user;
      *                                        }

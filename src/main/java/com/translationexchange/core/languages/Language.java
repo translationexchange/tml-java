@@ -296,8 +296,8 @@ public class Language extends Base {
                 setLoaded(false);
             }
             Map<String, Object> attributes = getApplication().getHttpClient().getJSONMap("languages/" + getLocale() + "/definition",
-                    Utils.buildMap(),
-                    Utils.buildMap("cache_key", getCacheKey())
+                    Utils.map(),
+                    Utils.map("cache_key", getCacheKey())
             );
             updateAttributes(attributes);
             setLoaded(true);
@@ -309,7 +309,7 @@ public class Language extends Base {
 
     public void loadLocal(String cacheVersion) {
         try {
-            Map<String, Object> attributes = getApplication().getHttpClient().getJSONMap(Utils.buildMap("cache_key", getCacheKey(), CacheVersion.VERSION_KEY, cacheVersion));
+            Map<String, Object> attributes = getApplication().getHttpClient().getJSONMap(Utils.map("cache_key", getCacheKey(), CacheVersion.VERSION_KEY, cacheVersion));
             updateAttributes(attributes);
             setLoaded(true);
         } catch (Exception ex) {
@@ -427,7 +427,7 @@ public class Language extends Base {
      * @return
      */
     protected TranslationKey createTranslationKey(String keyHash, String label, String description, Map<String, Object> options) {
-        Map<String, Object> attributes = Utils.buildMap(
+        Map<String, Object> attributes = Utils.map(
                 "application", getApplication(),
                 "key", keyHash,
                 "label", label,

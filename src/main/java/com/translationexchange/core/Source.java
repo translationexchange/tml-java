@@ -326,7 +326,7 @@ public class Source extends Base {
                 options = new HashMap<String, Object>();
             if (!options.containsKey("dry") || !Boolean.valueOf((String) options.get("dry"))) {
                 options.put("cache_key", getCacheKey());
-                updateTranslationKeys(getApplication().getHttpClient().getJSONMap("sources/" + this.generateMD5Key() + "/translations", Utils.buildMap("app_id", getApplication().getKey(), "all", "true", "locale", getLocale()), options));
+                updateTranslationKeys(getApplication().getHttpClient().getJSONMap("sources/" + this.generateMD5Key() + "/translations", Utils.map("app_id", getApplication().getKey(), "all", "true", "locale", getLocale()), options));
             }
             setLoaded(true);
         } catch (Exception ex) {

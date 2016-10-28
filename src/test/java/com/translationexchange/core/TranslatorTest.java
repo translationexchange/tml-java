@@ -12,7 +12,7 @@ public class TranslatorTest {
         Translator t = new Translator();
         Assert.assertTrue(t instanceof Translator);
         
-        Translator translator = new Translator(Utils.buildMap(
+        Translator translator = new Translator(Utils.map(
                 "name", "rustem",
                 "email", "r.kamun@gmail.com",
                 "manager", null,
@@ -36,10 +36,10 @@ public class TranslatorTest {
         Assert.assertEquals(null, translator.getAccessToken());
         
         // features
-        translator.setFeatures((Map) Utils.buildMap()); 
-        Assert.assertEquals(Utils.buildMap(), translator.getFeatures());
+        translator.setFeatures((Map) Utils.map());
+        Assert.assertEquals(Utils.map(), translator.getFeatures());
         Assert.assertEquals(false, translator.isFeatureEnabled("f2"));
-        translator.setFeatures((Map) Utils.buildMap("f1", false, "f2", true));
+        translator.setFeatures((Map) Utils.map("f1", false, "f2", true));
         Assert.assertEquals(true, translator.isFeatureEnabled("f2"));
         Assert.assertEquals(false, translator.isFeatureEnabled("f1"));
         

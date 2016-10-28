@@ -151,7 +151,7 @@ public abstract class CacheAdapter implements Cache {
         // If no version in cache or it is expired, fetch it from the CDN
         if (cacheVersion.isExpired()) {
             Tml.getLogger().debug("Fetching version from CDN...");
-            cacheVersion.updateFromCDN(application.getHttpClient().getFromCDN("version", Utils.buildMap("uncompressed", true)));
+            cacheVersion.updateFromCDN(application.getHttpClient().getFromCDN("version", Utils.map("uncompressed", true)));
         }
 
         Tml.getLogger().debug("Cache version: " + cacheVersion.getVersion() + " " + cacheVersion.getExpirationMessage());

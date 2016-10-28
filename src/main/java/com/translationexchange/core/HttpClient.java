@@ -166,7 +166,7 @@ public class HttpClient {
      * @throws java.lang.Exception if any.
      */
     public Map<String, Object> getJSON(String path) throws Exception {
-        return getJSON(path, Utils.buildMap());
+        return getJSON(path, Utils.map());
     }
 
     /**
@@ -178,7 +178,7 @@ public class HttpClient {
      * @throws java.lang.Exception if any.
      */
     public Map<String, Object> getJSON(String path, Map<String, Object> params) throws Exception {
-        return getJSON(path, params, Utils.buildMap());
+        return getJSON(path, params, Utils.map());
     }
 
     /**
@@ -246,7 +246,7 @@ public class HttpClient {
             return response;
         } catch (Exception ex) {
             Tml.getLogger().error("Failed to get from CDN " + cacheKey + " with error: " + ex.getMessage());
-            return cacheKey.equals("version") ? (String) Tml.getCache().fetch(cacheVersion.getVersionKey(), Utils.buildMap("cache_key", CacheVersion.VERSION_KEY)) : "{}";
+            return cacheKey.equals("version") ? (String) Tml.getCache().fetch(cacheVersion.getVersionKey(), Utils.map("cache_key", CacheVersion.VERSION_KEY)) : "{}";
         }
     }
 
@@ -423,7 +423,7 @@ public class HttpClient {
      */
     @SuppressWarnings("rawtypes")
     public Object post(String path, Map<String, Object> params, Map<String, Object> options) throws Exception {
-        URL url = Utils.buildURL(getApplication().getHost(), API_PATH + path, Utils.buildMap("access_token", this.getAccessToken()));
+        URL url = Utils.buildURL(getApplication().getHost(), API_PATH + path, Utils.map("access_token", this.getAccessToken()));
 
         Tml.getLogger().debug("HTTP Post: " + url.toString());
         Tml.getLogger().debug("HTTP Params: " + params.toString());

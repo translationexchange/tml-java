@@ -182,7 +182,7 @@ public class Utils {
      * @param data a {@link java.lang.Object} object.
      * @return a {@link java.util.Map} object.
      */
-    public static Map<String, Object> buildMap(Object... data) {
+    public static Map<String, Object> map(Object... data) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
         if (data.length % 2 != 0)
@@ -217,7 +217,7 @@ public class Utils {
      */
     public static Map<String, Object> extendMap(Map<String, Object> original, Object... data) {
         Map<String, Object> map = new HashMap<String, Object>(original);
-        map.putAll(buildMap(data));
+        map.putAll(map(data));
         return map;
     }
 

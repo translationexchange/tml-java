@@ -40,7 +40,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Rule;
-import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.agent.PowerMockAgent;
@@ -49,9 +48,6 @@ import org.powermock.modules.junit4.rule.PowerMockRule;
 
 import static org.powermock.reflect.Whitebox.invokeMethod;
 
-import com.translationexchange.core.Translation;
-import com.translationexchange.core.TranslationKey;
-import com.translationexchange.core.Utils;
 import com.translationexchange.core.languages.Language;
 import com.translationexchange.core.models.User;
 import com.translationexchange.core.tokenizers.Tokenizer;
@@ -96,7 +92,7 @@ public class TranslationKeyTest extends BaseTest {
         List<Map<String, Object>> data = (List<Map<String, Object>>)loadJSON(resource);
         List<TranslationKey> transKeys = new ArrayList<TranslationKey>();
         for(Map<String, Object> transItem : data) {
-            TranslationKey tKey = new TranslationKey(Utils.buildMap("label", transItem.get("label"), "locale", "en-US"));
+            TranslationKey tKey = new TranslationKey(Utils.map("label", transItem.get("label"), "locale", "en-US"));
             List<Translation> trans = new ArrayList<Translation>();
             
             List<Map<String, Object>> keyTransData = ((Map<String, List<Map<String, Object>>>) transItem.get("translations")).get("ru");
@@ -116,7 +112,7 @@ public class TranslationKeyTest extends BaseTest {
     public void initObjects() {
         ru = new Language(loadJSONMap("/languages/ru.json"));
         en = new Language(loadJSONMap("/languages/en-US.json"));
-        unk = new Language(Utils.buildMap("locale", "unknown"));
+        unk = new Language(Utils.map("locale", "unknown"));
     }
     
     @Test
@@ -129,7 +125,7 @@ public class TranslationKeyTest extends BaseTest {
 
     @Test
     public void testCreation() {
-        TranslationKey tkey = new TranslationKey(Utils.buildMap(
+        TranslationKey tkey = new TranslationKey(Utils.map(
                 "key", "d541c79af1be6a05b1f16fca8b5730de",
                 "label", "Hello World",
                 "description", ""
@@ -151,7 +147,7 @@ public class TranslationKeyTest extends BaseTest {
         );
 
         List<Translation> translations = new ArrayList<Translation>();
-        translations.add(new Translation(Utils.buildMap("locale", "ru", "label", "Privet Mir")));
+        translations.add(new Translation(Utils.map("locale", "ru", "label", "Privet Mir")));
         tkey.addTranslations(translations);
         
         Assert.assertEquals(
@@ -174,7 +170,7 @@ public class TranslationKeyTest extends BaseTest {
     
     @Test
     public void testMisc() {
-        TranslationKey tkey = new TranslationKey(Utils.buildMap(
+        TranslationKey tkey = new TranslationKey(Utils.map(
                 "label", "Hello World",
                 "description", "Greeting"
         ));
@@ -188,7 +184,7 @@ public class TranslationKeyTest extends BaseTest {
         Assert.assertFalse(tkey.hasTranslations());
         
         Assert.assertEquals(
-                Utils.buildMap("label", "Hello World", "description", "Greeting", "locale", "en-US"),
+                Utils.map("label", "Hello World", "description", "Greeting", "locale", "en-US"),
                 tkey.toMap());
         
         tkey.setAllowedDataTokenNames(Arrays.asList(new String[]{"target", "user"}));
@@ -208,11 +204,11 @@ public class TranslationKeyTest extends BaseTest {
         List<TranslationKey> keys = loadKeys("ru", "genders.json");
         TranslationKey keyWithCtx = PowerMockito.spy(keys.get(0));
         Assert.assertEquals("Анна любезно дала тебе 2 яблока",
-                             keyWithCtx.translate(ru, Utils.buildMap("actor", user, "count", "2"), Utils.buildMap()));
+                             keyWithCtx.translate(ru, Utils.map("actor", user, "count", "2"), Utils.map()));
         
         TranslationKey simpleKey = keys.get(1);
         Assert.assertEquals("{actor} любит {target::gen}.",
-                            simpleKey.translate(ru, Utils.buildMap("actor", user, "target", target)));
+                            simpleKey.translate(ru, Utils.map("actor", user, "target", target)));
         
         TranslationKey noTokensKey = keys.get(3);
         Assert.assertEquals("Привет мир.", noTokensKey.translate(ru));
@@ -222,15 +218,15 @@ public class TranslationKeyTest extends BaseTest {
     public void testFindFirstAcceptableTrans() throws Exception{
         List<TranslationKey> keys = loadKeys("ru", "genders.json");
         TranslationKey simpleKey = PowerMockito.spy(keys.get(1));
-        String actualLabel = ((Translation) invokeMethod(simpleKey, "findFirstAcceptableTranslation", ru, Utils.buildMap())).getLabel();
+        String actualLabel = ((Translation) invokeMethod(simpleKey, "findFirstAcceptableTranslation", ru, Utils.map())).getLabel();
         Assert.assertEquals("{actor} любит {target::gen}.", actualLabel);
         
-        Assert.assertNull(invokeMethod(simpleKey, "findFirstAcceptableTranslation", unk, Utils.buildMap()));
+        Assert.assertNull(invokeMethod(simpleKey, "findFirstAcceptableTranslation", unk, Utils.map()));
         
         final User user = new User("Анна", "female");
         TranslationKey keyWithCtx = PowerMockito.spy(keys.get(0));
         String transLabel = ((Translation) invokeMethod(
-                keyWithCtx, "findFirstAcceptableTranslation", ru, Utils.buildMap("actor", user))
+                keyWithCtx, "findFirstAcceptableTranslation", ru, Utils.map("actor", user))
         ).getLabel();
         Assert.assertEquals("{actor} любезно дала тебе {count||яблоко, яблока, яблок}", transLabel);
     }
@@ -238,43 +234,43 @@ public class TranslationKeyTest extends BaseTest {
     @Test
     public void testApplyTokenizer() throws Exception {
         final User user = new User("Michael", "male");
-        TranslationKey tkey = new TranslationKey(Utils.buildMap(
+        TranslationKey tkey = new TranslationKey(Utils.map(
                 "key", "d541c79af1be6a05b1f16fca8b5730de",
                 "label", "Hello {user}",
                 "description", ""));
-        Map<String, Object> tokens = Utils.buildMap("user", user);
+        Map<String, Object> tokens = Utils.map("user", user);
         Assert.assertEquals(
                 "Hello Michael",
-                tkey.applyTokenizer(TranslationKey.DEFAULT_TOKENIZERS_DATA, tkey.getLabel(), ru, null, tokens, Utils.buildMap()));
+                tkey.applyTokenizer(TranslationKey.DEFAULT_TOKENIZERS_DATA, tkey.getLabel(), ru, null, tokens, Utils.map()));
         
         TranslationKey spiedKey = PowerMockito.spy(tkey);
         PowerMockito.doReturn(DummyTokenizer.class).when(spiedKey, "getTokenizerByKey", "dummy_tokenizer");
         Assert.assertEquals(
                 "Hello {user}",
-                spiedKey.applyTokenizer("dummy_tokenizer", tkey.getLabel(), ru, null, tokens, Utils.buildMap()));
+                spiedKey.applyTokenizer("dummy_tokenizer", tkey.getLabel(), ru, null, tokens, Utils.map()));
     }
     
     @Test
     public void testSubstitutions() throws Exception {
         final User user = new User("Michael", "male");
-        TranslationKey tkey = new TranslationKey(Utils.buildMap(
+        TranslationKey tkey = new TranslationKey(Utils.map(
                 "key", "d541c79af1be6a05b1f16fca8b5730de",
                 "label", "{user|He,She} has {count} items.",
                 "description", ""));
-        Map<String, Object> tokens = Utils.buildMap("user", user, "count", 2);
+        Map<String, Object> tokens = Utils.map("user", user, "count", 2);
         Assert.assertEquals(
                 "He has 2 items.",
-                tkey.substitute(tkey.getLabel(), tokens, ru, en, Utils.buildMap())
+                tkey.substitute(tkey.getLabel(), tokens, ru, en, Utils.map())
         );
         
-        TranslationKey tkey2 = new TranslationKey(Utils.buildMap(
+        TranslationKey tkey2 = new TranslationKey(Utils.map(
                 "label", "[link]you have messages[/link]",
                 "description", ""));
         Assert.assertEquals(
                 "<a href=\"www.google.com\">you have messages</a>",
                 tkey2.substitute(tkey2.getLabel(),
-                                Utils.buildMap("link", Utils.buildMap("href", "www.google.com")),
-                                ru, en, Utils.buildMap("tokenizer", "html"))
+                                Utils.map("link", Utils.map("href", "www.google.com")),
+                                ru, en, Utils.map("tokenizer", "html"))
         );
         
     }

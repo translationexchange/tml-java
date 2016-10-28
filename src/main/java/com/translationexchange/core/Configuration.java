@@ -171,14 +171,14 @@ public class Configuration {
 
         this.applicationClass = Application.class.getName();
 
-        this.cache = Utils.buildMap(
+        this.cache = Utils.map(
                 "enabled", true,
                 "class", "com.translationexchange.core.cache.FileCache",
                 "host", "localhost:11211",
                 "adapter", "memcache"
         );
 
-        this.agent = Utils.buildMap(
+        this.agent = Utils.map(
                 "host", "https://tools.translationexchange.com/agent/stable/agent.min.js",
                 "cache", 3600
         );
@@ -190,9 +190,9 @@ public class Configuration {
     }
 
     private void buildDefaultContextRulesConfiguration() {
-        this.contextRules = Utils.buildMap(
-                "number", Utils.buildMap(
-                        "variables", Utils.buildMap(
+        this.contextRules = Utils.map(
+                "number", Utils.map(
+                        "variables", Utils.map(
                                 "@n", new Variable() {
                                     public Object getValue(LanguageContext context, Object object) {
                                         return object;
@@ -200,8 +200,8 @@ public class Configuration {
                                 }
                         )
                 ),
-                "gender", Utils.buildMap(
-                        "variables", Utils.buildMap(
+                "gender", Utils.map(
+                        "variables", Utils.map(
                                 "@gender", new Variable() {
                                     @SuppressWarnings("unchecked")
                                     public Object getValue(LanguageContext context, Object object) {
@@ -225,8 +225,8 @@ public class Configuration {
                                 }
                         )
                 ),
-                "genders", Utils.buildMap(
-                        "variables", Utils.buildMap(
+                "genders", Utils.map(
+                        "variables", Utils.map(
                                 "@genders", new Variable() {
                                     @SuppressWarnings("unchecked")
                                     public Object getValue(LanguageContext context, Object object) {
@@ -262,8 +262,8 @@ public class Configuration {
                                 }
                         )
                 ),
-                "date", Utils.buildMap(
-                        "variables", Utils.buildMap(
+                "date", Utils.map(
+                        "variables", Utils.map(
                                 "@date", new Variable() {
                                     public Object getValue(LanguageContext context, Object object) {
                                         return object;
@@ -271,8 +271,8 @@ public class Configuration {
                                 }
                         )
                 ),
-                "list", Utils.buildMap(
-                        "variables", Utils.buildMap(
+                "list", Utils.map(
+                        "variables", Utils.map(
                                 "@count", new Variable() {
                                     @SuppressWarnings("unchecked")
                                     public Object getValue(LanguageContext context, Object object) {
@@ -286,29 +286,29 @@ public class Configuration {
     }
 
     private void buildDefaultTranslatorOptionsConfiguration() {
-        this.translatorOptions = Utils.buildMap(
+        this.translatorOptions = Utils.map(
                 "debug", false,
                 "debug_format_html", "<span style='font-size:20px;color:red;'>{</span> {$0} <span style='font-size:20px;color:red;'>}</span>",
                 "debug_format", "{{{{$0}}}}",
                 "split_sentences", false,
-                "nodes", Utils.buildMap(
+                "nodes", Utils.map(
                         "ignored", Utils.buildList(),
                         "scripts", Utils.buildList("style", "script", "code", "pre"),
                         "inline", Utils.buildList("a", "span", "i", "b", "img", "strong", "s", "em", "u", "sub", "sup"),
                         "short", Utils.buildList("i", "b"),
                         "splitters", Utils.buildList("br", "hr")),
-                "attributes", Utils.buildMap(
+                "attributes", Utils.map(
                         "labels", Utils.buildList("title", "alt")),
-                "name_mapping", Utils.buildMap(
+                "name_mapping", Utils.map(
                         "b", "bold",
                         "i", "italic",
                         "a", "link",
                         "img", "picture"),
-                "data_tokens", Utils.buildMap(
-                        "special", Utils.buildMap(
+                "data_tokens", Utils.map(
+                        "special", Utils.map(
                                 "enabled", true,
                                 "regex", "(&[^;]*;)"),
-                        "date", Utils.buildMap(
+                        "date", Utils.map(
                                 "enabled", true,
                                 "formats", Utils.buildList(
                                         Utils.buildList("((Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s+\\d+,\\s+\\d+)", "{month} {day}, {year}"),
@@ -317,23 +317,23 @@ public class Configuration {
                                         Utils.buildList("(\\d+\\s+(January|February|March|April|May|June|July|August|September|October|November|December),\\s+\\d+)", "{day} {month}, {year}")),
                                 "name", "date"),
                         "rules", Utils.buildList(
-                                Utils.buildMap("enabled", true, "name", "time", "regex", "(\\d{1,2}:\\d{1,2}\\s+([A-Z]{2,3}|am|pm|AM|PM)?)"),
-                                Utils.buildMap("enabled", true, "name", "phone", "regex", "((\\d{1}-)?\\d{3}-\\d{3}-\\d{4}|\\d?\\(\\d{3}\\)\\s*\\d{3}-\\d{4}|(\\d.)?\\d{3}.\\d{3}.\\d{4})"),
-                                Utils.buildMap("enabled", true, "name", "email", "regex", "([-a-z0-9~!$%^&*_=+}{\\'?]+(\\.[-a-z0-9~!$%^&*_=+}{\\'?]+)*@([a-z0-9_][-a-z0-9_]*(\\.[-a-z0-9_]+)*\\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|io|mobi|[a-z][a-z])|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,5})?)"),
-                                Utils.buildMap("enabled", true, "name", "price", "regex", "(\\$\\d*(,\\d*)*(\\.\\d*)?)"),
-                                Utils.buildMap("enabled", true, "name", "fraction", "regex", "(\\d+\\/\\d+)"),
-                                Utils.buildMap("enabled", true, "name", "num", "regex", "(\\b\\d*(,\\d*)*(\\.\\d*)?%?\\b)")
+                                Utils.map("enabled", true, "name", "time", "regex", "(\\d{1,2}:\\d{1,2}\\s+([A-Z]{2,3}|am|pm|AM|PM)?)"),
+                                Utils.map("enabled", true, "name", "phone", "regex", "((\\d{1}-)?\\d{3}-\\d{3}-\\d{4}|\\d?\\(\\d{3}\\)\\s*\\d{3}-\\d{4}|(\\d.)?\\d{3}.\\d{3}.\\d{4})"),
+                                Utils.map("enabled", true, "name", "email", "regex", "([-a-z0-9~!$%^&*_=+}{\\'?]+(\\.[-a-z0-9~!$%^&*_=+}{\\'?]+)*@([a-z0-9_][-a-z0-9_]*(\\.[-a-z0-9_]+)*\\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|io|mobi|[a-z][a-z])|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,5})?)"),
+                                Utils.map("enabled", true, "name", "price", "regex", "(\\$\\d*(,\\d*)*(\\.\\d*)?)"),
+                                Utils.map("enabled", true, "name", "fraction", "regex", "(\\d+\\/\\d+)"),
+                                Utils.map("enabled", true, "name", "num", "regex", "(\\b\\d*(,\\d*)*(\\.\\d*)?%?\\b)")
                         ))
         );
     }
 
     private void buildDefaultLocalizationConfiguration() {
-        this.localization = Utils.buildMap(
+        this.localization = Utils.map(
                 "default_day_names", Utils.buildList("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"),
                 "default_abbr_day_names", Utils.buildList("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"),
                 "default_month_names", Utils.buildList("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
                 "default_abbr_month_names", Utils.buildList("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
-                "custom_date_formats", Utils.buildMap(
+                "custom_date_formats", Utils.map(
                         "default", "%m/%d/%Y",            // 07/4/2008
                         "short_numeric", "%m/%d",               // 07/4
                         "short_numeric_year", "%m/%d/%y",            // 07/4/08
@@ -345,7 +345,7 @@ public class Configuration {
                         "monthname_abbr_year", "%b %d, %Y",           // Jul 4, 2008
                         "date_time", "%m/%d/%Y at %H:%M"   // 01/03/1010 at 5:30
                 ),
-                "token_mapping", Utils.buildMap(
+                "token_mapping", Utils.map(
                         "%a", "{short_week_day_name}",
                         "%A", "{week_day_name}",
                         "%b", "{short_month_name}",
@@ -370,9 +370,9 @@ public class Configuration {
     }
 
     private void buildDefaultTokensConfiguration() {
-        this.defaultTokens = Utils.buildMap(
-                "html", Utils.buildMap(
-                        "data", Utils.buildMap(
+        this.defaultTokens = Utils.map(
+                "html", Utils.map(
+                        "data", Utils.map(
                                 "ndash", "&ndash;",       // ?
                                 "mdash", "&mdash;",       // ?
                                 "iexcl", "&iexcl;",       // ?
@@ -392,7 +392,7 @@ public class Configuration {
                                 "rbrace", "}",
                                 "trade", "&trade;"        // TM
                         ),
-                        "decoration", Utils.buildMap(
+                        "decoration", Utils.map(
                                 "strong", "<strong>{$0}</strong>",
                                 "bold", "<strong>{$0}</strong>",
                                 "b", "<strong>{$0}</strong>",
@@ -410,8 +410,8 @@ public class Configuration {
                         )
                 ),
 
-                "text", Utils.buildMap(
-                        "data", Utils.buildMap(
+                "text", Utils.map(
+                        "data", Utils.map(
                                 "ndash", "?",        // ?
                                 "mdash", "?",        // ?
                                 "iexcl", "?",        // ?
@@ -431,7 +431,7 @@ public class Configuration {
                                 "rbrace", "}",
                                 "trade", "?"         // TM
                         ),
-                        "decoration", Utils.buildMap(
+                        "decoration", Utils.map(
                                 "strong", "{$0}",
                                 "bold", "{$0}",
                                 "b", "{$0}",
@@ -523,7 +523,7 @@ public class Configuration {
      */
     public Map<String, Object> getApplication() {
         if (application == null) {
-            return Utils.buildMap();
+            return Utils.map();
         }
         return application;
     }
