@@ -544,9 +544,9 @@ public class Language extends Base {
             opts.put("pending", "true");
             String sourcePath = Utils.join(getApplication().getSession().getSourcePath(), Configuration.SOURCE_SEPARATOR);
             TranslationKey tempKey = createTranslationKey(keyHash, label, description, opts);
-            if (getLocale().equals(getApplication().getDefaultLocale())) {
-                getApplication().registerMissingTranslationKey(tempKey, sourcePath);
-            }
+//            if (getLocale().equals(getApplication().getDefaultLocale())) {
+            getApplication().registerMissingTranslationKey(tempKey, sourcePath);
+//            }
             return tempKey.translate(this, tokens, options);
         }
     }

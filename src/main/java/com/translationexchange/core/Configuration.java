@@ -61,6 +61,11 @@ public class Configuration {
     private Boolean enabled = true;
 
     /**
+     * Enables/Disables Using only local bundle
+     */
+    private boolean useLocalBundle;
+
+    /**
      * Application default locale fallback, if disabled
      */
     private String defaultLocale = "en-US";
@@ -614,9 +619,9 @@ public class Configuration {
      *
      * @return a {@link Boolean} object.
      */
-    public Boolean getEnabled() {
-        return enabled;
-    }
+//    public Boolean getEnabled() {
+//        return enabled;
+//    }
 
     /**
      * <p>Setter for the field <code>enabled</code>.</p>
@@ -926,4 +931,11 @@ public class Configuration {
         this.keyRegistrationMode = false;
     }
 
+    public boolean isUseLocalBundle() {
+        return useLocalBundle;
+    }
+
+    public void setUseLocalBundle(boolean useLocalBundle) {
+        this.useLocalBundle = useLocalBundle;
+    }
 }

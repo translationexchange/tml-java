@@ -86,7 +86,7 @@ public class Tml {
     /**
      * Schedule handler
      */
-    protected static ScheduledFuture<?> applicationScheduleHandler;
+    private static ScheduledFuture<?> applicationScheduleHandler;
 
     /**
      * Get the current session

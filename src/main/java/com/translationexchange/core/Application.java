@@ -713,8 +713,8 @@ public class Application extends Base {
      * @param sourceKey      a {@link java.lang.String} object.
      */
     public synchronized void registerMissingTranslationKey(TranslationKey translationKey, String sourceKey) {
-//        if (!isKeyRegistrationEnabled())
-//            return;
+        if (!isKeyRegistrationEnabled())
+            return;
 
         Map<String, TranslationKey> translationKeys = getMissingTranslationKeysBySources().get(sourceKey);
         if (translationKeys == null) {
