@@ -1,6 +1,5 @@
-
-/**
- * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
+/*
+ * Copyright (c) 2018 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -29,7 +28,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @author Berk
+ * @author Michael Berkovich
  * @version $Id: $Id
  */
 
@@ -39,57 +38,58 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 public class NotificationCenter {
-	Map<String, List<NotificationListener>> listeners;
+  Map<String, List<NotificationListener>> listeners;
 
-	/**
-	 * <p>subscribe.</p>
-	 *
-	 * @param listener a {@link com.translationexchange.core.notifications.NotificationListener} object.
-	 */
-	public void subscribe(NotificationListener listener) {
-		subscribe("*", listener);
-	}
-	
-	/**
-	 * <p>subscribe.</p>
-	 *
-	 * @param topic a {@link java.lang.String} object.
-	 * @param listener a {@link com.translationexchange.core.notifications.NotificationListener} object.
-	 */
-	public void subscribe(String topic, NotificationListener listener) {
-		List<NotificationListener> topicListeners = getListeners(topic);
-		topicListeners.add(listener);
-	}
+  /**
+   * <p>subscribe.</p>
+   *
+   * @param listener a {@link com.translationexchange.core.notifications.NotificationListener} object.
+   */
+  public void subscribe(NotificationListener listener) {
+    subscribe("*", listener);
+  }
 
-	/**
-	 * <p>publish.</p>
-	 *
-	 * @param notification a {@link com.translationexchange.core.notifications.Notification} object.
-	 */
-	public void publish(Notification notification) {
-		List<NotificationListener> topicListeners = getListeners(notification.getTopic());
-		for (NotificationListener listener : topicListeners) {
-			listener.onNotification(notification);
-		}
-		
-		topicListeners = getListeners("*");
-		for (NotificationListener listener : topicListeners) {
-			listener.onNotification(notification);
-		}
-	}
-	
-	private List<NotificationListener> getListeners(String topic) {
-		if (this.listeners == null) {
-			this.listeners = new HashMap<String, List<NotificationListener>>();
-		}
-		
-		List<NotificationListener> topicListeners = this.listeners.get(topic); 
-		if (topicListeners == null) {
-			topicListeners = new ArrayList<NotificationListener>();
-			this.listeners.put(topic, topicListeners);
-		}
-		return topicListeners;
-	}
-	
+  /**
+   * <p>subscribe.</p>
+   *
+   * @param topic    a {@link java.lang.String} object.
+   * @param listener a {@link com.translationexchange.core.notifications.NotificationListener} object.
+   */
+  public void subscribe(String topic, NotificationListener listener) {
+    List<NotificationListener> topicListeners = getListeners(topic);
+    topicListeners.add(listener);
+  }
+
+  /**
+   * <p>publish.</p>
+   *
+   * @param notification a {@link com.translationexchange.core.notifications.Notification} object.
+   */
+  public void publish(Notification notification) {
+    List<NotificationListener> topicListeners = getListeners(notification.getTopic());
+    for (NotificationListener listener : topicListeners) {
+      listener.onNotification(notification);
+    }
+
+    topicListeners = getListeners("*");
+    for (NotificationListener listener : topicListeners) {
+      listener.onNotification(notification);
+    }
+  }
+
+  private List<NotificationListener> getListeners(String topic) {
+    if (this.listeners == null) {
+      this.listeners = new HashMap<String, List<NotificationListener>>();
+    }
+
+    List<NotificationListener> topicListeners = this.listeners.get(topic);
+    if (topicListeners == null) {
+      topicListeners = new ArrayList<NotificationListener>();
+      this.listeners.put(topic, topicListeners);
+    }
+    return topicListeners;
+  }
+
 }

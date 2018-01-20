@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+/*
+ * Copyright (c) 2018 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -27,6 +27,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core;
@@ -41,104 +44,104 @@ import java.util.Date;
 
 public class ConfigurationTest {
 
-    @Test
-    public void testRulesEngineVariables() {
-        Configuration config = new Configuration();
+  @Test
+  public void testRulesEngineVariables() {
+    Configuration config = new Configuration();
 
-        Variable var = config.getContextVariable("number", "@n");
-        Assert.assertEquals(
-                1,
-                var.getValue(null, 1)
-        );
+    Variable var = config.getContextVariable("number", "@n");
+    Assert.assertEquals(
+        1,
+        var.getValue(null, 1)
+    );
 
-        var = config.getContextVariable("gender", "@gender");
-        Assert.assertEquals(
-                "male",
-                var.getValue(null, Utils.map("gender", "male"))
-        );
+    var = config.getContextVariable("gender", "@gender");
+    Assert.assertEquals(
+        "male",
+        var.getValue(null, Utils.map("gender", "male"))
+    );
 
-        var = config.getContextVariable("gender", "@gender");
-        Assert.assertEquals(
-                "female",
-                var.getValue(null, Utils.map("object", Utils.map("gender", "female", "name", "Michael"), "attribute", "name"))
-        );
+    var = config.getContextVariable("gender", "@gender");
+    Assert.assertEquals(
+        "female",
+        var.getValue(null, Utils.map("object", Utils.map("gender", "female", "name", "Michael"), "attribute", "name"))
+    );
 
-        var = config.getContextVariable("genders", "@genders");
-        Assert.assertEquals(
-                Utils.buildList("male"),
-                var.getValue(null, Utils.map("gender", "male"))
-        );
+    var = config.getContextVariable("genders", "@genders");
+    Assert.assertEquals(
+        Utils.buildList("male"),
+        var.getValue(null, Utils.map("gender", "male"))
+    );
 
-        Date today = new Date();
+    Date today = new Date();
 
-        var = config.getContextVariable("date", "@date");
-        Assert.assertEquals(
-                today,
-                var.getValue(null, today)
-        );
+    var = config.getContextVariable("date", "@date");
+    Assert.assertEquals(
+        today,
+        var.getValue(null, today)
+    );
 
-        var = config.getContextVariable("list", "@count");
-        Assert.assertEquals(
-                1,
-                var.getValue(null, Utils.buildList("one"))
-        );
+    var = config.getContextVariable("list", "@count");
+    Assert.assertEquals(
+        1,
+        var.getValue(null, Utils.buildList("one"))
+    );
 
-        Assert.assertEquals(
-                2,
-                var.getValue(null, Utils.buildList("one", "two"))
-        );
+    Assert.assertEquals(
+        2,
+        var.getValue(null, Utils.buildList("one", "two"))
+    );
 
-        Assert.assertEquals(
-                1,
-                var.getValue(null, "one")
-        );
-    }
+    Assert.assertEquals(
+        1,
+        var.getValue(null, "one")
+    );
+  }
 
-    @Test
-    public void testDefaultTokenValues() {
-        Configuration config = new Configuration();
+  @Test
+  public void testDefaultTokenValues() {
+    Configuration config = new Configuration();
 
-        Assert.assertEquals(
-                "&nbsp;",
-                config.getDefaultTokenValue("nbsp")
-        );
+    Assert.assertEquals(
+        "&nbsp;",
+        config.getDefaultTokenValue("nbsp")
+    );
 
-        Assert.assertEquals(
-                "&nbsp;",
-                config.getDefaultTokenValue("nbsp", "data")
-        );
+    Assert.assertEquals(
+        "&nbsp;",
+        config.getDefaultTokenValue("nbsp", "data")
+    );
 
-        Assert.assertEquals(
-                "&nbsp;",
-                config.getDefaultTokenValue("nbsp", "data", "html")
-        );
+    Assert.assertEquals(
+        "&nbsp;",
+        config.getDefaultTokenValue("nbsp", "data", "html")
+    );
 
-        Assert.assertEquals(
-                " ",
-                config.getDefaultTokenValue("nbsp", "data", "text")
-        );
+    Assert.assertEquals(
+        " ",
+        config.getDefaultTokenValue("nbsp", "data", "text")
+    );
 
-        Assert.assertEquals(
-                "<strong>{$0}</strong>",
-                config.getDefaultTokenValue("strong", "decoration", "html")
-        );
+    Assert.assertEquals(
+        "<strong>{$0}</strong>",
+        config.getDefaultTokenValue("strong", "decoration", "html")
+    );
 
-        config.addDefaultTokenValue("test", "data", "html", "hello world");
+    config.addDefaultTokenValue("test", "data", "html", "hello world");
 
-        Assert.assertEquals(
-                "hello world",
-                config.getDefaultTokenValue("test", "data", "html")
-        );
+    Assert.assertEquals(
+        "hello world",
+        config.getDefaultTokenValue("test", "data", "html")
+    );
 
-    }
-    
-    @Test
-    public void testGetDefaultLanguage() {
-        Configuration config = new Configuration();
-    	Language defaultLanguage = config.getDefaultLanguage();
-    	Assert.assertEquals("en", defaultLanguage.getLocale());
-    	Assert.assertEquals("English", defaultLanguage.getEnglishName());
-    	Assert.assertNotNull(defaultLanguage.getLanguageCaseByKeyword("ord"));
-    }
-    
+  }
+
+  @Test
+  public void testGetDefaultLanguage() {
+    Configuration config = new Configuration();
+    Language defaultLanguage = config.getDefaultLanguage();
+    Assert.assertEquals("en", defaultLanguage.getLocale());
+    Assert.assertEquals("English", defaultLanguage.getEnglishName());
+    Assert.assertNotNull(defaultLanguage.getLanguageCaseByKeyword("ord"));
+  }
+
 }

@@ -1,6 +1,5 @@
-
-/**
- * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
+/*
+ * Copyright (c) 2018 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -29,7 +28,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @author Berk
+ * @author Michael Berkovich
  * @version $Id: $Id
  */
 
@@ -47,337 +46,346 @@ import com.translationexchange.core.languages.Language;
 import com.translationexchange.core.languages.LanguageCase;
 import com.translationexchange.core.languages.LanguageContext;
 import com.translationexchange.core.tokenizers.DataTokenValue;
+
 public class DataToken extends Token {
-	
-    /** Constant <code>SEPARATOR_CONTEXT=":"</code> */
-    public static final String SEPARATOR_CONTEXT = ":";
-    /** Constant <code>SEPARATOR_CASE="::"</code> */
-    public static final String SEPARATOR_CASE = "::";
 
-    private static final String MAP_OBJECT_NAME = "object";
-    private static final String MAP_OBJECT_VALUE = "value";
-    private static final String MAP_PROPERTY_NAME = "property";
-    private static final String MAP_ATTRIBUTE_NAME = "attribute";
+  /**
+   * Constant <code>SEPARATOR_CONTEXT=":"</code>
+   */
+  public static final String SEPARATOR_CONTEXT = ":";
+  /**
+   * Constant <code>SEPARATOR_CASE="::"</code>
+   */
+  public static final String SEPARATOR_CASE = "::";
 
-    /**
-     * List of language cases keys, if any
-     */
-    protected List<String> languageCaseKeys;
+  private static final String MAP_OBJECT_NAME = "object";
+  private static final String MAP_OBJECT_VALUE = "value";
+  private static final String MAP_PROPERTY_NAME = "property";
+  private static final String MAP_ATTRIBUTE_NAME = "attribute";
 
-    /**
-     * List of language context keys
-     */
-    protected List<String> languageContextKeys;
+  /**
+   * List of language cases keys, if any
+   */
+  protected List<String> languageCaseKeys;
 
-    /**
-     * <p>getExpression.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public static String getExpression() {
-    	return "(%?\\{{1,2}\\s*\\w+\\s*(:\\s*\\w+)*\\s*(::\\s*\\w+)*\\s*\\}{1,2})";
+  /**
+   * List of language context keys
+   */
+  protected List<String> languageContextKeys;
+
+  /**
+   * <p>getExpression.</p>
+   *
+   * @return a {@link java.lang.String} object.
+   */
+  public static String getExpression() {
+    return "(%?\\{{1,2}\\s*\\w+\\s*(:\\s*\\w+)*\\s*(::\\s*\\w+)*\\s*\\}{1,2})";
+  }
+
+  /**
+   * <p>Constructor for DataToken.</p>
+   *
+   * @param token a {@link java.lang.String} object.
+   */
+  public DataToken(String token) {
+    super(token);
+  }
+
+  /**
+   * <p>Constructor for DataToken.</p>
+   *
+   * @param token a {@link java.lang.String} object.
+   * @param label a {@link java.lang.String} object.
+   */
+  public DataToken(String token, String label) {
+    super(token, label);
+  }
+
+  /**
+   * <p>Getter for the field <code>languageContextKeys</code>.</p>
+   *
+   * @return a {@link java.util.List} object.
+   */
+  public List<String> getLanguageContextKeys() {
+    if (this.languageContextKeys == null) {
+      this.languageContextKeys = Utils.trimListValues(
+          Arrays.asList(getParenslessName().split(SEPARATOR_CASE)[0].split(SEPARATOR_CONTEXT))
+      );
+      this.languageContextKeys.remove(0);
+    }
+    return this.languageContextKeys;
+  }
+
+  /**
+   * <p>Getter for the field <code>languageCaseKeys</code>.</p>
+   *
+   * @return a {@link java.util.List} object.
+   */
+  public List<String> getLanguageCaseKeys() {
+    if (this.languageCaseKeys == null) {
+      this.languageCaseKeys = Utils.trimListValues(
+          Arrays.asList(getParenslessName().split(SEPARATOR_CASE))
+      );
+      this.languageCaseKeys.remove(0);
+    }
+    return this.languageCaseKeys;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public String getName(Map<String, Object> options) {
+    StringBuilder sb = new StringBuilder();
+
+    if (options.get("parens") != null && options.get("parens").equals(true))
+      sb.append("{");
+
+    sb.append(getName());
+
+    if (options.get("context_keys") != null && options.get("context_keys").equals(true) && this.getLanguageContextKeys().size() > 0) {
+      sb.append(":");
+      sb.append(Utils.join(this.getLanguageContextKeys().toArray(), SEPARATOR_CONTEXT));
     }
 
-    /**
-     * <p>Constructor for DataToken.</p>
-     *
-     * @param token a {@link java.lang.String} object.
-     */
-    public DataToken(String token) {
-        super(token);
+    if (options.get("case_keys") != null && options.get("case_keys").equals(true) && this.getLanguageCaseKeys().size() > 0) {
+      sb.append("::");
+      sb.append(Utils.join(this.getLanguageCaseKeys().toArray(), SEPARATOR_CASE));
     }
 
-    /**
-     * <p>Constructor for DataToken.</p>
-     *
-     * @param token a {@link java.lang.String} object.
-     * @param label a {@link java.lang.String} object.
-     */
-    public DataToken(String token, String label) {
-        super(token, label);
+    if (options.get("parens") != null && options.get("parens").equals(true))
+      sb.append("}");
+
+    return sb.toString();
+  }
+
+  /**
+   * Token objects can be passed to the translation method using any of the following approaches:
+   * <p>
+   * - if an object is passed without a substitution value, it will use toString() to get the value:
+   * <p>
+   * Tml.translate("Hello {user}", Utils.map("user", current_user))
+   * Tml.translate("{count||message}", Utils.map("count", counter))
+   * <p>
+   * - if an object is a list, the first value is the context object, the second value is the substitution value:
+   * <p>
+   * Tml.translate("Hello {user}", Utils.map("user", Utils.buildList(current_user, "Michael")))
+   * Tml.translate("Hello {user}", Utils.map("user", Utils.buildList(current_user, current_user.name)))
+   * <p>
+   * - if an object is a map (mostly used for JSON), it must provide the object and the value/attribute for substitution:
+   * <p>
+   * Tml.translate("Hello {user}", Utils.map("user", Utils.map(
+   * "object", Utils.map(
+   * "name", "Michael",
+   * "gender", "male"
+   * ),
+   * "value", "Michael"
+   * ))
+   * <p>
+   * Tml.translate("Hello {user}", Utils.map("user", Utils.map(
+   * "object", Utils.map(
+   * "name", "Michael",
+   * "gender", "male"
+   * ),
+   * "attribute", "name"
+   * ))
+   * <p>
+   * - if you don't need the substitution, you can provide an object directly:
+   * <p>
+   * Tml.translate("{user| He, She}", Utils.map("user", Utils.map(
+   * "name", "Michael",
+   * "gender", "male"
+   * ))
+   * <p>
+   * - the most explicit way is to use the DataTokenValue interface:
+   * <p>
+   * Tml.translate("Hello {user}", Utils.map("user", new DataTokenValue() {
+   * public Object getContextObject() {
+   * return user;
+   * }
+   * public String getSubstitutionValue() {
+   * return user.getName();
+   * }
+   * }))
+   *
+   * @param tokenMap a {@link java.util.Map} object.
+   * @return a {@link java.lang.Object} object.
+   */
+  public Object getContextObject(Map<String, Object> tokenMap) {
+    return getContextObject(tokenMap, this.getObjectName());
+  }
+
+  /**
+   * <p>getContextObject.</p>
+   *
+   * @param tokenMap a {@link java.util.Map} object.
+   * @param name     a {@link java.lang.String} object.
+   * @return a {@link java.lang.Object} object.
+   */
+  @SuppressWarnings("unchecked")
+  public static Object getContextObject(Map<String, Object> tokenMap, String name) {
+    if (tokenMap == null)
+      return null;
+
+    Object object = tokenMap.get(name);
+    if (object == null)
+      return null;
+
+    if (object instanceof DataTokenValue) {
+      DataTokenValue dtv = (DataTokenValue) object;
+      return dtv.getContextObject();
     }
 
-    /**
-     * <p>Getter for the field <code>languageContextKeys</code>.</p>
-     *
-     * @return a {@link java.util.List} object.
-     */
-    public List<String> getLanguageContextKeys() {
-        if (this.languageContextKeys == null) {
-            this.languageContextKeys = Utils.trimListValues(
-                Arrays.asList(getParenslessName().split(SEPARATOR_CASE)[0].split(SEPARATOR_CONTEXT))
-            );
-            this.languageContextKeys.remove(0);
-        }
-        return this.languageContextKeys;
+    if (object instanceof List) {
+      List<Object> list = (List<Object>) object;
+      return list.get(0);
     }
 
-    /**
-     * <p>Getter for the field <code>languageCaseKeys</code>.</p>
-     *
-     * @return a {@link java.util.List} object.
-     */
-    public List<String> getLanguageCaseKeys() {
-        if (this.languageCaseKeys == null) {
-            this.languageCaseKeys = Utils.trimListValues(
-                Arrays.asList(getParenslessName().split(SEPARATOR_CASE))
-            );
-            this.languageCaseKeys.remove(0);
-        }
-        return this.languageCaseKeys;
+    if (object instanceof Map) {
+      Map<String, Object> map = (Map<String, Object>) object;
+      if (map.get(MAP_OBJECT_NAME) != null)
+        return map.get(MAP_OBJECT_NAME);
+      return map;
     }
 
-    /** {@inheritDoc} */
-    public String getName(Map<String, Object> options) {
-        StringBuilder sb = new StringBuilder();
+    return object;
+  }
 
-        if (options.get("parens") != null && options.get("parens").equals(true))
-            sb.append("{");
-
-        sb.append(getName());
-
-        if (options.get("context_keys") != null && options.get("context_keys").equals(true) && this.getLanguageContextKeys().size() > 0) {
-            sb.append(":");
-            sb.append(Utils.join(this.getLanguageContextKeys().toArray(), SEPARATOR_CONTEXT));
-        }
-
-        if (options.get("case_keys") != null && options.get("case_keys").equals(true) && this.getLanguageCaseKeys().size() > 0) {
-            sb.append("::");
-            sb.append(Utils.join(this.getLanguageCaseKeys().toArray(), SEPARATOR_CASE));
-        }
-
-        if (options.get("parens") != null && options.get("parens").equals(true))
-            sb.append("}");
-
-        return sb.toString();
+  /**
+   * <p>getValue.</p>
+   *
+   * @param tokenMap map of token names to values
+   * @return value of the token
+   */
+  @SuppressWarnings("unchecked")
+  public String getValue(Map<String, Object> tokenMap) {
+    if (tokenMap == null || tokenMap.get(this.getName()) == null) {
+      String tokenValue = Tml.getConfig().getDefaultTokenValue(getName());
+      if (tokenValue != null) return tokenValue;
+      return this.toString();
     }
 
-    /**
-     * Token objects can be passed to the translation method using any of the following approaches:
-     *
-     * - if an object is passed without a substitution value, it will use toString() to get the value:
-     *
-     *     Tml.translate("Hello {user}", Utils.map("user", current_user))
-     *     Tml.translate("{count||message}", Utils.map("count", counter))
-     *
-     * - if an object is a list, the first value is the context object, the second value is the substitution value:
-     *
-     *     Tml.translate("Hello {user}", Utils.map("user", Utils.buildList(current_user, "Michael")))
-     *     Tml.translate("Hello {user}", Utils.map("user", Utils.buildList(current_user, current_user.name)))
-     *
-     * - if an object is a map (mostly used for JSON), it must provide the object and the value/attribute for substitution:
-     *
-     *     Tml.translate("Hello {user}", Utils.map("user", Utils.map(
-     *                                       "object", Utils.map(
-     *                                           "name", "Michael",
-     *                                           "gender", "male"
-     *                                       ),
-     *                                       "value", "Michael"
-     *                                    ))
-     *
-     *     Tml.translate("Hello {user}", Utils.map("user", Utils.map(
-     *                                       "object", Utils.map(
-     *                                           "name", "Michael",
-     *                                           "gender", "male"
-     *                                       ),
-     *                                       "attribute", "name"
-     *                                    ))
-     *
-     * - if you don't need the substitution, you can provide an object directly:
-     *
-     *     Tml.translate("{user| He, She}", Utils.map("user", Utils.map(
-     *                                           "name", "Michael",
-     *                                           "gender", "male"
-     *                                       ))
-     *
-     * - the most explicit way is to use the DataTokenValue interface:
-     *
-     *     Tml.translate("Hello {user}", Utils.map("user", new DataTokenValue() {
-     *                                        public Object getContextObject() {
-     *                                           return user;
-     *                                        }
-     *                                        public String getSubstitutionValue() {
-     *                                           return user.getName();
-     *                                        }
-     *                                    }))
-     *
-     * @param tokenMap a {@link java.util.Map} object.
-     * @return a {@link java.lang.Object} object.
-     */
-    public Object getContextObject(Map<String, Object> tokenMap) {
-        return getContextObject(tokenMap, this.getObjectName());
+    Object object = tokenMap.get(this.getName());
+
+    if (object instanceof DataTokenValue) {
+      DataTokenValue dtv = (DataTokenValue) object;
+      return dtv.getSubstitutionValue();
     }
 
-    /**
-     * <p>getContextObject.</p>
-     *
-     * @param tokenMap a {@link java.util.Map} object.
-     * @param name a {@link java.lang.String} object.
-     * @return a {@link java.lang.Object} object.
-     */
-    @SuppressWarnings("unchecked")
-	public static Object getContextObject(Map<String, Object> tokenMap, String name) {
-        if (tokenMap == null)
-            return null;
-
-        Object object = tokenMap.get(name);
-        if (object == null)
-            return null;
-
-        if (object instanceof DataTokenValue) {
-            DataTokenValue dtv = (DataTokenValue) object;
-            return dtv.getContextObject();
-        }
-
-        if (object instanceof List) {
-            List<Object> list = (List<Object>) object;
-            return list.get(0);
-        }
-
-        if (object instanceof Map) {
-            Map<String, Object> map = (Map<String, Object>) object;
-            if (map.get(MAP_OBJECT_NAME) != null)
-                return map.get(MAP_OBJECT_NAME);
-            return map;
-        }
-
-        return object;
+    if (object instanceof List) {
+      List<Object> list = (List<Object>) object;
+      if (list.size() != 2) {
+        logError("{" + getName() + "} in " + getOriginalLabel() + " : list substitution value is not provided}");
+        return getFullName();
+      }
+      object = list.get(1);
     }
 
-    /**
-     * <p>getValue.</p>
-     *
-     * @param tokenMap map of token names to values
-     * @return value of the token
-     */
-    @SuppressWarnings("unchecked")
-	public String getValue(Map<String, Object> tokenMap) {
-        if (tokenMap == null || tokenMap.get(this.getName()) == null) {
-            String tokenValue = Tml.getConfig().getDefaultTokenValue(getName());
-            if (tokenValue != null) return tokenValue;
-            return this.toString();
-        }
+    if (object instanceof Map) {
+      Map<String, Object> map = (Map<String, Object>) object;
 
-        Object object = tokenMap.get(this.getName());
+      if (map.get(MAP_OBJECT_VALUE) != null) {
+        return map.get(MAP_OBJECT_VALUE).toString();
+      }
 
-        if (object instanceof DataTokenValue) {
-            DataTokenValue dtv = (DataTokenValue) object;
-            return dtv.getSubstitutionValue();
-        }
+      if (map.get(MAP_OBJECT_NAME) == null) {
+        logError("{" + getName() + "} in " + getOriginalLabel() + " : substitution object is not provided}");
+        return getFullName();
+      }
 
-        if (object instanceof List) {
-            List<Object> list = (List<Object>) object;
-            if (list.size() != 2) {
-            	logError("{" + getName() + "} in " + getOriginalLabel() + " : list substitution value is not provided}");
-                return getFullName();
-            }
-            object = list.get(1);
-        }
+      if (!(map.get(MAP_OBJECT_NAME) instanceof Map)) {
+        logError("{" + getName() + "} in " + getOriginalLabel() + " : substitution object is not a map}");
+        return getFullName();
+      }
 
-        if (object instanceof Map) {
-            Map<String, Object> map = (Map<String, Object>) object;
+      Map<String, Object> obj = (Map<String, Object>) map.get(MAP_OBJECT_NAME);
 
-            if (map.get(MAP_OBJECT_VALUE) != null) {
-                return map.get(MAP_OBJECT_VALUE).toString();
-            }
+      if (map.get(MAP_ATTRIBUTE_NAME) != null) {
+        return obj.get(map.get(MAP_ATTRIBUTE_NAME)).toString();
+      }
 
-            if (map.get(MAP_OBJECT_NAME) == null) {
-            	logError("{" + getName() + "} in " + getOriginalLabel() + " : substitution object is not provided}");
-                return getFullName();
-            }
+      if (map.get(MAP_PROPERTY_NAME) != null) {
+        return obj.get(map.get(MAP_PROPERTY_NAME)).toString();
+      }
 
-            if (!(map.get(MAP_OBJECT_NAME) instanceof Map)) {
-            	logError("{" + getName() + "} in " + getOriginalLabel() + " : substitution object is not a map}");
-                return getFullName();
-            }
-
-            Map<String, Object> obj = (Map<String, Object>) map.get(MAP_OBJECT_NAME);
-
-            if (map.get(MAP_ATTRIBUTE_NAME) != null) {
-               return obj.get(map.get(MAP_ATTRIBUTE_NAME)).toString();
-            }
-
-            if (map.get(MAP_PROPERTY_NAME) != null) {
-                return obj.get(map.get(MAP_PROPERTY_NAME)).toString();
-            }
-
-            logError("{" + getName() + "} in " + getOriginalLabel() + " : substitution property/value is not provided}");
-            return getFullName();
-        }
-
-        return object.toString();
+      logError("{" + getName() + "} in " + getOriginalLabel() + " : substitution property/value is not provided}");
+      return getFullName();
     }
 
-    /**
-     * <p>applyLanguageCases.</p>
-     *
-     * @param tokenValue a {@link java.lang.String} object.
-     * @param object a {@link java.lang.Object} object.
-     * @param language a {@link com.translationexchange.core.languages.Language} object.
-     * @param options a {@link java.util.Map} object.
-     * @param languageCaseKeys a {@link java.util.List} object.
-     * @return a {@link java.lang.String} object.
-     */
-    public String applyLanguageCases(String tokenValue, Object object, Language language, List<String> languageCaseKeys, Map<String, Object> options) {
-        if (languageCaseKeys.size() == 0)
-            return tokenValue;
+    return object.toString();
+  }
 
-        for (String keyword : languageCaseKeys) {
-            LanguageCase languageCase = language.getLanguageCaseByKeyword(keyword);
-            if (languageCase == null) continue;
-            tokenValue = languageCase.apply(tokenValue, object, options);
-        }
+  /**
+   * <p>applyLanguageCases.</p>
+   *
+   * @param tokenValue       a {@link java.lang.String} object.
+   * @param object           a {@link java.lang.Object} object.
+   * @param language         a {@link com.translationexchange.core.languages.Language} object.
+   * @param options          a {@link java.util.Map} object.
+   * @param languageCaseKeys a {@link java.util.List} object.
+   * @return a {@link java.lang.String} object.
+   */
+  public String applyLanguageCases(String tokenValue, Object object, Language language, List<String> languageCaseKeys, Map<String, Object> options) {
+    if (languageCaseKeys.size() == 0)
+      return tokenValue;
 
-        return tokenValue;
+    for (String keyword : languageCaseKeys) {
+      LanguageCase languageCase = language.getLanguageCaseByKeyword(keyword);
+      if (languageCase == null) continue;
+      tokenValue = languageCase.apply(tokenValue, object, options);
     }
 
-    /**
-     * <p>applyLanguageCases.</p>
-     *
-     * @param tokenValue a {@link java.lang.String} object.
-     * @param object a {@link java.lang.Object} object.
-     * @param language a {@link com.translationexchange.core.languages.Language} object.
-     * @param options a {@link java.util.Map} object.
-     * @return a {@link java.lang.String} object.
-     */
-    public String applyLanguageCases(String tokenValue, Object object, Language language, Map<String, Object> options) {
-       return applyLanguageCases(tokenValue, object, language, this.getLanguageCaseKeys(), options);
-    }
+    return tokenValue;
+  }
 
-    /**
-     * For transform tokens, we can only use the first context key, if it is not mapped in the context itself.
-     *
-     * {user:gender | male: , female: ... }
-     *
-     * It is not possible to apply multiple context rules on a single token at the same time:
-     *
-     * {user:gender:value | .... hah?}
-     *
-     * It is still possible to setup dependencies on multiple contexts.
-     *
-     * {user:gender:value}   - just not with piped tokens
-     *
-     * @param language a {@link com.translationexchange.core.languages.Language} object.
-     * @return a {@link com.translationexchange.core.languages.LanguageContext} object.
-     */
-    public LanguageContext getLanguageContext(Language language) {
-        if (this.getLanguageContextKeys().size() > 0)
-            return language.getContextByKeyword(getLanguageContextKeys().get(0));
+  /**
+   * <p>applyLanguageCases.</p>
+   *
+   * @param tokenValue a {@link java.lang.String} object.
+   * @param object     a {@link java.lang.Object} object.
+   * @param language   a {@link com.translationexchange.core.languages.Language} object.
+   * @param options    a {@link java.util.Map} object.
+   * @return a {@link java.lang.String} object.
+   */
+  public String applyLanguageCases(String tokenValue, Object object, Language language, Map<String, Object> options) {
+    return applyLanguageCases(tokenValue, object, language, this.getLanguageCaseKeys(), options);
+  }
 
-        return language.getContextByTokenName(this.getName());
-    }
+  /**
+   * For transform tokens, we can only use the first context key, if it is not mapped in the context itself.
+   * <p>
+   * {user:gender | male: , female: ... }
+   * <p>
+   * It is not possible to apply multiple context rules on a single token at the same time:
+   * <p>
+   * {user:gender:value | .... hah?}
+   * <p>
+   * It is still possible to setup dependencies on multiple contexts.
+   * <p>
+   * {user:gender:value}   - just not with piped tokens
+   *
+   * @param language a {@link com.translationexchange.core.languages.Language} object.
+   * @return a {@link com.translationexchange.core.languages.LanguageContext} object.
+   */
+  public LanguageContext getLanguageContext(Language language) {
+    if (this.getLanguageContextKeys().size() > 0)
+      return language.getContextByKeyword(getLanguageContextKeys().get(0));
 
-    /** {@inheritDoc} */
-    public String substitute(String translatedLabel, Map<String, Object> tokensData, Language language, Map<String, Object> options) {
-        String value = getValue(tokensData);
-        
-        if (value.equals(getFullName()))
-        	return translatedLabel;
-        
-        value = applyLanguageCases(value, getContextObject(tokensData), language, options);
-        
-    	Decorator decorator = Tml.getConfig().getDecorator();
-        return translatedLabel.replaceAll(Pattern.quote(getFullName()), decorator.decorateToken(this, value, options));
-    }
+    return language.getContextByTokenName(this.getName());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public String substitute(String translatedLabel, Map<String, Object> tokensData, Language language, Map<String, Object> options) {
+    String value = getValue(tokensData);
+
+    if (value.equals(getFullName()))
+      return translatedLabel;
+
+    value = applyLanguageCases(value, getContextObject(tokensData), language, options);
+
+    Decorator decorator = Tml.getConfig().getDecorator();
+    return translatedLabel.replaceAll(Pattern.quote(getFullName()), decorator.decorateToken(this, value, options));
+  }
 
 }

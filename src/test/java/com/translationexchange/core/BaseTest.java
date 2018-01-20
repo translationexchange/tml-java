@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2015 Translation Exchange, Inc. All rights reserved.
+/*
+ * Copyright (c) 2018 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -27,6 +27,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Berk
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core;
@@ -47,90 +50,90 @@ import static org.mockito.Mockito.*;
 import com.translationexchange.core.Utils;
 
 public class BaseTest {
-    
-    public static Application mockedApplication(String resourceFile) {
-        HttpClient mockedHttpClient = mock(HttpClient.class);
-        Application app = spy(new Application(loadJSONMap("/" + resourceFile)));
-        when(app.getHttpClient()).thenReturn(mockedHttpClient);
-        return app;
-    }
-    
-    public static String readFile(String filename) {
-        String content = null;
-        File file = new File(filename); //for ex foo.txt
-        try {
-            FileReader reader = new FileReader(file);
-            char[] chars = new char[(int) file.length()];
-            reader.read(chars);
-            content = new String(chars);
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return content;
-    }
 
-    public static String loadResource(String resourceName) {
-        String content = null;
-        try {
-            InputStream inputStream = BaseTest.class.getResourceAsStream(resourceName);
-            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-            content = sb.toString();
-        } catch (Exception e) {
-        	System.out.println("Failed to load a resource: " + resourceName);
+  public static Application mockedApplication(String resourceFile) {
+    HttpClient mockedHttpClient = mock(HttpClient.class);
+    Application app = spy(new Application(loadJSONMap("/" + resourceFile)));
+    when(app.getHttpClient()).thenReturn(mockedHttpClient);
+    return app;
+  }
+
+  public static String readFile(String filename) {
+    String content = null;
+    File file = new File(filename); //for ex foo.txt
+    try {
+      FileReader reader = new FileReader(file);
+      char[] chars = new char[(int) file.length()];
+      reader.read(chars);
+      content = new String(chars);
+      reader.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return content;
+  }
+
+  public static String loadResource(String resourceName) {
+    String content = null;
+    try {
+      InputStream inputStream = BaseTest.class.getResourceAsStream(resourceName);
+      BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+      StringBuilder sb = new StringBuilder();
+      String line;
+      while ((line = br.readLine()) != null) {
+        sb.append(line);
+      }
+      content = sb.toString();
+    } catch (Exception e) {
+      System.out.println("Failed to load a resource: " + resourceName);
 //        	e.printStackTrace();
-            return null;
-        }
-        return content;
+      return null;
     }
+    return content;
+  }
 
-    public static Object loadJSON(String resourceName) {
-        String jsonText = loadResource(resourceName);
-        if (jsonText == null) return null;
-        return Utils.parseJSON(jsonText);
+  public static Object loadJSON(String resourceName) {
+    String jsonText = loadResource(resourceName);
+    if (jsonText == null) return null;
+    return Utils.parseJSON(jsonText);
+  }
+
+
+  public static Date parseDate(String value) {
+    try {
+      return (new SimpleDateFormat("yyyy-MM-dd")).parse(value);
+    } catch (java.text.ParseException ex) {
+      return null;
     }
+  }
 
-
-    public static Date parseDate(String value) {
-        try {
-            return (new SimpleDateFormat("yyyy-MM-dd")).parse(value);
-        } catch (java.text.ParseException ex){
-            return null;
-        }
+  public static Date parseTime(String value) {
+    try {
+      return (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).parse(value);
+    } catch (java.text.ParseException ex) {
+      return null;
     }
+  }
 
-    public static Date parseTime(String value) {
-        try {
-            return (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).parse(value);
-        } catch (java.text.ParseException ex){
-            return null;
-        }
-    }
+  @SuppressWarnings("unchecked")
+  public static Map<String, Object> loadJSONMap(String resourceName) {
+    return (Map<String, Object>) loadJSON(resourceName);
+  }
 
-    @SuppressWarnings("unchecked")
-    public static Map<String, Object> loadJSONMap(String resourceName) {
-        return (Map<String, Object>) loadJSON(resourceName);
-    }
+  @SuppressWarnings("unchecked")
+  public static List<Object> loadJSONList(String resourceName) {
+    return (List<Object>) loadJSON(resourceName);
+  }
 
-    @SuppressWarnings("unchecked")
-    public static List<Object> loadJSONList(String resourceName) {
-        return (List<Object>) loadJSON(resourceName);
-    }
+  @SuppressWarnings("unchecked")
+  public static Map<String, Object> loadJsonMapFromString(String jsonText) {
+    return (Map<String, Object>) Utils.parseJSON(jsonText);
+  }
 
-    @SuppressWarnings("unchecked")
-    public static Map<String, Object> loadJsonMapFromString(String jsonText) {
-        return (Map<String, Object>) Utils.parseJSON(jsonText);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static List<Object> loadJsonListFromString(String jsonText) {
-        return (List<Object>) Utils.parseJSON(jsonText);
-    }
+  @SuppressWarnings("unchecked")
+  public static List<Object> loadJsonListFromString(String jsonText) {
+    return (List<Object>) Utils.parseJSON(jsonText);
+  }
 }
 
 

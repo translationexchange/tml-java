@@ -1,6 +1,5 @@
-
-/**
- * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
+/*
+ * Copyright (c) 2018 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -29,7 +28,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @author Berk
+ * @author Michael Berkovich
  * @version $Id: $Id
  */
 
@@ -41,72 +40,75 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.translationexchange.core.Tml;
+
 public class HtmlTokenizer extends DecorationTokenizer {
 
-    /**
-     * Default constructor
-     */
-    public HtmlTokenizer() {
-        super();
-    }
-	
-    /**
-     * <p>Constructor for HtmlTokenizer.</p>
-     *
-     * @param label a {@link java.lang.String} object.
-     */
-    public HtmlTokenizer(String label) {
-        this(label, null);
-    }
+  /**
+   * Default constructor
+   */
+  public HtmlTokenizer() {
+    super();
+  }
 
-    /**
-     * <p>Constructor for HtmlTokenizer.</p>
-     *
-     * @param label a {@link java.lang.String} object.
-     * @param allowedTokenNames a {@link java.util.List} object.
-     */
-    public HtmlTokenizer(String label, List<String> allowedTokenNames) {
-        super(label, allowedTokenNames);
-    }
+  /**
+   * <p>Constructor for HtmlTokenizer.</p>
+   *
+   * @param label a {@link java.lang.String} object.
+   */
+  public HtmlTokenizer(String label) {
+    this(label, null);
+  }
 
-    /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
-	protected String applyToken(String token, String value) {
-        if (token.equals(RESERVED_TOKEN) || !isTokenAllowed(token))
-            return value;
+  /**
+   * <p>Constructor for HtmlTokenizer.</p>
+   *
+   * @param label             a {@link java.lang.String} object.
+   * @param allowedTokenNames a {@link java.util.List} object.
+   */
+  public HtmlTokenizer(String label, List<String> allowedTokenNames) {
+    super(label, allowedTokenNames);
+  }
 
-        if (this.tokensData == null || this.tokensData.get(token) == null || this.tokensData.get(token) instanceof Map) {
-            String defaultValue = Tml.getConfig().getDefaultTokenValue(token, "decoration", "html");
-            if (defaultValue == null) return value;
+  /**
+   * {@inheritDoc}
+   */
+  @SuppressWarnings("unchecked")
+  protected String applyToken(String token, String value) {
+    if (token.equals(RESERVED_TOKEN) || !isTokenAllowed(token))
+      return value;
 
-            defaultValue = defaultValue.replaceAll(Pattern.quote(PLACEHOLDER), value);
+    if (this.tokensData == null || this.tokensData.get(token) == null || this.tokensData.get(token) instanceof Map) {
+      String defaultValue = Tml.getConfig().getDefaultTokenValue(token, "decoration", "html");
+      if (defaultValue == null) return value;
 
-            if (this.tokensData != null && this.tokensData.get(token) instanceof Map) {
-                Map<String, Object> map = (Map<String, Object>) this.tokensData.get(token);
-                Iterator<Map.Entry<String, Object>> entries = map.entrySet().iterator();
-                while (entries.hasNext()) {
-                    Map.Entry<String, Object> entry = entries.next();
-                    String param = "{$" + entry.getKey() + "}";
-                    defaultValue = defaultValue.replaceAll(Pattern.quote(param), (String) entry.getValue());
-                }
-            }
+      defaultValue = defaultValue.replaceAll(Pattern.quote(PLACEHOLDER), value);
 
-            return defaultValue;
+      if (this.tokensData != null && this.tokensData.get(token) instanceof Map) {
+        Map<String, Object> map = (Map<String, Object>) this.tokensData.get(token);
+        Iterator<Map.Entry<String, Object>> entries = map.entrySet().iterator();
+        while (entries.hasNext()) {
+          Map.Entry<String, Object> entry = entries.next();
+          String param = "{$" + entry.getKey() + "}";
+          defaultValue = defaultValue.replaceAll(Pattern.quote(param), (String) entry.getValue());
         }
+      }
 
-        Object object = this.tokensData.get(token);
-
-        if (object instanceof DecorationTokenValue) {
-            DecorationTokenValue dtv = (DecorationTokenValue) object;
-            return dtv.getSubstitutionValue(value);
-        }
-
-        if (object instanceof String) {
-            String str = (String) object;
-            return str.replaceAll(Pattern.quote(PLACEHOLDER), value);
-        }
-
-        return value;
+      return defaultValue;
     }
+
+    Object object = this.tokensData.get(token);
+
+    if (object instanceof DecorationTokenValue) {
+      DecorationTokenValue dtv = (DecorationTokenValue) object;
+      return dtv.getSubstitutionValue(value);
+    }
+
+    if (object instanceof String) {
+      String str = (String) object;
+      return str.replaceAll(Pattern.quote(PLACEHOLDER), value);
+    }
+
+    return value;
+  }
 
 }

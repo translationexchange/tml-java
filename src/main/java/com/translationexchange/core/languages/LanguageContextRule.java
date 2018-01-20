@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
+/*
+ * Copyright (c) 2018 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -28,7 +28,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @author Berk
+ * @author Michael Berkovich
  * @version $Id: $Id
  */
 
@@ -42,207 +42,212 @@ import java.util.Map.Entry;
 import com.translationexchange.core.Base;
 import com.translationexchange.core.rulesengine.Evaluator;
 import com.translationexchange.core.rulesengine.Parser;
+
 public class LanguageContextRule extends Base {
 
-    /** Constant <code>TR8N_DEFAULT_RULE_KEYWORD="other"</code> */
-    public static final String TR8N_DEFAULT_RULE_KEYWORD = "other";
+  /**
+   * Constant <code>TR8N_DEFAULT_RULE_KEYWORD="other"</code>
+   */
+  public static final String TR8N_DEFAULT_RULE_KEYWORD = "other";
 
-    /**
-     * Holds reference to the language context it belongs to
-     */
-    private LanguageContext languageContext;
+  /**
+   * Holds reference to the language context it belongs to
+   */
+  private LanguageContext languageContext;
 
-    /**
-     * Unique key of the context within the language
-     */
-    private String keyword;
+  /**
+   * Unique key of the context within the language
+   */
+  private String keyword;
 
-    /**
-     * Description of the rule
-     */
-    private String description;
+  /**
+   * Description of the rule
+   */
+  private String description;
 
-    /**
-     * Examples of the rule application
-     */
-    private String examples;
+  /**
+   * Examples of the rule application
+   */
+  private String examples;
 
-    /**
-     * Conditions in symbolic notation
-     */
-    private String conditions;
+  /**
+   * Conditions in symbolic notation
+   */
+  private String conditions;
 
-    /**
-     * Optimized conditions parsed into an array
-     */
-    private List<Object> conditionsExpression;
+  /**
+   * Optimized conditions parsed into an array
+   */
+  private List<Object> conditionsExpression;
 
-    /**
-     * Default constructor
-     */
-    public LanguageContextRule() {
-        super();
+  /**
+   * Default constructor
+   */
+  public LanguageContextRule() {
+    super();
+  }
+
+  /**
+   * Default constructor
+   *
+   * @param attributes a {@link java.util.Map} object.
+   */
+  public LanguageContextRule(Map<String, Object> attributes) {
+    super(attributes);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  public void updateAttributes(Map<String, Object> attributes) {
+    if (attributes.get("language_context") != null)
+      setLanguageContext((LanguageContext) attributes.get("language_context"));
+
+    setKeyword((String) attributes.get("keyword"));
+    setDescription((String) attributes.get("description"));
+    setExamples((String) attributes.get("examples"));
+    setConditions((String) attributes.get("conditions"));
+
+    if (attributes.get("operations_expression") instanceof List) {
+      this.conditionsExpression = (List) attributes.get("conditions_expression");
+    }
+  }
+
+  /**
+   * <p>isFallback.</p>
+   *
+   * @return boolean
+   */
+  public boolean isFallback() {
+    return getKeyword().equals(TR8N_DEFAULT_RULE_KEYWORD);
+  }
+
+  /**
+   * <p>Getter for the field <code>conditionsExpression</code>.</p>
+   *
+   * @return List
+   */
+  @SuppressWarnings("unchecked")
+  public List<Object> getConditionsExpression() {
+    if (this.conditionsExpression == null) {
+      Parser p = new Parser(this.conditions);
+      this.conditionsExpression = (List<Object>) p.parse();
     }
 
-    /**
-     * Default constructor
-     *
-     * @param attributes a {@link java.util.Map} object.
-     */
-    public LanguageContextRule(Map<String, Object> attributes) {
-        super(attributes);
+    return this.conditionsExpression;
+  }
+
+  /**
+   * <p>evaluate.</p>
+   *
+   * @param vars a {@link java.util.Map} object.
+   * @return boolean
+   */
+  public boolean evaluate(Map<String, Object> vars) {
+    if (isFallback())
+      return true;
+
+    Evaluator e = new Evaluator();
+
+    Iterator<Entry<String, Object>> entries = vars.entrySet().iterator();
+    while (entries.hasNext()) {
+      Entry<String, Object> thisEntry = (Entry<String, Object>) entries.next();
+      String key = (String) thisEntry.getKey();
+      Object value = thisEntry.getValue();
+      e.setVariable(key, value);
     }
 
-    /** {@inheritDoc} */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-	public void updateAttributes(Map<String, Object> attributes) {
-        if (attributes.get("language_context") != null)
-            setLanguageContext((LanguageContext) attributes.get("language_context"));
+    return (Boolean) e.evaluate(this.getConditionsExpression());
+  }
 
-        setKeyword((String) attributes.get("keyword"));
-        setDescription((String) attributes.get("description"));
-        setExamples((String) attributes.get("examples"));
-        setConditions((String) attributes.get("conditions"));
+  /**
+   * <p>Getter for the field <code>keyword</code>.</p>
+   *
+   * @return a {@link java.lang.String} object.
+   */
+  public String getKeyword() {
+    return this.keyword;
+  }
 
-        if (attributes.get("operations_expression") instanceof List) {
-            this.conditionsExpression = (List) attributes.get("conditions_expression");
-        }
-    }
+  /**
+   * <p>Getter for the field <code>languageContext</code>.</p>
+   *
+   * @return a {@link com.translationexchange.core.languages.LanguageContext} object.
+   */
+  public LanguageContext getLanguageContext() {
+    return languageContext;
+  }
 
-    /**
-     * <p>isFallback.</p>
-     *
-     * @return boolean
-     */
-    public boolean isFallback() {
-        return getKeyword().equals(TR8N_DEFAULT_RULE_KEYWORD);
-    }
+  /**
+   * <p>Setter for the field <code>languageContext</code>.</p>
+   *
+   * @param languageContext a {@link com.translationexchange.core.languages.LanguageContext} object.
+   */
+  public void setLanguageContext(LanguageContext languageContext) {
+    this.languageContext = languageContext;
+  }
 
-    /**
-     * <p>Getter for the field <code>conditionsExpression</code>.</p>
-     *
-     * @return List
-     */
-    @SuppressWarnings("unchecked")
-	public List<Object> getConditionsExpression() {
-        if (this.conditionsExpression == null) {
-            Parser p = new Parser(this.conditions);
-            this.conditionsExpression = (List<Object>) p.parse();
-        }
+  /**
+   * <p>Getter for the field <code>description</code>.</p>
+   *
+   * @return a {@link java.lang.String} object.
+   */
+  public String getDescription() {
+    return description;
+  }
 
-        return this.conditionsExpression;
-    }
+  /**
+   * <p>Getter for the field <code>examples</code>.</p>
+   *
+   * @return a {@link java.lang.String} object.
+   */
+  public String getExamples() {
+    return examples;
+  }
 
-    /**
-     * <p>evaluate.</p>
-     *
-     * @param vars a {@link java.util.Map} object.
-     * @return boolean
-     */
-    public boolean evaluate(Map<String, Object> vars) {
-        if (isFallback())
-            return true;
+  /**
+   * <p>Getter for the field <code>conditions</code>.</p>
+   *
+   * @return a {@link java.lang.String} object.
+   */
+  public String getConditions() {
+    return conditions;
+  }
 
-        Evaluator e = new Evaluator();
+  /**
+   * <p>Setter for the field <code>keyword</code>.</p>
+   *
+   * @param keyword a {@link java.lang.String} object.
+   */
+  public void setKeyword(String keyword) {
+    this.keyword = keyword;
+  }
 
-        Iterator<Entry<String, Object>> entries = vars.entrySet().iterator();
-        while (entries.hasNext()) {
-            Entry<String, Object> thisEntry = (Entry<String, Object>) entries.next();
-            String key = (String) thisEntry.getKey();
-            Object value = thisEntry.getValue();
-            e.setVariable(key, value);
-        }
+  /**
+   * <p>Setter for the field <code>description</code>.</p>
+   *
+   * @param description a {@link java.lang.String} object.
+   */
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-        return (Boolean) e.evaluate(this.getConditionsExpression());
-    }
+  /**
+   * <p>Setter for the field <code>examples</code>.</p>
+   *
+   * @param examples a {@link java.lang.String} object.
+   */
+  public void setExamples(String examples) {
+    this.examples = examples;
+  }
 
-    /**
-     * <p>Getter for the field <code>keyword</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getKeyword() {
-        return this.keyword;
-    }
-
-    /**
-     * <p>Getter for the field <code>languageContext</code>.</p>
-     *
-     * @return a {@link com.translationexchange.core.languages.LanguageContext} object.
-     */
-    public LanguageContext getLanguageContext() {
-        return languageContext;
-    }
-
-    /**
-     * <p>Setter for the field <code>languageContext</code>.</p>
-     *
-     * @param languageContext a {@link com.translationexchange.core.languages.LanguageContext} object.
-     */
-    public void setLanguageContext(LanguageContext languageContext) {
-        this.languageContext = languageContext;
-    }
-
-    /**
-     * <p>Getter for the field <code>description</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * <p>Getter for the field <code>examples</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getExamples() {
-        return examples;
-    }
-
-    /**
-     * <p>Getter for the field <code>conditions</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getConditions() {
-        return conditions;
-    }
-
-    /**
-     * <p>Setter for the field <code>keyword</code>.</p>
-     *
-     * @param keyword a {@link java.lang.String} object.
-     */
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
-    }
-
-    /**
-     * <p>Setter for the field <code>description</code>.</p>
-     *
-     * @param description a {@link java.lang.String} object.
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
-     * <p>Setter for the field <code>examples</code>.</p>
-     *
-     * @param examples a {@link java.lang.String} object.
-     */
-    public void setExamples(String examples) {
-        this.examples = examples;
-    }
-
-    /**
-     * <p>Setter for the field <code>conditions</code>.</p>
-     *
-     * @param conditions a {@link java.lang.String} object.
-     */
-    public void setConditions(String conditions) {
-        this.conditions = conditions;
-    }
+  /**
+   * <p>Setter for the field <code>conditions</code>.</p>
+   *
+   * @param conditions a {@link java.lang.String} object.
+   */
+  public void setConditions(String conditions) {
+    this.conditions = conditions;
+  }
 }

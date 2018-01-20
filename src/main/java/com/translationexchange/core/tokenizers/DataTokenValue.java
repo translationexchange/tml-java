@@ -1,6 +1,5 @@
-
-/**
- * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
+/*
+ * Copyright (c) 2018 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -29,25 +28,26 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @author Berk
+ * @author Michael Berkovich
  * @version $Id: $Id
  */
 
 package com.translationexchange.core.tokenizers;
+
 public interface DataTokenValue {
 
-    /**
-     * <p>getContextObject.</p>
-     *
-     * @return a {@link java.lang.Object} object.
-     */
-    public Object getContextObject();
+  /**
+   * <p>getContextObject.</p>
+   *
+   * @return a {@link java.lang.Object} object.
+   */
+  Object getContextObject();
 
-    /**
-     * <p>getSubstitutionValue.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getSubstitutionValue();
+  /**
+   * <p>getSubstitutionValue.</p>
+   *
+   * @return a {@link java.lang.String} object.
+   */
+  String getSubstitutionValue();
 
 }

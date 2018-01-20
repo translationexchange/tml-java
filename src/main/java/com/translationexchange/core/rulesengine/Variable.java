@@ -1,6 +1,5 @@
-
-/**
- * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
+/*
+ * Copyright (c) 2018 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -29,22 +28,23 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @author Berk
+ * @author Michael Berkovich
  * @version $Id: $Id
  */
 
 package com.translationexchange.core.rulesengine;
 
 import com.translationexchange.core.languages.LanguageContext;
+
 public interface Variable {
 
-    /**
-     * <p>getValue.</p>
-     *
-     * @param context a {@link com.translationexchange.core.languages.LanguageContext} object.
-     * @param object a {@link java.lang.Object} object.
-     * @return a {@link java.lang.Object} object.
-     */
-    public Object getValue(LanguageContext context, Object object);
+  /**
+   * <p>getValue.</p>
+   *
+   * @param context a {@link com.translationexchange.core.languages.LanguageContext} object.
+   * @param object  a {@link java.lang.Object} object.
+   * @return a {@link java.lang.Object} object.
+   */
+  Object getValue(LanguageContext context, Object object);
 
 }

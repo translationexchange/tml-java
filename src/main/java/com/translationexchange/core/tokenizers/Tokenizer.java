@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
+/*
+ * Copyright (c) 2018 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -27,6 +27,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Michael Berkovich
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core.tokenizers;
@@ -40,177 +43,177 @@ import com.translationexchange.core.tokens.Token;
 /**
  * Base class for all tokenizers
  *
- * @author Berk
+ * @author Michael Berkovich
  * @version $Id: $Id
  */
 public abstract class Tokenizer {
 
-    /**
-     * Label from which the tokens were extracted (original or translated)
-     */
-    protected String label;
+  /**
+   * Label from which the tokens were extracted (original or translated)
+   */
+  protected String label;
 
-    /**
-     * List of allowed token names from the original label
-     */
-    protected List<String> allowedTokenNames;
+  /**
+   * List of allowed token names from the original label
+   */
+  protected List<String> allowedTokenNames;
 
-    /**
-     * Names of all registered tokens
-     */
-    protected List<String> tokenNames;
+  /**
+   * Names of all registered tokens
+   */
+  protected List<String> tokenNames;
 
-    /**
-     * Tokens data map, used internally
-     */
-    protected Map<String, Object> tokensData;
+  /**
+   * Tokens data map, used internally
+   */
+  protected Map<String, Object> tokensData;
 
-    /**
-     * Substitution options, used internally
-     */
-    protected Map<String, Object> options;
+  /**
+   * Substitution options, used internally
+   */
+  protected Map<String, Object> options;
 
-    /**
-     * Default constructor
-     */
-    public Tokenizer() {
-    }
+  /**
+   * Default constructor
+   */
+  public Tokenizer() {
+  }
 
-    /**
-     * Constructs tokenizer with label
-     *
-     * @param label label to be tokenized
-     */
-    public Tokenizer(String label) {
-        this(label, null);
-    }
+  /**
+   * Constructs tokenizer with label
+   *
+   * @param label label to be tokenized
+   */
+  public Tokenizer(String label) {
+    this(label, null);
+  }
 
-    /**
-     * Constructs tokenizer with label and list of allowed token names
-     *
-     * @param label a {@link java.lang.String} object.
-     * @param allowedTokenNames a {@link java.util.List} object.
-     */
-    public Tokenizer(String label, List<String> allowedTokenNames) {
-        tokenize(label, allowedTokenNames);
-    }
+  /**
+   * Constructs tokenizer with label and list of allowed token names
+   *
+   * @param label             a {@link java.lang.String} object.
+   * @param allowedTokenNames a {@link java.util.List} object.
+   */
+  public Tokenizer(String label, List<String> allowedTokenNames) {
+    tokenize(label, allowedTokenNames);
+  }
 
-    /**
-     * <p>tokenize.</p>
-     *
-     * @param label a {@link java.lang.String} object.
-     */
-    public void tokenize(String label) {
-        tokenize(label, null);
-    }
+  /**
+   * <p>tokenize.</p>
+   *
+   * @param label a {@link java.lang.String} object.
+   */
+  public void tokenize(String label) {
+    tokenize(label, null);
+  }
 
-    /**
-     * <p>tokenize.</p>
-     *
-     * @param label a {@link java.lang.String} object.
-     * @param allowedTokenNames a {@link java.util.List} object.
-     */
-    public void tokenize(String label, List<String> allowedTokenNames) {
-        this.label = label;
-        this.allowedTokenNames = allowedTokenNames;
-        this.tokenNames = null;
-        tokenize();
-    }
+  /**
+   * <p>tokenize.</p>
+   *
+   * @param label             a {@link java.lang.String} object.
+   * @param allowedTokenNames a {@link java.util.List} object.
+   */
+  public void tokenize(String label, List<String> allowedTokenNames) {
+    this.label = label;
+    this.allowedTokenNames = allowedTokenNames;
+    this.tokenNames = null;
+    tokenize();
+  }
 
-    /**
-     * Tokenizes the expression
-     */
-    protected abstract void tokenize();
+  /**
+   * Tokenizes the expression
+   */
+  protected abstract void tokenize();
 
-    /**
-     * <p>Getter for the field <code>tokenNames</code>.</p>
-     *
-     * @return a {@link java.util.List} object.
-     */
-    public List<String> getTokenNames() {
-        return this.tokenNames;
-    }
+  /**
+   * <p>Getter for the field <code>tokenNames</code>.</p>
+   *
+   * @return a {@link java.util.List} object.
+   */
+  public List<String> getTokenNames() {
+    return this.tokenNames;
+  }
 
-    /**
-     * <p>Getter for the field <code>allowedTokenNames</code>.</p>
-     *
-     * @return a {@link java.util.List} object.
-     */
-    public List<String> getAllowedTokenNames() {
-        return this.allowedTokenNames;
-    }
+  /**
+   * <p>Getter for the field <code>allowedTokenNames</code>.</p>
+   *
+   * @return a {@link java.util.List} object.
+   */
+  public List<String> getAllowedTokenNames() {
+    return this.allowedTokenNames;
+  }
 
-    /**
-     * <p>isTokenAllowed.</p>
-     *
-     * @param token a {@link com.translationexchange.core.tokens.Token} object.
-     * @return a boolean.
-     */
-    public boolean isTokenAllowed(Token token) {
-        if (this.getAllowedTokenNames() == null)
-            return true;
+  /**
+   * <p>isTokenAllowed.</p>
+   *
+   * @param token a {@link com.translationexchange.core.tokens.Token} object.
+   * @return a boolean.
+   */
+  public boolean isTokenAllowed(Token token) {
+    if (this.getAllowedTokenNames() == null)
+      return true;
 
-        return this.getAllowedTokenNames().contains(token.getName());
-    }
+    return this.getAllowedTokenNames().contains(token.getName());
+  }
 
-    /**
-     * <p>substitute.</p>
-     *
-     * @param tokensData a {@link java.util.Map} object.
-     * @return a {@link java.lang.Object} object.
-     */
-    public Object substitute(Map<String, Object> tokensData) {
-        return substitute(tokensData, null);
-    }
+  /**
+   * <p>substitute.</p>
+   *
+   * @param tokensData a {@link java.util.Map} object.
+   * @return a {@link java.lang.Object} object.
+   */
+  public Object substitute(Map<String, Object> tokensData) {
+    return substitute(tokensData, null);
+  }
 
-    /**
-     * <p>substitute.</p>
-     *
-     * @param tokensData a {@link java.util.Map} object.
-     * @param language a {@link com.translationexchange.core.languages.Language} object.
-     * @return a {@link java.lang.Object} object.
-     */
-    public Object substitute(Map<String, Object> tokensData, Language language) {
-        return substitute(tokensData, language, null);
-    }
+  /**
+   * <p>substitute.</p>
+   *
+   * @param tokensData a {@link java.util.Map} object.
+   * @param language   a {@link com.translationexchange.core.languages.Language} object.
+   * @return a {@link java.lang.Object} object.
+   */
+  public Object substitute(Map<String, Object> tokensData, Language language) {
+    return substitute(tokensData, language, null);
+  }
 
-    /**
-     * <p>substitute.</p>
-     *
-     * @param tokensData a {@link java.util.Map} object.
-     * @param language a {@link com.translationexchange.core.languages.Language} object.
-     * @param options a {@link java.util.Map} object.
-     * @return a {@link java.lang.Object} object.
-     */
-    public abstract Object substitute(Map<String, Object> tokensData, Language language, Map<String, Object> options);
+  /**
+   * <p>substitute.</p>
+   *
+   * @param tokensData a {@link java.util.Map} object.
+   * @param language   a {@link com.translationexchange.core.languages.Language} object.
+   * @param options    a {@link java.util.Map} object.
+   * @return a {@link java.lang.Object} object.
+   */
+  public abstract Object substitute(Map<String, Object> tokensData, Language language, Map<String, Object> options);
 
-    /**
-     * Returns true/false whether the tokenizer is applicable to the label
-     *
-     * @param label a {@link java.lang.String} object.
-     * @return a boolean.
-     */
-    public static boolean isApplicable(String label) {
-        return false;
-    }
-    
-    /**
-     * Logs error message
-     * 
-     * @param msg a {@link java.lang.String} object
-     * @param ex a {@link java.lang.Exception} object.
-     */
-    protected void logException(String msg, Exception ex) {
+  /**
+   * Returns true/false whether the tokenizer is applicable to the label
+   *
+   * @param label a {@link java.lang.String} object.
+   * @return a boolean.
+   */
+  public static boolean isApplicable(String label) {
+    return false;
+  }
+
+  /**
+   * Logs error message
+   *
+   * @param msg a {@link java.lang.String} object
+   * @param ex  a {@link java.lang.Exception} object.
+   */
+  protected void logException(String msg, Exception ex) {
 //    	Tml.getLogger().logException(msg, ex);
-    }
-    
-    /**
-     * Logs error message
-     * 
-     * @param msg a {@link java.lang.String} object
-     */
-    protected void logException(String msg) {
+  }
+
+  /**
+   * Logs error message
+   *
+   * @param msg a {@link java.lang.String} object
+   */
+  protected void logException(String msg) {
 //    	Tml.getLogger().logError(msg);
-    }
+  }
 }
 
