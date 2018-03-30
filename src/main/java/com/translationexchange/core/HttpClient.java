@@ -388,15 +388,18 @@ public class HttpClient {
 
     Tml.getLogger().debug("HTTP Get took: " + (t1 - t0) + " mls");
 
-    Boolean uncompressed = (Boolean) options.get("uncompressed");
-    if (uncompressed != null && uncompressed.booleanValue()) {
+    String contentEncoding = response.headers().get("Content-Encoding");
+    String contentType = response.headers().get("Content-Type");
+
+    if ((contentEncoding != null && contentEncoding.equals("gzip")) || (contentType != null && contentType.contains("zip"))) {
+      String responseText = decompress(response.body().bytes());
+      Tml.getLogger().debug("HTTP response: " + responseText);
+      return responseText;
+    } else {
       String responseText = new String(response.body().bytes());
       Tml.getLogger().debug("HTTP response: " + responseText);
       return responseText;
     }
-    String responseText = decompress(response.body().bytes());
-    Tml.getLogger().debug("HTTP response: " + responseText);
-    return responseText;
   }
 
   /**
