@@ -4,7 +4,7 @@
 	<groupId>com.translationexchange</groupId>
 	<artifactId>tml</artifactId>
 	<packaging>jar</packaging>
-	<version>0.2.12-SNAPSHOT</version>
+	<version>0.2.12</version>
 
     <name>tml</name>
     <description>Core SDK library for Translation Exchange platform</description>
@@ -46,7 +46,7 @@
 		<connection>scm:git:https://github.com/translationexchange/tml-java.git</connection>
 		<developerConnection>scm:git:https://github.com/translationexchange/tml-java.git</developerConnection>
 		<url>https://github.com/translationexchange/tml-java.git</url>
-		<tag>HEAD</tag>
+		<tag>tml-0.2.12</tag>
 	</scm>
 
 	<properties>
@@ -54,7 +54,7 @@
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssa</maven.build.timestamp.format>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<additionalparam>-Xdoclint:none</additionalparam>
-        <argLine></argLine>
+        <argLine />
         <jacoco.outputDir>${project.basedir}/target/jacoco.exec</jacoco.outputDir>
 	</properties>
 
