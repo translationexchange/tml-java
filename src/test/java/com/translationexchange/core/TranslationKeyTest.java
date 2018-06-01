@@ -267,7 +267,7 @@ public class TranslationKeyTest extends BaseTest {
                 "label", "[link]you have messages[/link]",
                 "description", ""));
         Assert.assertEquals(
-                "<a href='www.google.com'>you have messages</a>",
+                "<a href=\"www.google.com\">you have messages</a>",
                 tkey2.substitute(tkey2.getLabel(),
                                 Utils.map("link", Utils.map("href", "www.google.com")),
                                 ru, en, Utils.map("tokenizer", "html"))
