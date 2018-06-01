@@ -4,7 +4,7 @@
 	<groupId>com.translationexchange</groupId>
 	<artifactId>tml</artifactId>
 	<packaging>jar</packaging>
-	<version>0.2.14-SNAPSHOT</version>
+	<version>0.2.14</version>
 
     <name>tml</name>
     <description>Core SDK library for Translation Exchange platform</description>
