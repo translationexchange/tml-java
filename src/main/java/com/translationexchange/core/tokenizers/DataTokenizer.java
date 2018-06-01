@@ -1,6 +1,5 @@
-
-/**
- * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
+/*
+ * Copyright (c) 2018 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -29,7 +28,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @author Berk
+ * @author Michael Berkovich
  * @version $Id: $Id
  */
 
@@ -46,124 +45,134 @@ import java.util.regex.Pattern;
 import com.translationexchange.core.Tml;
 import com.translationexchange.core.languages.Language;
 import com.translationexchange.core.tokens.Token;
+
 public class DataTokenizer extends Tokenizer {
-    /** Constant <code>TOKEN_BRACKET="{"</code> */
-    public static final String TOKEN_BRACKET = "{";
-    /** Constant <code>EXPRESSION_METHOD="getExpression"</code> */
-    public static final String EXPRESSION_METHOD = "getExpression";
-    
-    /**
-     * Token objects generated from the label
-     */
-    List<Token> tokens;
+  /**
+   * Constant <code>TOKEN_BRACKET="{"</code>
+   */
+  public static final String TOKEN_BRACKET = "{";
+  /**
+   * Constant <code>EXPRESSION_METHOD="getExpression"</code>
+   */
+  public static final String EXPRESSION_METHOD = "getExpression";
 
-    /**
-     * Default constructor
-     */
-    public DataTokenizer() {
-        super();
-    }
+  /**
+   * Token objects generated from the label
+   */
+  List<Token> tokens;
 
-    /**
-     * Constructs Base with label
-     *
-     * @param label label to be tokenized
-     */
-    public DataTokenizer(String label) {
-        super(label, null);
-    }
+  /**
+   * Default constructor
+   */
+  public DataTokenizer() {
+    super();
+  }
 
-    /**
-     * <p>Constructor for DataTokenizer.</p>
-     *
-     * @param label label to be tokenized
-     * @param allowedTokenNames list of allowed token names
-     */
-    public DataTokenizer(String label, List<String> allowedTokenNames) {
-        super(label, allowedTokenNames);
-    }
+  /**
+   * Constructs Base with label
+   *
+   * @param label label to be tokenized
+   */
+  public DataTokenizer(String label) {
+    super(label, null);
+  }
 
-	/**
-	 * Extract tokens from a string
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-    protected void tokenize() {
-        try {
-        	this.tokens = new ArrayList<Token>();
-            List<String> tokenMatches = new ArrayList<String>();
-            String matchingLabel = this.label;
-            for (String token : Tml.getConfig().getTokenClasses()) {
-                Class tokenClass = Class.forName(token);
-                Method method = tokenClass.getMethod(EXPRESSION_METHOD);
-                String expression = (String) method.invoke(null);
+  /**
+   * <p>Constructor for DataTokenizer.</p>
+   *
+   * @param label             label to be tokenized
+   * @param allowedTokenNames list of allowed token names
+   */
+  public DataTokenizer(String label, List<String> allowedTokenNames) {
+    super(label, allowedTokenNames);
+  }
 
-                Pattern pattern = Pattern.compile(expression);
-                Matcher matcher = pattern.matcher(matchingLabel);
+  /**
+   * Extract tokens from a string
+   */
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  protected void tokenize() {
+    try {
+      this.tokens = new ArrayList<Token>();
+      List<String> tokenMatches = new ArrayList<String>();
+      String matchingLabel = this.label;
+      for (String token : Tml.getConfig().getTokenClasses()) {
+        Class tokenClass = Class.forName(token);
+        Method method = tokenClass.getMethod(EXPRESSION_METHOD);
+        String expression = (String) method.invoke(null);
 
-                while(matcher.find()) {
-                    String match = matcher.group();
-                    if (tokenMatches.contains(match)) 
-                    	continue;
-                    tokenMatches.add(match);
-					Constructor<Token> constructor = tokenClass.getConstructor(String.class, String.class);
-                    addToken(constructor.newInstance(match, this.label));
-                    matchingLabel = matchingLabel.replaceAll(Pattern.quote(match), "");
-                }
-            }
-        } catch (Exception ex) {
-           logException("Failed to tokenize a label: " + label, ex);
+        Pattern pattern = Pattern.compile(expression);
+        Matcher matcher = pattern.matcher(matchingLabel);
+
+        while (matcher.find()) {
+          String match = matcher.group();
+          if (tokenMatches.contains(match))
+            continue;
+          tokenMatches.add(match);
+          Constructor<Token> constructor = tokenClass.getConstructor(String.class, String.class);
+          addToken(constructor.newInstance(match, this.label));
+          matchingLabel = matchingLabel.replaceAll(Pattern.quote(match), "");
         }
+      }
+    } catch (Exception ex) {
+      logException("Failed to tokenize a label: " + label, ex);
     }
+  }
 
-	/**
-	 * Returns list of tokens found in the label
-	 *
-	 * @return a {@link java.util.List} object.
-	 */
-	public List<Token> getTokens() {
-		if (this.tokens == null)
-			this.tokens = new ArrayList<Token>();
-		return this.tokens;
-	}
-	
-	/**
-	 * Adds a token to the list of tokens
-	 * @param token
-	 */
-	private void addToken(Token token) {
-		getTokens().add(token);
-	}
-	
-    /**
-     * <p>getTokenNames.</p>
-     *
-     * @return List of token names derived from the label
-     */
-    public List<String> getTokenNames() {
-        if (this.tokenNames == null) {
-            this.tokenNames = new ArrayList<String>();
-            for (Token token : this.tokens) {
-                this.tokenNames.add(token.getName());
-            }
-        }
-        return this.tokenNames;
+  /**
+   * Returns list of tokens found in the label
+   *
+   * @return a {@link java.util.List} object.
+   */
+  public List<Token> getTokens() {
+    if (this.tokens == null)
+      this.tokens = new ArrayList<Token>();
+    return this.tokens;
+  }
+
+  /**
+   * Adds a token to the list of tokens
+   *
+   * @param token
+   */
+  private void addToken(Token token) {
+    getTokens().add(token);
+  }
+
+  /**
+   * <p>getTokenNames.</p>
+   *
+   * @return List of token names derived from the label
+   */
+  public List<String> getTokenNames() {
+    if (this.tokenNames == null) {
+      this.tokenNames = new ArrayList<String>();
+      for (Token token : this.tokens) {
+        this.tokenNames.add(token.getName());
+      }
     }
+    return this.tokenNames;
+  }
 
-    /** {@inheritDoc} */
-    public Object substitute(Map<String, Object> tokensData, Language language, Map<String, Object> options) {
-        this.tokensData = tokensData;
-        this.options = options;
+  /**
+   * {@inheritDoc}
+   */
+  public Object substitute(Map<String, Object> tokensData, Language language, Map<String, Object> options) {
+    this.tokensData = tokensData;
+    this.options = options;
 
-        String translatedLabel = this.label;
-        for (Token token : this.tokens) {
-            translatedLabel = token.substitute(translatedLabel, tokensData, language, options);
-        }
-        return translatedLabel;
+    String translatedLabel = this.label;
+    for (Token token : this.tokens) {
+      translatedLabel = token.substitute(translatedLabel, tokensData, language, options);
     }
+    return translatedLabel;
+  }
 
-    /** {@inheritDoc} */
-    public static boolean isApplicable(String label) {
-        return label.contains(TOKEN_BRACKET);
-    }
+  /**
+   * {@inheritDoc}
+   */
+  public static boolean isApplicable(String label) {
+    return label != null && label.contains(TOKEN_BRACKET);
+  }
 
 }

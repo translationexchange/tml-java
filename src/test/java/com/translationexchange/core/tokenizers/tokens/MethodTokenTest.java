@@ -85,12 +85,12 @@ public class MethodTokenTest {
 
         Assert.assertEquals(
                 "Michael",
-                token.getObjectValue(Utils.buildMap("name", "Michael"), "name")
+                token.getObjectValue(Utils.map("name", "Michael"), "name")
         );
 
         Assert.assertEquals(
                 "{user.name}",
-                token.getObjectValue(Utils.buildMap("name", "Michael"), "wrongname")
+                token.getObjectValue(Utils.map("name", "Michael"), "wrongname")
         );
 
         User user = new User("Michael", "male");

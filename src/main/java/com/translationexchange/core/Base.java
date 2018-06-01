@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
+/*
+ * Copyright (c) 2018 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -27,6 +27,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author Michael Berkovich
+ * @version $Id: $Id
  */
 
 package com.translationexchange.core;
@@ -41,48 +44,48 @@ import java.util.Map;
  */
 public abstract class Base {
 
-	private Boolean loaded;
-	
-    /**
-     * Default constructor
-     */
-    public Base() {
+  private Boolean loaded;
 
-    }
+  /**
+   * Default constructor
+   */
+  public Base() {
 
-    /**
-     * Constructor from attributes
-     *
-     * @param attributes a {@link java.util.Map} object.
-     */
-    public Base(Map<String, Object> attributes) {
-        this();
-        updateAttributes(attributes);
-    }
+  }
 
-    /**
-     * Updates object's attributes
-     *
-     * @param attributes a {@link java.util.Map} object.
-     */
-    public abstract void updateAttributes(Map<String, Object> attributes);
+  /**
+   * Constructor from attributes
+   *
+   * @param attributes a {@link java.util.Map} object.
+   */
+  public Base(Map<String, Object> attributes) {
+    this();
+    updateAttributes(attributes);
+  }
 
-	/**
-	 * Checks if the model has been loaded from the server
-	 *
-	 * @return a {@link java.lang.Boolean} object.
-	 */
-	public Boolean isLoaded() {
-		return loaded;
-	}
+  /**
+   * Updates object's attributes
+   *
+   * @param attributes a {@link java.util.Map} object.
+   */
+  public abstract void updateAttributes(Map<String, Object> attributes);
 
-	/**
-	 * Indicates that the model has been loaded from Cache or API
-	 *
-	 * @param loaded a {@link java.lang.Boolean} object.
-	 */
-	public void setLoaded(Boolean loaded) {
-		this.loaded = loaded;
-	}
-    
+  /**
+   * Checks if the model has been loaded from the server
+   *
+   * @return a {@link java.lang.Boolean} object.
+   */
+  public Boolean isLoaded() {
+    return loaded;
+  }
+
+  /**
+   * Indicates that the model has been loaded from Cache or API
+   *
+   * @param loaded a {@link java.lang.Boolean} object.
+   */
+  public void setLoaded(Boolean loaded) {
+    this.loaded = loaded;
+  }
+
 }

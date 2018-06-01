@@ -34,7 +34,6 @@ package com.translationexchange.core;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.translationexchange.core.Utils;
 import com.translationexchange.core.languages.LanguageContextRule;
 
 /**
@@ -44,7 +43,7 @@ public class LanguageContextRuleTest extends BaseTest {
 
     @Test
     public void testEvaluatingRules() {
-        LanguageContextRule rule = new LanguageContextRule(Utils.buildMap(
+        LanguageContextRule rule = new LanguageContextRule(Utils.map(
                 "keyword", "many",
                 "description", "{token} mod 10 is 0 or {token} mod 10 in 5..9 or {token} mod 100 in 11..14",
                 "examples", "0, 5-20, 25-30, 35-40...",
@@ -72,68 +71,68 @@ public class LanguageContextRuleTest extends BaseTest {
         );
 
         Assert.assertTrue(
-                (Boolean) rule.evaluate(Utils.buildMap("@n", 5))
+                (Boolean) rule.evaluate(Utils.map("@n", 5))
         );
         Assert.assertTrue(
-                (Boolean) rule.evaluate(Utils.buildMap("@n", 9))
+                (Boolean) rule.evaluate(Utils.map("@n", 9))
         );
         Assert.assertTrue(
-                (Boolean) rule.evaluate(Utils.buildMap("@n", 11))
+                (Boolean) rule.evaluate(Utils.map("@n", 11))
         );
         Assert.assertTrue(
-                (Boolean) rule.evaluate(Utils.buildMap("@n", 12))
+                (Boolean) rule.evaluate(Utils.map("@n", 12))
         );
         Assert.assertTrue(
-                (Boolean) rule.evaluate(Utils.buildMap("@n", 14))
+                (Boolean) rule.evaluate(Utils.map("@n", 14))
         );
         Assert.assertTrue(
-                (Boolean) rule.evaluate(Utils.buildMap("@n", 50))
+                (Boolean) rule.evaluate(Utils.map("@n", 50))
         );
 
         Assert.assertFalse(
-                (Boolean) rule.evaluate(Utils.buildMap("@n", 1))
+                (Boolean) rule.evaluate(Utils.map("@n", 1))
         );
         Assert.assertFalse(
-                (Boolean) rule.evaluate(Utils.buildMap("@n", 2))
+                (Boolean) rule.evaluate(Utils.map("@n", 2))
         );
         Assert.assertFalse(
-                (Boolean) rule.evaluate(Utils.buildMap("@n", 4))
+                (Boolean) rule.evaluate(Utils.map("@n", 4))
         );
         Assert.assertFalse(
-                (Boolean) rule.evaluate(Utils.buildMap("@n", 51))
+                (Boolean) rule.evaluate(Utils.map("@n", 51))
         );
 
-        rule = new LanguageContextRule(Utils.buildMap("keyword", "female", "conditions", "(= 'female' @gender)"));
+        rule = new LanguageContextRule(Utils.map("keyword", "female", "conditions", "(= 'female' @gender)"));
 
         Assert.assertFalse(
-                (Boolean) rule.evaluate(Utils.buildMap("@gender", "male"))
+                (Boolean) rule.evaluate(Utils.map("@gender", "male"))
         );
 
         Assert.assertTrue(
-                (Boolean) rule.evaluate(Utils.buildMap("@gender", "female"))
+                (Boolean) rule.evaluate(Utils.map("@gender", "female"))
         );
 
         Assert.assertFalse(
-                (Boolean) rule.evaluate(Utils.buildMap("@gender", "unknown"))
+                (Boolean) rule.evaluate(Utils.map("@gender", "unknown"))
         );
 
 
-        rule = new LanguageContextRule(Utils.buildMap("keyword", "female", "conditions", "(&& (= 1 (count @genders)) (all @genders 'female'))"));
+        rule = new LanguageContextRule(Utils.map("keyword", "female", "conditions", "(&& (= 1 (count @genders)) (all @genders 'female'))"));
 
         Assert.assertTrue(
-                (Boolean) rule.evaluate(Utils.buildMap("@genders", Utils.buildList("female")))
+                (Boolean) rule.evaluate(Utils.map("@genders", Utils.buildList("female")))
         );
         Assert.assertFalse(
-                (Boolean) rule.evaluate(Utils.buildMap("@genders", Utils.buildList("female", "female")))
+                (Boolean) rule.evaluate(Utils.map("@genders", Utils.buildList("female", "female")))
         );
 
-        rule = new LanguageContextRule(Utils.buildMap("keyword", "female", "conditions", "(&& (> (count @genders) 1) (all @genders 'female'))"));
+        rule = new LanguageContextRule(Utils.map("keyword", "female", "conditions", "(&& (> (count @genders) 1) (all @genders 'female'))"));
 
         Assert.assertFalse(
-                (Boolean) rule.evaluate(Utils.buildMap("@genders", Utils.buildList("female")))
+                (Boolean) rule.evaluate(Utils.map("@genders", Utils.buildList("female")))
         );
         Assert.assertTrue(
-                (Boolean) rule.evaluate(Utils.buildMap("@genders", Utils.buildList("female", "female")))
+                (Boolean) rule.evaluate(Utils.map("@genders", Utils.buildList("female", "female")))
         );
 
 

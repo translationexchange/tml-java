@@ -76,12 +76,12 @@ public class DataTokenTest {
 
         Assert.assertEquals(
                 "user",
-                token.getName(Utils.buildMap())
+                token.getName(Utils.map())
         );
 
         Assert.assertEquals(
                 "{user}",
-                token.getName(Utils.buildMap("parens", true))
+                token.getName(Utils.map("parens", true))
         );
 
     }
@@ -165,27 +165,27 @@ public class DataTokenTest {
 
         Assert.assertEquals(
                 "{count}",
-                token.getName(Utils.buildMap("parens", true))
+                token.getName(Utils.map("parens", true))
         );
 
         Assert.assertEquals(
                 "{count:number}",
-                token.getName(Utils.buildMap("parens", true, "context_keys", true))
+                token.getName(Utils.map("parens", true, "context_keys", true))
         );
 
         Assert.assertEquals(
                 "{count::ordinal::ord}",
-                token.getName(Utils.buildMap("parens", true, "case_keys", true))
+                token.getName(Utils.map("parens", true, "case_keys", true))
         );
 
         Assert.assertEquals(
                 "{count:number::ordinal::ord}",
-                token.getName(Utils.buildMap("parens", true, "context_keys", true, "case_keys", true))
+                token.getName(Utils.map("parens", true, "context_keys", true, "case_keys", true))
         );
 
         Assert.assertEquals(
                 "count:number::ordinal::ord",
-                token.getName(Utils.buildMap("parens", false, "context_keys", true, "case_keys", true))
+                token.getName(Utils.map("parens", false, "context_keys", true, "case_keys", true))
         );
     }
 
@@ -194,27 +194,27 @@ public class DataTokenTest {
         DataToken token = new DataToken("{count}");
         Assert.assertEquals(
                 "{count}",
-                token.getValue(Utils.buildMap("user", "Michael"))
+                token.getValue(Utils.map("user", "Michael"))
         );
 
         Assert.assertEquals(
                 "1",
-                token.getValue(Utils.buildMap("count", "1"))
+                token.getValue(Utils.map("count", "1"))
         );
 
         Assert.assertEquals(
                 "1",
-                token.getValue(Utils.buildMap("count", 1))
+                token.getValue(Utils.map("count", 1))
         );
 
         Assert.assertEquals(
                 "01",
-                token.getValue(Utils.buildMap("count", Utils.buildList(1, "01")))
+                token.getValue(Utils.map("count", Utils.buildList(1, "01")))
         );
 
         Assert.assertEquals(
                 "Hello",
-                token.getValue(Utils.buildMap("count", new DataTokenValue() {
+                token.getValue(Utils.map("count", new DataTokenValue() {
                     public Object getContextObject() {
                         return 1;
                     }
@@ -229,13 +229,13 @@ public class DataTokenTest {
         token = new DataToken("{user}");
         Assert.assertEquals(
                 "Michael",
-                token.getValue(Utils.buildMap("user", user))
+                token.getValue(Utils.map("user", user))
         );
 
         token = new DataToken("{user}");
         Assert.assertEquals(
                 "Michael",
-                token.getValue(Utils.buildMap("user", new DataTokenValue() {
+                token.getValue(Utils.map("user", new DataTokenValue() {
                     public Object getContextObject() {
                         return user;
                     }
@@ -248,18 +248,18 @@ public class DataTokenTest {
 
         Assert.assertEquals(
                 "Berk",
-                token.getValue(Utils.buildMap("user",  Utils.buildList(user, "Berk")))
+                token.getValue(Utils.map("user",  Utils.buildList(user, "Berk")))
         );
 
         Assert.assertEquals(
                 "{user}",
-                token.getValue(Utils.buildMap("user",  Utils.buildList(user)))
+                token.getValue(Utils.map("user",  Utils.buildList(user)))
         );
 
         Assert.assertEquals(
                 "Michael",
-                token.getValue(Utils.buildMap("user",  Utils.buildMap(
-                        "object", Utils.buildMap(
+                token.getValue(Utils.map("user",  Utils.map(
+                        "object", Utils.map(
                             "name", "Michael",
                             "gender", "male"
                         ),
@@ -271,8 +271,8 @@ public class DataTokenTest {
 
         Assert.assertEquals(
                 "Michael",
-                token.getValue(Utils.buildMap("user",  Utils.buildMap(
-                        "object", Utils.buildMap(
+                token.getValue(Utils.map("user",  Utils.map(
+                        "object", Utils.map(
                             "name", "Michael",
                             "gender", "male"
                         ),
@@ -284,8 +284,8 @@ public class DataTokenTest {
 
         Assert.assertEquals(
                 "Mike",
-                token.getValue(Utils.buildMap("user",  Utils.buildMap(
-                        "object", Utils.buildMap(
+                token.getValue(Utils.map("user",  Utils.map(
+                        "object", Utils.map(
                             "name", "Michael",
                             "gender", "male"
                         ),
@@ -297,8 +297,8 @@ public class DataTokenTest {
 
         Assert.assertEquals(
                 "{user}",
-                token.getValue(Utils.buildMap("user",  Utils.buildMap(
-                        "object", Utils.buildMap(
+                token.getValue(Utils.map("user",  Utils.map(
+                        "object", Utils.map(
                            "name", "Michael",
                             "gender", "male"
                         )
@@ -310,7 +310,7 @@ public class DataTokenTest {
 
         Assert.assertEquals(
                 "{user}",
-                token.getValue(Utils.buildMap("user",  Utils.buildMap(
+                token.getValue(Utils.map("user",  Utils.map(
                         "object", user,
                         "property", "name"
                 )
@@ -320,13 +320,13 @@ public class DataTokenTest {
 
         Assert.assertEquals(
                 "{user}",
-                token.getValue(Utils.buildMap("user",  Utils.buildMap()))
+                token.getValue(Utils.map("user",  Utils.map()))
         );
 
         token = new DataToken("{nbsp}");
         Assert.assertEquals(
                 "nbsp",
-                token.getValue(Utils.buildMap("nbsp", "nbsp"))
+                token.getValue(Utils.map("nbsp", "nbsp"))
         );
         Assert.assertEquals(
                 "&nbsp;",
@@ -334,7 +334,7 @@ public class DataTokenTest {
         );
         Assert.assertEquals(
                 "&nbsp;",
-                token.getValue(Utils.buildMap("abc", "abc"))
+                token.getValue(Utils.map("abc", "abc"))
         );
     }
 
@@ -344,7 +344,7 @@ public class DataTokenTest {
 
         Assert.assertEquals(
                 null,
-                token.getContextObject(Utils.buildMap())
+                token.getContextObject(Utils.map())
         );
 
         Assert.assertEquals(
@@ -354,12 +354,12 @@ public class DataTokenTest {
 
         Assert.assertEquals(
                 1,
-                token.getContextObject(Utils.buildMap("count", 1))
+                token.getContextObject(Utils.map("count", 1))
         );
 
         Assert.assertEquals(
                 10,
-                token.getContextObject(Utils.buildMap("count", new DataTokenValue() {
+                token.getContextObject(Utils.map("count", new DataTokenValue() {
                     public Object getContextObject() {
                         return 10;
                     }
@@ -372,18 +372,18 @@ public class DataTokenTest {
 
         Assert.assertEquals(
                 1,
-                token.getContextObject(Utils.buildMap("count", Utils.buildList(1, 1)))
+                token.getContextObject(Utils.map("count", Utils.buildList(1, 1)))
         );
 
 
         Assert.assertEquals(
                 1,
-                token.getContextObject(Utils.buildMap("count", Utils.buildMap("object", 1)))
+                token.getContextObject(Utils.map("count", Utils.map("object", 1)))
         );
 
         Assert.assertEquals(
-                Utils.buildMap("a","b"),
-                token.getContextObject(Utils.buildMap("count", Utils.buildMap("a","b")))
+                Utils.map("a","b"),
+                token.getContextObject(Utils.map("count", Utils.map("a","b")))
         );
 
     }

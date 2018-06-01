@@ -1,6 +1,5 @@
-
-/**
- * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
+/*
+ * Copyright (c) 2018 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -29,18 +28,19 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @author Berk
+ * @author Michael Berkovich
  * @version $Id: $Id
  */
 
 package com.translationexchange.core.notifications;
+
 public interface NotificationListener {
 
-	/**
-	 * <p>onNotification.</p>
-	 *
-	 * @param notification a {@link com.translationexchange.core.notifications.Notification} object.
-	 */
-	public void onNotification(Notification notification);
-	
+  /**
+   * <p>onNotification.</p>
+   *
+   * @param notification a {@link com.translationexchange.core.notifications.Notification} object.
+   */
+  public void onNotification(Notification notification);
+
 }

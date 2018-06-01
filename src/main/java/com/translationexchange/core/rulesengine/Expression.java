@@ -1,6 +1,5 @@
-
-/**
- * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
+/*
+ * Copyright (c) 2018 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -29,23 +28,24 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @author Berk
+ * @author Michael Berkovich
  * @version $Id: $Id
  */
 
 package com.translationexchange.core.rulesengine;
 
 import java.util.List;
+
 public interface Expression {
 
-    /**
-     * <p>evaluate.</p>
-     *
-     * @param evaluator a {@link com.translationexchange.core.rulesengine.Evaluator} object.
-     * @param params a {@link java.util.List} object.
-     * @return a {@link java.lang.Object} object.
-     */
-    public Object evaluate(Evaluator evaluator, List<Object> params);
+  /**
+   * <p>evaluate.</p>
+   *
+   * @param evaluator a {@link com.translationexchange.core.rulesengine.Evaluator} object.
+   * @param params    a {@link java.util.List} object.
+   * @return a {@link java.lang.Object} object.
+   */
+  public Object evaluate(Evaluator evaluator, List<Object> params);
 
 }
    

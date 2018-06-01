@@ -34,7 +34,6 @@ package com.translationexchange.core;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.translationexchange.core.Utils;
 import com.translationexchange.core.languages.LanguageCaseRule;
 
 /**
@@ -50,7 +49,7 @@ public class LanguageCaseRuleTest extends BaseTest {
        );
 
     		   
-       rule = new LanguageCaseRule(Utils.buildMap(
+       rule = new LanguageCaseRule(Utils.map(
     		   "conditions", "(= 1 1)",
     		   "operations", "(+ 1 1)"
        ));
@@ -66,7 +65,7 @@ public class LanguageCaseRuleTest extends BaseTest {
        );
        
        
-       rule = new LanguageCaseRule(Utils.buildMap(
+       rule = new LanguageCaseRule(Utils.map(
     		   "conditions", "(= @value 'Michael')",
     		   "operations", "(prepend 'Hello ' @value)"
        ));

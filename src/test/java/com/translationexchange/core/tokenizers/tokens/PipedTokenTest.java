@@ -119,7 +119,7 @@ public class PipedTokenTest {
        PipedToken token = new PipedToken("{count|| one: message, many: messages}");
 
        Assert.assertEquals(
-               Utils.buildMap("one", "message", "many", "messages"),
+               Utils.map("one", "message", "many", "messages"),
                token.getParameterMap(null)
        );
 
@@ -138,25 +138,25 @@ public class PipedTokenTest {
        token = new PipedToken("{count|| message}");
 
        Assert.assertEquals(
-               Utils.buildMap("one", "message", "other", "message"),
-               token.getParameterMap(Utils.buildMap("one", "{$0}", "other", "{$0::plural}"))
+               Utils.map("one", "message", "other", "message"),
+               token.getParameterMap(Utils.map("one", "{$0}", "other", "{$0::plural}"))
        );
 
        Assert.assertEquals(
-               Utils.buildMap("one", "message", "other", "message"),
-               token.getParameterMap(Utils.buildList(Utils.buildMap("one", "{$0}", "other", "{$0::plural}"), Utils.buildMap("one", "{$0}", "other", "{$1}")))
+               Utils.map("one", "message", "other", "message"),
+               token.getParameterMap(Utils.buildList(Utils.map("one", "{$0}", "other", "{$0::plural}"), Utils.map("one", "{$0}", "other", "{$1}")))
        );
 
        token = new PipedToken("{count|| message, messages}");
 
        Assert.assertEquals(
-               Utils.buildMap("one", "message", "other", "messages"),
-               token.getParameterMap(Utils.buildList(Utils.buildMap("one", "{$0}", "other", "{$0::plural}"), Utils.buildMap("one", "{$0}", "other", "{$1}")))
+               Utils.map("one", "message", "other", "messages"),
+               token.getParameterMap(Utils.buildList(Utils.map("one", "{$0}", "other", "{$0::plural}"), Utils.map("one", "{$0}", "other", "{$1}")))
        );
 
        Assert.assertEquals(
                null,
-               token.getParameterMap(Utils.buildList(Utils.buildMap("one", "{$0}", "other", "{$0::plural}"), "undefined"))
+               token.getParameterMap(Utils.buildList(Utils.map("one", "{$0}", "other", "{$0::plural}"), "undefined"))
        );
 
        Assert.assertEquals(
@@ -166,12 +166,12 @@ public class PipedTokenTest {
 
        Assert.assertEquals(
                null,
-               token.getParameterMap(Utils.buildList(Utils.buildMap("one", "{$0}", "other", "{$0::plural}")))
+               token.getParameterMap(Utils.buildList(Utils.map("one", "{$0}", "other", "{$0::plural}")))
        );
 
        Assert.assertEquals(
                null,
-               token.getParameterMap(Utils.buildList(Utils.buildMap("one", "{$0}", "other", "{$3::plural}")))
+               token.getParameterMap(Utils.buildList(Utils.map("one", "{$0}", "other", "{$3::plural}")))
        );
 
     }

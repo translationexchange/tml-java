@@ -1,6 +1,5 @@
-
-/**
- * Copyright (c) 2016 Translation Exchange, Inc. All rights reserved.
+/*
+ * Copyright (c) 2018 Translation Exchange, Inc. All rights reserved.
  *
  *  _______                  _       _   _             ______          _
  * |__   __|                | |     | | (_)           |  ____|        | |
@@ -29,7 +28,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @author Berk
+ * @author Michael Berkovich
  * @version $Id: $Id
  */
 
@@ -38,36 +37,35 @@ package com.translationexchange.core.rulesengine;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 public class CLI {
 
-	/**
-	 * <p>main.</p>
-	 *
-	 * @param args an array of {@link java.lang.String} objects.
-	 */
-	public static void main(String[] args) {
-		boolean done = false;
-		
-		Parser parser = new Parser();
-		Evaluator evaluator = new Evaluator();
-		
-		while (!done) {
-	      System.out.print("$ ");
-	      BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	      String expression = null;
-	      try {
-	    	  expression = br.readLine();
-	      } catch (IOException ioe) {
-	         System.out.println("IO error trying to read expression");
-	         System.exit(1);
-	      }
-	
-	      if (expression.equals("\\q") || expression.equals("\\quit"))
-	    	  return;
-	      
-	      Object result = evaluator.evaluate(parser.parse(expression));
-	      System.out.println(result.toString());
-		}
-	}
-	
+  /**
+   * <p>main.</p>
+   *
+   * @param args an array of {@link java.lang.String} objects.
+   */
+  public static void main(String[] args) {
+    Parser parser = new Parser();
+    Evaluator evaluator = new Evaluator();
+
+    while (true) {
+      System.out.print("$ ");
+      BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+      String expression = null;
+      try {
+        expression = br.readLine();
+      } catch (IOException ioe) {
+        System.out.println("IO error trying to read expression");
+        System.exit(1);
+      }
+
+      if (expression.equals("\\q") || expression.equals("\\quit"))
+        return;
+
+      Object result = evaluator.evaluate(parser.parse(expression));
+      System.out.println(result.toString());
+    }
+  }
+
 }

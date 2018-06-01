@@ -32,7 +32,6 @@
 package com.translationexchange.core.tokenizers;
 
 import com.translationexchange.core.Utils;
-import com.translationexchange.core.tokenizers.DecorationTokenizer;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -123,19 +122,19 @@ public class DecorationTokenizerTest {
         DecorationTokenizer dt = new DecorationTokenizer("Hello [bold: World]");
         Assert.assertEquals(
                 "Hello World",
-                dt.substitute(Utils.buildMap())
+                dt.substitute(Utils.map())
         );
 
         dt.tokenize("[link] you have [italic: [bold: {count}] messages] [light: in your mailbox] [/link]");
         Assert.assertEquals(
                 " you have {count} messages in your mailbox ",
-                dt.substitute(Utils.buildMap())
+                dt.substitute(Utils.map())
         );
 
         dt.tokenize("<link>you have [italic: [bold: {count}] messages] [light: in your mailbox]</link>");
         Assert.assertEquals(
                 "you have {count} messages in your mailbox",
-                dt.substitute(Utils.buildMap())
+                dt.substitute(Utils.map())
         );
     }
 

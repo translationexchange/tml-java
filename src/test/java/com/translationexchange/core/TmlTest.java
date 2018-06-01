@@ -31,74 +31,150 @@
 
 package com.translationexchange.core;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-import com.translationexchange.core.Tml;
-import com.translationexchange.core.Utils;
+import com.translationexchange.core.dummy.DummyApplication;
 
 /**
  * Created by michael on 3/16/14.
  */
 public class TmlTest extends BaseTest {
 
-//    @Test
-    public void testIntegrationWithSampleApp() {
-        Tml.init("37f812fac93a71088", "37f812fac93a71088");
-        
-        Assert.assertEquals(
-            "Hello World",
-            Tml.translate("Hello World")
-        );
+    @BeforeClass
+    public static void configureTml() {
+        Tml.getConfig().setApplicationClass("com.translationexchange.core.dummy.DummyApplication");
+    }
 
-        Tml.beginBlockWithOptions(Utils.buildMap("source", "sample"));
-        
-        Assert.assertEquals(
-            "Hello World",
-            Tml.translate("Hello World")
-        );
-        
+    @Test
+    public void testCreation() {
+        Tml.init();
+        Tml.init("application.json", "37f812fac93a71088");
+        Assert.assertTrue(Tml.getSession() instanceof Session);
+        Assert.assertTrue(Tml.getApplication() instanceof Application);
+        Assert.assertTrue(Tml.getApplication() instanceof DummyApplication); // check
+                                                                             // mock
+                                                                             // properly
+        Assert.assertEquals("37f812fac93a71088", Tml.getApplication().getAccessToken());
+        Assert.assertTrue(Tml.isSchedulerRunning());
+        Assert.assertEquals("en-US", Tml.getCurrentLanguage().getLocale());
+        Assert.assertEquals(null, Tml.getCurrentTranslator());
+        Assert.assertEquals("tml-java v0.2.1 (OkHttp v2.4.0)", Tml.getFullVersion());
+        Tml.setApplication(Tml.getApplication());
+    }
+
+    @Test
+    public void testSwitchLanguage() {
+        Tml.init("application.json", "37f812fac93a71088");
+        Assert.assertEquals("en-US", Tml.getCurrentLanguage().getLocale());
+
+        Tml.switchLanguage(Tml.getApplication().getLanguage("da"));
+        Assert.assertEquals("da", Tml.getCurrentLanguage().getLocale());
+
+        Tml.switchLanguage(Tml.getApplication().getLanguage("en-US"), Utils.map("foo", "bar"));
+        Assert.assertEquals("en-US", Tml.getCurrentLanguage().getLocale());
+    }
+
+    @Test
+    public void testSwitchSource() {
+        Tml.init("application.json", "37f812fac93a71088");
+        Assert.assertEquals("", Tml.getCurrentSource());
+
+        Tml.setCurrentSource("index");
+        Assert.assertEquals("index", Tml.getCurrentSource());
+    }
+    
+    @Test
+    public void testScheduler() {
+        Tml.init("application.json", "37f812fac93a71088");
+        Tml.stopScheduledTasks();
+        Tml.stopScheduledTasks();  // to go to first branch
+    }
+
+    @Test
+    public void testBeginBlockWithOptions() {
+        Tml.init("application.json", "37f812fac93a71088");
+        Tml.setCurrentSource("index");
+        Tml.beginBlockWithOptions(Utils.map("source", "navigation"));
+        Assert.assertEquals(Utils.buildList("index", "navigation"), Tml.getSession().getSourcePath());
+        Assert.assertEquals(Utils.map("source", "navigation"), Tml.getBlockOptions());
         Tml.endBlock();
+        Assert.assertEquals(Utils.map(), Tml.getBlockOptions());
+    }
 
-        Assert.assertEquals(
-                "You have 5 messages",
-                Tml.translate("You have {count||message}", Utils.buildMap("count", 5))
-            );
+    @Test
+    public void testTranslator() {
+        Tml.init("application.json", "37f812fac93a71088");
+        Tml.setCurrentTranslator(new Translator(Utils.map("name", "xepa4ep", "email", "r.kamun@gmail.com", "inline", true)));
+        Assert.assertEquals("xepa4ep", Tml.getCurrentTranslator().getName());
+    }
 
-        Assert.assertEquals(
-                "You have 1 message",
-                Tml.translate("You have {count|| one: message, other: messages}", Utils.buildMap("count", 1))
-            );
+    @Test
+    public void testInitSource() {
+        Tml.init("application.json", "37f812fac93a71088");
+        Tml.initSource("index");
+        Assert.assertEquals("index",
+                Tml.getApplication().getSource("index", Tml.getCurrentLanguage().getLocale(), Utils.map())
+                        .getKey());
+    }
 
-        Assert.assertEquals(
-                "You have 5 messages",
-                Tml.translate("You have {count|| one: message, other: messages}", Utils.buildMap("count", 5))
-            );
+    @Test
+    public void testInitLanguage() {
+        Tml.init("application.json", "37f812fac93a71088");
+        Tml.initLanguage("unknown");
+        Assert.assertEquals("unknown", Tml.getApplication().getLanguage("unknown").getLocale());
+
+    }
+
+    @Test
+    public void testIntegrationWithSampleApp() {
+        Tml.getConfig().setDefaultLocale("en");
+        Tml.init("foody.json", "37f812fac93a71088");
+        Assert.assertEquals("Hello World", Tml.translate("Hello World"));
+
+        Tml.beginBlockWithOptions(Utils.map("source", "sample"));
+
+        Assert.assertEquals("Hello World", Tml.translate("Hello World"));
         
+        Assert.assertEquals("Hello World", Tml.translate("Hello World", "Greeting"));
+
+        Tml.endBlock();
+        
+        Assert.assertEquals("You have 5 messages",
+                Tml.translate("You have {count||message}", Utils.map("count", 5)));
+        Assert.assertEquals("You have 5 messages",
+                Tml.translate("You have {count||message}", "test descr", Utils.map("count", 5)));
+        
+        Assert.assertEquals("You have 1 message",
+                Tml.translate("You have {count|| one: message, other: messages}", Utils.map("count", 1), Utils.map()));
+        
+        Assert.assertEquals("You have 5 messages",
+                Tml.translate("You have {count|| one: message, other: messages}", Utils.map("count", 5)));
+
         Assert.assertEquals(
                 "You have <strong>5 messages</strong>",
-                Tml.translate("You have [indent: {count||message}]", Utils.buildMap(
-                		"count", 5,
-                		"indent", "<strong>{$0}</strong>"
-                ))
-            );
+                Tml.translate("You have [indent: {count||message}]",
+                        Utils.map("count", 5, "indent", "<strong>{$0}</strong>")));
 
         Assert.assertEquals(
                 "<strong>You</strong> have <strong>5 messages</strong>",
-                Tml.translate("[indent: You] have [indent: {count||message}]", Utils.buildMap(
-                		"count", 5,
-                		"indent", "<strong>{$0}</strong>"
-                ))
-            );
+                Tml.translate("[indent: You] have [indent: {count||message}]",
+                        Utils.map("count", 5, "indent", "<strong>{$0}</strong>")));
 
         Assert.assertEquals(
                 "<strong>You have <i>5 messages</i></strong> in your mailbox",
-                Tml.translate("[bold: You have [italic: {count||message}]] in your mailbox", Utils.buildMap(
-                		"count", 5,
-                		"bold", "<strong>{$0}</strong>",
-                		"italic", "<i>{$0}</i>"
-                ))
-            );
-        
+                Tml.translate("[bold: You have [italic: {count||message}]] in your mailbox",
+                        Utils.map("count", 5, "bold", "<strong>{$0}</strong>", "italic", "<i>{$0}</i>")));
+        Tml.getConfig().setDefaultLocale("en-US");
+    }
+
+    // }
+
+    @AfterClass
+    public static void deconfigureTml() {
+        Tml.getConfig().setApplicationClass("com.translationexchange.core.Application");
     }
 
 }
