@@ -444,7 +444,11 @@ public class DomTokenizer {
   private String adjustName(Element node) {
     String name = node.tagName().toLowerCase();
     Map<String, String> map = (Map<String, String>) option("name_mapping");
-    return map.getOrDefault(name, name);
+
+    if (map.get(name) != null)
+      return map.get(name);
+
+    return name;
   }
 
 }
